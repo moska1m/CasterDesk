@@ -13,6 +13,7 @@ Windows 10 x64; SDK .NET 10.0.303; runtime incluído 10.0.11.
 - Microteste de 20 alterações de bombsite: 5 ms, 789 KB de alocação gerenciada, zero recálculos de layout e 299/299 controles preservados. Isso não representa uma medição de consumo geral de CPU/memória.
 - Cada teste usa uma pasta de dados própria, fora dos arquivos instalados. Nenhum dado do usuário foi incluído no pacote.
 - Migração da prévia: cópia de partidas/configurações, preservação do caminho TXT do OBS, realocação dos logos e recusa de sobrescrever destino existente verificadas com dados fictícios.
+- Instalador compilado e extraído para auditoria: conteúdo sem partidas, preferências pessoais ou símbolos de depuração; DLL idêntica à publicação testada. O executável extraído passou novamente nas 406.530 verificações de campeonato usando seu runtime incluído.
 
 ## Verificação necessária antes da versão estável
 
