@@ -1,6 +1,6 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **0.1.0-beta.1 — beta privada para validação.**
+Ferramentas para community casters de Rainbow Six Siege. **0.1.0-beta.2 — beta privada para validação.**
 
 Aplicativo independente para Windows, em português. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft. O programa registra as informações inseridas pelo usuário; não controla o jogo nem o OBS.
 
@@ -19,7 +19,7 @@ Aplicativo independente para Windows, em português. Não é um produto oficial,
 
 ## Instalar
 
-Baixe `CasterDesk-0.1.0-beta.1-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
+Baixe `CasterDesk-0.1.0-beta.2-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
 
 Alvo desta beta: Windows 10/11 x64. Ainda é necessário validar em um segundo computador e em diferentes escalas de tela. O instalador beta não tem assinatura digital própria; o Windows pode pedir confirmação de origem. Não desative as proteções do sistema.
 
@@ -53,4 +53,8 @@ O nome interno `CronoLive` foi mantido em parte do código por compatibilidade h
 
 ## Licença e recursos visuais
 
-Código próprio sob MIT. **Imagens e marcas de terceiros não estão cobertas por essa licença.** A autorização para redistribuir os recursos oficiais no instalador ainda precisa ser confirmada antes de uma distribuição pública. Esta release permanece privada. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Código próprio sob MIT. **Imagens e marcas de terceiros não estão cobertas por essa licença.** A autorização para redistribuir os recursos oficiais no instalador ainda precisa ser confirmada para o compartilhamento do pacote, inclusive interno. O projeto permanece privado, destinado ao uso interno dos community casters. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+## Sobre e assinatura
+
+Na engrenagem, escolha **Sobre o CasterDesk** para consultar autoria, versão, créditos e condições de uso. Criado por Jeferson “Moska” Sampaio. Consulte SIGNING.md para o processo de assinatura; esta beta ainda não é assinada.

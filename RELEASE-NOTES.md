@@ -1,24 +1,11 @@
-# CasterDesk 0.1.0-beta.1
+# CasterDesk 0.1.0-beta.2
 
-Primeira beta privada para validar a experiência dos community casters.
+Atualização interna: novo **Sobre o CasterDesk** na engrenagem, com crédito a Jeferson “Moska” Sampaio, versão, autoria dos recursos visuais e condições de uso.
 
-## Incluído
+Preparado processo opcional de assinatura digital. **Este instalador ainda não está assinado**: não há certificado configurado, e o SmartScreen pode mostrar avisos em outros computadores ou versões. Nenhuma proteção do Windows é desativada.
 
-- Campeonato MD1/MD3 com veto de mapas, lados, bans de operadores e round a round.
-- Histórico, salvamento automático, JSON da série e resumo para remake.
-- Cronômetro e casting em TXT para OBS.
-- Exportação PNG para Stories, feed/carrossel e horizontal.
-- Temas claro/escuro, guia do lobby e identificação do caster/campeonato nas imagens.
-- Instalador Windows x64 com .NET incluído, atalhos e desinstalador.
+Repositório e versões continuam privados, destinados ao uso interno. Os créditos não substituem autorizações dos titulares e não indicam aprovação da Ubisoft/Microsoft. A licença MIT do código não inclui os recursos visuais de terceiros.
 
-## Instalar e preservar dados
+A instalação e desinstalação da beta.1 foram confirmadas pelo usuário; teste no segundo PC e validação da atualização ainda pendentes. Os dados continuam separados do aplicativo.
 
-Baixe o arquivo `Setup.exe` anexado. O arquivo `.sha256` permite conferir sua integridade. O instalador não possui assinatura digital própria nesta beta.
-
-Partidas e preferências ficam em `%LOCALAPPDATA%\CasterDesk`, separadas do aplicativo. A prévia anterior permanece intacta; consulte README para migrar os dados.
-
-## Estado da validação
-
-Testes automatizados de regras, JSON, PNG, cronômetro, temas e edição aprovados no PC de desenvolvimento. O ciclo interativo de instalação, atualização e desinstalação e o teste em um segundo PC **ainda estão pendentes**. Consulte VALIDATION.md.
-
-Recursos visuais de Ubisoft e outras marcas não estão sob MIT; a permissão para redistribuição pública precisa ser resolvida antes de tornar o projeto público. Esta beta permanece privada e não é um produto oficial da Ubisoft.
+Corrigida a codificação dos acentos e cedilhas no instalador e na tradução pt-BR.

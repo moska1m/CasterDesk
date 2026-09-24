@@ -39,3 +39,7 @@ Registrar versão do Windows, escala/resolução, resultado de cada passo e, se 
 - Concluir o teste em outro PC e corrigir falhas encontradas.
 - Resolver a permissão de redistribuição dos recursos visuais de terceiros ou substituí-los.
 - Revisar créditos, regras/map pool, documentação e assinatura do instalador.
+
+## Retorno do usuário — 24/09/2026
+
+O usuário informou que instalação e desinstalação da beta.1 funcionaram. Isso complementa a limitação do ambiente de automação acima. O teste em um segundo PC e o ciclo de atualização com preservação de dados seguem pendentes. O projeto será mantido privado para uso interno, sem plano atual de publicação pública.

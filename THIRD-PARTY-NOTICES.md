@@ -21,3 +21,5 @@ Twitch, YouTube e Kick são marcas de seus respectivos titulares; os símbolos e
 ## Componentes
 
 O pacote autocontido inclui componentes Microsoft .NET, sujeitos às licenças e avisos distribuídos pelo próprio runtime (`LICENSE.txt` e `THIRD-PARTY-NOTICES.txt`, quando fornecidos). O instalador é produzido com Inno Setup, de Jordan Russell e Martijn Laan, conforme a licença do compilador. Nenhum desses componentes é desenvolvido ou endossado pelo CasterDesk.
+
+A tradução pt-BR do instalador vem do Inno Setup 6.2.2 (Cesar82), com créditos preservados no arquivo installer/Languages/BrazilianPortuguese.isl; apenas a codificação foi convertida para UTF-8 com BOM.

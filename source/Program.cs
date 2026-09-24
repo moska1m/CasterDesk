@@ -64,6 +64,16 @@ static class Program
             return;
         }
         ApplicationConfiguration.Initialize();
+        if(args.Contains("--preview-about"))
+        {
+            foreach(bool dark in new[]{true,false})
+            {
+                AppTheme.Dark=dark;using var dialog=new AboutDialog();dialog.Show();Application.DoEvents();
+                using var image=new Bitmap(dialog.Width,dialog.Height);dialog.DrawToBitmap(image,new Rectangle(Point.Empty,dialog.Size));
+                image.Save(Path.Combine(AppPaths.DataDirectory,$"about-{dark}.png"));dialog.Close();
+            }
+            return;
+        }
         if(args.Contains("--championship-test")) { ChampionshipTests.Run(); return; }
         if(args.Contains("--preview-championship"))
         {
@@ -153,7 +163,7 @@ public sealed class MainForm : Form
     long retryAfter;
     public MainForm()
     {
-        Text = "CasterDesk • 0.1.0-beta.1";
+        Text = "CasterDesk • 0.1.0-beta.2";
         var area=Screen.PrimaryScreen!.WorkingArea;
         Size = new Size(Math.Min(1280,area.Width),Math.Min(990,area.Height)); MinimumSize = new Size(1140,760);
         StartPosition=FormStartPosition.CenterScreen;WindowState=FormWindowState.Maximized;
@@ -186,6 +196,8 @@ public sealed class MainForm : Form
         var dark=new ToolStripMenuItem("Escuro");var light=new ToolStripMenuItem("Claro");
         menu.Items.Add(new ToolStripMenuItem("TEMÁTICA") {Enabled=false});menu.Items.AddRange([siege,simple,new ToolStripSeparator(),new ToolStripMenuItem("APARÊNCIA"){Enabled=false},dark,light]);
         menu.Items.Add(new ToolStripSeparator());menu.Items.Add(new ToolStripMenuItem("Aplicar na próxima abertura"){Enabled=false});
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(new ToolStripMenuItem("Sobre o CasterDesk",null,(_,_)=>{using var dialog=new AboutDialog();dialog.ShowDialog(this);}));
         void ChangeTheme(bool style,bool isDark)
         {
             settings.SiegeTheme=style;settings.DarkMode=isDark;Save();

@@ -16,7 +16,7 @@ public sealed class NavigationBar : Panel
             int index=items.Count;var button=new NavigationButton{Text=page.Text.ToUpperInvariant(),AccessibleName=page.Text};
             button.IsCurrent=()=>tabs.SelectedIndex==index;button.Click+=(_,_)=>tabs.SelectedIndex=index;Controls.Add(button);items.Add(button);
         }
-        if(primary){var gear=new SettingsGear{AccessibleName="Configurações de aparência",Size=new Size(50,50)};SettingsButton=gear;Controls.Add(gear);}
+        if(primary){var gear=new SettingsGear{AccessibleName="Configurações e sobre",Size=new Size(50,50)};SettingsButton=gear;Controls.Add(gear);}
         tabs.SelectedIndexChanged+=(_,_)=>{for(int i=0;i<items.Count;i++){items[i].Active=i==tabs.SelectedIndex;items[i].Invalidate();}};
         for(int i=0;i<items.Count;i++)items[i].Active=i==tabs.SelectedIndex;
     }

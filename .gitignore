@@ -16,4 +16,6 @@ Casting/
 Exportacao/
 Logs/
 timer.txt
-
+*.pfx
+*.p12
+*.key

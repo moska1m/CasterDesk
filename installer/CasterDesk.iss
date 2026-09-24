@@ -1,4 +1,4 @@
-#define AppVersion "0.1.0-beta.1"
+﻿#define AppVersion "0.1.0-beta.2"
 [Setup]
 AppId={{D5FB900F-ED44-45B9-90B3-4131FA74F7A8}
 AppName=CasterDesk
@@ -21,9 +21,9 @@ SetupIconFile=..\assets\casterdesk.ico
 UninstallDisplayIcon={app}\CasterDesk.exe
 CloseApplications=yes
 RestartApplications=no
-VersionInfoVersion=0.1.0.0
+VersionInfoVersion=0.1.0.1
 [Languages]
-Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "brazilianportuguese"; MessagesFile: "Languages\BrazilianPortuguese.isl"
 [Tasks]
 Name: "desktopicon"; Description: "Criar atalho na área de trabalho"; Flags: unchecked
 [Files]
