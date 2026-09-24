@@ -1,0 +1,573 @@
+{
+  "operators": [
+    {
+      "id": "noor",
+      "name": "Noor",
+      "role": "DEF",
+      "icon": "icons/noor.png"
+    },
+    {
+      "id": "solid-snake",
+      "name": "Solid Snake",
+      "role": "ATQ",
+      "icon": "icons/solid-snake.png"
+    },
+    {
+      "id": "denari",
+      "name": "Denari",
+      "role": "DEF",
+      "icon": "icons/denari.png"
+    },
+    {
+      "id": "rauora",
+      "name": "Rauora",
+      "role": "ATQ",
+      "icon": "icons/rauora.png"
+    },
+    {
+      "id": "skopos",
+      "name": "Skopós",
+      "role": "DEF",
+      "icon": "icons/skopos.png"
+    },
+    {
+      "id": "striker",
+      "name": "Striker",
+      "role": "ATQ",
+      "icon": "icons/striker.png"
+    },
+    {
+      "id": "sentry",
+      "name": "Sentry",
+      "role": "DEF",
+      "icon": "icons/sentry.png"
+    },
+    {
+      "id": "deimos",
+      "name": "Deimos",
+      "role": "ATQ",
+      "icon": "icons/deimos.png"
+    },
+    {
+      "id": "tubarao",
+      "name": "Tubarão",
+      "role": "DEF",
+      "icon": "icons/tubarao.png"
+    },
+    {
+      "id": "ram",
+      "name": "Ram",
+      "role": "ATQ",
+      "icon": "icons/ram.png"
+    },
+    {
+      "id": "fenrir",
+      "name": "Fenrir",
+      "role": "DEF",
+      "icon": "icons/fenrir.png"
+    },
+    {
+      "id": "brava",
+      "name": "Brava",
+      "role": "ATQ",
+      "icon": "icons/brava.png"
+    },
+    {
+      "id": "solis",
+      "name": "Solis",
+      "role": "DEF",
+      "icon": "icons/solis.png"
+    },
+    {
+      "id": "grim",
+      "name": "Grim",
+      "role": "ATQ",
+      "icon": "icons/grim.png"
+    },
+    {
+      "id": "sens",
+      "name": "Sens",
+      "role": "ATQ",
+      "icon": "icons/sens.png"
+    },
+    {
+      "id": "azami",
+      "name": "Azami ",
+      "role": "DEF",
+      "icon": "icons/azami.png"
+    },
+    {
+      "id": "thorn",
+      "name": "Thorn",
+      "role": "DEF",
+      "icon": "icons/thorn.png"
+    },
+    {
+      "id": "osa",
+      "name": "Osa",
+      "role": "ATQ",
+      "icon": "icons/osa.png"
+    },
+    {
+      "id": "thunderbird",
+      "name": "Thunderbird",
+      "role": "DEF",
+      "icon": "icons/thunderbird.png"
+    },
+    {
+      "id": "flores",
+      "name": "Flores",
+      "role": "ATQ",
+      "icon": "icons/flores.png"
+    },
+    {
+      "id": "aruni",
+      "name": "Aruni",
+      "role": "DEF",
+      "icon": "icons/aruni.png"
+    },
+    {
+      "id": "zero",
+      "name": "Zero",
+      "role": "ATQ",
+      "icon": "icons/zero.png"
+    },
+    {
+      "id": "ace",
+      "name": "Ace",
+      "role": "ATQ",
+      "icon": "icons/ace.png"
+    },
+    {
+      "id": "melusi",
+      "name": "Melusi",
+      "role": "DEF",
+      "icon": "icons/melusi.png"
+    },
+    {
+      "id": "oryx",
+      "name": "Oryx",
+      "role": "DEF",
+      "icon": "icons/oryx.png"
+    },
+    {
+      "id": "iana",
+      "name": "Iana",
+      "role": "ATQ",
+      "icon": "icons/iana.png"
+    },
+    {
+      "id": "wamai",
+      "name": "Wamai",
+      "role": "DEF",
+      "icon": "icons/wamai.png"
+    },
+    {
+      "id": "kali",
+      "name": "Kali",
+      "role": "ATQ",
+      "icon": "icons/kali.png"
+    },
+    {
+      "id": "amaru",
+      "name": "Amaru",
+      "role": "ATQ",
+      "icon": "icons/amaru.png"
+    },
+    {
+      "id": "goyo",
+      "name": "Goyo",
+      "role": "DEF",
+      "icon": "icons/goyo.png"
+    },
+    {
+      "id": "nokk",
+      "name": "NØKK",
+      "role": "ATQ",
+      "icon": "icons/nokk.png"
+    },
+    {
+      "id": "warden",
+      "name": "Warden",
+      "role": "DEF",
+      "icon": "icons/warden.png"
+    },
+    {
+      "id": "mozzie",
+      "name": "Mozzie",
+      "role": "DEF",
+      "icon": "icons/mozzie.png"
+    },
+    {
+      "id": "gridlock",
+      "name": "Gridlock",
+      "role": "ATQ",
+      "icon": "icons/gridlock.png"
+    },
+    {
+      "id": "nomad",
+      "name": "Nomad",
+      "role": "ATQ",
+      "icon": "icons/nomad.png"
+    },
+    {
+      "id": "kaid",
+      "name": "Kaid",
+      "role": "DEF",
+      "icon": "icons/kaid.png"
+    },
+    {
+      "id": "clash",
+      "name": "Clash",
+      "role": "DEF",
+      "icon": "icons/clash.png"
+    },
+    {
+      "id": "maverick",
+      "name": "Maverick",
+      "role": "ATQ",
+      "icon": "icons/maverick.png"
+    },
+    {
+      "id": "maestro",
+      "name": "Maestro",
+      "role": "DEF",
+      "icon": "icons/maestro.png"
+    },
+    {
+      "id": "alibi",
+      "name": "Alibi",
+      "role": "DEF",
+      "icon": "icons/alibi.png"
+    },
+    {
+      "id": "lion",
+      "name": "Lion",
+      "role": "ATQ",
+      "icon": "icons/lion.png"
+    },
+    {
+      "id": "finka",
+      "name": "Finka",
+      "role": "ATQ",
+      "icon": "icons/finka.png"
+    },
+    {
+      "id": "vigil",
+      "name": "Vigil",
+      "role": "DEF",
+      "icon": "icons/vigil.png"
+    },
+    {
+      "id": "dokkaebi",
+      "name": "Dokkaebi",
+      "role": "ATQ",
+      "icon": "icons/dokkaebi.png"
+    },
+    {
+      "id": "zofia",
+      "name": "Zofia",
+      "role": "ATQ",
+      "icon": "icons/zofia.png"
+    },
+    {
+      "id": "ela",
+      "name": "Ela",
+      "role": "DEF",
+      "icon": "icons/ela.png"
+    },
+    {
+      "id": "ying",
+      "name": "Ying",
+      "role": "ATQ",
+      "icon": "icons/ying.png"
+    },
+    {
+      "id": "lesion",
+      "name": "Lesion",
+      "role": "DEF",
+      "icon": "icons/lesion.png"
+    },
+    {
+      "id": "mira",
+      "name": "Mira",
+      "role": "DEF",
+      "icon": "icons/mira.png"
+    },
+    {
+      "id": "jackal",
+      "name": "Jackal",
+      "role": "ATQ",
+      "icon": "icons/jackal.png"
+    },
+    {
+      "id": "hibana",
+      "name": "Hibana",
+      "role": "ATQ",
+      "icon": "icons/hibana.png"
+    },
+    {
+      "id": "echo",
+      "name": "Echo",
+      "role": "DEF",
+      "icon": "icons/echo.png"
+    },
+    {
+      "id": "caveira",
+      "name": "Caveira",
+      "role": "DEF",
+      "icon": "icons/caveira.png"
+    },
+    {
+      "id": "capitao",
+      "name": "CAPITÃO",
+      "role": "ATQ",
+      "icon": "icons/capitao.png"
+    },
+    {
+      "id": "blackbeard",
+      "name": "Blackbeard",
+      "role": "ATQ",
+      "icon": "icons/blackbeard.png"
+    },
+    {
+      "id": "valkyrie",
+      "name": "Valkyrie",
+      "role": "DEF",
+      "icon": "icons/valkyrie.png"
+    },
+    {
+      "id": "buck",
+      "name": "Buck",
+      "role": "ATQ",
+      "icon": "icons/buck.png"
+    },
+    {
+      "id": "frost",
+      "name": "Frost",
+      "role": "DEF",
+      "icon": "icons/frost.png"
+    },
+    {
+      "id": "mute",
+      "name": "Mute",
+      "role": "DEF",
+      "icon": "icons/mute.png"
+    },
+    {
+      "id": "sledge",
+      "name": "Sledge",
+      "role": "ATQ",
+      "icon": "icons/sledge.png"
+    },
+    {
+      "id": "smoke",
+      "name": "Smoke",
+      "role": "DEF",
+      "icon": "icons/smoke.png"
+    },
+    {
+      "id": "thatcher",
+      "name": "Thatcher",
+      "role": "ATQ",
+      "icon": "icons/thatcher.png"
+    },
+    {
+      "id": "ash",
+      "name": "Ash",
+      "role": "ATQ",
+      "icon": "icons/ash.png"
+    },
+    {
+      "id": "castle",
+      "name": "Castle",
+      "role": "DEF",
+      "icon": "icons/castle.png"
+    },
+    {
+      "id": "pulse",
+      "name": "Pulse",
+      "role": "DEF",
+      "icon": "icons/pulse.png"
+    },
+    {
+      "id": "thermite",
+      "name": "Thermite",
+      "role": "ATQ",
+      "icon": "icons/thermite.png"
+    },
+    {
+      "id": "montagne",
+      "name": "Montagne",
+      "role": "ATQ",
+      "icon": "icons/montagne.png"
+    },
+    {
+      "id": "twitch",
+      "name": "Twitch",
+      "role": "ATQ",
+      "icon": "icons/twitch.png"
+    },
+    {
+      "id": "doc",
+      "name": "Doc",
+      "role": "DEF",
+      "icon": "icons/doc.png"
+    },
+    {
+      "id": "rook",
+      "name": "Rook",
+      "role": "DEF",
+      "icon": "icons/rook.png"
+    },
+    {
+      "id": "jager",
+      "name": "Jäger",
+      "role": "DEF",
+      "icon": "icons/jager.png"
+    },
+    {
+      "id": "bandit",
+      "name": "Bandit",
+      "role": "DEF",
+      "icon": "icons/bandit.png"
+    },
+    {
+      "id": "blitz",
+      "name": "Blitz",
+      "role": "ATQ",
+      "icon": "icons/blitz.png"
+    },
+    {
+      "id": "iq",
+      "name": "IQ",
+      "role": "ATQ",
+      "icon": "icons/iq.png"
+    },
+    {
+      "id": "fuze",
+      "name": "Fuze",
+      "role": "ATQ",
+      "icon": "icons/fuze.png"
+    },
+    {
+      "id": "glaz",
+      "name": "Glaz",
+      "role": "ATQ",
+      "icon": "icons/glaz.png"
+    },
+    {
+      "id": "tachanka",
+      "name": "Tachanka",
+      "role": "DEF",
+      "icon": "icons/tachanka.png"
+    },
+    {
+      "id": "kapkan",
+      "name": "Kapkan",
+      "role": "DEF",
+      "icon": "icons/kapkan.png"
+    }
+  ],
+  "maps": [
+    {
+      "id": "bank",
+      "name": "BANCO",
+      "sites": [
+        "Lounge Executivo - Escritório CEO",
+        "Sala Funcion - Área aberta",
+        "Escrito. Funcionários - Arquivos",
+        "P Armários - Sala de Vigilância"
+      ],
+      "image": "maps/bank.jpg"
+    },
+    {
+      "id": "border",
+      "name": "FRONTEIRA",
+      "sites": [
+        "Sala Armas e Arsenal - Arquivos",
+        "Ventilação - Oficina",
+        "Banheiro - Antendimento",
+        "Alfândega: Inspeção - Sala de suprimento"
+      ],
+      "image": "maps/border.jpg"
+    },
+    {
+      "id": "chalet",
+      "name": "CHALÉ",
+      "sites": [
+        "Suíte Master - Escritório",
+        "Bar - Sala de Jogos",
+        "Cozinha - Sala de Jantar",
+        "Adega de Vinhos - Motoneves"
+      ],
+      "image": "maps/chalet.jpg"
+    },
+    {
+      "id": "clubhouse",
+      "name": "CLUBE",
+      "sites": [
+        "Academia - Quarto",
+        "Vigilância - Contabilidade",
+        "Bar - Palco",
+        "Capela - Arsenal"
+      ],
+      "image": "maps/clubhouse.jpg"
+    },
+    {
+      "id": "kafe-dostoyevsky",
+      "name": "CAFE DOSTOIEVSKI",
+      "sites": [
+        "Bar - Longue Coquetéis",
+        "Lareira - Bomba de Purificação",
+        "Sala Leitura - Lareira",
+        "Copa - Cozinha prep."
+      ],
+      "image": "maps/kafe-dostoyevsky.jpg"
+    },
+    {
+      "id": "lair",
+      "name": "COVIL",
+      "sites": [
+        "Escritório - Sala R6",
+        "Beliche - Briefing",
+        "Manute. Armas - Arsenal",
+        "Suport. Labo - Laboratório"
+      ],
+      "image": "maps/lair.jpg"
+    },
+    {
+      "id": "fortress",
+      "name": "FORTALEZA",
+      "sites": [
+        "Banheiro - Escritório comandante",
+        "Dormitório - Salão de jogos",
+        "Sala de espera - Refeitório",
+        "Hamam - Sala de estar"
+      ],
+      "image": "maps/fortress.jpg"
+    },
+    {
+      "id": "nighthaven-labs",
+      "name": "LABORATORIO",
+      "sites": [
+        "Centro de comando - Servodores",
+        "Cozinha - Refeitório",
+        "Armazém - Sala de Controle",
+        "Montagem - Tanque"
+      ],
+      "image": "maps/nighthaven-labs.jpg"
+    },
+    {
+      "id": "villa",
+      "name": "MANSÃO",
+      "sites": [
+        "Aviação - Jogos",
+        "Troféu - Estatua ",
+        "Cozinha - Jantar",
+        "Depos. Artes - Escritório"
+      ],
+      "image": "maps/villa.jpg"
+    }
+  ]
+}

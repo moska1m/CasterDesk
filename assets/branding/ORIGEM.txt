@@ -1,0 +1,3 @@
+Arquivos de marca obtidos do site oficial Ubisoft. Marcas pertencem aos respectivos titulares.
+siege-full.png: https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/58DpRD1OFgGKE1GkYmWQ6o/e12993e4e84977dddfeaec1cab72502f/r6-logo.png
+siege-mark.png: https://static-dm.ubisoft.com/siege/prod/r6x_favicon_152.png
