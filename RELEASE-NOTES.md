@@ -1,12 +1,12 @@
-# CasterDesk 0.2.0-beta.0.2
+# CasterDesk 0.2.0-beta.0.3
 
-Correção de legibilidade após o teste da nova interface.
+Ajustes visuais de alinhamento:
 
-- Scout retirada: Segoe UI nos textos e Bahnschrift SemiCondensed nos títulos, como antes.
-- Registro rápido dividido em grupos claros, equipes azul/laranja antes do clique e confirmação destacada em azul.
-- Seletor de mapa compacto junto ao placar; configuração de lados mais espaçosa.
-- Mantidos os cards compactos com retratos e as funcionalidades.
-- Nenhuma migração dos dados da partida.
+- Mapa, time, lado inicial e OT com campos de mesma altura.
+- Placar alinhado acima do histórico; seletor compacto à esquerda.
+- Histórico centralizado, separadores horizontais e setas discretas em chevron. Edição nativa preservada.
+- Cabeçalhos dos bans centralizados com Round por extenso e selo ATIVOS verde à esquerda.
+- Nova partida destacada em azul.
 
-Feche o CasterDesk e execute o instalador para atualizar. A versão anterior permanece no histórico.
-
+Imagens dos mapas permanecem as atuais, aguardando referências do caster e do JG.
+Feche o CasterDesk antes de instalar. Dados salvos permanecem separados do programa.

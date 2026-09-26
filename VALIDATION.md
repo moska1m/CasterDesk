@@ -119,3 +119,12 @@ Uso real pelo caster ainda pendente. Modo Rápido, motivo de fim de round e regr
 - Conferência visual em janela larga e compacta, claro e escuro. Instalador comparado à DLL testada, sem fontes Scout no pacote.
 - Sem instalação sobre dados reais. Histórico remoto arquiva os instaladores originais das betas 3–8 e identifica explicitamente que seus snapshots de código intermediários não foram preservados.
 - Contraste dos botões coloridos conferido novamente no tema claro, com texto calculado pela luminosidade do preenchimento: work/beta0202-contrast.
+
+## 0.2.0-beta.0.3 — alinhamento (26/09/2026)
+
+- Suite completa aprovada em test-results/7e7a727725d04fe38279474fe394c434; inclui edição nativa, placar, JSON, PNG, idiomas, temas e desempenho.
+- Nova verificação exige mesma altura e posição vertical dos quatro campos de lados em MD1/MD3/MD5. Diferença de um pixel corrigida com âncora e margem comuns.
+- Histórico centralizado com pintura de chevrons sem substituir o editor nativo. Cabeçalhos de bans e botão Nova partida revisados visualmente.
+- Ajuste final do centro do placar para histórico expandido/lista retestado em work/beta0203-final, relativo à raiz de trabalho.
+- Instalador extraído e comparado ao binário testado. Instalação sobre dados reais não realizada.
+- Imagens de mapas ainda aguardam referências do usuário e JG.
