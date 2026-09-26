@@ -14,7 +14,8 @@ public sealed class ChampionshipPanel : UserControl
     string vetoKey="",sidesKey="",bansKey="",roundsKey="",savedKey="";
     readonly ComboBox saved=Combo(), format=Combo(), coin=Combo(), first=Combo(), mapSelect=Combo();
     readonly TextBox teamA=new(){MaxLength=12},teamB=new(){MaxLength=12};
-    readonly Label score=new(){TextAlign=ContentAlignment.MiddleCenter,Font=AppFonts.Body(24,FontStyle.Bold),Dock=DockStyle.Fill};
+    static readonly Font ScoreFont=AppFonts.Body(24,FontStyle.Bold),CompactScoreFont=AppFonts.Body(18,FontStyle.Bold);
+    readonly Label score=new(){TextAlign=ContentAlignment.MiddleCenter,Font=ScoreFont,Dock=DockStyle.Fill,AutoEllipsis=true};
     readonly Label notice=new(){AutoSize=true,ForeColor=Color.Firebrick,MaximumSize=new Size(1150,0)};
     readonly TableLayoutPanel veto=Table(3,3),sideRows=Table(1,1),bans=Table(6,4);
     readonly TableLayoutPanel roundHost=Table(2,1);
@@ -60,7 +61,7 @@ public sealed class ChampionshipPanel : UserControl
         var bar=new FlowLayoutPanel(){Dock=DockStyle.Fill,WrapContents=false}; saved.Width=430;
         bar.Controls.AddRange([Btn(L.T("Nova partida"),NewMatch),saved]);canvas.Controls.Add(bar,0,0);canvas.SetColumnSpan(bar,2);
         var left=Table(1,2);leftLayout=left;left.RowStyles.Clear();left.RowStyles.Add(new(SizeType.Absolute,155));left.RowStyles.Add(new(SizeType.Percent,100));
-        var leftHost=new Panel{Dock=DockStyle.Fill};leftHost.Controls.Add(left);compactSetup=new ThemeButton{Dock=DockStyle.Top,Height=27,Visible=false};compactSetup.Click+=(_,_)=>{showCompactSides=!showCompactSides;AdjustLayout();};leftHost.Controls.Add(compactSetup);canvas.Controls.Add(leftHost,0,1);
+        var leftHost=new Panel{Dock=DockStyle.Fill};leftHost.Controls.Add(left);compactSetup=new ThemeButton{Dock=DockStyle.Top,Height=27,Visible=false};compactSetup.Click+=(_,_)=>{showCompactSides=!showCompactSides;AdjustLayout();};leftHost.Controls.Add(compactSetup);canvas.Controls.Add(leftHost,0,1);canvas.SetRowSpan(leftHost,2);
         var confrontation=Group(L.T("Confronto"),left,0,0);var fields=Table(4,4);fields.Padding=new Padding(6);confrontation.Controls.Add(fields);
         fields.ColumnStyles.Clear();foreach(float w in new[]{22,28,22,28})fields.ColumnStyles.Add(new(SizeType.Percent,w));
         fields.Controls.Add(Caption(L.T("Equipe A:")),0,0);var aField=TeamField(teamA,Color.FromArgb(64,143,179));fields.Controls.Add(aField,1,0);fields.SetColumnSpan(aField,3);
@@ -70,7 +71,7 @@ public sealed class ChampionshipPanel : UserControl
         sidesViewport=new Panel{Dock=DockStyle.Fill,AutoScroll=true};sideRows.Dock=DockStyle.Top;
         sidesViewport.Controls.Add(sideRows);Group(L.T("Mapas da partida • lados da equipe indicada"),left,0,1).Controls.Add(sidesViewport);
         Group(L.T("Mapas • picks e bans"),canvas,1,1).Controls.Add(veto);
-        canvas.Controls.Add(mapSelect,0,2);canvas.Controls.Add(score,1,2);
+        var scoreboard=Table(2,1);scoreboard.ColumnStyles.Clear();scoreboard.ColumnStyles.Add(new(SizeType.Percent,25));scoreboard.ColumnStyles.Add(new(SizeType.Percent,75));mapSelect.Dock=DockStyle.None;mapSelect.Anchor=AnchorStyles.Left|AnchorStyles.Right;scoreboard.Controls.Add(mapSelect,0,0);scoreboard.Controls.Add(score,1,0);canvas.Controls.Add(scoreboard,1,2);
         var banGroup=Group(L.T("Bans de operadores"),canvas,0,3);banGroup.Controls.Add(bans);
         bans.RowStyles.Clear();bans.RowStyles.Add(new(SizeType.Absolute,28));bans.RowStyles.Add(new(SizeType.Percent,50));bans.RowStyles.Add(new(SizeType.Absolute,28));bans.RowStyles.Add(new(SizeType.Percent,50));
         Group(L.T("Round a round • clique no bomb site ou vencedor"),canvas,1,3).Controls.Add(roundHost);
@@ -156,7 +157,8 @@ public sealed class ChampionshipPanel : UserControl
         {
             float scale=DeviceDpi/96f;int h=mainCanvas.ClientSize.Height;
             bool small=h<700*scale;
-            float desired=(240+Math.Max(1,match.Maps.Count)*30)*scale;
+            var scoreFont=small?CompactScoreFont:ScoreFont;if(score.Font!=scoreFont)score.Font=scoreFont;
+            float desired=(240+Math.Max(1,match.Maps.Count)*40)*scale;
             float upper=small?Math.Max(170*scale,Math.Min(desired,h-380*scale)):Math.Max(200*scale,Math.Min(desired,h-360*scale));
             if(mainCanvas.RowStyles[1].Height!=upper)mainCanvas.RowStyles[1].Height=upper;
             foreach(var pair in new[]{(0,small?32:38),(2,small?38:48),(4,small?36:42),(5,small?22:30)})if(mainCanvas.RowStyles[pair.Item1].Height!=pair.Item2*scale)mainCanvas.RowStyles[pair.Item1].Height=pair.Item2*scale;
@@ -170,7 +172,7 @@ public sealed class ChampionshipPanel : UserControl
                 float rowHeight=small?(show?100:0):(row==0?155*scale:100);
                 if(leftLayout.RowStyles[row].SizeType!=rowType)leftLayout.RowStyles[row].SizeType=rowType;if(leftLayout.RowStyles[row].Height!=rowHeight)leftLayout.RowStyles[row].Height=rowHeight;
             }
-            int sideHeight=(int)((23+Math.Max(1,match.Maps.Count)*30)*scale);
+            int sideHeight=(int)((23+Math.Max(1,match.Maps.Count)*40)*scale);
             if(sideRows.Height!=sideHeight)sideRows.Height=sideHeight;
             bool entry=quickMode && (current is null || current.Score().Winner<0);
             if(quickRound.Visible!=entry)quickRound.Visible=entry;
@@ -261,7 +263,7 @@ public sealed class ChampionshipPanel : UserControl
         }
         AppTheme.Apply(veto);}
         string sk=JsonSerializer.Serialize(new{match.Id,match.TeamA,match.TeamB,match.Complete,Maps=match.Maps.Select(m=>new{m.MapId,m.Picker,m.InitialAttack,m.OtAttack,m.Confirmed})});
-        if(sk!=sidesKey){sidesKey=sk;using var sideUpdate=new UiUpdate(sideRows,true);Clear(sideRows);sideRows.RowStyles.Clear();sideRows.RowCount=Math.Max(1,match.Maps.Count+1);sideRows.RowStyles.Add(new(SizeType.Absolute,23));for(int i=1;i<sideRows.RowCount;i++)sideRows.RowStyles.Add(new(SizeType.Absolute,30));
+        if(sk!=sidesKey){sidesKey=sk;using var sideUpdate=new UiUpdate(sideRows,true);Clear(sideRows);sideRows.RowStyles.Clear();sideRows.RowCount=Math.Max(1,match.Maps.Count+1);sideRows.RowStyles.Add(new(SizeType.Absolute,23));for(int i=1;i<sideRows.RowCount;i++)sideRows.RowStyles.Add(new(SizeType.Absolute,40));
         TableLayoutPanel SideLine(){var line=Table(4,1);line.ColumnStyles.Clear();foreach(float width in new[]{25,21,27,27})line.ColumnStyles.Add(new(SizeType.Percent,width));return line;}
         var headings=SideLine();foreach(var pair in new[]{(L.T("Mapa"),0),(L.T("Time"),1),(L.T("Lado inicial"),2),("OT",3)})headings.Controls.Add(Label(pair.Item1),pair.Item2,0);sideRows.Controls.Add(headings,0,0);
         for(int i=0;i<match.Maps.Count;i++)
@@ -272,7 +274,7 @@ public sealed class ChampionshipPanel : UserControl
             initial.Enabled=ot.Enabled=!m.Confirmed && !match.Complete;
             var mapField=new TextBox(){Text=name,ReadOnly=true,Dock=DockStyle.Fill};var teamField=new TextBox(){Text=match.Team(m.Picker),ReadOnly=true,Dock=DockStyle.Fill};
             hints.SetToolTip(mapField,name);hints.SetToolTip(teamField,match.Team(m.Picker));
-            row.Controls.Add(mapField,0,0);row.Controls.Add(teamField,1,0);row.Controls.Add(initial,2,0);row.Controls.Add(ot,3,0);sideRows.Controls.Add(row,0,i+1);
+            foreach(Control field in new Control[]{mapField,teamField,initial,ot}){field.Dock=DockStyle.None;field.Anchor=AnchorStyles.Left|AnchorStyles.Right;}row.Controls.Add(mapField,0,0);row.Controls.Add(teamField,1,0);row.Controls.Add(initial,2,0);row.Controls.Add(ot,3,0);sideRows.Controls.Add(row,0,i+1);
             initial.SelectedIndexChanged+=(_,_)=>{if(!loading)SetSide(m,false,initial.SelectedIndex==0?1-m.Picker:m.Picker);};ot.SelectedIndexChanged+=(_,_)=>{if(!loading)SetSide(m,true,ot.SelectedIndex==0?m.Picker:1-m.Picker);};
         }
         AppTheme.Apply(sideRows);}
@@ -728,3 +730,5 @@ public sealed class ChampionshipPanel : UserControl
         return $"20 alterações de bombsite: {watch.Elapsed.TotalMilliseconds:F0} ms; alocação gerenciada: {(GC.GetAllocatedBytesForCurrentThread()-allocated)/1024} KB; layouts: {layouts}; controles retidos: {retained}/{controls.Count}.";
     }
 }
+
+

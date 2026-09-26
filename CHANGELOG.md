@@ -1,3 +1,10 @@
+# 0.2.0-beta.0.2
+
+- Reverte Scout para Segoe UI e Bahnschrift SemiCondensed após feedback de legibilidade; fontes privadas retiradas da distribuição.
+- Mantém cards compactos e retratos. Registro rápido separado em Bomb site, Vencedor e Finalização; equipes coloridas antes da seleção e botão Confirmar round em azul.
+- Seletor de mapa compacto junto do placar; configuração de lados ganha altura e campos alinhados.
+- Consolida no GitHub o histórico acumulado e arquiva os instaladores preservados das betas anteriores, identificando a ausência de snapshots exatos intermediários.
+
 # 0.2.0-beta.0.1
 
 - Reformulação visual do tema Siege: títulos Scout, campos integrados, destaque vermelho em botões, estados bloqueados hachurados e sublinhado curto centralizado nas abas. Controles compartilhados nas demais páginas.
@@ -66,3 +73,5 @@
 Primeira beta privada: campeonato MD1/MD3, bans, round a round, histórico e JSON, resumo para remake, guia do lobby, cronômetro e casting TXT, exportação PNG e temas.
 
 Inclui instalador por usuário, atalho opcional, desinstalador e runtime .NET. Os dados passam a ficar separados do executável. Esta beta precisa de validação em outro computador antes de ser considerada estável.
+
+

@@ -8,7 +8,7 @@ public static class AppTheme
 {
     public static bool Dark { get; set; }
     public static bool Siege { get; set; } = true;
-    public static readonly Font HeadingFont=AppFonts.Heading(12,FontStyle.Bold);
+    public static readonly Font HeadingFont=AppFonts.Heading(10,FontStyle.Bold);
     public static readonly Font TabFont=AppFonts.Heading(11,FontStyle.Regular);
     static readonly Bitmap darkTexture=MakeTexture(true),lightTexture=MakeTexture(false);
     static Bitmap MakeTexture(bool dark)
@@ -138,19 +138,23 @@ public class ThemeButton : Button
     protected override void OnMouseLeave(EventArgs e){base.OnMouseLeave(e);hover=false;Invalidate();}
     [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
     internal Color? EmphasisFill { get; set; }
+    [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+    internal bool PrimaryAction { get; set; }
     protected override void OnPaint(PaintEventArgs e)
     {
-        if(!AppTheme.Dark && !AppTheme.Siege && EmphasisFill is null){base.OnPaint(e);return;}
+        if(!AppTheme.Dark && !AppTheme.Siege && EmphasisFill is null && !PrimaryAction){base.OnPaint(e);return;}
         if(Width<2 || Height<2)return;
-        if(Enabled && EmphasisFill is Color emphasis)e.Graphics.Clear(emphasis);
+        if(PrimaryAction){using var primary=new LinearGradientBrush(ClientRectangle,Enabled?Color.FromArgb(25,77,111):Color.FromArgb(38,57,72),Enabled?(hover?Color.FromArgb(62,161,205):Color.FromArgb(40,121,166)):Color.FromArgb(50,77,94),90f);e.Graphics.FillRectangle(primary,ClientRectangle);}
+        else if(Enabled && EmphasisFill is Color emphasis){using var fill=new LinearGradientBrush(ClientRectangle,ControlPaint.Dark(emphasis,.15f),emphasis,90f);e.Graphics.FillRectangle(fill,ClientRectangle);}
         else if(Enabled && AppTheme.Siege && (hover || Focused)){using var fill=new LinearGradientBrush(ClientRectangle,AppTheme.Dark?Color.FromArgb(96,51,58):Color.FromArgb(186,63,62),Color.FromArgb(217,68,62),90f);e.Graphics.FillRectangle(fill,ClientRectangle);}
         else if(AppTheme.Siege) {using var fill=new LinearGradientBrush(ClientRectangle,AppTheme.Surface,AppTheme.Field,90f);e.Graphics.FillRectangle(fill,ClientRectangle);} else e.Graphics.Clear(AppTheme.Field);
         if(!Enabled && AppTheme.Siege){using var hatch=new HatchBrush(HatchStyle.ForwardDiagonal,Color.FromArgb(22,AppTheme.Text),Color.Transparent);e.Graphics.FillRectangle(hatch,ClientRectangle);}
         using var border=new Pen(Focused?Color.FromArgb(100,175,220):AppTheme.Border);e.Graphics.DrawRectangle(border,0,0,Width-1,Height-1);
-        if(Enabled && (hover || EmphasisFill is not null || Focused)){using var accent=new SolidBrush(EmphasisFill is Color color?ControlPaint.Light(color):AppTheme.Interaction);e.Graphics.FillRectangle(accent,1,Height-4,Width-2,3);}
+        if(Enabled && (hover || EmphasisFill is not null || Focused)){using var accent=new SolidBrush(PrimaryAction?Color.FromArgb(98,193,231):EmphasisFill is Color color?ControlPaint.Light(color):AppTheme.Interaction);e.Graphics.FillRectangle(accent,1,Height-4,Width-2,3);}
         var textBounds=new Rectangle(3,2,Width-6,Height-4);
+        Color emphasisText=EmphasisFill is Color tone && (.2126*tone.R+.7152*tone.G+.0722*tone.B)>=125?Color.Black:Color.White;
         if(Image is not null){int x=(Width-Image.Width)/2;e.Graphics.DrawImage(Image,x,6);textBounds=new Rectangle(3,Image.Height+8,Width-6,Math.Max(12,Height-Image.Height-10));}
-        TextRenderer.DrawText(e.Graphics,Text,Font,textBounds,Enabled?(AppTheme.Siege && (hover || Focused) && EmphasisFill is null?Color.White:ForeColor):(AppTheme.Dark?Color.FromArgb(189,197,208):Color.FromArgb(98,109,121)),TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.WordBreak);
+        TextRenderer.DrawText(e.Graphics,Text,Font,textBounds,PrimaryAction?(Enabled?Color.White:Color.Silver):Enabled && EmphasisFill is not null?emphasisText:Enabled?(AppTheme.Siege && (hover || Focused) && EmphasisFill is null?Color.White:ForeColor):(AppTheme.Dark?Color.FromArgb(189,197,208):Color.FromArgb(98,109,121)),TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.WordBreak);
         if(Focused)ControlPaint.DrawFocusRectangle(e.Graphics,new Rectangle(3,3,Width-6,Height-6));
     }
 }
@@ -227,3 +231,7 @@ public sealed class ThemeCaption : Label
         TextRenderer.DrawText(e.Graphics,Text,Font,new Rectangle(7,0,Math.Max(0,Width-14),Height),AppTheme.Text,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
     }
 }
+
+
+
+

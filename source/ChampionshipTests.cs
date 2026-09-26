@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 namespace CronoLive;
 public static class ChampionshipTests
 {
@@ -17,9 +17,7 @@ public static class ChampionshipTests
         Check(catalog.Maps.Count==9 && catalog.Operators.Count==78,"catalog");
         Check(catalog.Maps.All(m=>File.Exists(SiegeCatalog.Asset(m.Image))) && catalog.Operators.All(o=>File.Exists(SiegeCatalog.Asset(o.Icon))),"assets");
         Check(catalog.Operators.All(o=>File.Exists(SiegeCatalog.Asset(o.Id+"-portrait.png"))),"Portraits packaged for all operators");
-        Check(AppFonts.LoadedFamilies.Any(n=>n.Contains("Scout",StringComparison.OrdinalIgnoreCase)) && AppFonts.LoadedFamilies.Any(n=>n.Contains("Cond",StringComparison.OrdinalIgnoreCase)),"Private Scout fonts loaded");
-        using(var body=AppFonts.Body(10))using(var bold=AppFonts.Body(10,FontStyle.Bold))Check(body.FontFamily.Name=="Scout-Regular" && bold.FontFamily.Name=="Scout-Bold","Correct Scout weight selection");
-        File.WriteAllLines(Path.Combine(AppPaths.DataDirectory,"loaded-fonts.txt"),AppFonts.LoadedFamilies);
+        using(var body=AppFonts.Body(10))using(var bold=AppFonts.Body(10,FontStyle.Bold))Check(body.FontFamily.Name=="Segoe UI" && bold.FontFamily.Name=="Segoe UI" && bold.Bold,"System font and bold weight restored");
         // Every possible win sequence through round 15: no 7–6 win, finite OT.
         for(int mask=0;mask<32768;mask++)
         {
@@ -101,3 +99,4 @@ public static class ChampionshipTests
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"championship-tests.txt"),$"{checks} verificações aprovadas (inclui sequências de placar exaustivas, lados, bans, JSON e construção da tela).");
     }
 }
+

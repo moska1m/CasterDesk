@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -167,7 +167,7 @@ public sealed class MainForm : Form
     long retryAfter;
     public MainForm()
     {
-        Text = "CasterDesk • 0.2.0-beta.0.1";
+        Text = "CasterDesk • 0.2.0-beta.0.2";
         var area=Screen.PrimaryScreen!.WorkingArea;
         Size = new Size(Math.Min(1280,area.Width),Math.Min(990,area.Height)); MinimumSize = new Size(1140,760);
         StartPosition=FormStartPosition.CenterScreen;WindowState=FormWindowState.Maximized;

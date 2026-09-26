@@ -1,12 +1,12 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **0.2.0-beta.0.1 — beta privada para validação.**
+Ferramentas para community casters de Rainbow Six Siege. **0.2.0-beta.0.2 — beta privada para validação.**
 
 Aplicativo independente para Windows, em português, inglês e espanhol. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft. O programa registra as informações inseridas pelo usuário; não controla o jogo nem o OBS.
 
 ## Visual da versão 0.2
 
-Tema Siege com tipografia Scout carregada pelo aplicativo, sem instalação global. Cards compactos com retratos nos bans; a janela de seleção mantém ícones. Botões e cabeçalhos compartilham a nova aparência, com destaque vermelho na interação.
+Tema Siege com Segoe UI nos textos e Bahnschrift SemiCondensed nos títulos, restauradas após o teste com Scout. Cards compactos com retratos nos bans; a janela de seleção mantém ícones. Botões e cabeçalhos compartilham a nova aparência, com destaque vermelho na interação.
 
 A página de partida se ajusta à janela e mantém as ações inferiores visíveis. Em janelas menores, use **Configurar lados dos mapas / Voltar ao confronto** no bloco superior e clique no cabeçalho de cada metade para alternar os bans. Histórico, lista de lados e escolhas rápidas podem rolar dentro dos próprios blocos em janelas pequenas; Confirmar round permanece fixo. Finalizações continuam em texto; novos símbolos foram adiados.
 
@@ -36,7 +36,7 @@ Use **Exportar partida** para gerar um nome legível, por exemplo `2026-09-24_18
 
 ## Instalar
 
-Baixe `CasterDesk-0.2.0-beta.0.1-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
+Baixe `CasterDesk-0.2.0-beta.0.2-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
 
 Alvo desta beta: Windows 10/11 x64. Ainda é necessário validar em um segundo computador e em diferentes escalas de tela. O instalador beta não tem assinatura digital própria; o Windows pode pedir confirmação de origem. Não desative as proteções do sistema.
 
@@ -75,3 +75,4 @@ Código próprio sob MIT. **Imagens e marcas de terceiros não estão cobertas p
 ## Sobre e assinatura
 
 Na engrenagem, escolha **Sobre o CasterDesk** para consultar autoria, versão, créditos e condições de uso. Criado por Jeferson “Moska” Sampaio. Consulte SIGNING.md para o processo de assinatura; esta beta ainda não é assinada.
+

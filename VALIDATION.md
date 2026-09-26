@@ -110,3 +110,12 @@ Uso real pelo caster ainda pendente. Modo Rápido, motivo de fim de round e regr
 - Revisão visual dos temas claro/escuro e tamanho compacto. Após a suite, título da janela corrigido e teste de idiomas repetido em work/design02-final-title; contraste do placeholder/rodapé claro ajustado e teste de campeonato repetido em work/design02-final-contrast (pastas relativas à raiz de trabalho).
 - Instalador reconstruído, extraído e comparado à DLL publicada; fontes e retratos incluídos, sem dados pessoais ou PDB. Hash SHA256 acompanha o instalador.
 - Não instalado sobre dados reais, não publicado no GitHub nesta entrega. Teste pelo usuário em outro PC e outras escalas físicas de DPI ainda pendente. Novos símbolos de finalização adiados por decisão do usuário.
+
+## 0.2.0-beta.0.2 — legibilidade e registro rápido (26/09/2026)
+
+- Scout revertida para Segoe UI/Bahnschrift e removida do pacote atual. Layout e retratos preservados.
+- Registro rápido com três divisões, equipes coloridas antes do clique e confirmação azul; seletor de mapa junto ao placar e maior altura para lados.
+- Suite completa aprovada em test-results/b1c9e516b101498b881cd38fd87afd40. Após ajustes finais de altura dos botões e fonte do placar compacto, campeonato repetido em work/beta0202-final (relativo à raiz de trabalho).
+- Conferência visual em janela larga e compacta, claro e escuro. Instalador comparado à DLL testada, sem fontes Scout no pacote.
+- Sem instalação sobre dados reais. Histórico remoto arquiva os instaladores originais das betas 3–8 e identifica explicitamente que seus snapshots de código intermediários não foram preservados.
+- Contraste dos botões coloridos conferido novamente no tema claro, com texto calculado pela luminosidade do preenchimento: work/beta0202-contrast.

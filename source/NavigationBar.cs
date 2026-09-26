@@ -40,7 +40,7 @@ public sealed class NavigationBar : Panel
 }
 sealed class NavigationButton : Button
 {
-    static readonly Font NavFont=AppFonts.Heading(15,FontStyle.Bold);
+    static readonly Font NavFont=AppFonts.Heading(13,FontStyle.Bold);
     bool hover;
     public bool Active;
     public Func<bool> IsCurrent=()=>false;
@@ -74,4 +74,6 @@ sealed class SettingsGear : ThemeButton
         if(Focused)ControlPaint.DrawFocusRectangle(e.Graphics,new Rectangle(2,2,Width-4,Height-4));
     }
 }
+
+
 

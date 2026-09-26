@@ -1,4 +1,4 @@
-﻿#define AppVersion "0.2.0-beta.0.1"
+﻿#define AppVersion "0.2.0-beta.0.2"
 [Setup]
 AppId={{D5FB900F-ED44-45B9-90B3-4131FA74F7A8}
 AppName=CasterDesk
@@ -21,7 +21,7 @@ SetupIconFile=..\assets\casterdesk.ico
 UninstallDisplayIcon={app}\CasterDesk.exe
 CloseApplications=yes
 RestartApplications=no
-VersionInfoVersion=0.2.0.1
+VersionInfoVersion=0.2.0.2
 [Languages]
 Name: "brazilianportuguese"; MessagesFile: "Languages\BrazilianPortuguese.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"

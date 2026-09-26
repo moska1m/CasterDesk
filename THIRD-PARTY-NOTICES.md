@@ -26,4 +26,5 @@ A tradução pt-BR do instalador vem do Inno Setup 6.2.2 (Cesar82), com crédito
 
 ## Tipografia Scout
 
-Arquivos Scout Regular, Bold e Condensed Regular fornecidos pelo usuário em 26/09/2026 para esta versão interna. São carregados apenas no processo do aplicativo e não instalados globalmente. A licença MIT do código não cobre estas fontes; nenhuma licença aberta ou autorização adicional de redistribuição é declarada pelo projeto.
+Arquivos Scout Regular, Bold e Condensed Regular foram utilizados apenas na 0.2.0-beta.0.1. Removidos do código atual e da distribuição a partir da 0.2.0-beta.0.2; permanecem no histórico daquela versão. A licença MIT do código não cobre estas fontes; nenhuma licença aberta ou autorização adicional de redistribuição é declarada pelo projeto.
+
