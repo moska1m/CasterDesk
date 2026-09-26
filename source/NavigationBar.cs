@@ -7,16 +7,16 @@ public sealed class NavigationBar : Panel
     readonly bool primary;
     readonly List<NavigationButton> items=[];
     public Button? SettingsButton {get;}
-    static readonly Font BrandFont=new("Bahnschrift SemiCondensed",21,FontStyle.Bold);
+    static readonly Font BrandFont=AppFonts.Heading(21,FontStyle.Bold);
     public NavigationBar(TabControl tabs,bool primary=false)
     {
-        this.tabs=tabs;this.primary=primary;Dock=DockStyle.Top;Height=primary?64:68;DoubleBuffered=true;
+        this.tabs=tabs;this.primary=primary;Dock=DockStyle.Top;Height=primary?64:52;DoubleBuffered=true;
         foreach(TabPage page in tabs.TabPages)
         {
             int index=items.Count;var button=new NavigationButton{Text=page.Text.ToUpperInvariant(),AccessibleName=page.Text};
             button.IsCurrent=()=>tabs.SelectedIndex==index;button.Click+=(_,_)=>tabs.SelectedIndex=index;Controls.Add(button);items.Add(button);
         }
-        if(primary){var gear=new SettingsGear{AccessibleName="Configurações e sobre",Size=new Size(50,50)};SettingsButton=gear;Controls.Add(gear);}
+        if(primary){var gear=new SettingsGear{AccessibleName=L.T("Configurações e sobre"),Size=new Size(50,50)};SettingsButton=gear;Controls.Add(gear);}
         tabs.SelectedIndexChanged+=(_,_)=>{for(int i=0;i<items.Count;i++){items[i].Active=i==tabs.SelectedIndex;items[i].Invalidate();}};
         for(int i=0;i<items.Count;i++)items[i].Active=i==tabs.SelectedIndex;
     }
@@ -40,7 +40,7 @@ public sealed class NavigationBar : Panel
 }
 sealed class NavigationButton : Button
 {
-    static readonly Font NavFont=new("Bahnschrift SemiCondensed",13,FontStyle.Bold);
+    static readonly Font NavFont=AppFonts.Heading(15,FontStyle.Bold);
     bool hover;
     public bool Active;
     public Func<bool> IsCurrent=()=>false;
@@ -54,7 +54,7 @@ sealed class NavigationButton : Button
         AppTheme.PaintSurface(e.Graphics,ClientRectangle);using(var veil=new SolidBrush(Color.FromArgb(AppTheme.Dark?160:20,0,0,0)))e.Graphics.FillRectangle(veil,ClientRectangle);
         var accent=AppTheme.Siege?Color.FromArgb(232,68,76):AppTheme.Accent;
         if(hover){using var glow=new LinearGradientBrush(ClientRectangle,Color.Transparent,Color.FromArgb(65,accent),90);e.Graphics.FillRectangle(glow,ClientRectangle);}
-        if(IsCurrent()){using var line=new SolidBrush(accent);e.Graphics.FillRectangle(line,16,Height-5,Width-32,4);}
+        if(IsCurrent()){using var line=new SolidBrush(accent);int width=(int)(Width*.58);e.Graphics.FillRectangle(line,(Width-width)/2,Height-5,width,4);}
         TextRenderer.DrawText(e.Graphics,Text,NavFont,ClientRectangle,AppTheme.Text,TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter);
         if(Focused)ControlPaint.DrawFocusRectangle(e.Graphics,new Rectangle(8,8,Width-16,Height-16));
     }

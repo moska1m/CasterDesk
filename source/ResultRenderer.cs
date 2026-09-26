@@ -1,4 +1,4 @@
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Text.Json;
@@ -17,14 +17,19 @@ public static class ResultRenderer
     public static List<ResultPage> Render(SiegeMatch match,SiegeCatalog catalog,ExportBrand brand,ExportAspect aspect,MapRecord? only=null)
     {
         var maps=only is null?Played(match):new List<MapRecord>{only};
-        if(maps.Count==0)throw new InvalidOperationException("Registre pelo menos um round antes de gerar a imagem.");
+        if(maps.Count==0)throw new InvalidOperationException(L.T("Registre pelo menos um round antes de gerar a imagem."));
         var pages=new List<ResultPage>();
         try
         {
-            if(aspect==ExportAspect.Feed)
+            if(aspect==ExportAspect.Feed || (aspect==ExportAspect.Stories && maps.Count>3))
             {
                 if(only is null)pages.Add(new("01_capa",Draw(match,catalog,brand,maps,aspect,true)));
                 for(int i=0;i<maps.Count;i++)pages.Add(new($"{i+2:00}_mapa_{match.Maps.IndexOf(maps[i])+1:00}",Draw(match,catalog,brand,[maps[i]],aspect,false)));
+            }
+            else if(aspect==ExportAspect.Horizontal && maps.Count>3)
+            {
+                for(int start=0;start<maps.Count;start+=3)
+                    pages.Add(new($"serie_{start/3+1:00}",Draw(match,catalog,brand,maps.Skip(start).Take(3).ToList(),aspect,false)));
             }
             else pages.Add(new(only is null?"serie":$"mapa_{match.Maps.IndexOf(only)+1:00}",Draw(match,catalog,brand,maps,aspect,false)));
             return pages;
@@ -42,6 +47,9 @@ public static class ResultRenderer
         }
         return new Bitmap(image);
     }
+    // Symmetric side columns keep the title centered independently of branding.
+    internal static (RectangleF Left, RectangleF Center, RectangleF Right) HeaderBounds(int width,float top)
+        => (new(40,top,250,150),new(305,top,width-610,98),new(width-290,top,250,150));
     static Bitmap Draw(SiegeMatch match,SiegeCatalog c,ExportBrand brand,List<MapRecord> maps,ExportAspect aspect,bool cover)
     {
         int w=aspect==ExportAspect.Horizontal?1920:1080,h=aspect==ExportAspect.Horizontal?1080:aspect==ExportAspect.Feed?1350:1920;
@@ -50,23 +58,24 @@ public static class ResultRenderer
         {
             using var g=Graphics.FromImage(image);g.SmoothingMode=SmoothingMode.AntiAlias;g.InterpolationMode=InterpolationMode.HighQualityBicubic;g.TextRenderingHint=TextRenderingHint.AntiAliasGridFit;
             float safe=aspect==ExportAspect.Stories?100:30;
+            var header=HeaderBounds(w,safe);
             string logo=Path.Combine(AppContext.BaseDirectory,"assets","branding",match.Format=="MD1"?"siege-full.png":"siege-mark.png");
-            Img(g,logo,new(40,safe,match.Format=="MD1"?190:76,76));
-            if(!string.IsNullOrEmpty(brand.LogoFile))Img(g,brand.LogoFile,new(40,safe+80,190,70));
-            T(g,string.IsNullOrWhiteSpace(brand.EventName)?"RESULTADO DA PARTIDA":brand.EventName.ToUpperInvariant(),new(245,safe,w-610,50),26,Color.White,true);
+            Img(g,logo,new(header.Left.X+(header.Left.Width-(match.Format=="MD1"?190:76))/2,safe,match.Format=="MD1"?190:76,76));
+            if(!string.IsNullOrEmpty(brand.LogoFile))Img(g,brand.LogoFile,new(header.Left.X+(header.Left.Width-190)/2,safe+80,190,70));
+            T(g,string.IsNullOrWhiteSpace(brand.EventName)?L.T("RESULTADO DA PARTIDA"):brand.EventName.ToUpperInvariant(),new(header.Center.X,safe,header.Center.Width,50),26,Color.White,true);
             bool series=maps.Count>1||cover;
-            string title=series?$"{match.Format} · RESULTADO DA SÉRIE":$"{match.Format} · MAPA {match.Maps.IndexOf(maps[0])+1:00} · {c.Maps.Single(m=>m.Id==maps[0].MapId).Name}";
-            T(g,title,new(245,safe+54,w-610,44),22,Muted,true);
+            string title=series?L.F($"{L.FormatName(match.Format)} · RESULTADO DA SÉRIE"):L.F($"{L.FormatName(match.Format)} · MAPA {match.Maps.IndexOf(maps[0])+1:00} · {c.Maps.Single(m=>m.Id==maps[0].MapId).DisplayName}");
+            T(g,title,new(header.Center.X,safe+54,header.Center.Width,44),22,Muted,true);
             int a=series?match.Maps.Count(m=>m.Score().Winner==0):maps[0].Score().A,b=series?match.Maps.Count(m=>m.Score().Winner==1):maps[0].Score().B;
             bool hasCaster=!string.IsNullOrWhiteSpace(brand.CasterName)||!string.IsNullOrWhiteSpace(brand.Channel)||brand.SelectedPlatforms().Any(p=>!string.IsNullOrWhiteSpace(brand.ChannelFor(p)));
-            if(hasCaster)Caster(g,brand,new(w-340,safe,300,150));
+            if(hasCaster)Caster(g,brand,header.Right);
             float scoreY=safe+((hasCaster||!string.IsNullOrEmpty(brand.LogoFile))?160:105);float scoreHeight=cover?140:100;
             T(g,match.TeamA.ToUpperInvariant(),new(45,scoreY,w*.33f-45,scoreHeight),w>1100?52:40,Blue,true);
             T(g,$"{a} × {b}",new(w*.33f,scoreY-8,w*.34f,scoreHeight),cover?120:88,a==b?Color.White:a>b?Blue:Orange,true);
             T(g,match.TeamB.ToUpperInvariant(),new(w*.67f,scoreY,w*.33f-45,scoreHeight),w>1100?52:40,Orange,true);
             bool complete=series?match.Complete:maps[0].Confirmed;
-            string state=series?"PLACAR EM MAPAS":"PLACAR EM ROUNDS";
-            if(!complete)state+=" · "+(maps.All(m=>m.Score().Winner>=0)?"NÃO CONFIRMADO":"RESULTADO PARCIAL");
+            string state=series?L.T("PLACAR EM MAPAS"):L.T("PLACAR EM ROUNDS");
+            if(!complete)state+=" · "+(maps.All(m=>m.Score().Winner>=0)?L.T("NÃO CONFIRMADO"):L.T("RESULTADO PARCIAL"));
             T(g,state,new(40,scoreY+scoreHeight,w-80,30),18,complete?Muted:Color.FromArgb(255,201,126),false);
             float top=scoreY+scoreHeight+45,bottom=h-(aspect==ExportAspect.Stories?170:65),height=bottom-top;
             if(cover)
@@ -92,16 +101,18 @@ public static class ResultRenderer
     static void CoverMap(Graphics g,SiegeMatch match,SiegeCatalog c,MapRecord map,RectangleF r)
     {
         var info=c.Maps.Single(m=>m.Id==map.MapId);Photo(g,SiegeCatalog.Asset(info.Image),r);
-        T(g,$"MAPA {match.Maps.IndexOf(map)+1:00} · {info.Name}",new(r.X+20,r.Y+20,r.Width-40,55),38,Color.White,true);
-        var s=map.Score();T(g,$"{s.A} × {s.B}",new(r.X+20,r.Y+r.Height/2-55,r.Width-40,110),102,s.A==s.B?Color.White:s.A>s.B?Blue:Orange,true);
-        if(!map.Confirmed)T(g,s.Winner<0?"PARCIAL":"NÃO CONFIRMADO",new(r.X+20,r.Bottom-45,r.Width-40,30),18,Muted,true);
+        bool compact=r.Height<250;
+        T(g,L.F($"MAPA {match.Maps.IndexOf(map)+1:00} · {info.DisplayName}"),new(r.X+20,r.Y+(compact?8:20),r.Width-40,compact?42:55),compact?32:38,Color.White,true);
+        var scoreArea=compact?new RectangleF(r.X+20,r.Y+52,r.Width-40,r.Height-82):new RectangleF(r.X+20,r.Y+r.Height/2-55,r.Width-40,110);
+        var s=map.Score();T(g,$"{s.A} × {s.B}",scoreArea,compact?68:102,s.A==s.B?Color.White:s.A>s.B?Blue:Orange,true);
+        if(!map.Confirmed)T(g,s.Winner<0?L.T("PARCIAL"):L.T("NÃO CONFIRMADO"),new(r.X+20,r.Bottom-45,r.Width-40,30),18,Muted,true);
     }
     static void Map(Graphics g,SiegeMatch match,SiegeCatalog c,MapRecord map,RectangleF r,bool spacious)
     {
         Fill(g,Panel,r);using var pen=new Pen(Line);g.DrawRectangle(pen,r.X,r.Y,r.Width,r.Height);
         var info=c.Maps.Single(m=>m.Id==map.MapId);float banner=spacious?Math.Min(180,r.Height*.19f):Math.Min(90,r.Height*.19f);
         Photo(g,SiegeCatalog.Asset(info.Image),new(r.X,r.Y,r.Width,banner));
-        T(g,$"MAPA {match.Maps.IndexOf(map)+1:00} · {info.Name}",new(r.X+12,r.Y+8,r.Width-24,banner*.42f),spacious?40:26,Color.White,true);
+        T(g,L.F($"MAPA {match.Maps.IndexOf(map)+1:00} · {info.DisplayName}"),new(r.X+12,r.Y+8,r.Width-24,banner*.42f),spacious?40:26,Color.White,true);
         var score=map.Score();T(g,$"{match.TeamA}  {score.A} × {score.B}  {match.TeamB}",new(r.X+12,r.Y+banner*.46f,r.Width-24,banner*.45f),spacious?48:30,Color.White,true);
         var body=new RectangleF(r.X+12,r.Y+banner+10,r.Width-24,r.Height-banner-20);
         if(spacious && r.Width<1200)
@@ -123,30 +134,30 @@ public static class ResultRenderer
     }
     static void Rounds(Graphics g,MapRecord map,RectangleF r,SiegeMatch match)
     {
-        float titleH=26;T(g,"ROUND A ROUND",new(r.X,r.Y,r.Width,titleH),20,Muted,true);
+        float titleH=26;T(g,L.T("ROUND A ROUND"),new(r.X,r.Y,r.Width,titleH),20,Muted,true);
         float rowH=RoundHeight(r.Height,map.Rounds.Count);float y=r.Y+titleH;
-        float[] widths=[r.Width*.12f,r.Width*.56f,r.Width*.32f];string[] headers=["ROUND","BOMBSITE","VENCEDOR"];
+        float[] widths=[r.Width*.12f,r.Width*.56f,r.Width*.32f];string[] headers=[L.T("ROUND"),L.T("BOMBSITE"),L.T("VENCEDOR")];
         float x=r.X;for(int i=0;i<3;i++){T(g,headers[i],new(x,y,widths[i],rowH),Math.Min(18,rowH*.65f),Muted,true);x+=widths[i];}
         for(int i=0;i<map.Rounds.Count;i++)
         {
             y+=rowH;var round=map.Rounds[i];if(i%2==0)Fill(g,Color.FromArgb(33,43,53),new(r.X,y,r.Width,rowH));
             using var pen=new Pen(Line);g.DrawLine(pen,r.X,y+rowH,r.Right,y+rowH);
             float font=Math.Min(26,rowH*.76f);T(g,$"{i+1:00}",new(r.X,y,widths[0],rowH),font,Color.White,false);
-            T(g,string.IsNullOrWhiteSpace(round.Site)?"Não registrado":round.Site,new(r.X+widths[0]+3,y,widths[1]-6,rowH),font,Color.White,false);
+            T(g,string.IsNullOrWhiteSpace(round.Site)?L.T("Não registrado"):L.T(round.Site),new(r.X+widths[0]+3,y,widths[1]-6,rowH),font,Color.White,false);
             T(g,match.Team(round.Winner),new(r.X+widths[0]+widths[1]+7,y,widths[2]-14,rowH),font,round.Winner==0?Blue:Orange,true);
         }
     }
     static void Bans(Graphics g,SiegeMatch match,SiegeCatalog c,MapRecord map,RectangleF r,bool wide)
     {
-        T(g,"BANS DE OPERADORES",new(r.X,r.Y,r.Width,25),18,Muted,true);
+        T(g,L.T("BANS DE OPERADORES"),new(r.X,r.Y,r.Width,25),18,Muted,true);
         float blockW=wide?(r.Width-16)/2:r.Width;
         float blockH=wide?r.Height-28:(r.Height-36)/2;
         for(int half=0;half<2;half++)
         {
             float x=r.X+(wide?half*(blockW+16):0),top=r.Y+28+(wide?0:half*(blockH+8));
             int attacker=half==0?map.InitialAttack:1-map.InitialAttack;
-            if(map.InitialAttack<0)T(g,"LADOS NÃO DEFINIDOS",new(x,top,blockW,24),17,Muted,true);
-            else {T(g,$"{match.TeamA.ToUpperInvariant()} {(attacker==0?"ATACANDO":"DEFENDENDO")}",new(x,top,blockW/2,24),16,Blue,true);T(g,$"{match.TeamB.ToUpperInvariant()} {(attacker==1?"ATACANDO":"DEFENDENDO")}",new(x+blockW/2,top,blockW/2,24),16,Orange,true);}
+            if(map.InitialAttack<0)T(g,L.T("LADOS NÃO DEFINIDOS"),new(x,top,blockW,24),17,Muted,true);
+            else {T(g,$"{match.TeamA.ToUpperInvariant()} {(attacker==0?L.T("ATACANDO"):L.T("DEFENDENDO"))}",new(x,top,blockW/2,24),16,Blue,true);T(g,$"{match.TeamB.ToUpperInvariant()} {(attacker==1?L.T("ATACANDO"):L.T("DEFENDENDO"))}",new(x+blockW/2,top,blockW/2,24),16,Orange,true);}
             float rowH=(blockH-26)/2;
             for(int role=0;role<2;role++)
             {

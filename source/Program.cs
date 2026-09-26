@@ -21,12 +21,14 @@ public sealed class Countdown
 
 public sealed class Settings
 {
+    public string Language { get; set; } = "pt-BR";
     public bool DarkMode { get; set; } = true;
     public bool SiegeTheme { get; set; } = true;
+    public bool QuickRounds { get; set; }
     public decimal Initial { get; set; } = 10;
     public decimal[] Presets { get; set; } = [2, 3, 4];
     public string Format { get; set; } = "mm:ss";
-    public string Message { get; set; } = "TEMPO ENCERRADO";
+    public string Message { get; set; } = L.T("TEMPO ENCERRADO");
     public string Output { get; set; } = Path.Combine(AppPaths.DataDirectory, "timer.txt");
 }
 
@@ -35,6 +37,7 @@ static class Program
     [STAThread]
     static void Main(string[] args)
     {
+        L.LoadPreference();
         if (args.Contains("--self-test"))
         {
             double t = 0;
@@ -64,6 +67,7 @@ static class Program
             return;
         }
         ApplicationConfiguration.Initialize();
+        if(args.Contains("--localization-test")){LocalizationTests.Run();return;}
         if(args.Contains("--preview-about"))
         {
             foreach(bool dark in new[]{true,false})
@@ -74,7 +78,7 @@ static class Program
             }
             return;
         }
-        if(args.Contains("--championship-test")) { ChampionshipTests.Run(); return; }
+        if(args.Contains("--championship-test")) { try { ChampionshipTests.Run(); } catch(Exception ex) { File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"test-error.txt"),ex.ToString()); Environment.ExitCode=1; } return; }
         if(args.Contains("--preview-championship"))
         {
             using var form=new Form {Text="CronoLive",ClientSize=new Size(1240,900)};
@@ -141,7 +145,7 @@ static class Program
         if(args.Contains("--export-test")){ExportTests.Run();return;}
         AppLog.Install();
         try{Application.Run(new MainForm());}
-        catch(Exception ex){AppLog.Write("STARTUP ERROR "+ex);MessageBox.Show("Não foi possível abrir o CasterDesk. Consulte a pasta Logs dos dados do aplicativo.\n"+ex.Message,"CasterDesk");}
+        catch(Exception ex){AppLog.Write("STARTUP ERROR "+ex);MessageBox.Show(L.T("Não foi possível abrir o CasterDesk. Consulte a pasta Logs dos dados do aplicativo.\n")+ex.Message,"CasterDesk");}
     }
     static void Check(bool condition, string name) { if (!condition) throw new Exception(name); }
 }
@@ -163,45 +167,60 @@ public sealed class MainForm : Form
     long retryAfter;
     public MainForm()
     {
-        Text = "CasterDesk • 0.1.0-beta.2";
+        Text = "CasterDesk • 0.2.0-beta.0.1";
         var area=Screen.PrimaryScreen!.WorkingArea;
         Size = new Size(Math.Min(1280,area.Width),Math.Min(990,area.Height)); MinimumSize = new Size(1140,760);
         StartPosition=FormStartPosition.CenterScreen;WindowState=FormWindowState.Maximized;
         BackColor = SystemColors.Control; ForeColor = SystemColors.ControlText;
-        Font = new Font("Segoe UI", 9); AutoScaleMode = AutoScaleMode.Dpi;
+        Font = AppFonts.Body(10); AutoScaleMode = AutoScaleMode.Dpi;
         try { settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText(settingsPath)) ?? new(); } catch { }
         AppTheme.Dark=settings.DarkMode;AppTheme.Siege=settings.SiegeTheme;
         var tabs = new ThemeTabs { Dock = DockStyle.Fill, Padding = new Point(12, 5) };
         var casting = new CastingPanel();
         var championship=new ChampionshipPanel();
-        var championshipPage=new TabPage("Campeonato"){BackColor=Color.White};
+        championship.SetQuickMode(settings.QuickRounds);
+        var championshipPage=new TabPage(L.T("Campeonato")){BackColor=Color.White};
         championshipPage.Controls.Add(championship);tabs.TabPages.Add(championshipPage);
-        var textsPage=new TabPage("Textos para OBS"){BackColor=Color.White,Padding=new Padding(8),AutoScroll=true};
+        var textsPage=new TabPage(L.T("Textos para OBS")){BackColor=Color.White,Padding=new Padding(8),AutoScroll=true};
         tabs.TabPages.Add(textsPage);
         var split=new TableLayoutPanel {Dock=DockStyle.Fill,ColumnCount=2,RowCount=1,MinimumSize=new Size(1090,500)};
         split.ColumnStyles.Add(new(SizeType.Percent,50));split.ColumnStyles.Add(new(SizeType.Percent,50));
         var castingGroup=new ThemeGroup {Text="CASTING",Dock=DockStyle.Fill,Padding=new Padding(8)};
         castingGroup.Controls.Add(casting);split.Controls.Add(castingGroup,0,0);
-        var page=new ThemeGroup {Text="CRONÔMETRO",Dock=DockStyle.Fill,Padding=new Padding(8)};
+        var page=new ThemeGroup {Text=L.T("CRONÔMETRO"),Dock=DockStyle.Fill,Padding=new Padding(8)};
         split.Controls.Add(page,1,0);textsPage.Controls.Add(split);
         var footer = new StatusStrip();
-        var footerLabel = new ToolStripStatusLabel("CasterDesk • Ferramentas para community casters");
+        var footerLabel = new ToolStripStatusLabel(L.T("CasterDesk • Ferramentas para community casters"));
         footer.Items.Add(footerLabel);
         var host = new Panel { Dock = DockStyle.Fill, Padding = Padding.Empty };
         host.Controls.Add(tabs); Controls.Add(host); Controls.Add(footer);
         var themeBar=new NavigationBar(tabs,true);Controls.Add(themeBar);
         var gear=themeBar.SettingsButton!;
         var menu=new ContextMenuStrip();gear.ContextMenuStrip=menu;
-        var siege=new ToolStripMenuItem("Siege");var simple=new ToolStripMenuItem("Simplificado");
-        var dark=new ToolStripMenuItem("Escuro");var light=new ToolStripMenuItem("Claro");
-        menu.Items.Add(new ToolStripMenuItem("TEMÁTICA") {Enabled=false});menu.Items.AddRange([siege,simple,new ToolStripSeparator(),new ToolStripMenuItem("APARÊNCIA"){Enabled=false},dark,light]);
-        menu.Items.Add(new ToolStripSeparator());menu.Items.Add(new ToolStripMenuItem("Aplicar na próxima abertura"){Enabled=false});
+        var siege=new ToolStripMenuItem("Siege");var simple=new ToolStripMenuItem(L.T("Simplificado"));
+        var dark=new ToolStripMenuItem(L.T("Escuro"));var light=new ToolStripMenuItem(L.T("Claro"));
+        menu.Items.Add(new ToolStripMenuItem(L.T("TEMÁTICA")) {Enabled=false});menu.Items.AddRange([siege,simple,new ToolStripSeparator(),new ToolStripMenuItem(L.T("APARÊNCIA")){Enabled=false},dark,light]);
+        menu.Items.Add(new ToolStripSeparator());menu.Items.Add(new ToolStripMenuItem(L.T("Aplicar na próxima abertura")){Enabled=false});
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(new ToolStripMenuItem("Sobre o CasterDesk",null,(_,_)=>{using var dialog=new AboutDialog();dialog.ShowDialog(this);}));
+        menu.Items.Add(new ToolStripMenuItem(L.T("Sobre o CasterDesk"),null,(_,_)=>{using var dialog=new AboutDialog();dialog.ShowDialog(this);}));
+        var languageMenu=new ToolStripMenuItem(L.T("Idioma"));
+        foreach(var (code,label) in new[]{("pt-BR","Português (Brasil)"),("en","English"),("es","Español")})
+        {
+            var choice=new ToolStripMenuItem(label){Checked=settings.Language==code,Tag=code};
+            choice.Click+=(_,_)=>{settings.Language=code;Save();foreach(ToolStripMenuItem item in languageMenu.DropDownItems)item.Checked=Equals(item.Tag,code);footerLabel.Text=L.T("Idioma salvo. Feche e reabra o CasterDesk para aplicar.");};
+            languageMenu.DropDownItems.Add(choice);
+        }
+        menu.Items.Add(new ToolStripSeparator());menu.Items.Add(languageMenu);
+        var roundMode=new ToolStripMenuItem(L.T("Registro de rounds"));
+        var listMode=new ToolStripMenuItem(L.T("Lista")){Checked=!settings.QuickRounds};
+        var quickMode=new ToolStripMenuItem(L.T("Modo rápido")){Checked=settings.QuickRounds};
+        void ChangeRoundMode(bool quick){settings.QuickRounds=quick;championship.SetQuickMode(quick);listMode.Checked=!quick;quickMode.Checked=quick;Save();}
+        listMode.Click+=(_,_)=>ChangeRoundMode(false);quickMode.Click+=(_,_)=>ChangeRoundMode(true);
+        roundMode.DropDownItems.AddRange([listMode,quickMode]);menu.Items.Add(roundMode);
         void ChangeTheme(bool style,bool isDark)
         {
             settings.SiegeTheme=style;settings.DarkMode=isDark;Save();
-            footerLabel.Text=(style!=AppTheme.Siege || isDark!=AppTheme.Dark)?"Tema salvo • será aplicado na próxima abertura do CasterDesk.":"CasterDesk • Ferramentas para community casters";
+            footerLabel.Text=(style!=AppTheme.Siege || isDark!=AppTheme.Dark)?L.T("Tema salvo • será aplicado na próxima abertura do CasterDesk."):L.T("CasterDesk • Ferramentas para community casters");
         }
         siege.Click+=(_,_)=>ChangeTheme(true,settings.DarkMode);simple.Click+=(_,_)=>ChangeTheme(false,settings.DarkMode);
         dark.Click+=(_,_)=>ChangeTheme(settings.SiegeTheme,true);light.Click+=(_,_)=>ChangeTheme(settings.SiegeTheme,false);
@@ -213,24 +232,24 @@ public sealed class MainForm : Form
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 108));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 110));
         page.Controls.Add(layout);
-        var countdown = new ThemeGroup { Text = "Contagem regressiva", Dock = DockStyle.Fill };
-        var additions = new ThemeGroup { Text = "Acrescentar tempo sem pausar", Dock = DockStyle.Fill };
-        var fileGroup = new ThemeGroup { Text = "Arquivo de saída • OBS", Dock = DockStyle.Fill };
+        var countdown = new ThemeGroup { Text = L.T("Contagem regressiva"), Dock = DockStyle.Fill };
+        var additions = new ThemeGroup { Text = L.T("Acrescentar tempo sem pausar"), Dock = DockStyle.Fill };
+        var fileGroup = new ThemeGroup { Text = L.T("Arquivo de saída • OBS"), Dock = DockStyle.Fill };
         layout.Controls.Add(countdown, 0, 0); layout.Controls.Add(additions, 0, 1); layout.Controls.Add(fileGroup, 0, 2);
         void Place(Control parent, Control child, int x, int y, int width) { child.Location = new Point((int)(x * 0.83), y); child.Width = (int)(width * 0.83); parent.Controls.Add(child); }
-        void Caption(Control parent, string text, int x, int y, int width) => Place(parent, new Label { Text = text, AutoSize = false, Height = 23, TextAlign = ContentAlignment.MiddleLeft }, x, y, width);
+        void Caption(Control parent, string text, int x, int y, int width) => Place(parent, new ThemeCaption { Text = text, AutoSize = false, Height = 23, TextAlign = ContentAlignment.MiddleLeft }, x, y, width);
         initial.Value = Math.Clamp(decimal.Round(settings.Initial * 60), initial.Minimum, initial.Maximum);
-        Caption(countdown, "Tempo inicial:", 12, 24, 135);
+        Caption(countdown, L.T("Tempo inicial:"), 12, 24, 135);
         Place(countdown, initial, 150, 24, 160);
-        Place(countdown, Button("Resetar tempo", () => { if (clock.Running && MessageBox.Show(this, "Substituir a contagem atual e deixá-la pausada?", "Resetar tempo", MessageBoxButtons.YesNo) != DialogResult.Yes) return; clock.Reset((double)initial.Value); RefreshOutput(); }), 320, 22, 140);
+        Place(countdown, Button(L.T("Resetar tempo"), () => { if (clock.Running && MessageBox.Show(this, L.T("Substituir a contagem atual e deixá-la pausada?"), L.T("Resetar tempo"), MessageBoxButtons.YesNo) != DialogResult.Yes) return; clock.Reset((double)initial.Value); RefreshOutput(); }), 320, 22, 140);
         format.Items.AddRange(["mm:ss", "hh:mm:ss"]); format.SelectedItem = settings.Format; if (format.SelectedIndex < 0) format.SelectedIndex = 0;
-        Caption(countdown, "Formato de saída:", 12, 53, 135); Place(countdown, format, 150, 53, 160);
+        Caption(countdown, L.T("Formato de saída:"), 12, 53, 135); Place(countdown, format, 150, 53, 160);
         Place(countdown, status, 330, 56, 280);
-        Caption(countdown, "Saída ao vivo:", 12, 82, 135); Place(countdown, preview, 150, 82, 460);
+        Caption(countdown, L.T("Saída ao vivo:"), 12, 82, 135); Place(countdown, preview, 150, 82, 460);
         finalMessage.Text = settings.Message;
-        Caption(countdown, "Mensagem final:", 12, 111, 135); Place(countdown, finalMessage, 150, 111, 460);
-        Place(countdown, Button("Iniciar / Retomar", () => { clock.Start(); RefreshOutput(); }), 150, 136, 220);
-        Place(countdown, Button("Pausar", () => { clock.Pause(); RefreshOutput(); }), 380, 136, 230);
+        Caption(countdown, L.T("Mensagem final:"), 12, 111, 135); Place(countdown, finalMessage, 150, 111, 460);
+        Place(countdown, Button(L.T("Iniciar / Retomar"), () => { clock.Start(); RefreshOutput(); }), 150, 136, 220);
+        Place(countdown, Button(L.T("Pausar"), () => { clock.Pause(); RefreshOutput(); }), 380, 136, 230);
         var presetInputs = new List<NumericUpDown>();
         for (int i = 0; i < 3; i++)
         {
@@ -242,19 +261,19 @@ public sealed class MainForm : Form
             Place(additions, b, x, 24, 148); Place(additions, n, x, 57, 100);
             Caption(additions, "min", x + 105, 57, 40);
         }
-        Caption(additions, "Adicionar agora:", 12, 25, 135);
-        Caption(additions, "Valor dos botões:", 12, 57, 135);
+        Caption(additions, L.T("Adicionar agora:"), 12, 25, 135);
+        Caption(additions, L.T("Valor dos botões:"), 12, 57, 135);
         output.Text = settings.Output;
         Place(fileGroup, output, 12, 22, 450);
-        Place(fileGroup, Button("Escolher TXT", ChooseOutput), 472, 20, 138);
-        Place(fileGroup, Button("Copiar caminho", () => Clipboard.SetText(output.Text)), 472, 49, 138);
+        Place(fileGroup, Button(L.T("Escolher TXT"), ChooseOutput), 472, 20, 138);
+        Place(fileGroup, Button(L.T("Copiar caminho"), () => Clipboard.SetText(output.Text)), 472, 49, 138);
         Place(fileGroup, writeStatus, 12, 53, 450);
         writeStatus.MaximumSize = new Size(450, 0);
         format.SelectedIndexChanged += (_, _) => RefreshOutput(); finalMessage.TextChanged += (_, _) => RefreshOutput();
         clock.Reset((double)initial.Value); RefreshOutput();
         AppTheme.Apply(this);
         pulse.Tick += (_, _) => { clock.Tick(); RefreshOutput(); };
-        FormClosing += (_, e) => { if (clock.Running && MessageBox.Show(this, "Fechar e interromper a contagem? O TXT manterá o último texto.", "Sair", MessageBoxButtons.YesNo) != DialogResult.Yes) { e.Cancel = true; return; } Save(); casting.SaveDraft(); championship.FlushNames(); };
+        FormClosing += (_, e) => { if (clock.Running && MessageBox.Show(this, L.T("Fechar e interromper a contagem? O TXT manterá o último texto."), L.T("Sair"), MessageBoxButtons.YesNo) != DialogResult.Yes) { e.Cancel = true; return; } Save(); casting.SaveDraft(); championship.FlushNames(); };
     }
     internal void VerifyTimerStart(){if(pulse.Enabled)throw new Exception("Idle timer is polling");clock.Reset(2);clock.Start();RefreshOutput();if(!pulse.Enabled)throw new Exception("Timer did not start");}
     internal void VerifyTimerEnd(){if(!clock.Finished || pulse.Enabled || File.ReadAllText(output.Text)!=finalMessage.Text)throw new Exception("Timer completion failed");}
@@ -274,7 +293,7 @@ public sealed class MainForm : Form
         try {
         string text = clock.Finished ? finalMessage.Text : Format((int)Math.Ceiling(clock.Remaining), format.Text);
         if(preview.Text!=text)preview.Text=text;
-        string state=clock.Running ? "● Em andamento" : clock.Finished ? "Contagem encerrada" : "Pausado / pronto";
+        string state=clock.Running ? L.T("● Em andamento") : clock.Finished ? L.T("Contagem encerrada") : L.T("Pausado / pronto");
         if(status.Text!=state)status.Text=state;
         if (text == lastText || Environment.TickCount64 < retryAfter) return;
         try
@@ -284,9 +303,9 @@ public sealed class MainForm : Form
                 byte[] bytes = new UTF8Encoding(false).GetBytes(text);
                 file.Write(bytes); file.SetLength(bytes.Length); file.Flush();
             }
-            lastText = text; retryAfter=0; writeStatus.Text = "TXT atualizado • " + DateTime.Now.ToString("HH:mm:ss.fff"); writeStatus.ForeColor = AppTheme.Success;
+            lastText = text; retryAfter=0; writeStatus.Text = L.T("TXT atualizado • ") + DateTime.Now.ToString("HH:mm:ss.fff"); writeStatus.ForeColor = AppTheme.Success;
         }
-        catch (Exception ex) { retryAfter = Environment.TickCount64 + 1000; writeStatus.Text = "Não foi possível gravar o TXT: " + ex.Message; writeStatus.ForeColor = AppTheme.Error; }
+        catch (Exception ex) { retryAfter = Environment.TickCount64 + 1000; writeStatus.Text = L.T("Não foi possível gravar o TXT: ") + ex.Message; writeStatus.ForeColor = AppTheme.Error; }
             }finally{SchedulePulse();}
     }
     void SchedulePulse()
@@ -298,7 +317,7 @@ public sealed class MainForm : Form
 
     void ChooseOutput()
     {
-        using var dialog = new SaveFileDialog { Filter = "Arquivo de texto (*.txt)|*.txt", FileName = "timer.txt", OverwritePrompt = true };
+        using var dialog = new SaveFileDialog { Filter = L.T("Arquivo de texto (*.txt)|*.txt"), FileName = "timer.txt", OverwritePrompt = true };
         if (dialog.ShowDialog(this) != DialogResult.OK) return;
         output.Text = dialog.FileName; lastText = null; retryAfter = 0; RefreshOutput();
     }
@@ -306,7 +325,7 @@ public sealed class MainForm : Form
     {
         settings.Initial = initial.Value / 60m; settings.Format = format.Text; settings.Message = finalMessage.Text; settings.Output = output.Text;
         try { File.WriteAllText(settingsPath, JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true })); }
-        catch (Exception ex) { MessageBox.Show(this, "Não foi possível salvar as preferências: " + ex.Message); }
+        catch (Exception ex) { MessageBox.Show(this, L.T("Não foi possível salvar as preferências: ") + ex.Message); }
     }
 }
 

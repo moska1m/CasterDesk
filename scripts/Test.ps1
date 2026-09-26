@@ -1,4 +1,4 @@
-param([string]$Executable)
+﻿param([string]$Executable)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 if (!$Executable) {
@@ -11,7 +11,7 @@ $previous = $env:CASTERDESK_DATA_DIR
 $results = Join-Path $root ('test-results/' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force $results | Out-Null
 try {
-    foreach ($test in @('self-test','championship-test','export-test','perf-test','theme-restart-test','timer-ui-test','theme-smoke')) {
+    foreach ($test in @('self-test','championship-test','export-test','perf-test','theme-restart-test','timer-ui-test','theme-smoke','localization-test')) {
         $env:CASTERDESK_DATA_DIR = Join-Path $results $test
         $p = Start-Process $Executable -ArgumentList "--$test" -PassThru -WindowStyle Hidden
         if (!$p.WaitForExit(120000)) { throw "Teste demorou mais de 120 segundos: $test (PID $($p.Id))." }

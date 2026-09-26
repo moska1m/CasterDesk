@@ -8,8 +8,8 @@ public static class AppTheme
 {
     public static bool Dark { get; set; }
     public static bool Siege { get; set; } = true;
-    public static readonly Font HeadingFont=new("Bahnschrift SemiCondensed",10,FontStyle.Bold);
-    public static readonly Font TabFont=new("Bahnschrift SemiCondensed",11,FontStyle.Regular);
+    public static readonly Font HeadingFont=AppFonts.Heading(12,FontStyle.Bold);
+    public static readonly Font TabFont=AppFonts.Heading(11,FontStyle.Regular);
     static readonly Bitmap darkTexture=MakeTexture(true),lightTexture=MakeTexture(false);
     static Bitmap MakeTexture(bool dark)
     {
@@ -24,6 +24,7 @@ public static class AppTheme
     }
     public static Color Border => Siege ? (Dark ? Color.FromArgb(81,105,140) : Color.FromArgb(154,176,200)) : Color.FromArgb(80,89,102);
     public static Color Accent => Color.FromArgb(64,143,179);
+    public static Color Interaction => Siege ? Color.FromArgb(231,72,69) : Accent;
     public static void PaintSurface(Graphics g, Rectangle r)
     {
         if(r.Width<=0 || r.Height<=0)return;
@@ -114,7 +115,7 @@ public static class AppTheme
 
 public sealed class ThemeSwitch : CheckBox
 {
-    public ThemeSwitch(){AutoSize=false;Size=new Size(170,30);Text="Modo escuro";AccessibleName="Alternar modo claro e escuro";SetStyle(ControlStyles.UserPaint|ControlStyles.OptimizedDoubleBuffer|ControlStyles.AllPaintingInWmPaint,true);Cursor=Cursors.Hand;}
+    public ThemeSwitch(){AutoSize=false;Size=new Size(170,30);Text=L.T("Modo escuro");AccessibleName=L.T("Alternar modo claro e escuro");SetStyle(ControlStyles.UserPaint|ControlStyles.OptimizedDoubleBuffer|ControlStyles.AllPaintingInWmPaint,true);Cursor=Cursors.Hand;}
     protected override void OnPaint(PaintEventArgs e)
     {
         e.Graphics.Clear(AppTheme.Background);e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;
@@ -124,21 +125,32 @@ public sealed class ThemeSwitch : CheckBox
         using var ink=new SolidBrush(Color.FromArgb(34,45,58));
         if(Checked){e.Graphics.FillEllipse(ink,x+5,8,12,13);e.Graphics.FillEllipse(knob,x+9,6,11,12);}
         else {e.Graphics.FillEllipse(ink,x+7,12,6,6);using var pen=new Pen(ink,1.3f);for(int i=0;i<8;i++){double a=i*Math.PI/4;e.Graphics.DrawLine(pen,x+10+(float)Math.Cos(a)*5,15+(float)Math.Sin(a)*5,x+10+(float)Math.Cos(a)*8,15+(float)Math.Sin(a)*8);}}
-        TextRenderer.DrawText(e.Graphics,Checked?"Modo escuro":"Modo claro",Font,new Rectangle(72,0,95,30),AppTheme.Text,TextFormatFlags.VerticalCenter|TextFormatFlags.Left);
+        TextRenderer.DrawText(e.Graphics,Checked?L.T("Modo escuro"):L.T("Modo claro"),Font,new Rectangle(72,0,95,30),AppTheme.Text,TextFormatFlags.VerticalCenter|TextFormatFlags.Left);
         if(Focused)ControlPaint.DrawFocusRectangle(e.Graphics,new Rectangle(0,0,Width-1,Height-1),AppTheme.Text,AppTheme.Background);
     }
 }
 
 public class ThemeButton : Button
 {
+    bool hover;
+    public ThemeButton(){SetStyle(ControlStyles.UserPaint|ControlStyles.OptimizedDoubleBuffer|ControlStyles.AllPaintingInWmPaint,true);Cursor=Cursors.Hand;}
+    protected override void OnMouseEnter(EventArgs e){base.OnMouseEnter(e);hover=true;Invalidate();}
+    protected override void OnMouseLeave(EventArgs e){base.OnMouseLeave(e);hover=false;Invalidate();}
+    [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+    internal Color? EmphasisFill { get; set; }
     protected override void OnPaint(PaintEventArgs e)
     {
-        if(!AppTheme.Dark && !AppTheme.Siege){base.OnPaint(e);return;}
-        if(AppTheme.Siege) {using var fill=new LinearGradientBrush(ClientRectangle,AppTheme.Surface,AppTheme.Field,90f);e.Graphics.FillRectangle(fill,ClientRectangle);} else e.Graphics.Clear(AppTheme.Field);
+        if(!AppTheme.Dark && !AppTheme.Siege && EmphasisFill is null){base.OnPaint(e);return;}
+        if(Width<2 || Height<2)return;
+        if(Enabled && EmphasisFill is Color emphasis)e.Graphics.Clear(emphasis);
+        else if(Enabled && AppTheme.Siege && (hover || Focused)){using var fill=new LinearGradientBrush(ClientRectangle,AppTheme.Dark?Color.FromArgb(96,51,58):Color.FromArgb(186,63,62),Color.FromArgb(217,68,62),90f);e.Graphics.FillRectangle(fill,ClientRectangle);}
+        else if(AppTheme.Siege) {using var fill=new LinearGradientBrush(ClientRectangle,AppTheme.Surface,AppTheme.Field,90f);e.Graphics.FillRectangle(fill,ClientRectangle);} else e.Graphics.Clear(AppTheme.Field);
+        if(!Enabled && AppTheme.Siege){using var hatch=new HatchBrush(HatchStyle.ForwardDiagonal,Color.FromArgb(22,AppTheme.Text),Color.Transparent);e.Graphics.FillRectangle(hatch,ClientRectangle);}
         using var border=new Pen(Focused?Color.FromArgb(100,175,220):AppTheme.Border);e.Graphics.DrawRectangle(border,0,0,Width-1,Height-1);
+        if(Enabled && (hover || EmphasisFill is not null || Focused)){using var accent=new SolidBrush(EmphasisFill is Color color?ControlPaint.Light(color):AppTheme.Interaction);e.Graphics.FillRectangle(accent,1,Height-4,Width-2,3);}
         var textBounds=new Rectangle(3,2,Width-6,Height-4);
         if(Image is not null){int x=(Width-Image.Width)/2;e.Graphics.DrawImage(Image,x,6);textBounds=new Rectangle(3,Image.Height+8,Width-6,Math.Max(12,Height-Image.Height-10));}
-        TextRenderer.DrawText(e.Graphics,Text,Font,textBounds,Enabled?ForeColor:(AppTheme.Dark?Color.FromArgb(189,197,208):Color.FromArgb(98,109,121)),TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.WordBreak);
+        TextRenderer.DrawText(e.Graphics,Text,Font,textBounds,Enabled?(AppTheme.Siege && (hover || Focused) && EmphasisFill is null?Color.White:ForeColor):(AppTheme.Dark?Color.FromArgb(189,197,208):Color.FromArgb(98,109,121)),TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.WordBreak);
         if(Focused)ControlPaint.DrawFocusRectangle(e.Graphics,new Rectangle(3,3,Width-6,Height-6));
     }
 }
@@ -174,9 +186,9 @@ public sealed class ThemeGroup : GroupBox
         if(AppTheme.Siege)
         {
             AppTheme.PaintSurface(e.Graphics,ClientRectangle);
-            using var edge=new Pen(AppTheme.Border);e.Graphics.DrawRectangle(edge,0,0,Width-1,Height-1);
+            using var edge=new Pen(AppTheme.Border);
             int h=Math.Max(20,Font.Height+4);
-            using var fill=new SolidBrush(AppTheme.Surface);e.Graphics.FillRectangle(fill,1,1,Width-2,h);
+            using var fill=new SolidBrush(Color.FromArgb(AppTheme.Dark?55:22,AppTheme.Dark?Color.White:Color.Black));e.Graphics.FillRectangle(fill,0,0,Width,h);
             e.Graphics.DrawLine(edge,1,h,Width-2,h);
             TextRenderer.DrawText(e.Graphics,Text.ToUpperInvariant(),AppTheme.HeadingFont,new Rectangle(9,1,Width-18,h-1),AppTheme.Text,TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
             return;
@@ -196,7 +208,22 @@ public sealed class ThemeCombo : ComboBox
         if((!AppTheme.Dark && !AppTheme.Siege) || !IsHandleCreated || (m.Msg!=0xF && m.Msg!=0x317))return;
         using var g=m.Msg==0x317 && m.WParam!=IntPtr.Zero?Graphics.FromHdc(m.WParam):Graphics.FromHwnd(Handle);
         using var bg=new SolidBrush(AppTheme.Field);using var line=new Pen(AppTheme.Border);using var ink=new SolidBrush(Color.FromArgb(189,197,208));
+        if(DropDownStyle==ComboBoxStyle.DropDownList)
+        {
+            g.FillRectangle(bg,ClientRectangle);
+            TextRenderer.DrawText(g,Text,Font,new Rectangle(5,1,Math.Max(0,Width-28),Height-2),Enabled?AppTheme.Text:AppTheme.Dark?Color.Silver:Color.DimGray,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
+        }
         g.FillRectangle(bg,Width-20,1,19,Height-2);g.DrawRectangle(line,0,0,Width-1,Height-1);
         int x=Width-11,y=Height/2;g.FillPolygon(ink,[new Point(x-4,y-2),new Point(x+4,y-2),new Point(x,y+2)]);
+    }
+}
+
+public sealed class ThemeCaption : Label
+{
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        if(!AppTheme.Siege){base.OnPaint(e);return;}
+        using var fill=new SolidBrush(AppTheme.Dark?Color.FromArgb(66,80,100):Color.FromArgb(213,223,235));e.Graphics.FillRectangle(fill,ClientRectangle);
+        TextRenderer.DrawText(e.Graphics,Text,Font,new Rectangle(7,0,Math.Max(0,Width-14),Height),AppTheme.Text,TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
     }
 }

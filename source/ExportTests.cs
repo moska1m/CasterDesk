@@ -1,4 +1,4 @@
-namespace CronoLive;
+﻿namespace CronoLive;
 public static class ExportTests
 {
     public static void Run()
@@ -15,6 +15,14 @@ public static class ExportTests
         var brand=new ExportBrand{EventName="CAMPEONATO DA COMUNIDADE · PRÉVIA",CasterName="MOSKA",Channel="@MOSKA1M",Platform="Twitch"};
         int checks=0;
         void Need(bool value){if(!value)throw new Exception("PNG export test failed");checks++;}
+        foreach(var aspect in Enum.GetValues<ExportAspect>())
+        {
+            int width=aspect==ExportAspect.Horizontal?1920:1080;
+            var header=ResultRenderer.HeaderBounds(width,aspect==ExportAspect.Stories?100:30);
+            Need(header.Center.Left+header.Center.Width/2==width/2f);
+            Need(header.Left.Left==width-header.Right.Right && header.Left.Width==header.Right.Width);
+            Need(header.Left.Right<header.Center.Left && header.Center.Right<header.Right.Left);
+        }
         foreach(int initial in new[]{0,1})
         {
             var roles=new MapRecord{InitialAttack=initial};
@@ -50,6 +58,20 @@ public static class ExportTests
         var full=System.Text.Json.JsonSerializer.Deserialize<SiegeMatch>(System.Text.Json.JsonSerializer.Serialize(match))!;
         foreach(var map in full.Maps){map.Rounds.Clear();for(int i=0;i<15;i++)map.Rounds.Add(new(){Winner=i%2,Site=catalog.Maps.Single(m=>m.Id==map.MapId).Sites[i%4]});}
         foreach(var mode in new[]{ExportAspect.Stories,ExportAspect.Horizontal}){using var page=ResultRenderer.Render(full,catalog,brand,mode)[0];page.Image.Save(Path.Combine(folder,$"full15_{mode}.png"),System.Drawing.Imaging.ImageFormat.Png);Need(true);}
+        var md5=new SiegeMatch{Format="MD5",TeamA="Liquid",TeamB="FaZe"};
+        foreach(var info in catalog.Maps.Take(5))
+        {
+            int number=md5.Maps.Count;
+            md5.Maps.Add(new MapRecord{MapId=info.Id,InitialAttack=0,OtAttack=1,ConfirmedAt=DateTimeOffset.Now,
+                Bans=full.Maps[0].Bans.ToArray(),Rounds=Enumerable.Range(0,15).Select(i=>new RoundRecord{Winner=(i+number)%2,Site=info.Sites[i%info.Sites.Length]}).ToList()});
+        }
+        foreach(var mode in Enum.GetValues<ExportAspect>())
+        {
+            var pages=ResultRenderer.Render(md5,catalog,brand,mode);
+            Need(pages.Count==(mode==ExportAspect.Horizontal?2:6));
+            for(int i=0;i<pages.Count;i++){pages[i].Image.Save(Path.Combine(folder,$"MD5_{mode}_{i:00}.png"));pages[i].Dispose();}
+            var single=ResultRenderer.Render(md5,catalog,brand,mode,md5.Maps[4]);Need(single.Count==1);foreach(var page in single)page.Dispose();
+        }
         brand.Platforms=["Twitch","YouTube","Kick"];brand.PlatformChannels=new();
         Need(brand.SelectedPlatforms().Length==3 && brand.ChannelFor("Kick")==brand.Channel);
         using(var page=ResultRenderer.Render(match,catalog,brand,ExportAspect.Feed)[0])page.Image.Save(Path.Combine(folder,"multi-shared.png"),System.Drawing.Imaging.ImageFormat.Png);

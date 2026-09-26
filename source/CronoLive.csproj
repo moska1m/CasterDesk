@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>CasterDesk</AssemblyName><Version>0.1.0-beta.2</Version><AssemblyVersion>0.1.0.0</AssemblyVersion><FileVersion>0.1.0.1</FileVersion><Product>CasterDesk</Product><Description>Ferramentas para community casters</Description>
+    <AssemblyName>CasterDesk</AssemblyName><Version>0.2.0-beta.0.1</Version><AssemblyVersion>0.2.0.0</AssemblyVersion><FileVersion>0.2.0.1</FileVersion><Product>CasterDesk</Product><Description>Ferramentas para community casters</Description>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms><ApplicationIcon>../assets/casterdesk.ico</ApplicationIcon>
@@ -8,7 +8,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="translations.json" LogicalName="CasterDesk.translations.json" />
     <Content Include="../assets/siege/icons/*;../assets/siege/maps/*;../assets/siege/catalog.json" Link="assets/siege/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   <Content Include="../assets/branding/*" Link="assets/branding/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  <Content Include="../assets/siege/portraits/*.png" Link="assets/siege/%(Filename)-portrait.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  <Content Include="../assets/fonts/*.ttf" Link="assets/fonts/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

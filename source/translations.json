@@ -1,0 +1,2486 @@
+{
+  "ROUND {0:00} • registro rápido": [
+    "ROUND {0:00} • quick entry",
+    "RONDA {0:00} • registro rápido"
+  ],
+  "Escritório / Arquivos": [
+    "Office / Archives",
+    "Oficina / Archivos"
+  ],
+  "Armários / Vigilância": [
+    "Lockers / CCTV",
+    "Taquillas / Vigilancia"
+  ],
+  "Bloqueado: vitória da defesa nos dois rounds anteriores.": [
+    "Locked: defense won here within the previous two rounds.",
+    "Bloqueado: la defensa ganó aquí en las dos rondas anteriores."
+  ],
+  "Bombsite bloqueado por vitória da defesa. Escolha outro local.": [
+    "Bombsite locked after a defense win. Choose another site.",
+    "Sitio bloqueado tras una victoria de la defensa. Elige otro."
+  ],
+  "Bombsite em conflito. Revise este round após a correção do histórico.": [
+    "Bombsite conflict. Review this round after correcting the history.",
+    "Conflicto de sitio. Revisa esta ronda tras corregir el historial."
+  ],
+  "Bans pendentes": [
+    "Pending bans",
+    "Baneos pendientes"
+  ],
+  "HORA DOS BANS": [
+    "TIME TO BAN",
+    "HORA DE BANEAR"
+  ],
+  "Antes do round {0:00} • {1} ban(s) pendente(s).": [
+    "Before round {0:00} • {1} pending ban(s).",
+    "Antes de la ronda {0:00} • {1} baneo(s) pendiente(s)."
+  ],
+  "REGISTRAR BANS": [
+    "REGISTER BANS",
+    "REGISTRAR BANEOS"
+  ],
+  "LEMBRAR DEPOIS": [
+    "REMIND ME LATER",
+    "RECORDAR MÁS TARDE"
+  ],
+  "Registro de rounds": [
+    "Round entry",
+    "Registro de rondas"
+  ],
+  "Lista": [
+    "List",
+    "Lista"
+  ],
+  "Modo rápido": [
+    "Quick mode",
+    "Modo rápido"
+  ],
+  "CONFIRMAR ROUND": [
+    "CONFIRM ROUND",
+    "CONFIRMAR RONDA"
+  ],
+  "ROUND {0:00} • escolha bombsite, vencedor e finalização": [
+    "ROUND {0:00} • choose site, winner and ending",
+    "RONDA {0:00} • elige sitio, ganador y finalización"
+  ],
+  "Finalização": [
+    "Ending",
+    "Finalización"
+  ],
+  "Eliminação": [
+    "Elimination",
+    "Eliminación"
+  ],
+  "Defuser concluído": [
+    "Defuser completed",
+    "Desactivador completado"
+  ],
+  "Defuser desativado": [
+    "Defuser disabled",
+    "Desactivador deshabilitado"
+  ],
+  "Tempo esgotado": [
+    "Time expired",
+    "Tiempo agotado"
+  ],
+  "Não informado": [
+    "Not recorded",
+    "Sin registrar"
+  ],
+  "Finalização incompatível com o vencedor.": [
+    "Ending does not match the winner.",
+    "La finalización no coincide con el ganador."
+  ],
+  "Nova partida": [
+    "New match",
+    "Nueva partida"
+  ],
+  "Campeonato": [
+    "Championship",
+    "Campeonato"
+  ],
+  "Textos para OBS": [
+    "OBS text sources",
+    "Textos para OBS"
+  ],
+  "CRONÔMETRO": [
+    "TIMER",
+    "CRONÓMETRO"
+  ],
+  "CasterDesk • Ferramentas para community casters": [
+    "CasterDesk • Tools for community casters",
+    "CasterDesk • Herramientas para community casters"
+  ],
+  "Simplificado": [
+    "Simplified",
+    "Simplificado"
+  ],
+  "Escuro": [
+    "Dark",
+    "Oscuro"
+  ],
+  "Claro": [
+    "Light",
+    "Claro"
+  ],
+  "TEMÁTICA": [
+    "THEME",
+    "TEMA"
+  ],
+  "APARÊNCIA": [
+    "APPEARANCE",
+    "APARIENCIA"
+  ],
+  "Aplicar na próxima abertura": [
+    "Apply on next launch",
+    "Aplicar al volver a abrir"
+  ],
+  "Sobre o CasterDesk": [
+    "About CasterDesk",
+    "Acerca de CasterDesk"
+  ],
+  "Tema salvo • será aplicado na próxima abertura do CasterDesk.": [
+    "Theme saved • it will apply the next time CasterDesk opens.",
+    "Tema guardado • se aplicará al volver a abrir CasterDesk."
+  ],
+  "Contagem regressiva": [
+    "Countdown",
+    "Cuenta regresiva"
+  ],
+  "Acrescentar tempo sem pausar": [
+    "Add time without pausing",
+    "Añadir tiempo sin pausar"
+  ],
+  "Arquivo de saída • OBS": [
+    "Output file • OBS",
+    "Archivo de salida • OBS"
+  ],
+  "Tempo inicial:": [
+    "Start time:",
+    "Tiempo inicial:"
+  ],
+  "Resetar tempo": [
+    "Reset timer",
+    "Reiniciar tiempo"
+  ],
+  "Substituir a contagem atual e deixá-la pausada?": [
+    "Replace the current countdown and leave it paused?",
+    "¿Reemplazar la cuenta actual y dejarla pausada?"
+  ],
+  "Formato de saída:": [
+    "Output format:",
+    "Formato de salida:"
+  ],
+  "Saída ao vivo:": [
+    "Live output:",
+    "Salida en vivo:"
+  ],
+  "Mensagem final:": [
+    "End message:",
+    "Mensaje final:"
+  ],
+  "Iniciar / Retomar": [
+    "Start / Resume",
+    "Iniciar / Reanudar"
+  ],
+  "Pausar": [
+    "Pause",
+    "Pausar"
+  ],
+  "Adicionar agora:": [
+    "Add now:",
+    "Añadir ahora:"
+  ],
+  "Valor dos botões:": [
+    "Button amounts:",
+    "Valor por botón:"
+  ],
+  "Escolher TXT": [
+    "Choose TXT",
+    "Elegir TXT"
+  ],
+  "Copiar caminho": [
+    "Copy path",
+    "Copiar ruta"
+  ],
+  "Fechar e interromper a contagem? O TXT manterá o último texto.": [
+    "Close and stop the countdown? The TXT will keep its last text.",
+    "¿Cerrar y detener la cuenta? El TXT conservará el último texto."
+  ],
+  "Sair": [
+    "Exit",
+    "Salir"
+  ],
+  "● Em andamento": [
+    "● Running",
+    "● En curso"
+  ],
+  "Contagem encerrada": [
+    "Countdown finished",
+    "Cuenta finalizada"
+  ],
+  "Pausado / pronto": [
+    "Paused / ready",
+    "Pausado / listo"
+  ],
+  "TXT atualizado • ": [
+    "TXT updated • ",
+    "TXT actualizado • "
+  ],
+  "Não foi possível gravar o TXT: ": [
+    "Could not write the TXT: ",
+    "No se pudo escribir el TXT: "
+  ],
+  "Arquivo de texto (*.txt)|*.txt": [
+    "Text file (*.txt)|*.txt",
+    "Archivo de texto (*.txt)|*.txt"
+  ],
+  "Não foi possível salvar as preferências: ": [
+    "Could not save preferences: ",
+    "No se pudieron guardar las preferencias: "
+  ],
+  "Preencha os campos e clique em Aplicar no OBS.": [
+    "Fill in the fields and click Apply to OBS.",
+    "Rellena los campos y pulsa Aplicar en OBS."
+  ],
+  "Narrador / Caster": [
+    "Play-by-play / Caster",
+    "Narrador / Caster"
+  ],
+  "Comentarista": [
+    "Commentator",
+    "Comentarista"
+  ],
+  "Convidado 1": [
+    "Guest 1",
+    "Invitado 1"
+  ],
+  "Convidado 2": [
+    "Guest 2",
+    "Invitado 2"
+  ],
+  "Nome:": [
+    "Name:",
+    "Nombre:"
+  ],
+  "Pasta dos oito arquivos TXT": [
+    "Folder for the eight TXT files",
+    "Carpeta de los ocho archivos TXT"
+  ],
+  "Escolher pasta": [
+    "Choose folder",
+    "Elegir carpeta"
+  ],
+  "Aplicar no OBS": [
+    "Apply to OBS",
+    "Aplicar en OBS"
+  ],
+  "Alterações pendentes. Clique em Aplicar no OBS.": [
+    "Pending changes. Click Apply to OBS.",
+    "Cambios pendientes. Pulsa Aplicar en OBS."
+  ],
+  "Escolha a pasta dos TXT do casting": [
+    "Choose the casting TXT folder",
+    "Elige la carpeta de TXT del casting"
+  ],
+  "Não foi possível salvar o casting: ": [
+    "Could not save casting: ",
+    "No se pudo guardar el casting: "
+  ],
+  "8 TXT atualizados às ": [
+    "8 TXT files updated at ",
+    "8 archivos TXT actualizados a las "
+  ],
+  "Falha ao atualizar. Alguns TXT podem ter sido gravados.": [
+    "Update failed. Some TXT files may have been written.",
+    "Error al actualizar. Algunos TXT pueden haberse guardado."
+  ],
+  "Saída do casting": [
+    "Casting output",
+    "Salida del casting"
+  ],
+  "Partida": [
+    "Match",
+    "Partida"
+  ],
+  "Confronto": [
+    "Matchup",
+    "Enfrentamiento"
+  ],
+  "Equipe A:": [
+    "Team A:",
+    "Equipo A:"
+  ],
+  "Equipe B:": [
+    "Team B:",
+    "Equipo B:"
+  ],
+  "Formato:": [
+    "Format:",
+    "Formato:"
+  ],
+  "MD5: futuro": [
+    "BO5: future",
+    "MD5: futuro"
+  ],
+  "Coin flip:": [
+    "Coin flip:",
+    "Sorteo:"
+  ],
+  "Primeiro ban:": [
+    "First ban:",
+    "Primer ban:"
+  ],
+  "Mapas da partida • lados da equipe indicada": [
+    "Match maps • sides of the indicated team",
+    "Mapas de la partida • lados del equipo indicado"
+  ],
+  "Mapas • picks e bans": [
+    "Maps • picks and bans",
+    "Mapas • picks y bans"
+  ],
+  "Bans de operadores": [
+    "Operator bans",
+    "Bans de agentes"
+  ],
+  "Round a round • clique no bomb site ou vencedor": [
+    "Round by round • click the bombsite or winner",
+    "Ronda a ronda • pulsa el bombsite o el ganador"
+  ],
+  "Corrigir bans": [
+    "Correct bans",
+    "Corregir bans"
+  ],
+  "Resumo para remake": [
+    "Remake summary",
+    "Resumen para remake"
+  ],
+  "Salvar agora": [
+    "Save now",
+    "Guardar ahora"
+  ],
+  "Importar partida": [
+    "Import match",
+    "Importar partida"
+  ],
+  "Exportar partida": [
+    "Export match",
+    "Exportar partida"
+  ],
+  "Configurar lobby": [
+    "Lobby setup",
+    "Configurar lobby"
+  ],
+  "Exportar imagem": [
+    "Export image",
+    "Exportar imagen"
+  ],
+  "Ataque": [
+    "Attack",
+    "Ataque"
+  ],
+  "Defesa": [
+    "Defense",
+    "Defensa"
+  ],
+  "Vencedor": [
+    "Winner",
+    "Ganador"
+  ],
+  "Placar": [
+    "Score",
+    "Marcador"
+  ],
+  "Seleção inválida. Confira o campo.": [
+    "Invalid selection. Check the field.",
+    "Selección no válida. Revisa el campo."
+  ],
+  "Recuperada cópia anterior de ": [
+    "Recovered previous copy of ",
+    "Se recuperó una copia anterior de "
+  ],
+  "Não foi possível abrir ": [
+    "Could not open ",
+    "No se pudo abrir "
+  ],
+  "Salvo automaticamente • ": [
+    "Autosaved • ",
+    "Guardado automático • "
+  ],
+  "Falha ao salvar: ": [
+    "Save failed: ",
+    "Error al guardar: "
+  ],
+  "Alterar o formato ou primeiro ban limpa o veto e os registros desta partida. Continuar?": [
+    "Changing the format or first ban clears this match's veto and records. Continue?",
+    "Cambiar el formato o el primer ban borra el veto y los registros de esta partida. ¿Continuar?"
+  ],
+  "ID da partida: ": [
+    "Match ID: ",
+    "ID de la partida: "
+  ],
+  "Selecionar mapa…": [
+    "Select map…",
+    "Seleccionar mapa…"
+  ],
+  "{0}. PRÓXIMO: {1} {2}\nClique para selecionar": [
+    "{0}. NEXT: {1} {2}\nClick to select",
+    "{0}. SIGUIENTE: {1} {2}\nPulsa para seleccionar"
+  ],
+  "Continue por aqui": [
+    "Continue here",
+    "Continúa aquí"
+  ],
+  "Mapa": [
+    "Map",
+    "Mapa"
+  ],
+  "Time": [
+    "Team",
+    "Equipo"
+  ],
+  "Lado inicial": [
+    "Starting side",
+    "Lado inicial"
+  ],
+  ": ATQ": [
+    ": ATK",
+    ": ATQ"
+  ],
+  ": DEF": [
+    ": DEF",
+    ": DEF"
+  ],
+  "Mapa {0} — {1}": [
+    "Map {0} — {1}",
+    "Mapa {0} — {1}"
+  ],
+  "Vencedor confirmado": [
+    "Winner confirmed",
+    "Ganador confirmado"
+  ],
+  "Confirmar vitória: ": [
+    "Confirm victory: ",
+    "Confirmar victoria: "
+  ],
+  "Confirmar vencedor": [
+    "Confirm winner",
+    "Confirmar ganador"
+  ],
+  "Série concluída. Resultados confirmados e edição bloqueada.": [
+    "Series completed. Results confirmed and editing locked.",
+    "Serie finalizada. Resultados confirmados y edición bloqueada."
+  ],
+  "Vencedor confirmado. Este mapa está bloqueado; você pode continuar nos demais mapas.": [
+    "Winner confirmed. This map is locked; you can continue with the other maps.",
+    "Ganador confirmado. Este mapa está bloqueado; puedes continuar en los demás mapas."
+  ],
+  "Atenção: {0} ban(s) pendente(s), marcados com !. ": [
+    "Warning: {0} pending ban(s), marked with !. ",
+    "Atención: {0} ban(s) pendiente(s), marcados con !. "
+  ],
+  "Confira os rounds e confirme o vencedor.": [
+    "Check the rounds and confirm the winner.",
+    "Revisa las rondas y confirma al ganador."
+  ],
+  "Você pode continuar registrando os rounds.": [
+    "You can continue recording rounds.",
+    "Puedes seguir registrando rondas."
+  ],
+  "Vencedor definido. Confira os rounds e confirme o vencedor.": [
+    "Winner determined. Check the rounds and confirm the winner.",
+    "Ganador definido. Revisa las rondas y confirma al ganador."
+  ],
+  "Defina o lado do overtime para liberar o round 13. ": [
+    "Set the overtime side to unlock round 13. ",
+    "Define el lado del overtime para habilitar la ronda 13. "
+  ],
+  "Há {0} ban(s) pendente(s).": [
+    "There are {0} pending ban(s).",
+    "Hay {0} ban(s) pendiente(s)."
+  ],
+  "Defina o lado inicial para liberar os bans e os rounds deste mapa.": [
+    "Set the starting side to unlock this map's bans and rounds.",
+    "Define el lado inicial para habilitar los bans y las rondas de este mapa."
+  ],
+  "Esta escolha mudaria um mapa confirmado. Alteração bloqueada.": [
+    "This choice would change a confirmed map. Change blocked.",
+    "Esta elección cambiaría un mapa confirmado. Cambio bloqueado."
+  ],
+  "Esta troca muda um mapa com bans ou rounds registrados. Limpar apenas os registros do mapa substituído?": [
+    "This change replaces a map with recorded bans or rounds. Clear only the replaced map's records?",
+    "Este cambio reemplaza un mapa con bans o rondas registrados. ¿Borrar solo los registros del mapa reemplazado?"
+  ],
+  "Recalcular os lados do overtime com esta escolha?": [
+    "Recalculate overtime sides with this choice?",
+    "¿Recalcular los lados del overtime con esta elección?"
+  ],
+  "Alterar o lado inicial recalcula ataque/defesa dos rounds e limpa os bans deste mapa, pois mudam os tipos permitidos. Continuar?": [
+    "Changing the starting side recalculates attack/defense and clears this map's bans because the allowed roles change. Continue?",
+    "Cambiar el lado inicial recalcula ataque/defensa y borra los bans de este mapa porque cambian los tipos permitidos. ¿Continuar?"
+  ],
+  "Defina o lado inicial": [
+    "Set the starting side",
+    "Define el lado inicial"
+  ],
+  "{0} ATQ / {1} DEF": [
+    "{0} ATK / {1} DEF",
+    "{0} ATQ / {1} DEF"
+  ],
+  "ATIVOS • ": [
+    "ACTIVE • ",
+    "ACTIVOS • "
+  ],
+  " • Corrigindo": [
+    " • Editing",
+    " • Corrigiendo"
+  ],
+  "! Pendente": [
+    "! Pending",
+    "! Pendiente"
+  ],
+  "Bloqueado": [
+    "Locked",
+    "Bloqueado"
+  ],
+  "Selecionar ban de ": [
+    "Select ban for ",
+    "Seleccionar ban de "
+  ],
+  "Libera após o round ": [
+    "Unlocks after round ",
+    "Se habilita tras la ronda "
+  ],
+  "{0} bane {1}": [
+    "{0} bans {1}",
+    "{0} banea {1}"
+  ],
+  "Buscar operador…": [
+    "Search operator…",
+    "Buscar agente…"
+  ],
+  "Selecionar…": [
+    "Select…",
+    "Seleccionar…"
+  ],
+  "Escolha um vencedor para corrigir o round.": [
+    "Choose a winner to correct the round.",
+    "Elige un ganador para corregir la ronda."
+  ],
+  "Vencedor já definido. Confira os rounds.": [
+    "Winner already determined. Check the rounds.",
+    "Ganador ya definido. Revisa las rondas."
+  ],
+  "Esta correção encerra o mapa no round ": [
+    "This correction ends the map at round ",
+    "Esta corrección finaliza el mapa en la ronda "
+  ],
+  ". Remover os rounds posteriores?": [
+    ". Remove later rounds?",
+    ". ¿Eliminar las rondas posteriores?"
+  ],
+  "Confirmar que {0} venceu este mapa?\n\nO mapa ficará bloqueado para edição. A correção administrativa ainda não está disponível.": [
+    "Confirm that {0} won this map?\n\nThe map will be locked for editing. Administrative correction is not yet available.",
+    "¿Confirmar que {0} ganó este mapa?\n\nEl mapa quedará bloqueado. La corrección administrativa aún no está disponible."
+  ],
+  "\n\nExistem {0} bans pendentes. Eles também ficarão bloqueados.": [
+    "\n\nThere are {0} pending bans. They will also be locked.",
+    "\n\nHay {0} bans pendientes. También quedarán bloqueados."
+  ],
+  "Partida JSON|*.json": [
+    "Match JSON|*.json",
+    "Partida JSON|*.json"
+  ],
+  "Partida exportada.": [
+    "Match exported.",
+    "Partida exportada."
+  ],
+  "Esta partida já existe no programa: {0} × {1}. ID: {2}. Nenhum registro foi substituído.": [
+    "This match already exists: {0} × {1}. ID: {2}. No records were replaced.",
+    "Esta partida ya existe: {0} × {1}. ID: {2}. No se reemplazó ningún registro."
+  ],
+  "Não foi possível importar: ": [
+    "Could not import: ",
+    "No se pudo importar: "
+  ],
+  "Escolha um mapa primeiro.": [
+    "Choose a map first.",
+    "Elige primero un mapa."
+  ],
+  "Placar: {0} × {1} • {2} rounds concluídos": [
+    "Score: {0} × {1} • {2} rounds completed",
+    "Marcador: {0} × {1} • {2} rondas completadas"
+  ],
+  "Mapa encerrado: ": [
+    "Map finished: ",
+    "Mapa finalizado: "
+  ],
+  "Retomar no Round {0:00}: {1} ATQ / {2} DEF": [
+    "Resume at Round {0:00}: {1} ATK / {2} DEF",
+    "Reanudar en la Ronda {0:00}: {1} ATQ / {2} DEF"
+  ],
+  "Defina os lados antes de retomar.": [
+    "Set the sides before resuming.",
+    "Define los lados antes de reanudar."
+  ],
+  "\r\nBans da {0} metade:": [
+    "\r\nBans for the {0} half:",
+    "\r\nBans de la {0} mitad:"
+  ],
+  "primeira": [
+    "first",
+    "primera"
+  ],
+  "segunda": [
+    "second",
+    "segunda"
+  ],
+  "Pendente / não realizado": [
+    "Pending / not performed",
+    "Pendiente / no realizado"
+  ],
+  "\r\nHistórico:": [
+    "\r\nHistory:",
+    "\r\nHistorial:"
+  ],
+  "Round {0:00}: {1} ATQ • {2} • venceu {3}": [
+    "Round {0:00}: {1} ATK • {2} • winner {3}",
+    "Ronda {0:00}: {1} ATQ • {2} • ganó {3}"
+  ],
+  "Copiar resumo": [
+    "Copy summary",
+    "Copiar resumen"
+  ],
+  "Revisar partida": [
+    "Review match",
+    "Revisar partida"
+  ],
+  "Mapa confirmado: edição bloqueada.": [
+    "Confirmed map: editing locked.",
+    "Mapa confirmado: edición bloqueada."
+  ],
+  "Aberta": [
+    "Open",
+    "Abierta"
+  ],
+  "Concluída": [
+    "Completed",
+    "Finalizada"
+  ],
+  "Nome / nick do caster": [
+    "Caster name / nickname",
+    "Nombre / nick del caster"
+  ],
+  "@usuario ou endereço do canal": [
+    "@handle or channel address",
+    "@usuario o dirección del canal"
+  ],
+  "@usuário ou endereço do canal": [
+    "@handle or channel address",
+    "@usuario o dirección del canal"
+  ],
+  "Salvar PNGs": [
+    "Save PNGs",
+    "Guardar PNG"
+  ],
+  "Copiar imagem": [
+    "Copy image",
+    "Copiar imagen"
+  ],
+  "Partida para exportar:": [
+    "Match to export:",
+    "Partida para exportar:"
+  ],
+  "FORMATO DA IMAGEM": [
+    "IMAGE FORMAT",
+    "FORMATO DE IMAGEN"
+  ],
+  "CONTEÚDO": [
+    "CONTENT",
+    "CONTENIDO"
+  ],
+  "CAMPEONATO (OPCIONAL)": [
+    "CHAMPIONSHIP (OPTIONAL)",
+    "CAMPEONATO (OPCIONAL)"
+  ],
+  "Selecionar logo": [
+    "Select logo",
+    "Seleccionar logo"
+  ],
+  "Remover logo": [
+    "Remove logo",
+    "Eliminar logo"
+  ],
+  "TRANSMISSÃO (OPCIONAL)": [
+    "BROADCAST (OPTIONAL)",
+    "TRANSMISIÓN (OPCIONAL)"
+  ],
+  "Marque as plataformas. Canal vazio usa o @ principal.": [
+    "Select platforms. Empty channels use the main handle.",
+    "Marca las plataformas. Los canales vacíos usan el @ principal."
+  ],
+  "PRÉVIA": [
+    "PREVIEW",
+    "VISTA PREVIA"
+  ],
+  "Atualizar prévia": [
+    "Refresh preview",
+    "Actualizar vista previa"
+  ],
+  "Imagem copiada.": [
+    "Image copied.",
+    "Imagen copiada."
+  ],
+  "Não foi possível copiar: ": [
+    "Could not copy: ",
+    "No se pudo copiar: "
+  ],
+  "Série · mapas com rounds registrados": [
+    "Series · maps with recorded rounds",
+    "Serie · mapas con rondas registradas"
+  ],
+  "Mapa {0:00} · {1}": [
+    "Map {0:00} · {1}",
+    "Mapa {0:00} · {1}"
+  ],
+  "Logo indisponível. Selecione a imagem novamente.": [
+    "Logo unavailable. Select the image again.",
+    "Logo no disponible. Selecciona de nuevo la imagen."
+  ],
+  "Imagem PNG ou JPEG|*.png;*.jpg;*.jpeg": [
+    "PNG or JPEG image|*.png;*.jpg;*.jpeg",
+    "Imagen PNG o JPEG|*.png;*.jpg;*.jpeg"
+  ],
+  "Use uma imagem com até 20 MB.": [
+    "Use an image up to 20 MB.",
+    "Usa una imagen de hasta 20 MB."
+  ],
+  "A imagem é muito grande. Use uma logo menor.": [
+    "The image is too large. Use a smaller logo.",
+    "La imagen es demasiado grande. Usa un logo más pequeño."
+  ],
+  "Não foi possível usar esta logo: ": [
+    "Could not use this logo: ",
+    "No se pudo usar este logo: "
+  ],
+  "Falha ao salvar preferências: ": [
+    "Could not save preferences: ",
+    "Error al guardar preferencias: "
+  ],
+  "Preparando prévia… Você pode continuar navegando.": [
+    "Preparing preview… You can keep browsing.",
+    "Preparando vista previa… Puedes seguir navegando."
+  ],
+  "Uma imagem vertical com todo o resumo. Séries longas têm texto menor.": [
+    "One vertical image with the full summary. Long series use smaller text.",
+    "Una imagen vertical con todo el resumen. Las series largas usan texto más pequeño."
+  ],
+  "Carrossel: uma capa e uma imagem detalhada por mapa.": [
+    "Carousel: a cover and one detailed image per map.",
+    "Carrusel: una portada y una imagen detallada por mapa."
+  ],
+  "Uma imagem com os mapas lado a lado.": [
+    "One image with maps side by side.",
+    "Una imagen con los mapas uno al lado del otro."
+  ],
+  "Este mapa ainda não tem rounds registrados.": [
+    "This map has no recorded rounds yet.",
+    "Este mapa aún no tiene rondas registradas."
+  ],
+  "{0} imagem(ns) pronta(s). Geração local, sem internet.": [
+    "{0} image(s) ready. Generated locally, without internet.",
+    "{0} imagen(es) lista(s). Generación local, sin internet."
+  ],
+  "Escolha onde salvar as imagens": [
+    "Choose where to save images",
+    "Elige dónde guardar las imágenes"
+  ],
+  "{0} PNG(s) salvo(s) em:\n{1}": [
+    "{0} PNG(s) saved to:\n{1}",
+    "{0} PNG guardado(s) en:\n{1}"
+  ],
+  "Falha na exportação: ": [
+    "Export failed: ",
+    "Error al exportar: "
+  ],
+  "Registre pelo menos um round antes de gerar a imagem.": [
+    "Record at least one round before generating the image.",
+    "Registra al menos una ronda antes de generar la imagen."
+  ],
+  "RESULTADO DA PARTIDA": [
+    "MATCH RESULT",
+    "RESULTADO DE LA PARTIDA"
+  ],
+  "{0} · RESULTADO DA SÉRIE": [
+    "{0} · SERIES RESULT",
+    "{0} · RESULTADO DE LA SERIE"
+  ],
+  "{0} · MAPA {1:00} · {2}": [
+    "{0} · MAP {1:00} · {2}",
+    "{0} · MAPA {1:00} · {2}"
+  ],
+  "PLACAR EM MAPAS": [
+    "MAP SCORE",
+    "MARCADOR EN MAPAS"
+  ],
+  "PLACAR EM ROUNDS": [
+    "ROUND SCORE",
+    "MARCADOR EN RONDAS"
+  ],
+  "RESULTADO PARCIAL": [
+    "PARTIAL RESULT",
+    "RESULTADO PARCIAL"
+  ],
+  "MAPA {0:00} · {1}": [
+    "MAP {0:00} · {1}",
+    "MAPA {0:00} · {1}"
+  ],
+  "PARCIAL": [
+    "PARTIAL",
+    "PARCIAL"
+  ],
+  "NÃO CONFIRMADO": [
+    "UNCONFIRMED",
+    "SIN CONFIRMAR"
+  ],
+  "ROUND A ROUND": [
+    "ROUND BY ROUND",
+    "RONDA A RONDA"
+  ],
+  "ROUND": [
+    "ROUND",
+    "RONDA"
+  ],
+  "BOMBSITE": [
+    "BOMBSITE",
+    "BOMBSITE"
+  ],
+  "VENCEDOR": [
+    "WINNER",
+    "GANADOR"
+  ],
+  "Não registrado": [
+    "Not recorded",
+    "No registrado"
+  ],
+  "LADOS NÃO DEFINIDOS": [
+    "SIDES NOT SET",
+    "LADOS SIN DEFINIR"
+  ],
+  "ATACANDO": [
+    "ATTACKING",
+    "ATACANDO"
+  ],
+  "DEFENDENDO": [
+    "DEFENDING",
+    "DEFENDIENDO"
+  ],
+  "Configurações e sobre": [
+    "Settings and about",
+    "Configuración y acerca de"
+  ],
+  "Modo claro": [
+    "Light mode",
+    "Modo claro"
+  ],
+  "Modo escuro": [
+    "Dark mode",
+    "Modo oscuro"
+  ],
+  "Alternar modo claro e escuro": [
+    "Toggle light and dark mode",
+    "Alternar modo claro y oscuro"
+  ],
+  "Tempo inicial em horas, minutos e segundos": [
+    "Start time in hours, minutes and seconds",
+    "Tiempo inicial en horas, minutos y segundos"
+  ],
+  "Cor fixa da equipe": [
+    "Fixed team color",
+    "Color fijo del equipo"
+  ],
+  "CONFIGURAÇÃO DE LOBBY": [
+    "LOBBY SETUP",
+    "CONFIGURACIÓN DEL LOBBY"
+  ],
+  "Guia de referência para criar sua partida no Siege.": [
+    "Reference guide for creating a match in Siege.",
+    "Guía de referencia para crear una partida en Siege."
+  ],
+  "01   CRIAR PLAYLIST": [
+    "01   CREATE PLAYLIST",
+    "01   CREAR LISTA"
+  ],
+  "Nome": [
+    "Name",
+    "Nombre"
+  ],
+  "Campeonatos": [
+    "Championships",
+    "Campeonatos"
+  ],
+  "Adicionar uma partida": [
+    "Add a match",
+    "Añadir una partida"
+  ],
+  "Mapa (exemplo)": [
+    "Map (example)",
+    "Mapa (ejemplo)"
+  ],
+  "Clube": [
+    "Clubhouse",
+    "Club"
+  ],
+  "Display de navegação": [
+    "HUD settings",
+    "Configuración del HUD"
+  ],
+  "Modo de jogo": [
+    "Game mode",
+    "Modo de juego"
+  ],
+  "Bomba": [
+    "Bomb",
+    "Bomba"
+  ],
+  "02   BANIMENTOS": [
+    "02   BANS",
+    "02   BANS"
+  ],
+  "Ativar fase de banimento": [
+    "Enable ban phase",
+    "Activar fase de veto"
+  ],
+  "Tempo do banimento": [
+    "Ban timer",
+    "Tiempo de veto"
+  ],
+  "03   RODADAS": [
+    "03   ROUNDS",
+    "03   RONDAS"
+  ],
+  "Número de rodadas": [
+    "Number of rounds",
+    "Número de rondas"
+  ],
+  "Inverter atacante/defensor": [
+    "Attacker/defender role swap",
+    "Cambio de atacante/defensor"
+  ],
+  "Rodadas de prorrogação": [
+    "Overtime rounds",
+    "Rondas de prórroga"
+  ],
+  "Dif. pontos prorrogação": [
+    "Overtime score difference",
+    "Diferencia de puntos en prórroga"
+  ],
+  "Inv. papéis prorrogação": [
+    "Overtime role change",
+    "Cambio de lado en prórroga"
+  ],
+  "Rotação de objetivo": [
+    "Objective rotation parameter",
+    "Rotación del objetivo"
+  ],
+  "Rotação do tipo de objetivo": [
+    "Objective type rotation",
+    "Rotación del tipo de objetivo"
+  ],
+  "Rodadas jogadas": [
+    "Rounds played",
+    "Rondas jugadas"
+  ],
+  "Tempo da fase de escolha": [
+    "Pick phase timer",
+    "Tiempo de fase de elección"
+  ],
+  "04   SAÚDE E DANOS": [
+    "04   HEALTH AND DAMAGE",
+    "04   SALUD Y DAÑO"
+  ],
+  "Energia do agente": [
+    "Damage handicap",
+    "Salud del agente"
+  ],
+  "Dano de fogo amigo": [
+    "Friendly fire damage",
+    "Daño por fuego amigo"
+  ],
+  "Fogo amigo na preparação": [
+    "Preparation phase friendly fire",
+    "Fuego amigo en preparación"
+  ],
+  "Fogo amigo reverso": [
+    "Reverse friendly fire",
+    "Fuego amigo inverso"
+  ],
+  "Desligado": [
+    "Off",
+    "Desactivado"
+  ],
+  "Ferido": [
+    "Injured",
+    "Herido"
+  ],
+  "05   CONTROLE DO PERSONAGEM": [
+    "05   CHARACTER CONTROL",
+    "05   CONTROL DEL PERSONAJE"
+  ],
+  "Correr": [
+    "Sprint",
+    "Esprintar"
+  ],
+  "Inclinar": [
+    "Lean",
+    "Inclinarse"
+  ],
+  "Ligado": [
+    "On",
+    "Activado"
+  ],
+  "06   MORTE": [
+    "06   DEATH",
+    "06   MUERTE"
+  ],
+  "Duração da morte": [
+    "Death duration",
+    "Duración de la muerte"
+  ],
+  "Replay da eliminação": [
+    "Death replay",
+    "Repetición de eliminación"
+  ],
+  "07   INTERRUPÇÃO TÁTICA": [
+    "07   TACTICAL TIMEOUT",
+    "07   PAUSA TÁCTICA"
+  ],
+  "Solicitações por equipe": [
+    "Requests per team",
+    "Solicitudes por equipo"
+  ],
+  "Permitir solicitações de": [
+    "Allow requests from",
+    "Permitir solicitudes de"
+  ],
+  "Jogadores": [
+    "Players",
+    "Jugadores"
+  ],
+  "Duração da interrupção": [
+    "Timeout duration",
+    "Duración de la pausa"
+  ],
+  "Intervalo de troca de função": [
+    "Role swap break",
+    "Descanso al cambiar de lado"
+  ],
+  "Duração do intervalo": [
+    "Break duration",
+    "Duración del descanso"
+  ],
+  "08   MODO BOMBA": [
+    "08   BOMB MODE",
+    "08   MODO BOMBA"
+  ],
+  "Instalar / desativar": [
+    "Plant / defuse",
+    "Colocar / desactivar"
+  ],
+  "Detonação": [
+    "Fuse time",
+    "Tiempo de detonación"
+  ],
+  "Portador do desativador": [
+    "Defuser carrier selection",
+    "Selección del portador"
+  ],
+  "Preparação / ação": [
+    "Preparation / action",
+    "Preparación / acción"
+  ],
+  "09   DUPLICAR E SALVAR": [
+    "09   DUPLICATE AND SAVE",
+    "09   DUPLICAR Y GUARDAR"
+  ],
+  "Configure o primeiro mapa.": [
+    "Configure the first map.",
+    "Configura el primer mapa."
+  ],
+  "Duplique e altere apenas o mapa.": [
+    "Duplicate and change only the map.",
+    "Duplica y cambia solo el mapa."
+  ],
+  "Repita para os 9 mapas do campeonato.": [
+    "Repeat for the championship's 9 maps.",
+    "Repite para los 9 mapas del campeonato."
+  ],
+  "Salve as condições de jogo.": [
+    "Save the game settings.",
+    "Guarda la configuración de juego."
+  ],
+  "Banco • Fronteira • Chalé": [
+    "Bank • Border • Chalet",
+    "Banco • Frontera • Chalet"
+  ],
+  "Clube • Fortaleza • Café Dostoyevsky": [
+    "Clubhouse • Fortress • Kafe Dostoyevsky",
+    "Club • Fortaleza • Café Dostoyevsky"
+  ],
+  "Laboratórios Nighthaven • Covil • Mansão": [
+    "Nighthaven Labs • Lair • Villa",
+    "Laboratorios Nighthaven • Guarida • Villa"
+  ],
+  "Guia de consulta: configure os valores dentro do jogo. As partidas duplicadas mantêm as configurações.": [
+    "Reference guide: set these values in the game. Duplicated matches keep the settings.",
+    "Guía de consulta: configura los valores dentro del juego. Las partidas duplicadas conservan los ajustes."
+  ],
+  "Arquivo de partida muito grande.": [
+    "Match file is too large.",
+    "El archivo de partida es demasiado grande."
+  ],
+  "Partida vazia.": [
+    "Empty match.",
+    "Partida vacía."
+  ],
+  "Versão de partida incompatível.": [
+    "Incompatible match version.",
+    "Versión de partida incompatible."
+  ],
+  "Identificador inválido.": [
+    "Invalid identifier.",
+    "Identificador no válido."
+  ],
+  "Nome de equipe deve ter até 12 caracteres.": [
+    "Team names must have at most 12 characters.",
+    "Los nombres de equipo deben tener un máximo de 12 caracteres."
+  ],
+  "Formato inválido.": [
+    "Invalid format.",
+    "Formato no válido."
+  ],
+  "Coin flip inválido.": [
+    "Invalid coin flip.",
+    "Sorteo no válido."
+  ],
+  "Estrutura de partida inválida.": [
+    "Invalid match structure.",
+    "Estructura de partida no válida."
+  ],
+  "Mapas repetidos ou desconhecidos.": [
+    "Duplicate or unknown maps.",
+    "Mapas repetidos o desconocidos."
+  ],
+  "Falta definir coin flip.": [
+    "Set the coin flip first.",
+    "Primero define el sorteo."
+  ],
+  "Veto fora de sequência.": [
+    "Veto is out of sequence.",
+    "Veto fuera de secuencia."
+  ],
+  "Mapas não correspondem ao veto.": [
+    "Maps do not match the veto.",
+    "Los mapas no coinciden con el veto."
+  ],
+  "Lados inválidos.": [
+    "Invalid sides.",
+    "Lados no válidos."
+  ],
+  "Rounds ou bans inválidos.": [
+    "Invalid rounds or bans.",
+    "Rondas o bans no válidos."
+  ],
+  "Dados sem lado inicial.": [
+    "Records without a starting side.",
+    "Registros sin lado inicial."
+  ],
+  "Overtime sem lado definido.": [
+    "Overtime side is not set.",
+    "Lado del overtime sin definir."
+  ],
+  "Round inválido.": [
+    "Invalid round.",
+    "Ronda no válida."
+  ],
+  "Há rounds após o encerramento.": [
+    "There are rounds after the map ended.",
+    "Hay rondas después del final del mapa."
+  ],
+  "Confirmação sem vencedor definido.": [
+    "Confirmation without a winner.",
+    "Confirmación sin ganador definido."
+  ],
+  "Ban de etapa futura.": [
+    "Ban belongs to a future stage.",
+    "El ban corresponde a una etapa futura."
+  ],
+  "Operador incompatível com o lado.": [
+    "Operator does not match the side.",
+    "Agente incompatible con el lado."
+  ],
+  "Ban duplicado na mesma metade.": [
+    "Duplicate ban in the same half.",
+    "Ban duplicado en la misma mitad."
+  ],
+  "Fechar": [
+    "Close",
+    "Cerrar"
+  ],
+  "Créditos e avisos": [
+    "Credits and notices",
+    "Créditos y avisos"
+  ],
+  "RECURSOS VISUAIS E MARCAS\r\n": [
+    "VISUAL ASSETS AND TRADEMARKS\r\n",
+    "RECURSOS VISUALES Y MARCAS\r\n"
+  ],
+  "USO E RESPONSABILIDADE\r\n": [
+    "USE AND RESPONSIBILITY\r\n",
+    "USO Y RESPONSABILIDAD\r\n"
+  ],
+  "Criado por Jeferson “Moska” Sampaio.\r\nFerramentas para community casters • uso interno.\r\n\r\n": [
+    "Created by Jeferson “Moska” Sampaio.\r\nTools for community casters • internal use.\r\n\r\n",
+    "Creado por Jeferson “Moska” Sampaio.\r\nHerramientas para community casters • uso interno.\r\n\r\n"
+  ],
+  "Os ícones de operadores, imagens de mapas e logos de Rainbow Six Siege utilizados neste aplicativo pertencem à Ubisoft e/ou aos respectivos titulares. Rainbow Six, Ubisoft e suas marcas relacionadas pertencem aos respectivos titulares. Logos de campeonatos, equipes e plataformas pertencem aos seus proprietários.\r\n\r\n": [
+    "The operator icons, map images and Rainbow Six Siege logos used in this application belong to Ubisoft and/or their respective owners. Rainbow Six, Ubisoft and related trademarks belong to their respective owners. Championship, team and platform logos belong to their owners.\r\n\r\n",
+    "Los iconos de agentes, imágenes de mapas y logos de Rainbow Six Siege usados en esta aplicación pertenecen a Ubisoft y/o a sus respectivos titulares. Rainbow Six, Ubisoft y sus marcas relacionadas pertenecen a sus respectivos titulares. Los logos de campeonatos, equipos y plataformas pertenecen a sus propietarios.\r\n\r\n"
+  ],
+  "O CasterDesk é uma ferramenta independente. Não representa aprovação, patrocínio ou certificação pela Ubisoft ou pela Microsoft. A autorização de transmissão dos usuários não equivale, por si só, à autorização de redistribuição dos recursos do aplicativo.\r\n\r\n": [
+    "CasterDesk is an independent tool. It does not imply approval, sponsorship or certification by Ubisoft or Microsoft. Users' broadcast authorization does not by itself authorize redistribution of the application's assets.\r\n\r\n",
+    "CasterDesk es una herramienta independiente. No implica aprobación, patrocinio ni certificación de Ubisoft o Microsoft. La autorización de transmisión de los usuarios no autoriza por sí sola la redistribución de los recursos de la aplicación.\r\n\r\n"
+  ],
+  "Utilize a ferramenta e as imagens geradas conforme as autorizações aplicáveis, as regras dos campeonatos e os direitos de terceiros. O usuário é responsável pelos dados e materiais que insere e pelo uso que faz dos resultados, nos limites da legislação aplicável. Este aviso não concede direitos sobre recursos de terceiros nem afasta responsabilidades previstas em lei.\r\n\r\n": [
+    "Use the tool and generated images in accordance with applicable permissions, championship rules and third-party rights. Users are responsible for the data and materials they enter and how they use the results, within the limits of applicable law. This notice grants no rights to third-party assets and does not waive statutory responsibilities.\r\n\r\n",
+    "Utiliza la herramienta y las imágenes generadas conforme a las autorizaciones aplicables, las reglas de los campeonatos y los derechos de terceros. El usuario es responsable de los datos y materiales que introduce y del uso de los resultados, dentro de los límites de la legislación aplicable. Este aviso no concede derechos sobre recursos de terceros ni excluye responsabilidades legales.\r\n\r\n"
+  ],
+  "LICENÇAS\r\nO código próprio possui licença MIT. Recursos visuais de terceiros não estão incluídos nessa licença. O acesso ao repositório e às versões permanece privado. Consulte os arquivos LICENSE e THIRD-PARTY-NOTICES.md que acompanham o instalador.": [
+    "LICENSES\r\nOriginal code is licensed under MIT. Third-party visual assets are not covered by that license. Access to the repository and releases remains private. See the LICENSE and THIRD-PARTY-NOTICES.md files included with the installer.",
+    "LICENCIAS\r\nEl código propio tiene licencia MIT. Los recursos visuales de terceros no están incluidos en esa licencia. El acceso al repositorio y a las versiones sigue siendo privado. Consulta LICENSE y THIRD-PARTY-NOTICES.md incluidos con el instalador."
+  ],
+  "\n\nReabra o programa para retomar os dados salvos.": [
+    "\n\nReopen the application to resume saved data.",
+    "\n\nVuelve a abrir el programa para retomar los datos guardados."
+  ],
+  "Ocorreu um erro de interface. O diagnóstico foi registrado em:\n": [
+    "An interface error occurred. Diagnostics were saved to:\n",
+    "Se produjo un error de interfaz. El diagnóstico se guardó en:\n"
+  ],
+  "Não foi possível abrir o CasterDesk. Consulte a pasta Logs dos dados do aplicativo.\n": [
+    "Could not open CasterDesk. Check the Logs folder in the application data.\n",
+    "No se pudo abrir CasterDesk. Consulta la carpeta Logs de los datos de la aplicación.\n"
+  ],
+  "CasterDesk — erro": [
+    "CasterDesk — error",
+    "CasterDesk — error"
+  ],
+  "NOVA PARTIDA": [
+    "NEW MATCH",
+    "NUEVA PARTIDA"
+  ],
+  "CAMPEONATO": [
+    "CHAMPIONSHIP",
+    "CAMPEONATO"
+  ],
+  "TEXTOS PARA OBS": [
+    "OBS TEXT SOURCES",
+    "TEXTOS PARA OBS"
+  ],
+  "CASTERDESK • FERRAMENTAS PARA COMMUNITY CASTERS": [
+    "CASTERDESK • TOOLS FOR COMMUNITY CASTERS",
+    "CASTERDESK • HERRAMIENTAS PARA COMMUNITY CASTERS"
+  ],
+  "SIMPLIFICADO": [
+    "SIMPLIFIED",
+    "SIMPLIFICADO"
+  ],
+  "ESCURO": [
+    "DARK",
+    "OSCURO"
+  ],
+  "CLARO": [
+    "LIGHT",
+    "CLARO"
+  ],
+  "APLICAR NA PRÓXIMA ABERTURA": [
+    "APPLY ON NEXT LAUNCH",
+    "APLICAR AL VOLVER A ABRIR"
+  ],
+  "SOBRE O CASTERDESK": [
+    "ABOUT CASTERDESK",
+    "ACERCA DE CASTERDESK"
+  ],
+  "TEMA SALVO • SERÁ APLICADO NA PRÓXIMA ABERTURA DO CASTERDESK.": [
+    "THEME SAVED • IT WILL APPLY THE NEXT TIME CASTERDESK OPENS.",
+    "TEMA GUARDADO • SE APLICARÁ AL VOLVER A ABRIR CASTERDESK."
+  ],
+  "CONTAGEM REGRESSIVA": [
+    "COUNTDOWN",
+    "CUENTA REGRESIVA"
+  ],
+  "ACRESCENTAR TEMPO SEM PAUSAR": [
+    "ADD TIME WITHOUT PAUSING",
+    "AÑADIR TIEMPO SIN PAUSAR"
+  ],
+  "ARQUIVO DE SAÍDA • OBS": [
+    "OUTPUT FILE • OBS",
+    "ARCHIVO DE SALIDA • OBS"
+  ],
+  "TEMPO INICIAL:": [
+    "START TIME:",
+    "TIEMPO INICIAL:"
+  ],
+  "RESETAR TEMPO": [
+    "RESET TIMER",
+    "REINICIAR TIEMPO"
+  ],
+  "SUBSTITUIR A CONTAGEM ATUAL E DEIXÁ-LA PAUSADA?": [
+    "REPLACE THE CURRENT COUNTDOWN AND LEAVE IT PAUSED?",
+    "¿REEMPLAZAR LA CUENTA ACTUAL Y DEJARLA PAUSADA?"
+  ],
+  "FORMATO DE SAÍDA:": [
+    "OUTPUT FORMAT:",
+    "FORMATO DE SALIDA:"
+  ],
+  "SAÍDA AO VIVO:": [
+    "LIVE OUTPUT:",
+    "SALIDA EN VIVO:"
+  ],
+  "MENSAGEM FINAL:": [
+    "END MESSAGE:",
+    "MENSAJE FINAL:"
+  ],
+  "INICIAR / RETOMAR": [
+    "START / RESUME",
+    "INICIAR / REANUDAR"
+  ],
+  "PAUSAR": [
+    "PAUSE",
+    "PAUSAR"
+  ],
+  "ADICIONAR AGORA:": [
+    "ADD NOW:",
+    "AÑADIR AHORA:"
+  ],
+  "VALOR DOS BOTÕES:": [
+    "BUTTON AMOUNTS:",
+    "VALOR POR BOTÓN:"
+  ],
+  "ESCOLHER TXT": [
+    "CHOOSE TXT",
+    "ELEGIR TXT"
+  ],
+  "COPIAR CAMINHO": [
+    "COPY PATH",
+    "COPIAR RUTA"
+  ],
+  "FECHAR E INTERROMPER A CONTAGEM? O TXT MANTERÁ O ÚLTIMO TEXTO.": [
+    "CLOSE AND STOP THE COUNTDOWN? THE TXT WILL KEEP ITS LAST TEXT.",
+    "¿CERRAR Y DETENER LA CUENTA? EL TXT CONSERVARÁ EL ÚLTIMO TEXTO."
+  ],
+  "SAIR": [
+    "EXIT",
+    "SALIR"
+  ],
+  "● EM ANDAMENTO": [
+    "● RUNNING",
+    "● EN CURSO"
+  ],
+  "CONTAGEM ENCERRADA": [
+    "COUNTDOWN FINISHED",
+    "CUENTA FINALIZADA"
+  ],
+  "PAUSADO / PRONTO": [
+    "PAUSED / READY",
+    "PAUSADO / LISTO"
+  ],
+  "TXT ATUALIZADO • ": [
+    "TXT UPDATED • ",
+    "TXT ACTUALIZADO • "
+  ],
+  "NÃO FOI POSSÍVEL GRAVAR O TXT: ": [
+    "COULD NOT WRITE THE TXT: ",
+    "NO SE PUDO ESCRIBIR EL TXT: "
+  ],
+  "ARQUIVO DE TEXTO (*.TXT)|*.TXT": [
+    "TEXT FILE (*.TXT)|*.TXT",
+    "ARCHIVO DE TEXTO (*.TXT)|*.TXT"
+  ],
+  "NÃO FOI POSSÍVEL SALVAR AS PREFERÊNCIAS: ": [
+    "COULD NOT SAVE PREFERENCES: ",
+    "NO SE PUDIERON GUARDAR LAS PREFERENCIAS: "
+  ],
+  "PREENCHA OS CAMPOS E CLIQUE EM APLICAR NO OBS.": [
+    "FILL IN THE FIELDS AND CLICK APPLY TO OBS.",
+    "RELLENA LOS CAMPOS Y PULSA APLICAR EN OBS."
+  ],
+  "NARRADOR / CASTER": [
+    "PLAY-BY-PLAY / CASTER",
+    "NARRADOR / CASTER"
+  ],
+  "COMENTARISTA": [
+    "COMMENTATOR",
+    "COMENTARISTA"
+  ],
+  "CONVIDADO 1": [
+    "GUEST 1",
+    "INVITADO 1"
+  ],
+  "CONVIDADO 2": [
+    "GUEST 2",
+    "INVITADO 2"
+  ],
+  "NOME:": [
+    "NAME:",
+    "NOMBRE:"
+  ],
+  "PASTA DOS OITO ARQUIVOS TXT": [
+    "FOLDER FOR THE EIGHT TXT FILES",
+    "CARPETA DE LOS OCHO ARCHIVOS TXT"
+  ],
+  "ESCOLHER PASTA": [
+    "CHOOSE FOLDER",
+    "ELEGIR CARPETA"
+  ],
+  "APLICAR NO OBS": [
+    "APPLY TO OBS",
+    "APLICAR EN OBS"
+  ],
+  "ALTERAÇÕES PENDENTES. CLIQUE EM APLICAR NO OBS.": [
+    "PENDING CHANGES. CLICK APPLY TO OBS.",
+    "CAMBIOS PENDIENTES. PULSA APLICAR EN OBS."
+  ],
+  "ESCOLHA A PASTA DOS TXT DO CASTING": [
+    "CHOOSE THE CASTING TXT FOLDER",
+    "ELIGE LA CARPETA DE TXT DEL CASTING"
+  ],
+  "NÃO FOI POSSÍVEL SALVAR O CASTING: ": [
+    "COULD NOT SAVE CASTING: ",
+    "NO SE PUDO GUARDAR EL CASTING: "
+  ],
+  "8 TXT ATUALIZADOS ÀS ": [
+    "8 TXT FILES UPDATED AT ",
+    "8 ARCHIVOS TXT ACTUALIZADOS A LAS "
+  ],
+  "FALHA AO ATUALIZAR. ALGUNS TXT PODEM TER SIDO GRAVADOS.": [
+    "UPDATE FAILED. SOME TXT FILES MAY HAVE BEEN WRITTEN.",
+    "ERROR AL ACTUALIZAR. ALGUNOS TXT PUEDEN HABERSE GUARDADO."
+  ],
+  "SAÍDA DO CASTING": [
+    "CASTING OUTPUT",
+    "SALIDA DEL CASTING"
+  ],
+  "PARTIDA": [
+    "MATCH",
+    "PARTIDA"
+  ],
+  "CONFRONTO": [
+    "MATCHUP",
+    "ENFRENTAMIENTO"
+  ],
+  "EQUIPE A:": [
+    "TEAM A:",
+    "EQUIPO A:"
+  ],
+  "EQUIPE B:": [
+    "TEAM B:",
+    "EQUIPO B:"
+  ],
+  "FORMATO:": [
+    "FORMAT:",
+    "FORMATO:"
+  ],
+  "MD5: FUTURO": [
+    "BO5: FUTURE",
+    "MD5: FUTURO"
+  ],
+  "COIN FLIP:": [
+    "COIN FLIP:",
+    "SORTEO:"
+  ],
+  "PRIMEIRO BAN:": [
+    "FIRST BAN:",
+    "PRIMER BAN:"
+  ],
+  "MAPAS DA PARTIDA • LADOS DA EQUIPE INDICADA": [
+    "MATCH MAPS • SIDES OF THE INDICATED TEAM",
+    "MAPAS DE LA PARTIDA • LADOS DEL EQUIPO INDICADO"
+  ],
+  "MAPAS • PICKS E BANS": [
+    "MAPS • PICKS AND BANS",
+    "MAPAS • PICKS Y BANS"
+  ],
+  "BANS DE OPERADORES": [
+    "OPERATOR BANS",
+    "BANS DE AGENTES"
+  ],
+  "ROUND A ROUND • CLIQUE NO BOMB SITE OU VENCEDOR": [
+    "ROUND BY ROUND • CLICK THE BOMBSITE OR WINNER",
+    "RONDA A RONDA • PULSA EL BOMBSITE O EL GANADOR"
+  ],
+  "CORRIGIR BANS": [
+    "CORRECT BANS",
+    "CORREGIR BANS"
+  ],
+  "RESUMO PARA REMAKE": [
+    "REMAKE SUMMARY",
+    "RESUMEN PARA REMAKE"
+  ],
+  "SALVAR AGORA": [
+    "SAVE NOW",
+    "GUARDAR AHORA"
+  ],
+  "IMPORTAR PARTIDA": [
+    "IMPORT MATCH",
+    "IMPORTAR PARTIDA"
+  ],
+  "EXPORTAR PARTIDA": [
+    "EXPORT MATCH",
+    "EXPORTAR PARTIDA"
+  ],
+  "CONFIGURAR LOBBY": [
+    "LOBBY SETUP",
+    "CONFIGURAR LOBBY"
+  ],
+  "EXPORTAR IMAGEM": [
+    "EXPORT IMAGE",
+    "EXPORTAR IMAGEN"
+  ],
+  "ATAQUE": [
+    "ATTACK",
+    "ATAQUE"
+  ],
+  "DEFESA": [
+    "DEFENSE",
+    "DEFENSA"
+  ],
+  "PLACAR": [
+    "SCORE",
+    "MARCADOR"
+  ],
+  "SELEÇÃO INVÁLIDA. CONFIRA O CAMPO.": [
+    "INVALID SELECTION. CHECK THE FIELD.",
+    "SELECCIÓN NO VÁLIDA. REVISA EL CAMPO."
+  ],
+  "RECUPERADA CÓPIA ANTERIOR DE ": [
+    "RECOVERED PREVIOUS COPY OF ",
+    "SE RECUPERÓ UNA COPIA ANTERIOR DE "
+  ],
+  "NÃO FOI POSSÍVEL ABRIR ": [
+    "COULD NOT OPEN ",
+    "NO SE PUDO ABRIR "
+  ],
+  "SALVO AUTOMATICAMENTE • ": [
+    "AUTOSAVED • ",
+    "GUARDADO AUTOMÁTICO • "
+  ],
+  "FALHA AO SALVAR: ": [
+    "SAVE FAILED: ",
+    "ERROR AL GUARDAR: "
+  ],
+  "ALTERAR O FORMATO OU PRIMEIRO BAN LIMPA O VETO E OS REGISTROS DESTA PARTIDA. CONTINUAR?": [
+    "CHANGING THE FORMAT OR FIRST BAN CLEARS THIS MATCH'S VETO AND RECORDS. CONTINUE?",
+    "CAMBIAR EL FORMATO O EL PRIMER BAN BORRA EL VETO Y LOS REGISTROS DE ESTA PARTIDA. ¿CONTINUAR?"
+  ],
+  "ID DA PARTIDA: ": [
+    "MATCH ID: ",
+    "ID DE LA PARTIDA: "
+  ],
+  "SELECIONAR MAPA…": [
+    "SELECT MAP…",
+    "SELECCIONAR MAPA…"
+  ],
+  "CONTINUE POR AQUI": [
+    "CONTINUE HERE",
+    "CONTINÚA AQUÍ"
+  ],
+  "MAPA": [
+    "MAP",
+    "MAPA"
+  ],
+  "TIME": [
+    "TEAM",
+    "EQUIPO"
+  ],
+  "LADO INICIAL": [
+    "STARTING SIDE",
+    "LADO INICIAL"
+  ],
+  "VENCEDOR CONFIRMADO": [
+    "WINNER CONFIRMED",
+    "GANADOR CONFIRMADO"
+  ],
+  "CONFIRMAR VITÓRIA: ": [
+    "CONFIRM VICTORY: ",
+    "CONFIRMAR VICTORIA: "
+  ],
+  "CONFIRMAR VENCEDOR": [
+    "CONFIRM WINNER",
+    "CONFIRMAR GANADOR"
+  ],
+  "SÉRIE CONCLUÍDA. RESULTADOS CONFIRMADOS E EDIÇÃO BLOQUEADA.": [
+    "SERIES COMPLETED. RESULTS CONFIRMED AND EDITING LOCKED.",
+    "SERIE FINALIZADA. RESULTADOS CONFIRMADOS Y EDICIÓN BLOQUEADA."
+  ],
+  "VENCEDOR CONFIRMADO. ESTE MAPA ESTÁ BLOQUEADO; VOCÊ PODE CONTINUAR NOS DEMAIS MAPAS.": [
+    "WINNER CONFIRMED. THIS MAP IS LOCKED; YOU CAN CONTINUE WITH THE OTHER MAPS.",
+    "GANADOR CONFIRMADO. ESTE MAPA ESTÁ BLOQUEADO; PUEDES CONTINUAR EN LOS DEMÁS MAPAS."
+  ],
+  "CONFIRA OS ROUNDS E CONFIRME O VENCEDOR.": [
+    "CHECK THE ROUNDS AND CONFIRM THE WINNER.",
+    "REVISA LAS RONDAS Y CONFIRMA AL GANADOR."
+  ],
+  "VOCÊ PODE CONTINUAR REGISTRANDO OS ROUNDS.": [
+    "YOU CAN CONTINUE RECORDING ROUNDS.",
+    "PUEDES SEGUIR REGISTRANDO RONDAS."
+  ],
+  "VENCEDOR DEFINIDO. CONFIRA OS ROUNDS E CONFIRME O VENCEDOR.": [
+    "WINNER DETERMINED. CHECK THE ROUNDS AND CONFIRM THE WINNER.",
+    "GANADOR DEFINIDO. REVISA LAS RONDAS Y CONFIRMA AL GANADOR."
+  ],
+  "DEFINA O LADO DO OVERTIME PARA LIBERAR O ROUND 13. ": [
+    "SET THE OVERTIME SIDE TO UNLOCK ROUND 13. ",
+    "DEFINE EL LADO DEL OVERTIME PARA HABILITAR LA RONDA 13. "
+  ],
+  "DEFINA O LADO INICIAL PARA LIBERAR OS BANS E OS ROUNDS DESTE MAPA.": [
+    "SET THE STARTING SIDE TO UNLOCK THIS MAP'S BANS AND ROUNDS.",
+    "DEFINE EL LADO INICIAL PARA HABILITAR LOS BANS Y LAS RONDAS DE ESTE MAPA."
+  ],
+  "ESTA ESCOLHA MUDARIA UM MAPA CONFIRMADO. ALTERAÇÃO BLOQUEADA.": [
+    "THIS CHOICE WOULD CHANGE A CONFIRMED MAP. CHANGE BLOCKED.",
+    "ESTA ELECCIÓN CAMBIARÍA UN MAPA CONFIRMADO. CAMBIO BLOQUEADO."
+  ],
+  "ESTA TROCA MUDA UM MAPA COM BANS OU ROUNDS REGISTRADOS. LIMPAR APENAS OS REGISTROS DO MAPA SUBSTITUÍDO?": [
+    "THIS CHANGE REPLACES A MAP WITH RECORDED BANS OR ROUNDS. CLEAR ONLY THE REPLACED MAP'S RECORDS?",
+    "ESTE CAMBIO REEMPLAZA UN MAPA CON BANS O RONDAS REGISTRADOS. ¿BORRAR SOLO LOS REGISTROS DEL MAPA REEMPLAZADO?"
+  ],
+  "RECALCULAR OS LADOS DO OVERTIME COM ESTA ESCOLHA?": [
+    "RECALCULATE OVERTIME SIDES WITH THIS CHOICE?",
+    "¿RECALCULAR LOS LADOS DEL OVERTIME CON ESTA ELECCIÓN?"
+  ],
+  "ALTERAR O LADO INICIAL RECALCULA ATAQUE/DEFESA DOS ROUNDS E LIMPA OS BANS DESTE MAPA, POIS MUDAM OS TIPOS PERMITIDOS. CONTINUAR?": [
+    "CHANGING THE STARTING SIDE RECALCULATES ATTACK/DEFENSE AND CLEARS THIS MAP'S BANS BECAUSE THE ALLOWED ROLES CHANGE. CONTINUE?",
+    "CAMBIAR EL LADO INICIAL RECALCULA ATAQUE/DEFENSA Y BORRA LOS BANS DE ESTE MAPA PORQUE CAMBIAN LOS TIPOS PERMITIDOS. ¿CONTINUAR?"
+  ],
+  "DEFINA O LADO INICIAL": [
+    "SET THE STARTING SIDE",
+    "DEFINE EL LADO INICIAL"
+  ],
+  " • CORRIGINDO": [
+    " • EDITING",
+    " • CORRIGIENDO"
+  ],
+  "! PENDENTE": [
+    "! PENDING",
+    "! PENDIENTE"
+  ],
+  "BLOQUEADO": [
+    "LOCKED",
+    "BLOQUEADO"
+  ],
+  "SELECIONAR BAN DE ": [
+    "SELECT BAN FOR ",
+    "SELECCIONAR BAN DE "
+  ],
+  "LIBERA APÓS O ROUND ": [
+    "UNLOCKS AFTER ROUND ",
+    "SE HABILITA TRAS LA RONDA "
+  ],
+  "BUSCAR OPERADOR…": [
+    "SEARCH OPERATOR…",
+    "BUSCAR AGENTE…"
+  ],
+  "SELECIONAR…": [
+    "SELECT…",
+    "SELECCIONAR…"
+  ],
+  "ESCOLHA UM VENCEDOR PARA CORRIGIR O ROUND.": [
+    "CHOOSE A WINNER TO CORRECT THE ROUND.",
+    "ELIGE UN GANADOR PARA CORREGIR LA RONDA."
+  ],
+  "VENCEDOR JÁ DEFINIDO. CONFIRA OS ROUNDS.": [
+    "WINNER ALREADY DETERMINED. CHECK THE ROUNDS.",
+    "GANADOR YA DEFINIDO. REVISA LAS RONDAS."
+  ],
+  "ESTA CORREÇÃO ENCERRA O MAPA NO ROUND ": [
+    "THIS CORRECTION ENDS THE MAP AT ROUND ",
+    "ESTA CORRECCIÓN FINALIZA EL MAPA EN LA RONDA "
+  ],
+  ". REMOVER OS ROUNDS POSTERIORES?": [
+    ". REMOVE LATER ROUNDS?",
+    ". ¿ELIMINAR LAS RONDAS POSTERIORES?"
+  ],
+  "PARTIDA JSON|*.JSON": [
+    "MATCH JSON|*.JSON",
+    "PARTIDA JSON|*.JSON"
+  ],
+  "PARTIDA EXPORTADA.": [
+    "MATCH EXPORTED.",
+    "PARTIDA EXPORTADA."
+  ],
+  "NÃO FOI POSSÍVEL IMPORTAR: ": [
+    "COULD NOT IMPORT: ",
+    "NO SE PUDO IMPORTAR: "
+  ],
+  "ESCOLHA UM MAPA PRIMEIRO.": [
+    "CHOOSE A MAP FIRST.",
+    "ELIGE PRIMERO UN MAPA."
+  ],
+  "MAPA ENCERRADO: ": [
+    "MAP FINISHED: ",
+    "MAPA FINALIZADO: "
+  ],
+  "DEFINA OS LADOS ANTES DE RETOMAR.": [
+    "SET THE SIDES BEFORE RESUMING.",
+    "DEFINE LOS LADOS ANTES DE REANUDAR."
+  ],
+  "PRIMEIRA": [
+    "FIRST",
+    "PRIMERA"
+  ],
+  "SEGUNDA": [
+    "SECOND",
+    "SEGUNDA"
+  ],
+  "PENDENTE / NÃO REALIZADO": [
+    "PENDING / NOT PERFORMED",
+    "PENDIENTE / NO REALIZADO"
+  ],
+  "\r\nHISTÓRICO:": [
+    "\r\nHISTORY:",
+    "\r\nHISTORIAL:"
+  ],
+  "COPIAR RESUMO": [
+    "COPY SUMMARY",
+    "COPIAR RESUMEN"
+  ],
+  "REVISAR PARTIDA": [
+    "REVIEW MATCH",
+    "REVISAR PARTIDA"
+  ],
+  "MAPA CONFIRMADO: EDIÇÃO BLOQUEADA.": [
+    "CONFIRMED MAP: EDITING LOCKED.",
+    "MAPA CONFIRMADO: EDICIÓN BLOQUEADA."
+  ],
+  "ABERTA": [
+    "OPEN",
+    "ABIERTA"
+  ],
+  "CONCLUÍDA": [
+    "COMPLETED",
+    "FINALIZADA"
+  ],
+  "NOME / NICK DO CASTER": [
+    "CASTER NAME / NICKNAME",
+    "NOMBRE / NICK DEL CASTER"
+  ],
+  "@USUARIO OU ENDEREÇO DO CANAL": [
+    "@HANDLE OR CHANNEL ADDRESS",
+    "@USUARIO O DIRECCIÓN DEL CANAL"
+  ],
+  "@USUÁRIO OU ENDEREÇO DO CANAL": [
+    "@HANDLE OR CHANNEL ADDRESS",
+    "@USUARIO O DIRECCIÓN DEL CANAL"
+  ],
+  "SALVAR PNGS": [
+    "SAVE PNGS",
+    "GUARDAR PNG"
+  ],
+  "COPIAR IMAGEM": [
+    "COPY IMAGE",
+    "COPIAR IMAGEN"
+  ],
+  "PARTIDA PARA EXPORTAR:": [
+    "MATCH TO EXPORT:",
+    "PARTIDA PARA EXPORTAR:"
+  ],
+  "SELECIONAR LOGO": [
+    "SELECT LOGO",
+    "SELECCIONAR LOGO"
+  ],
+  "REMOVER LOGO": [
+    "REMOVE LOGO",
+    "ELIMINAR LOGO"
+  ],
+  "MARQUE AS PLATAFORMAS. CANAL VAZIO USA O @ PRINCIPAL.": [
+    "SELECT PLATFORMS. EMPTY CHANNELS USE THE MAIN HANDLE.",
+    "MARCA LAS PLATAFORMAS. LOS CANALES VACÍOS USAN EL @ PRINCIPAL."
+  ],
+  "ATUALIZAR PRÉVIA": [
+    "REFRESH PREVIEW",
+    "ACTUALIZAR VISTA PREVIA"
+  ],
+  "IMAGEM COPIADA.": [
+    "IMAGE COPIED.",
+    "IMAGEN COPIADA."
+  ],
+  "NÃO FOI POSSÍVEL COPIAR: ": [
+    "COULD NOT COPY: ",
+    "NO SE PUDO COPIAR: "
+  ],
+  "SÉRIE · MAPAS COM ROUNDS REGISTRADOS": [
+    "SERIES · MAPS WITH RECORDED ROUNDS",
+    "SERIE · MAPAS CON RONDAS REGISTRADAS"
+  ],
+  "LOGO INDISPONÍVEL. SELECIONE A IMAGEM NOVAMENTE.": [
+    "LOGO UNAVAILABLE. SELECT THE IMAGE AGAIN.",
+    "LOGO NO DISPONIBLE. SELECCIONA DE NUEVO LA IMAGEN."
+  ],
+  "IMAGEM PNG OU JPEG|*.PNG;*.JPG;*.JPEG": [
+    "PNG OR JPEG IMAGE|*.PNG;*.JPG;*.JPEG",
+    "IMAGEN PNG O JPEG|*.PNG;*.JPG;*.JPEG"
+  ],
+  "USE UMA IMAGEM COM ATÉ 20 MB.": [
+    "USE AN IMAGE UP TO 20 MB.",
+    "USA UNA IMAGEN DE HASTA 20 MB."
+  ],
+  "A IMAGEM É MUITO GRANDE. USE UMA LOGO MENOR.": [
+    "THE IMAGE IS TOO LARGE. USE A SMALLER LOGO.",
+    "LA IMAGEN ES DEMASIADO GRANDE. USA UN LOGO MÁS PEQUEÑO."
+  ],
+  "NÃO FOI POSSÍVEL USAR ESTA LOGO: ": [
+    "COULD NOT USE THIS LOGO: ",
+    "NO SE PUDO USAR ESTE LOGO: "
+  ],
+  "FALHA AO SALVAR PREFERÊNCIAS: ": [
+    "COULD NOT SAVE PREFERENCES: ",
+    "ERROR AL GUARDAR PREFERENCIAS: "
+  ],
+  "PREPARANDO PRÉVIA… VOCÊ PODE CONTINUAR NAVEGANDO.": [
+    "PREPARING PREVIEW… YOU CAN KEEP BROWSING.",
+    "PREPARANDO VISTA PREVIA… PUEDES SEGUIR NAVEGANDO."
+  ],
+  "UMA IMAGEM VERTICAL COM TODO O RESUMO. SÉRIES LONGAS TÊM TEXTO MENOR.": [
+    "ONE VERTICAL IMAGE WITH THE FULL SUMMARY. LONG SERIES USE SMALLER TEXT.",
+    "UNA IMAGEN VERTICAL CON TODO EL RESUMEN. LAS SERIES LARGAS USAN TEXTO MÁS PEQUEÑO."
+  ],
+  "CARROSSEL: UMA CAPA E UMA IMAGEM DETALHADA POR MAPA.": [
+    "CAROUSEL: A COVER AND ONE DETAILED IMAGE PER MAP.",
+    "CARRUSEL: UNA PORTADA Y UNA IMAGEN DETALLADA POR MAPA."
+  ],
+  "UMA IMAGEM COM OS MAPAS LADO A LADO.": [
+    "ONE IMAGE WITH MAPS SIDE BY SIDE.",
+    "UNA IMAGEN CON LOS MAPAS UNO AL LADO DEL OTRO."
+  ],
+  "ESTE MAPA AINDA NÃO TEM ROUNDS REGISTRADOS.": [
+    "THIS MAP HAS NO RECORDED ROUNDS YET.",
+    "ESTE MAPA AÚN NO TIENE RONDAS REGISTRADAS."
+  ],
+  "ESCOLHA ONDE SALVAR AS IMAGENS": [
+    "CHOOSE WHERE TO SAVE IMAGES",
+    "ELIGE DÓNDE GUARDAR LAS IMÁGENES"
+  ],
+  "FALHA NA EXPORTAÇÃO: ": [
+    "EXPORT FAILED: ",
+    "ERROR AL EXPORTAR: "
+  ],
+  "REGISTRE PELO MENOS UM ROUND ANTES DE GERAR A IMAGEM.": [
+    "RECORD AT LEAST ONE ROUND BEFORE GENERATING THE IMAGE.",
+    "REGISTRA AL MENOS UNA RONDA ANTES DE GENERAR LA IMAGEN."
+  ],
+  "NÃO REGISTRADO": [
+    "NOT RECORDED",
+    "NO REGISTRADO"
+  ],
+  "CONFIGURAÇÕES E SOBRE": [
+    "SETTINGS AND ABOUT",
+    "CONFIGURACIÓN Y ACERCA DE"
+  ],
+  "MODO CLARO": [
+    "LIGHT MODE",
+    "MODO CLARO"
+  ],
+  "MODO ESCURO": [
+    "DARK MODE",
+    "MODO OSCURO"
+  ],
+  "ALTERNAR MODO CLARO E ESCURO": [
+    "TOGGLE LIGHT AND DARK MODE",
+    "ALTERNAR MODO CLARO Y OSCURO"
+  ],
+  "TEMPO INICIAL EM HORAS, MINUTOS E SEGUNDOS": [
+    "START TIME IN HOURS, MINUTES AND SECONDS",
+    "TIEMPO INICIAL EN HORAS, MINUTOS Y SEGUNDOS"
+  ],
+  "COR FIXA DA EQUIPE": [
+    "FIXED TEAM COLOR",
+    "COLOR FIJO DEL EQUIPO"
+  ],
+  "GUIA DE REFERÊNCIA PARA CRIAR SUA PARTIDA NO SIEGE.": [
+    "REFERENCE GUIDE FOR CREATING A MATCH IN SIEGE.",
+    "GUÍA DE REFERENCIA PARA CREAR UNA PARTIDA EN SIEGE."
+  ],
+  "NOME": [
+    "NAME",
+    "NOMBRE"
+  ],
+  "CAMPEONATOS": [
+    "CHAMPIONSHIPS",
+    "CAMPEONATOS"
+  ],
+  "ADICIONAR UMA PARTIDA": [
+    "ADD A MATCH",
+    "AÑADIR UNA PARTIDA"
+  ],
+  "MAPA (EXEMPLO)": [
+    "MAP (EXAMPLE)",
+    "MAPA (EJEMPLO)"
+  ],
+  "CLUBE": [
+    "CLUBHOUSE",
+    "CLUB"
+  ],
+  "DISPLAY DE NAVEGAÇÃO": [
+    "HUD SETTINGS",
+    "CONFIGURACIÓN DEL HUD"
+  ],
+  "MODO DE JOGO": [
+    "GAME MODE",
+    "MODO DE JUEGO"
+  ],
+  "BOMBA": [
+    "BOMB",
+    "BOMBA"
+  ],
+  "ATIVAR FASE DE BANIMENTO": [
+    "ENABLE BAN PHASE",
+    "ACTIVAR FASE DE VETO"
+  ],
+  "TEMPO DO BANIMENTO": [
+    "BAN TIMER",
+    "TIEMPO DE VETO"
+  ],
+  "NÚMERO DE RODADAS": [
+    "NUMBER OF ROUNDS",
+    "NÚMERO DE RONDAS"
+  ],
+  "INVERTER ATACANTE/DEFENSOR": [
+    "ATTACKER/DEFENDER ROLE SWAP",
+    "CAMBIO DE ATACANTE/DEFENSOR"
+  ],
+  "RODADAS DE PRORROGAÇÃO": [
+    "OVERTIME ROUNDS",
+    "RONDAS DE PRÓRROGA"
+  ],
+  "DIF. PONTOS PRORROGAÇÃO": [
+    "OVERTIME SCORE DIFFERENCE",
+    "DIFERENCIA DE PUNTOS EN PRÓRROGA"
+  ],
+  "INV. PAPÉIS PRORROGAÇÃO": [
+    "OVERTIME ROLE CHANGE",
+    "CAMBIO DE LADO EN PRÓRROGA"
+  ],
+  "ROTAÇÃO DE OBJETIVO": [
+    "OBJECTIVE ROTATION PARAMETER",
+    "ROTACIÓN DEL OBJETIVO"
+  ],
+  "ROTAÇÃO DO TIPO DE OBJETIVO": [
+    "OBJECTIVE TYPE ROTATION",
+    "ROTACIÓN DEL TIPO DE OBJETIVO"
+  ],
+  "RODADAS JOGADAS": [
+    "ROUNDS PLAYED",
+    "RONDAS JUGADAS"
+  ],
+  "TEMPO DA FASE DE ESCOLHA": [
+    "PICK PHASE TIMER",
+    "TIEMPO DE FASE DE ELECCIÓN"
+  ],
+  "ENERGIA DO AGENTE": [
+    "DAMAGE HANDICAP",
+    "SALUD DEL AGENTE"
+  ],
+  "DANO DE FOGO AMIGO": [
+    "FRIENDLY FIRE DAMAGE",
+    "DAÑO POR FUEGO AMIGO"
+  ],
+  "FOGO AMIGO NA PREPARAÇÃO": [
+    "PREPARATION PHASE FRIENDLY FIRE",
+    "FUEGO AMIGO EN PREPARACIÓN"
+  ],
+  "FOGO AMIGO REVERSO": [
+    "REVERSE FRIENDLY FIRE",
+    "FUEGO AMIGO INVERSO"
+  ],
+  "DESLIGADO": [
+    "OFF",
+    "DESACTIVADO"
+  ],
+  "FERIDO": [
+    "INJURED",
+    "HERIDO"
+  ],
+  "CORRER": [
+    "SPRINT",
+    "ESPRINTAR"
+  ],
+  "INCLINAR": [
+    "LEAN",
+    "INCLINARSE"
+  ],
+  "LIGADO": [
+    "ON",
+    "ACTIVADO"
+  ],
+  "DURAÇÃO DA MORTE": [
+    "DEATH DURATION",
+    "DURACIÓN DE LA MUERTE"
+  ],
+  "REPLAY DA ELIMINAÇÃO": [
+    "DEATH REPLAY",
+    "REPETICIÓN DE ELIMINACIÓN"
+  ],
+  "SOLICITAÇÕES POR EQUIPE": [
+    "REQUESTS PER TEAM",
+    "SOLICITUDES POR EQUIPO"
+  ],
+  "PERMITIR SOLICITAÇÕES DE": [
+    "ALLOW REQUESTS FROM",
+    "PERMITIR SOLICITUDES DE"
+  ],
+  "JOGADORES": [
+    "PLAYERS",
+    "JUGADORES"
+  ],
+  "DURAÇÃO DA INTERRUPÇÃO": [
+    "TIMEOUT DURATION",
+    "DURACIÓN DE LA PAUSA"
+  ],
+  "INTERVALO DE TROCA DE FUNÇÃO": [
+    "ROLE SWAP BREAK",
+    "DESCANSO AL CAMBIAR DE LADO"
+  ],
+  "DURAÇÃO DO INTERVALO": [
+    "BREAK DURATION",
+    "DURACIÓN DEL DESCANSO"
+  ],
+  "INSTALAR / DESATIVAR": [
+    "PLANT / DEFUSE",
+    "COLOCAR / DESACTIVAR"
+  ],
+  "DETONAÇÃO": [
+    "FUSE TIME",
+    "TIEMPO DE DETONACIÓN"
+  ],
+  "PORTADOR DO DESATIVADOR": [
+    "DEFUSER CARRIER SELECTION",
+    "SELECCIÓN DEL PORTADOR"
+  ],
+  "PREPARAÇÃO / AÇÃO": [
+    "PREPARATION / ACTION",
+    "PREPARACIÓN / ACCIÓN"
+  ],
+  "CONFIGURE O PRIMEIRO MAPA.": [
+    "CONFIGURE THE FIRST MAP.",
+    "CONFIGURA EL PRIMER MAPA."
+  ],
+  "DUPLIQUE E ALTERE APENAS O MAPA.": [
+    "DUPLICATE AND CHANGE ONLY THE MAP.",
+    "DUPLICA Y CAMBIA SOLO EL MAPA."
+  ],
+  "REPITA PARA OS 9 MAPAS DO CAMPEONATO.": [
+    "REPEAT FOR THE CHAMPIONSHIP'S 9 MAPS.",
+    "REPITE PARA LOS 9 MAPAS DEL CAMPEONATO."
+  ],
+  "SALVE AS CONDIÇÕES DE JOGO.": [
+    "SAVE THE GAME SETTINGS.",
+    "GUARDA LA CONFIGURACIÓN DE JUEGO."
+  ],
+  "BANCO • FRONTEIRA • CHALÉ": [
+    "BANK • BORDER • CHALET",
+    "BANCO • FRONTERA • CHALET"
+  ],
+  "CLUBE • FORTALEZA • CAFÉ DOSTOYEVSKY": [
+    "CLUBHOUSE • FORTRESS • KAFE DOSTOYEVSKY",
+    "CLUB • FORTALEZA • CAFÉ DOSTOYEVSKY"
+  ],
+  "LABORATÓRIOS NIGHTHAVEN • COVIL • MANSÃO": [
+    "NIGHTHAVEN LABS • LAIR • VILLA",
+    "LABORATORIOS NIGHTHAVEN • GUARIDA • VILLA"
+  ],
+  "GUIA DE CONSULTA: CONFIGURE OS VALORES DENTRO DO JOGO. AS PARTIDAS DUPLICADAS MANTÊM AS CONFIGURAÇÕES.": [
+    "REFERENCE GUIDE: SET THESE VALUES IN THE GAME. DUPLICATED MATCHES KEEP THE SETTINGS.",
+    "GUÍA DE CONSULTA: CONFIGURA LOS VALORES DENTRO DEL JUEGO. LAS PARTIDAS DUPLICADAS CONSERVAN LOS AJUSTES."
+  ],
+  "ARQUIVO DE PARTIDA MUITO GRANDE.": [
+    "MATCH FILE IS TOO LARGE.",
+    "EL ARCHIVO DE PARTIDA ES DEMASIADO GRANDE."
+  ],
+  "PARTIDA VAZIA.": [
+    "EMPTY MATCH.",
+    "PARTIDA VACÍA."
+  ],
+  "VERSÃO DE PARTIDA INCOMPATÍVEL.": [
+    "INCOMPATIBLE MATCH VERSION.",
+    "VERSIÓN DE PARTIDA INCOMPATIBLE."
+  ],
+  "IDENTIFICADOR INVÁLIDO.": [
+    "INVALID IDENTIFIER.",
+    "IDENTIFICADOR NO VÁLIDO."
+  ],
+  "NOME DE EQUIPE DEVE TER ATÉ 12 CARACTERES.": [
+    "TEAM NAMES MUST HAVE AT MOST 12 CHARACTERS.",
+    "LOS NOMBRES DE EQUIPO DEBEN TENER UN MÁXIMO DE 12 CARACTERES."
+  ],
+  "FORMATO INVÁLIDO.": [
+    "INVALID FORMAT.",
+    "FORMATO NO VÁLIDO."
+  ],
+  "COIN FLIP INVÁLIDO.": [
+    "INVALID COIN FLIP.",
+    "SORTEO NO VÁLIDO."
+  ],
+  "ESTRUTURA DE PARTIDA INVÁLIDA.": [
+    "INVALID MATCH STRUCTURE.",
+    "ESTRUCTURA DE PARTIDA NO VÁLIDA."
+  ],
+  "MAPAS REPETIDOS OU DESCONHECIDOS.": [
+    "DUPLICATE OR UNKNOWN MAPS.",
+    "MAPAS REPETIDOS O DESCONOCIDOS."
+  ],
+  "FALTA DEFINIR COIN FLIP.": [
+    "SET THE COIN FLIP FIRST.",
+    "PRIMERO DEFINE EL SORTEO."
+  ],
+  "VETO FORA DE SEQUÊNCIA.": [
+    "VETO IS OUT OF SEQUENCE.",
+    "VETO FUERA DE SECUENCIA."
+  ],
+  "MAPAS NÃO CORRESPONDEM AO VETO.": [
+    "MAPS DO NOT MATCH THE VETO.",
+    "LOS MAPAS NO COINCIDEN CON EL VETO."
+  ],
+  "LADOS INVÁLIDOS.": [
+    "INVALID SIDES.",
+    "LADOS NO VÁLIDOS."
+  ],
+  "ROUNDS OU BANS INVÁLIDOS.": [
+    "INVALID ROUNDS OR BANS.",
+    "RONDAS O BANS NO VÁLIDOS."
+  ],
+  "DADOS SEM LADO INICIAL.": [
+    "RECORDS WITHOUT A STARTING SIDE.",
+    "REGISTROS SIN LADO INICIAL."
+  ],
+  "OVERTIME SEM LADO DEFINIDO.": [
+    "OVERTIME SIDE IS NOT SET.",
+    "LADO DEL OVERTIME SIN DEFINIR."
+  ],
+  "ROUND INVÁLIDO.": [
+    "INVALID ROUND.",
+    "RONDA NO VÁLIDA."
+  ],
+  "HÁ ROUNDS APÓS O ENCERRAMENTO.": [
+    "THERE ARE ROUNDS AFTER THE MAP ENDED.",
+    "HAY RONDAS DESPUÉS DEL FINAL DEL MAPA."
+  ],
+  "CONFIRMAÇÃO SEM VENCEDOR DEFINIDO.": [
+    "CONFIRMATION WITHOUT A WINNER.",
+    "CONFIRMACIÓN SIN GANADOR DEFINIDO."
+  ],
+  "BAN DE ETAPA FUTURA.": [
+    "BAN BELONGS TO A FUTURE STAGE.",
+    "EL BAN CORRESPONDE A UNA ETAPA FUTURA."
+  ],
+  "OPERADOR INCOMPATÍVEL COM O LADO.": [
+    "OPERATOR DOES NOT MATCH THE SIDE.",
+    "AGENTE INCOMPATIBLE CON EL LADO."
+  ],
+  "BAN DUPLICADO NA MESMA METADE.": [
+    "DUPLICATE BAN IN THE SAME HALF.",
+    "BAN DUPLICADO EN LA MISMA MITAD."
+  ],
+  "FECHAR": [
+    "CLOSE",
+    "CERRAR"
+  ],
+  "CRÉDITOS E AVISOS": [
+    "CREDITS AND NOTICES",
+    "CRÉDITOS Y AVISOS"
+  ],
+  "CRIADO POR JEFERSON “MOSKA” SAMPAIO.\r\nFERRAMENTAS PARA COMMUNITY CASTERS • USO INTERNO.\r\n\r\n": [
+    "CREATED BY JEFERSON “MOSKA” SAMPAIO.\r\nTOOLS FOR COMMUNITY CASTERS • INTERNAL USE.\r\n\r\n",
+    "CREADO POR JEFERSON “MOSKA” SAMPAIO.\r\nHERRAMIENTAS PARA COMMUNITY CASTERS • USO INTERNO.\r\n\r\n"
+  ],
+  "OS ÍCONES DE OPERADORES, IMAGENS DE MAPAS E LOGOS DE RAINBOW SIX SIEGE UTILIZADOS NESTE APLICATIVO PERTENCEM À UBISOFT E/OU AOS RESPECTIVOS TITULARES. RAINBOW SIX, UBISOFT E SUAS MARCAS RELACIONADAS PERTENCEM AOS RESPECTIVOS TITULARES. LOGOS DE CAMPEONATOS, EQUIPES E PLATAFORMAS PERTENCEM AOS SEUS PROPRIETÁRIOS.\r\n\r\n": [
+    "THE OPERATOR ICONS, MAP IMAGES AND RAINBOW SIX SIEGE LOGOS USED IN THIS APPLICATION BELONG TO UBISOFT AND/OR THEIR RESPECTIVE OWNERS. RAINBOW SIX, UBISOFT AND RELATED TRADEMARKS BELONG TO THEIR RESPECTIVE OWNERS. CHAMPIONSHIP, TEAM AND PLATFORM LOGOS BELONG TO THEIR OWNERS.\r\n\r\n",
+    "LOS ICONOS DE AGENTES, IMÁGENES DE MAPAS Y LOGOS DE RAINBOW SIX SIEGE USADOS EN ESTA APLICACIÓN PERTENECEN A UBISOFT Y/O A SUS RESPECTIVOS TITULARES. RAINBOW SIX, UBISOFT Y SUS MARCAS RELACIONADAS PERTENECEN A SUS RESPECTIVOS TITULARES. LOS LOGOS DE CAMPEONATOS, EQUIPOS Y PLATAFORMAS PERTENECEN A SUS PROPIETARIOS.\r\n\r\n"
+  ],
+  "O CASTERDESK É UMA FERRAMENTA INDEPENDENTE. NÃO REPRESENTA APROVAÇÃO, PATROCÍNIO OU CERTIFICAÇÃO PELA UBISOFT OU PELA MICROSOFT. A AUTORIZAÇÃO DE TRANSMISSÃO DOS USUÁRIOS NÃO EQUIVALE, POR SI SÓ, À AUTORIZAÇÃO DE REDISTRIBUIÇÃO DOS RECURSOS DO APLICATIVO.\r\n\r\n": [
+    "CASTERDESK IS AN INDEPENDENT TOOL. IT DOES NOT IMPLY APPROVAL, SPONSORSHIP OR CERTIFICATION BY UBISOFT OR MICROSOFT. USERS' BROADCAST AUTHORIZATION DOES NOT BY ITSELF AUTHORIZE REDISTRIBUTION OF THE APPLICATION'S ASSETS.\r\n\r\n",
+    "CASTERDESK ES UNA HERRAMIENTA INDEPENDIENTE. NO IMPLICA APROBACIÓN, PATROCINIO NI CERTIFICACIÓN DE UBISOFT O MICROSOFT. LA AUTORIZACIÓN DE TRANSMISIÓN DE LOS USUARIOS NO AUTORIZA POR SÍ SOLA LA REDISTRIBUCIÓN DE LOS RECURSOS DE LA APLICACIÓN.\r\n\r\n"
+  ],
+  "UTILIZE A FERRAMENTA E AS IMAGENS GERADAS CONFORME AS AUTORIZAÇÕES APLICÁVEIS, AS REGRAS DOS CAMPEONATOS E OS DIREITOS DE TERCEIROS. O USUÁRIO É RESPONSÁVEL PELOS DADOS E MATERIAIS QUE INSERE E PELO USO QUE FAZ DOS RESULTADOS, NOS LIMITES DA LEGISLAÇÃO APLICÁVEL. ESTE AVISO NÃO CONCEDE DIREITOS SOBRE RECURSOS DE TERCEIROS NEM AFASTA RESPONSABILIDADES PREVISTAS EM LEI.\r\n\r\n": [
+    "USE THE TOOL AND GENERATED IMAGES IN ACCORDANCE WITH APPLICABLE PERMISSIONS, CHAMPIONSHIP RULES AND THIRD-PARTY RIGHTS. USERS ARE RESPONSIBLE FOR THE DATA AND MATERIALS THEY ENTER AND HOW THEY USE THE RESULTS, WITHIN THE LIMITS OF APPLICABLE LAW. THIS NOTICE GRANTS NO RIGHTS TO THIRD-PARTY ASSETS AND DOES NOT WAIVE STATUTORY RESPONSIBILITIES.\r\n\r\n",
+    "UTILIZA LA HERRAMIENTA Y LAS IMÁGENES GENERADAS CONFORME A LAS AUTORIZACIONES APLICABLES, LAS REGLAS DE LOS CAMPEONATOS Y LOS DERECHOS DE TERCEROS. EL USUARIO ES RESPONSABLE DE LOS DATOS Y MATERIALES QUE INTRODUCE Y DEL USO DE LOS RESULTADOS, DENTRO DE LOS LÍMITES DE LA LEGISLACIÓN APLICABLE. ESTE AVISO NO CONCEDE DERECHOS SOBRE RECURSOS DE TERCEROS NI EXCLUYE RESPONSABILIDADES LEGALES.\r\n\r\n"
+  ],
+  "LICENÇAS\r\nO CÓDIGO PRÓPRIO POSSUI LICENÇA MIT. RECURSOS VISUAIS DE TERCEIROS NÃO ESTÃO INCLUÍDOS NESSA LICENÇA. O ACESSO AO REPOSITÓRIO E ÀS VERSÕES PERMANECE PRIVADO. CONSULTE OS ARQUIVOS LICENSE E THIRD-PARTY-NOTICES.MD QUE ACOMPANHAM O INSTALADOR.": [
+    "LICENSES\r\nORIGINAL CODE IS LICENSED UNDER MIT. THIRD-PARTY VISUAL ASSETS ARE NOT COVERED BY THAT LICENSE. ACCESS TO THE REPOSITORY AND RELEASES REMAINS PRIVATE. SEE THE LICENSE AND THIRD-PARTY-NOTICES.MD FILES INCLUDED WITH THE INSTALLER.",
+    "LICENCIAS\r\nEL CÓDIGO PROPIO TIENE LICENCIA MIT. LOS RECURSOS VISUALES DE TERCEROS NO ESTÁN INCLUIDOS EN ESA LICENCIA. EL ACCESO AL REPOSITORIO Y A LAS VERSIONES SIGUE SIENDO PRIVADO. CONSULTA LICENSE Y THIRD-PARTY-NOTICES.MD INCLUIDOS CON EL INSTALADOR."
+  ],
+  "\n\nREABRA O PROGRAMA PARA RETOMAR OS DADOS SALVOS.": [
+    "\n\nREOPEN THE APPLICATION TO RESUME SAVED DATA.",
+    "\n\nVUELVE A ABRIR EL PROGRAMA PARA RETOMAR LOS DATOS GUARDADOS."
+  ],
+  "OCORREU UM ERRO DE INTERFACE. O DIAGNÓSTICO FOI REGISTRADO EM:\n": [
+    "AN INTERFACE ERROR OCCURRED. DIAGNOSTICS WERE SAVED TO:\n",
+    "SE PRODUJO UN ERROR DE INTERFAZ. EL DIAGNÓSTICO SE GUARDÓ EN:\n"
+  ],
+  "NÃO FOI POSSÍVEL ABRIR O CASTERDESK. CONSULTE A PASTA LOGS DOS DADOS DO APLICATIVO.\n": [
+    "COULD NOT OPEN CASTERDESK. CHECK THE LOGS FOLDER IN THE APPLICATION DATA.\n",
+    "NO SE PUDO ABRIR CASTERDESK. CONSULTA LA CARPETA LOGS DE LOS DATOS DE LA APLICACIÓN.\n"
+  ],
+  "CASTERDESK — ERRO": [
+    "CASTERDESK — ERROR",
+    "CASTERDESK — ERROR"
+  ],
+  "Idioma": [
+    "Language",
+    "Idioma"
+  ],
+  "Idioma salvo. Feche e reabra o CasterDesk para aplicar.": [
+    "Language saved. Close and reopen CasterDesk to apply.",
+    "Idioma guardado. Cierra y vuelve a abrir CasterDesk para aplicarlo."
+  ],
+  "BANCO": [
+    "BANK",
+    "BANCO"
+  ],
+  "FRONTEIRA": [
+    "BORDER",
+    "FRONTERA"
+  ],
+  "CHALÉ": [
+    "CHALET",
+    "CHALET"
+  ],
+  "CAFE DOSTOIEVSKI": [
+    "KAFE DOSTOYEVSKY",
+    "CAFÉ DOSTOYEVSKY"
+  ],
+  "COVIL": [
+    "LAIR",
+    "GUARIDA"
+  ],
+  "FORTALEZA": [
+    "FORTRESS",
+    "FORTALEZA"
+  ],
+  "LABORATORIO": [
+    "NIGHTHAVEN LABS",
+    "LABORATORIOS NIGHTHAVEN"
+  ],
+  "MANSÃO": [
+    "VILLA",
+    "VILLA"
+  ],
+  "Lounge Executivo - Escritório CEO": [
+    "Executive Lounge - CEO Office",
+    "Salón ejecutivo - Despacho del director"
+  ],
+  "Sala Funcion - Área aberta": [
+    "Staff Room - Open Area",
+    "Sala de personal - Zona abierta"
+  ],
+  "Escrito. Funcionários - Arquivos": [
+    "Tellers' Office - Archives",
+    "Oficina de cajeros - Archivos"
+  ],
+  "P Armários - Sala de Vigilância": [
+    "Lockers - CCTV Room",
+    "Taquillas - Sala de vigilancia"
+  ],
+  "Sala Armas e Arsenal - Arquivos": [
+    "Armory Lockers - Archives",
+    "Armería - Archivos"
+  ],
+  "Ventilação - Oficina": [
+    "Ventilation Room - Workshop",
+    "Ventilación - Taller"
+  ],
+  "Banheiro - Antendimento": [
+    "Bathroom - Tellers",
+    "Baño - Taquillas"
+  ],
+  "Alfândega: Inspeção - Sala de suprimento": [
+    "Customs Inspection - Supply Room",
+    "Inspección de aduanas - Suministros"
+  ],
+  "Suíte Master - Escritório": [
+    "Master Bedroom - Office",
+    "Dormitorio principal - Oficina"
+  ],
+  "Bar - Sala de Jogos": [
+    "Bar - Gaming Room",
+    "Bar - Sala de juegos"
+  ],
+  "Cozinha - Sala de Jantar": [
+    "Kitchen - Dining Room",
+    "Cocina - Comedor"
+  ],
+  "Adega de Vinhos - Motoneves": [
+    "Wine Cellar - Snowmobile Garage",
+    "Bodega - Garaje de motos de nieve"
+  ],
+  "Academia - Quarto": [
+    "Gym - Bedroom",
+    "Gimnasio - Dormitorio"
+  ],
+  "Vigilância - Contabilidade": [
+    "CCTV Room - Cash Room",
+    "Sala de vigilancia - Sala del dinero"
+  ],
+  "Bar - Palco": [
+    "Bar - Stage",
+    "Bar - Escenario"
+  ],
+  "Capela - Arsenal": [
+    "Church - Arsenal Room",
+    "Iglesia - Arsenal"
+  ],
+  "Bar - Longue Coquetéis": [
+    "Bar - Cocktail Lounge",
+    "Bar - Salón de cócteles"
+  ],
+  "Lareira - Bomba de Purificação": [
+    "Fireplace Hall - Mining Room",
+    "Sala de la chimenea - Sala de minería"
+  ],
+  "Sala Leitura - Lareira": [
+    "Reading Room - Fireplace Hall",
+    "Sala de lectura - Sala de la chimenea"
+  ],
+  "Copa - Cozinha prep.": [
+    "Kitchen Service - Kitchen Cooking",
+    "Servicio de cocina - Cocina"
+  ],
+  "Escritório - Sala R6": [
+    "Office - R6 Room",
+    "Oficina - Sala R6"
+  ],
+  "Beliche - Briefing": [
+    "Bunk - Briefing",
+    "Literas - Sala de reuniones"
+  ],
+  "Manute. Armas - Arsenal": [
+    "Weapon Maintenance - Arsenal",
+    "Mantenimiento de armas - Arsenal"
+  ],
+  "Suport. Labo - Laboratório": [
+    "Lab Support - Lab",
+    "Apoyo de laboratorio - Laboratorio"
+  ],
+  "Banheiro - Escritório comandante": [
+    "Bathroom - Commander's Office",
+    "Baño - Despacho del comandante"
+  ],
+  "Dormitório - Salão de jogos": [
+    "Dormitory - Games Room",
+    "Dormitorio - Sala de juegos"
+  ],
+  "Sala de espera - Refeitório": [
+    "Waiting Room - Dining Hall",
+    "Sala de espera - Comedor"
+  ],
+  "Hamam - Sala de estar": [
+    "Hammam - Sitting Room",
+    "Hamam - Sala de estar"
+  ],
+  "Centro de comando - Servodores": [
+    "Command Center - Servers",
+    "Centro de mando - Servidores"
+  ],
+  "Cozinha - Refeitório": [
+    "Kitchen - Cafeteria",
+    "Cocina - Cafetería"
+  ],
+  "Armazém - Sala de Controle": [
+    "Storage - Control Room",
+    "Almacén - Sala de control"
+  ],
+  "Montagem - Tanque": [
+    "Assembly - Tank",
+    "Montaje - Tanque"
+  ],
+  "Aviação - Jogos": [
+    "Aviator Room - Games Room",
+    "Sala de aviación - Sala de juegos"
+  ],
+  "Troféu - Estatua ": [
+    "Trophy Room - Statuary Room",
+    "Sala de trofeos - Sala de estatuas"
+  ],
+  "Cozinha - Jantar": [
+    "Kitchen - Dining Room",
+    "Cocina - Comedor"
+  ],
+  "Depos. Artes - Escritório": [
+    "Art Storage - Living Room",
+    "Almacén de arte - Sala de estar"
+  ],
+  "Round": [
+    "Round",
+    "Ronda"
+  ],
+  "TEMPO ENCERRADO": [
+    "TIME UP",
+    "TIEMPO AGOTADO"
+  ],
+  "Equipe A": [
+    "Team A",
+    "Equipo A"
+  ],
+  "Equipe B": [
+    "Team B",
+    "Equipo B"
+  ],
+  "Série": [
+    "Series",
+    "Serie"
+  ],
+  "Capa": [
+    "Cover",
+    "Portada"
+  ],
+  "Até três mapas: resumo vertical. Quatro ou cinco: capa e detalhes por mapa.": [
+    "Up to three maps: vertical summary. Four or five: cover and details per map.",
+    "Hasta tres mapas: resumen vertical. Cuatro o cinco: portada y detalles por mapa."
+  ],
+  "Até três mapas por imagem, lado a lado.": [
+    "Up to three maps per image, side by side.",
+    "Hasta tres mapas por imagen, uno al lado del otro."
+  ],
+  "INDISPONÍVEL": [
+    "UNAVAILABLE",
+    "NO DISPONIBLE"
+  ],
+  "Concluir correção": [
+    "Finish correction",
+    "Finalizar corrección"
+  ],
+  "Corrigindo apenas bans de operadores. O resultado permanece protegido.": [
+    "Editing operator bans only. The result remains protected.",
+    "Corrigiendo solo los vetos de agentes. El resultado sigue protegido."
+  ],
+  "! {0} BAN(S) PENDENTE(S) • ANTES DO ROUND {1:00}": [
+    "! {0} PENDING BAN(S) • BEFORE ROUND {1:00}",
+    "! {0} VETO(S) PENDIENTE(S) • ANTES DE LA RONDA {1:00}"
+  ],
+  "Selecione os operadores nos campos marcados com !. Você pode continuar registrando os rounds.": [
+    "Select operators in the fields marked with !. You can continue recording rounds.",
+    "Selecciona agentes en los campos marcados con !. Puedes seguir registrando rondas."
+  ],
+  "Clique para visualizar esta metade.": [
+    "Click to view this half.",
+    "Haz clic para ver esta mitad."
+  ],
+  "Voltar ao confronto": [
+    "Back to matchup",
+    "Volver al enfrentamiento"
+  ],
+  "Configurar lados dos mapas": [
+    "Configure map sides",
+    "Configurar lados de los mapas"
+  ]
+}

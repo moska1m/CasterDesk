@@ -43,3 +43,70 @@ Registrar versão do Windows, escala/resolução, resultado de cada passo e, se 
 ## Retorno do usuário — 24/09/2026
 
 O usuário informou que instalação e desinstalação da beta.1 funcionaram. Isso complementa a limitação do ambiente de automação acima. O teste em um segundo PC e o ciclo de atualização com preservação de dados seguem pendentes. O projeto será mantido privado para uso interno, sem plano atual de publicação pública.
+
+
+## Beta 0.1.0-beta.3 — 24/09/2026
+
+- Publicação autocontida win-x64 aprovada.
+- Suite existente aprovada: cronômetro/casting (15), campeonato (406.530), PNG (44), temas/reabertura e cronômetro real.
+- 687 verificações de localização aprovadas: três idiomas, parâmetros dos textos, edição nativa/seletores, locks, preferência após reabertura, preservação de mensagem personalizada e JSON entre idiomas.
+- Nomes de arquivo: data/hora da criação, equipes, situação aberta/concluída em cada idioma, sanitização de caracteres e ausência de ID no nome exportado; ID mantido dentro do JSON e duplicatas recusadas.
+- Conferência visual das abas de campeonato em inglês/espanhol e dos quatro temas na aba TXT em espanhol. Corrigidos rótulos cortados no casting e no ajuste dos botões do timer.
+- Microteste: 20 edições, 5 ms, 796 KB, zero layouts, 299/299 controles preservados.
+- Traduções de termos de bombsite são uma primeira versão e ainda precisam de revisão humana no idioma do jogo.
+- Atualização real da instalação beta.2 e teste em segundo PC permanecem pendentes. O pacote continua sem assinatura digital, conforme decisão do usuário.
+
+## Beta.4 — cabeçalhos PNG
+
+- 53 verificações de exportação aprovadas, incluindo centro absoluto e simetria lateral nos três formatos.
+- PNGs feed, Stories e horizontal conferidos visualmente.
+- Instalador compilado e extraído; DLL corresponde ao binário testado. Instalação no ambiente do usuário ainda não executada.
+
+## Beta.5 — MD5
+
+- Suite completa aprovada: self-test, championship-test, export-test, perf-test, theme-restart-test, timer-ui-test, theme-smoke e localization-test.
+- Veto MD5 validado com ambas as equipes iniciando; preservação de mapas e round-trip JSON. Encerramento 3-0, 3-1, 3-2 para ambas as equipes.
+- Quinta linha de lados validada na interface, após ajuste de altura. A falha inicial foi uma asserção de layout no teste, corrigida antes do empacotamento.
+- Exportação de cinco mapas e seleção individual verificadas; capa Feed conferida visualmente sem sobreposição.
+- Relatórios: test-results/2fd6b1d72a3a4cccaffdef5eb29b60e5.
+
+## Beta.6 — cards e bans
+
+Suite completa aprovada: self-test, championship-test, export-test, perf-test, theme-restart-test, timer-ui-test, theme-smoke, localization-test. Relatórios: test-results/1b84af3cf4004353a35e406c5f5a7591.
+
+Verificações novas: nove assets monocromáticos, indisponibilidade e liberação de mapas em MD1/MD3/MD5; correção de bans em série confirmada sem alterar resultado/lados/rounds; rejeição de duplicatas, função errada e etapa futura; persistência JSON; lembretes nos limiares e encerramento 7-2 sem etapa R10. Cards e lembrete conferidos visualmente.
+
+Uso real pelo caster ainda pendente. Modo Rápido, motivo de fim de round e regra de bombsite não fazem parte desta entrega.
+
+## Beta.7 — modo rápido e aviso central (25/09/2026)
+
+- Suite completa aprovada: self-test, campeonato (414872 verificações), PNG, desempenho, reinício de tema, cronômetro, quatro temas e idiomas (718 verificações).
+- Modo rápido testado com cliques reais nos botões; clique duplo não duplica. Alternância Lista/Rápido mantém histórico e preferência salva.
+- Finalização por lado vencedor validada no modo rápido, na correção pela lista e na leitura de JSON. Correção limpa motivo incompatível. Legado permanece Não informado.
+- Avisos centrais nas transições 03→04, 06→07 e 09→10, sem repetição por correção; sem aviso quando já preenchido, em fim 7×2 ou OT. Overtime e bloqueio no 8×7 verificados.
+- Avisos de dois/quatro bans conferidos visualmente nos temas claro e escuro. Modo rápido usa área adicional com rolagem em telas menores.
+- Microteste: 20 alterações em 5 ms, 880 KB alocados, zero layouts e 306/306 controles retidos. Não representa consumo geral do aplicativo.
+- Relatórios: test-results/2489f442feda4a8b9b0f8f4c273182ec.
+- Trava de bombsite, símbolos específicos e finalização no PNG permanecem pendentes. Não foi executada instalação sobre os dados reais do usuário.
+
+## Beta.8 — bombsite e layout compacto
+
+- Suite completa aprovada: self-test, campeonato (415101 verificações), PNG, desempenho, reinício de tema, cronômetro, temas e idiomas (726 verificações).
+- Cooldown testado com ambas as equipes e vitórias em todos os rounds regulares: dois rounds bloqueados, reset após round 06 e overtime livre. Vitória de ataque não bloqueia.
+- Testes nativos: opção removida do seletor da lista, botão indisponível no modo rápido, correção libera opção e conflitos posteriores preservam histórico com sinalização.
+- Registro rápido/histórico lado a lado conferidos nos temas claro/escuro. Lista mantém ataque, defesa e placar; modo compacto mostra lados na dica do round.
+- Relatórios: test-results/83f9fa5aa524470ca1354377446d00d6.
+- Microteste: 20 alterações, 5 ms, 920 KB alocados, zero layouts, 306/306 controles retidos. Não equivale a consumo geral.
+- Instalador extraído: DLL confere com a publicação testada; SHA256 gerado. Não instalado sobre os dados reais.
+- Importação/exportação mantidas, sem prioridade de evolução por decisão do usuário. Apelidos dos demais bombsites e símbolos específicos ainda dependem de revisão/referência.
+
+## 0.2.0-beta.0.1 — visual e Scout (26/09/2026)
+
+- Suite completa aprovada: 415105 verificações de campeonato, 59 de PNG, 729 de idiomas, 15 de base, cronômetro, reinício de tema e quatro temas.
+- Relatórios: test-results/5cd6faf83b714e678ad9e15ecf9cdc21.
+- MD1/MD3/MD5 verificados em áreas lógicas de 1920×920, 1366×640 e 1140×600. A página não rola; ações e confirmação permanecem acessíveis. Janelas pequenas usam alternância de configuração/metades e rolagem local nas opções do registro rápido.
+- Scout Regular/Bold/Condensed carregadas privadamente; 78 retratos presentes. Cards de até 140 px lógicos, recorte de rosto, nome completo com fonte compacta e seleção por ícones preservada.
+- Microteste: 20 alterações de bombsite em 6 ms, 845 KB alocados, zero layouts e 256/256 controles retidos. Não representa o consumo geral do aplicativo.
+- Revisão visual dos temas claro/escuro e tamanho compacto. Após a suite, título da janela corrigido e teste de idiomas repetido em work/design02-final-title; contraste do placeholder/rodapé claro ajustado e teste de campeonato repetido em work/design02-final-contrast (pastas relativas à raiz de trabalho).
+- Instalador reconstruído, extraído e comparado à DLL publicada; fontes e retratos incluídos, sem dados pessoais ou PDB. Hash SHA256 acompanha o instalador.
+- Não instalado sobre dados reais, não publicado no GitHub nesta entrega. Teste pelo usuário em outro PC e outras escalas físicas de DPI ainda pendente. Novos símbolos de finalização adiados por decisão do usuário.

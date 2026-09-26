@@ -1,15 +1,24 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **0.1.0-beta.2 — beta privada para validação.**
+Ferramentas para community casters de Rainbow Six Siege. **0.2.0-beta.0.1 — beta privada para validação.**
 
-Aplicativo independente para Windows, em português. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft. O programa registra as informações inseridas pelo usuário; não controla o jogo nem o OBS.
+Aplicativo independente para Windows, em português, inglês e espanhol. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft. O programa registra as informações inseridas pelo usuário; não controla o jogo nem o OBS.
+
+## Visual da versão 0.2
+
+Tema Siege com tipografia Scout carregada pelo aplicativo, sem instalação global. Cards compactos com retratos nos bans; a janela de seleção mantém ícones. Botões e cabeçalhos compartilham a nova aparência, com destaque vermelho na interação.
+
+A página de partida se ajusta à janela e mantém as ações inferiores visíveis. Em janelas menores, use **Configurar lados dos mapas / Voltar ao confronto** no bloco superior e clique no cabeçalho de cada metade para alternar os bans. Histórico, lista de lados e escolhas rápidas podem rolar dentro dos próprios blocos em janelas pequenas; Confirmar round permanece fixo. Finalizações continuam em texto; novos símbolos foram adiados.
 
 ## Funcionalidades
 
-- Partidas MD1 e MD3: coin flip, veto de nove mapas, lados iniciais e overtime.
-- Bans de operadores por etapa, alertas de registro pendente e ícones visuais.
-- Round a round com bombsite, vencedor, placar e cores fixas das equipes.
-- Confirmação de resultado por mapa; MD3 encerrada com duas vitórias confirmadas.
+- Partidas MD1, MD3 e MD5: coin flip, veto de nove mapas, lados iniciais e overtime.
+- Bans de operadores por etapa, lembretes visuais e correção explícita após confirmar o resultado, sem desbloquear placar ou lados.
+- Mapas usados na seleção ficam indisponíveis com imagens preto e branco pré-geradas; picks permanecem coloridos no histórico.
+- Round a round com bombsite, vencedor, placar, finalização e cores fixas das equipes. Modo Lista ou Modo rápido por botões, na engrenagem → Registro de rounds; alternar preserva o histórico salvo.
+- Modo rápido com registro à esquerda e histórico à direita. Bombsite vencido pela defesa bloqueia os próximos dois rounds regulares; zera na troca de lados e não se aplica ao overtime. Correções sinalizam conflitos posteriores sem apagar o histórico.
+- Aviso central após os rounds 03, 06 e 09 para registrar os novos bans pendentes. Lembrar depois mantém o aviso junto aos campos; não bloqueia rounds nem abre etapa futura de mapa encerrado.
+- Confirmação de resultado por mapa; MD3 encerrada com duas vitórias confirmadas e MD5 com três.
 - Histórico local, salvamento automático, recuperação de backup e importação/exportação da série inteira em JSON com ID único.
 - Resumo para remake e guia de configuração de lobby.
 - Cronômetro com adição de tempo durante a contagem e saída TXT para OBS.
@@ -17,9 +26,17 @@ Aplicativo independente para Windows, em português. Não é um produto oficial,
 - PNG: Stories (1080×1920), feed/carrossel (1080×1350) e horizontal (1920×1080), com identificação do caster e logotipo do campeonato.
 - Temas Siege e simplificado, claros/escuros; mudança aplicada ao reabrir.
 
+## Idiomas e arquivos de partida
+
+Na engrenagem, escolha **Idioma → Português (Brasil), English ou Español**. Feche e reabra para aplicar. A tradução está incluída no aplicativo e funciona sem internet. O idioma do instalador pode ser escolhido separadamente.
+
+As traduções incluem interface, avisos, guia do lobby, resumo para remake e PNGs. Os nomes de equipes, operadores, canais, textos personalizados, caminhos TXT e o formato interno dos JSONs são preservados. Inglês mostra BO1/BO3/BO5; o JSON mantém MD1/MD3/MD5 para compatibilidade. A terminologia dos bombsites em inglês/espanhol está sujeita à revisão por casters nativos; os valores originais permanecem armazenados.
+
+Use **Exportar partida** para gerar um nome legível, por exemplo `2026-09-24_18-30-00_Liquid_vs_FaZe_aberta.json`. A data/hora é a de criação da partida; a situação acompanha o idioma escolhido e só indica conclusão após confirmar as vitórias necessárias. O ID permanece dentro do JSON, sem aparecer no nome exportado. Na pasta interna `Partidas`, os arquivos continuam identificados por ID para evitar colisões. Importar o mesmo ID novamente é recusado, mesmo que o arquivo tenha sido renomeado. Na MD3, o JSON inclui a série inteira.
+
 ## Instalar
 
-Baixe `CasterDesk-0.1.0-beta.2-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
+Baixe `CasterDesk-0.2.0-beta.0.1-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
 
 Alvo desta beta: Windows 10/11 x64. Ainda é necessário validar em um segundo computador e em diferentes escalas de tela. O instalador beta não tem assinatura digital própria; o Windows pode pedir confirmação de origem. Não desative as proteções do sistema.
 

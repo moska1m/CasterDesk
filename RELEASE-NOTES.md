@@ -1,11 +1,14 @@
-# CasterDesk 0.1.0-beta.2
+# CasterDesk 0.2.0-beta.0.1
 
-Atualização interna: novo **Sobre o CasterDesk** na engrenagem, com crédito a Jeferson “Moska” Sampaio, versão, autoria dos recursos visuais e condições de uso.
+Primeira beta da reformulação visual inspirada no Siege.
 
-Preparado processo opcional de assinatura digital. **Este instalador ainda não está assinado**: não há certificado configurado, e o SmartScreen pode mostrar avisos em outros computadores ou versões. Nenhuma proteção do Windows é desativada.
+- Scout incluída no aplicativo, sem instalação global de fontes.
+- Retratos compactos nos bans, com ícone, nome completo ajustado e equipe. Seleção continua por ícones.
+- Imagens preenchendo os cards de mapas, destaques de ban/pick e navegação com barra vermelha centralizada.
+- Nova aparência compartilhada por botões, cabeçalhos e campos nas páginas do programa.
+- Página de partida sem rolagem global; ações inferiores juntas e sempre acessíveis.
+- Registro rápido e histórico lado a lado. Resultado encerrado amplia o histórico. Finalização mantida em texto; novos ícones adiados.
 
-Repositório e versões continuam privados, destinados ao uso interno. Os créditos não substituem autorizações dos titulares e não indicam aprovação da Ubisoft/Microsoft. A licença MIT do código não inclui os recursos visuais de terceiros.
+Em janelas menores, o botão no bloco superior alterna confronto/lados; os cabeçalhos das metades alternam os cards de bans. Pode haver rolagem dentro dos blocos de lados, escolhas rápidas ou histórico. Confirmar round permanece fixo.
 
-A instalação e desinstalação da beta.1 foram confirmadas pelo usuário; teste no segundo PC e validação da atualização ainda pendentes. Os dados continuam separados do aplicativo.
-
-Corrigida a codificação dos acentos e cedilhas no instalador e na tradução pt-BR.
+Feche o CasterDesk e execute o novo instalador para atualizar. A pasta de dados permanece separada da instalação. A validação da atualização no PC do usuário, em outra máquina e com escalas diferentes continua pendente.

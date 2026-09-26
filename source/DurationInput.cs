@@ -9,7 +9,7 @@ public sealed class DurationInput : NumericUpDown
     {
         Minimum = 0; Maximum = 86400; Value = 600;
         TextAlign = HorizontalAlignment.Center;
-        AccessibleName = "Tempo inicial em horas, minutos e segundos";
+        AccessibleName = L.T("Tempo inicial em horas, minutos e segundos");
     }
     protected override void UpdateEditText() => Text = MainForm.Format((int)Value, "hh:mm:ss");
     protected override void OnTextBoxKeyPress(object? source, KeyPressEventArgs e)

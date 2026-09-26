@@ -1,4 +1,4 @@
-﻿#define AppVersion "0.1.0-beta.2"
+﻿#define AppVersion "0.2.0-beta.0.1"
 [Setup]
 AppId={{D5FB900F-ED44-45B9-90B3-4131FA74F7A8}
 AppName=CasterDesk
@@ -21,11 +21,13 @@ SetupIconFile=..\assets\casterdesk.ico
 UninstallDisplayIcon={app}\CasterDesk.exe
 CloseApplications=yes
 RestartApplications=no
-VersionInfoVersion=0.1.0.1
+VersionInfoVersion=0.2.0.1
 [Languages]
 Name: "brazilianportuguese"; MessagesFile: "Languages\BrazilianPortuguese.isl"
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "spanish"; MessagesFile: "Languages\Spanish.isl"
 [Tasks]
-Name: "desktopicon"; Description: "Criar atalho na área de trabalho"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Excludes: "*.pdb"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\assets\licenses\*"; DestDir: "{app}\licenses"; Flags: ignoreversion
@@ -36,4 +38,4 @@ Source: "..\THIRD-PARTY-NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{autoprograms}\CasterDesk"; Filename: "{app}\CasterDesk.exe"; WorkingDir: "{app}"
 Name: "{autodesktop}\CasterDesk"; Filename: "{app}\CasterDesk.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 [Run]
-Filename: "{app}\CasterDesk.exe"; Description: "Abrir CasterDesk"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\CasterDesk.exe"; Description: "{cm:LaunchProgram,CasterDesk}"; Flags: nowait postinstall skipifsilent

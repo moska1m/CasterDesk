@@ -15,7 +15,7 @@ public static class AppLog
         Application.ThreadException+=(_,e)=>
         {
             Write("UI ERROR "+e.Exception);
-            MessageBox.Show("Ocorreu um erro de interface. O diagnóstico foi registrado em:\n"+file+"\n\nReabra o programa para retomar os dados salvos.","CasterDesk — erro",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show(L.T("Ocorreu um erro de interface. O diagnóstico foi registrado em:\n")+file+L.T("\n\nReabra o programa para retomar os dados salvos."),L.T("CasterDesk — erro"),MessageBoxButtons.OK,MessageBoxIcon.Error);
         };
         Application.ApplicationExit+=(_,_)=>Write("EXIT");
     }

@@ -6,13 +6,13 @@ public sealed class ImageExportPanel : UserControl
 {
     readonly Func<IReadOnlyList<SiegeMatch>> list;readonly SiegeCatalog catalog;
     readonly ComboBox matches=new ThemeCombo(){DropDownStyle=ComboBoxStyle.DropDownList,Width=650},aspect=new ThemeCombo(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330},scope=new ThemeCombo(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330},pages=new ThemeCombo(){DropDownStyle=ComboBoxStyle.DropDownList,Width=240};
-    readonly TextBox casterName=new(){Width=330,MaxLength=40,PlaceholderText="Nome / nick do caster"},channel=new(){Width=330,MaxLength=80,PlaceholderText="@usuario ou endereço do canal"};
+    readonly TextBox casterName=new(){Width=330,MaxLength=40,PlaceholderText=L.T("Nome / nick do caster")},channel=new(){Width=330,MaxLength=80,PlaceholderText=L.T("@usuario ou endereço do canal")};
     readonly CheckBox[] platforms=[new(){Text="Twitch",Width=80},new(){Text="YouTube",Width=80},new(){Text="Kick",Width=80}];
     readonly TextBox[] platformChannels=[new(){Width=220,MaxLength=80},new(){Width=220,MaxLength=80},new(){Width=220,MaxLength=80}];
     readonly TextBox eventName=new(){Width=330,MaxLength=80};
     readonly PictureBox preview=new(){Dock=DockStyle.Fill,SizeMode=PictureBoxSizeMode.Zoom,BackColor=Color.FromArgb(19,25,31)},logo=new(){Width=80,Height=60,SizeMode=PictureBoxSizeMode.Zoom};
     readonly Label status=new(){AutoSize=true,MaximumSize=new Size(330,0)},description=new(){AutoSize=true,MaximumSize=new Size(330,0)};
-    readonly Button save=new ThemeButton(){Text="Salvar PNGs",Width=150,Height=30,Enabled=false},copy=new ThemeButton(){Text="Copiar imagem",Width=150,Height=30,Enabled=false};
+    readonly Button save=new ThemeButton(){Text=L.T("Salvar PNGs"),Width=150,Height=30,Enabled=false},copy=new ThemeButton(){Text=L.T("Copiar imagem"),Width=150,Height=30,Enabled=false};
     readonly Dictionary<string,ExportBrand> brands;
     readonly string settingsFile=Path.Combine(AppPaths.DataDirectory,"export-settings.json");
     readonly System.Windows.Forms.Timer delay=new(){Interval=450};
@@ -28,24 +28,24 @@ public sealed class ImageExportPanel : UserControl
         try{brands=JsonSerializer.Deserialize<Dictionary<string,ExportBrand>>(File.ReadAllText(settingsFile))??new();}catch{brands=new();}
         var layout=new TableLayoutPanel(){Dock=DockStyle.Fill,ColumnCount=2,RowCount=2,Padding=new Padding(12)};
         layout.ColumnStyles.Add(new(SizeType.Absolute,360));layout.ColumnStyles.Add(new(SizeType.Percent,100));layout.RowStyles.Add(new(SizeType.Absolute,42));layout.RowStyles.Add(new(SizeType.Percent,100));Controls.Add(layout);
-        var top=new FlowLayoutPanel(){Dock=DockStyle.Fill};top.Controls.Add(new Label(){Text="Partida para exportar:",AutoSize=true,Margin=new Padding(3,7,8,0)});top.Controls.Add(matches);layout.Controls.Add(top,0,0);layout.SetColumnSpan(top,2);
+        var top=new FlowLayoutPanel(){Dock=DockStyle.Fill};top.Controls.Add(new Label(){Text=L.T("Partida para exportar:"),AutoSize=true,Margin=new Padding(3,7,8,0)});top.Controls.Add(matches);layout.Controls.Add(top,0,0);layout.SetColumnSpan(top,2);
         var options=new FlowLayoutPanel(){Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoScroll=true};layout.Controls.Add(options,0,1);
-        void Label(string s)=>options.Controls.Add(new Label(){Text=s,AutoSize=true,Margin=new Padding(3,12,3,5)});
-        Label("FORMATO DA IMAGEM");aspect.Items.AddRange(["Stories · 9:16 · 1080 × 1920","Feed · 4:5 · 1080 × 1350","Horizontal · 16:9 · 1920 × 1080"]);aspect.SelectedIndex=0;options.Controls.Add(aspect);options.Controls.Add(description);
-        Label("CONTEÚDO");options.Controls.Add(scope);
-        Label("CAMPEONATO (OPCIONAL)");options.Controls.Add(eventName);options.Controls.Add(logo);
-        var logos=new FlowLayoutPanel(){Width=335,Height=36};var choose=new ThemeButton(){Text="Selecionar logo",Width=160};var remove=new ThemeButton(){Text="Remover logo",Width=150};logos.Controls.AddRange([choose,remove]);options.Controls.Add(logos);
-        Label("TRANSMISSÃO (OPCIONAL)");options.Controls.Add(new Label(){Text="Nome / nick do caster",AutoSize=true});options.Controls.Add(casterName);options.Controls.Add(new Label(){Text="@usuário ou endereço do canal",AutoSize=true});options.Controls.Add(channel);
-        options.Controls.Add(new Label(){Text="Marque as plataformas. Canal vazio usa o @ principal.",AutoSize=true,MaximumSize=new Size(330,0)});
+        void Label(string s)=>options.Controls.Add(new Label(){Text=s,AutoSize=true,Font=AppTheme.HeadingFont,Margin=new Padding(3,12,3,5)});
+        Label(L.T("FORMATO DA IMAGEM"));aspect.Items.AddRange(["Stories · 9:16 · 1080 × 1920","Feed · 4:5 · 1080 × 1350","Horizontal · 16:9 · 1920 × 1080"]);aspect.SelectedIndex=0;options.Controls.Add(aspect);options.Controls.Add(description);
+        Label(L.T("CONTEÚDO"));options.Controls.Add(scope);
+        Label(L.T("CAMPEONATO (OPCIONAL)"));options.Controls.Add(eventName);options.Controls.Add(logo);
+        var logos=new FlowLayoutPanel(){Width=335,Height=36};var choose=new ThemeButton(){Text=L.T("Selecionar logo"),Width=160};var remove=new ThemeButton(){Text=L.T("Remover logo"),Width=150};logos.Controls.AddRange([choose,remove]);options.Controls.Add(logos);
+        Label(L.T("TRANSMISSÃO (OPCIONAL)"));options.Controls.Add(new Label(){Text=L.T("Nome / nick do caster"),AutoSize=true});options.Controls.Add(casterName);options.Controls.Add(new Label(){Text=L.T("@usuário ou endereço do canal"),AutoSize=true});options.Controls.Add(channel);
+        options.Controls.Add(new Label(){Text=L.T("Marque as plataformas. Canal vazio usa o @ principal."),AutoSize=true,MaximumSize=new Size(330,0)});
         for(int i=0;i<platforms.Length;i++){var row=new FlowLayoutPanel(){Width=335,Height=30};row.Controls.Add(platforms[i]);row.Controls.Add(platformChannels[i]);options.Controls.Add(row);}
-        Label("PRÉVIA");options.Controls.Add(pages);var refresh=new ThemeButton(){Text="Atualizar prévia",Width=180,Height=30};options.Controls.Add(refresh);
+        Label(L.T("PRÉVIA"));options.Controls.Add(pages);var refresh=new ThemeButton(){Text=L.T("Atualizar prévia"),Width=180,Height=30};options.Controls.Add(refresh);
         var actions=new FlowLayoutPanel(){Width=335,Height=40};actions.Controls.AddRange([save,copy]);options.Controls.Add(actions);options.Controls.Add(status);
         layout.Controls.Add(preview,1,1);
         matches.SelectedIndexChanged+=(_,_)=>{if(!loading)LoadSelection();};aspect.SelectedIndexChanged+=(_,_)=>Generate();scope.SelectedIndexChanged+=(_,_)=>{if(!loading)Generate();};pages.SelectedIndexChanged+=(_,_)=>{preview.Image=rendered.ElementAtOrDefault(pages.SelectedIndex)?.Image;};
         void CasterChanged(){if(loading||Selected is null)return;Brand.CasterName=casterName.Text;Brand.Channel=channel.Text;Brand.Platforms=platforms.Where(p=>p.Checked).Select(p=>p.Text).ToList();for(int i=0;i<3;i++)Brand.PlatformChannels[platforms[i].Text]=platformChannels[i].Text;ClearPreview();delay.Stop();delay.Start();}
         casterName.TextChanged+=(_,_)=>CasterChanged();channel.TextChanged+=(_,_)=>CasterChanged();foreach(var check in platforms)check.CheckedChanged+=(_,_)=>CasterChanged();foreach(var field in platformChannels)field.TextChanged+=(_,_)=>CasterChanged();
         eventName.TextChanged+=(_,_)=>{if(loading||Selected is null)return;Brand.EventName=eventName.Text;ClearPreview();delay.Stop();delay.Start();};delay.Tick+=(_,_)=>{delay.Stop();SaveBrands();Generate();};
-        choose.Click+=(_,_)=>ChooseLogo();remove.Click+=(_,_)=>{Brand.LogoFile="";ShowLogo();SaveBrands();Generate();};refresh.Click+=(_,_)=>{renderKey=null;Generate();};save.Click+=(_,_)=>SaveImages();copy.Click+=(_,_)=>{try{if(preview.Image is not null){Clipboard.SetImage(preview.Image);status.Text="Imagem copiada.";}}catch(Exception ex){status.Text="Não foi possível copiar: "+ex.Message;}};
+        choose.Click+=(_,_)=>ChooseLogo();remove.Click+=(_,_)=>{Brand.LogoFile="";ShowLogo();SaveBrands();Generate();};refresh.Click+=(_,_)=>{renderKey=null;Generate();};save.Click+=(_,_)=>SaveImages();copy.Click+=(_,_)=>{try{if(preview.Image is not null){Clipboard.SetImage(preview.Image);status.Text=L.T("Imagem copiada.");}}catch(Exception ex){status.Text=L.T("Não foi possível copiar: ")+ex.Message;}};
     }
     public void RefreshMatches(string? preferred=null)
     {
@@ -60,22 +60,22 @@ public sealed class ImageExportPanel : UserControl
     }
     void LoadSelection()
     {
-        delay.Stop();loading=true;eventName.Text=Brand.EventName;casterName.Text=Brand.CasterName;channel.Text=Brand.Channel;for(int i=0;i<3;i++){platforms[i].Checked=Brand.SelectedPlatforms().Contains(platforms[i].Text);platformChannels[i].Text=Brand.PlatformChannels.GetValueOrDefault(platforms[i].Text,"");}scope.Items.Clear();scope.Items.Add("Série · mapas com rounds registrados");if(Selected is not null)foreach(var map in Selected.Maps)scope.Items.Add($"Mapa {Selected.Maps.IndexOf(map)+1:00} · {catalog.Maps.Single(m=>m.Id==map.MapId).Name}");scope.SelectedIndex=0;ShowLogo();loading=false;Generate();
+        delay.Stop();loading=true;eventName.Text=Brand.EventName;casterName.Text=Brand.CasterName;channel.Text=Brand.Channel;for(int i=0;i<3;i++){platforms[i].Checked=Brand.SelectedPlatforms().Contains(platforms[i].Text);platformChannels[i].Text=Brand.PlatformChannels.GetValueOrDefault(platforms[i].Text,"");}scope.Items.Clear();scope.Items.Add(L.T("Série · mapas com rounds registrados"));if(Selected is not null)foreach(var map in Selected.Maps)scope.Items.Add(L.F($"Mapa {Selected.Maps.IndexOf(map)+1:00} · {catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName}"));scope.SelectedIndex=0;ShowLogo();loading=false;Generate();
     }
-    void ShowLogo(){var old=logo.Image;logo.Image=null;old?.Dispose();try{if(File.Exists(Brand.LogoFile)){using var img=Image.FromFile(Brand.LogoFile);logo.Image=new Bitmap(img);}}catch{status.Text="Logo indisponível. Selecione a imagem novamente.";}}
+    void ShowLogo(){var old=logo.Image;logo.Image=null;old?.Dispose();try{if(File.Exists(Brand.LogoFile)){using var img=Image.FromFile(Brand.LogoFile);logo.Image=new Bitmap(img);}}catch{status.Text=L.T("Logo indisponível. Selecione a imagem novamente.");}}
     void ChooseLogo()
     {
-        if(Selected is null)return;using var dialog=new OpenFileDialog(){Filter="Imagem PNG ou JPEG|*.png;*.jpg;*.jpeg"};if(dialog.ShowDialog(this)!=DialogResult.OK)return;
+        if(Selected is null)return;using var dialog=new OpenFileDialog(){Filter=L.T("Imagem PNG ou JPEG|*.png;*.jpg;*.jpeg")};if(dialog.ShowDialog(this)!=DialogResult.OK)return;
         try
         {
-            if(new FileInfo(dialog.FileName).Length>20_000_000)throw new InvalidDataException("Use uma imagem com até 20 MB.");
-            using var source=Image.FromFile(dialog.FileName);if((long)source.Width*source.Height>40_000_000)throw new InvalidDataException("A imagem é muito grande. Use uma logo menor.");
+            if(new FileInfo(dialog.FileName).Length>20_000_000)throw new InvalidDataException(L.T("Use uma imagem com até 20 MB."));
+            using var source=Image.FromFile(dialog.FileName);if((long)source.Width*source.Height>40_000_000)throw new InvalidDataException(L.T("A imagem é muito grande. Use uma logo menor."));
             float scale=Math.Min(1,768f/Math.Max(source.Width,source.Height));using var normalized=new Bitmap(Math.Max(1,(int)(source.Width*scale)),Math.Max(1,(int)(source.Height*scale)));using(var g=Graphics.FromImage(normalized)){g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;g.DrawImage(source,0,0,normalized.Width,normalized.Height);}
             string folder=Path.Combine(AppPaths.DataDirectory,"Exportacao","Logos");Directory.CreateDirectory(folder);string path=Path.Combine(folder,Selected.Id+".png");normalized.Save(path,ImageFormat.Png);Brand.LogoFile=path;SaveBrands();ShowLogo();Generate();
         }
-        catch(Exception ex){status.Text="Não foi possível usar esta logo: "+ex.Message;}
+        catch(Exception ex){status.Text=L.T("Não foi possível usar esta logo: ")+ex.Message;}
     }
-    void SaveBrands(){try{string temp=settingsFile+".tmp";File.WriteAllText(temp,JsonSerializer.Serialize(brands,MatchStore.Options));File.Move(temp,settingsFile,true);}catch(Exception ex){status.Text="Falha ao salvar preferências: "+ex.Message;}}
+    void SaveBrands(){try{string temp=settingsFile+".tmp";File.WriteAllText(temp,JsonSerializer.Serialize(brands,MatchStore.Options));File.Move(temp,settingsFile,true);}catch(Exception ex){status.Text=L.T("Falha ao salvar preferências: ")+ex.Message;}}
     void ClearPreview(){generation++;renderCancellation?.Cancel();pendingKey=null;Rendering=false;renderKey=null;preview.Image=null;foreach(var page in rendered)page.Dispose();rendered.Clear();pages.Items.Clear();save.Enabled=copy.Enabled=false;}
     async void Generate()
     {
@@ -84,12 +84,12 @@ public sealed class ImageExportPanel : UserControl
         if(key==renderKey && rendered.Count>0 || key==pendingKey)return;
         ClearPreview();int request=generation;
         renderCancellation?.Dispose();renderCancellation=new CancellationTokenSource();var token=renderCancellation.Token;
-        pendingKey=key;Rendering=true;status.Text="Preparando prévia… Você pode continuar navegando.";
+        pendingKey=key;Rendering=true;status.Text=L.T("Preparando prévia… Você pode continuar navegando.");
         try
         {
-            var mode=(ExportAspect)Math.Max(0,aspect.SelectedIndex);description.Text=mode switch{ExportAspect.Stories=>"Uma imagem vertical com todo o resumo. Séries longas têm texto menor.",ExportAspect.Feed=>"Carrossel: uma capa e uma imagem detalhada por mapa.",_=>"Uma imagem com os mapas lado a lado."};
+            var mode=(ExportAspect)Math.Max(0,aspect.SelectedIndex);description.Text=mode switch{ExportAspect.Stories=>L.T("Até três mapas: resumo vertical. Quatro ou cinco: capa e detalhes por mapa."),ExportAspect.Feed=>L.T("Carrossel: uma capa e uma imagem detalhada por mapa."),_=>L.T("Até três mapas por imagem, lado a lado.")};
             var chosen=scope.SelectedIndex>0?Selected.Maps.ElementAtOrDefault(scope.SelectedIndex-1):null;
-            if(chosen is not null && chosen.Rounds.Count==0)throw new InvalidOperationException("Este mapa ainda não tem rounds registrados.");
+            if(chosen is not null && chosen.Rounds.Count==0)throw new InvalidOperationException(L.T("Este mapa ainda não tem rounds registrados."));
             var snapshot=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(Selected,MatchStore.Options),MatchStore.Options)!;
             var snapshotMap=chosen is null?null:snapshot.Maps.Single(m=>m.MapId==chosen.MapId);
             var brandSnapshot=JsonSerializer.Deserialize<ExportBrand>(JsonSerializer.Serialize(Brand))!;
@@ -98,7 +98,7 @@ public sealed class ImageExportPanel : UserControl
             try{token.ThrowIfCancellationRequested();result=await Task.Run(()=>ResultRenderer.Render(snapshot,catalog,brandSnapshot,mode,snapshotMap));}
             finally{renderGate.Release();}
             if(IsDisposed || Disposing || request!=generation){foreach(var page in result)page.Dispose();return;}
-            rendered=result;renderKey=key;pages.Items.AddRange(rendered.Select(p=>(object)p.Name.Replace('_',' ')).ToArray());pages.SelectedIndex=0;save.Enabled=copy.Enabled=true;status.Text=$"{rendered.Count} imagem(ns) pronta(s). Geração local, sem internet.";
+            rendered=result;renderKey=key;pages.Items.AddRange(rendered.Select(p=>(object)p.Name.Replace('_',' ').Replace("mapa",L.T("Mapa")).Replace("serie",L.T("Série")).Replace("capa",L.T("Capa"))).ToArray());pages.SelectedIndex=0;save.Enabled=copy.Enabled=true;status.Text=L.F($"{rendered.Count} imagem(ns) pronta(s). Geração local, sem internet.");
         }
         catch(OperationCanceledException){}
         catch(Exception ex){if(!IsDisposed && request==generation)status.Text=ex.Message;}
@@ -107,10 +107,10 @@ public sealed class ImageExportPanel : UserControl
     void SaveImages()
     {
         if(rendered.Count==0||Selected is null)return;
-        using var dialog=new FolderBrowserDialog(){Description="Escolha onde salvar as imagens"};if(dialog.ShowDialog(this)!=DialogResult.OK)return;
+        using var dialog=new FolderBrowserDialog(){Description=L.T("Escolha onde salvar as imagens")};if(dialog.ShowDialog(this)!=DialogResult.OK)return;
         string Safe(string s)=>string.Concat(s.Select(c=>Path.GetInvalidFileNameChars().Contains(c)?'_':c));
         string directory=Path.Combine(dialog.SelectedPath,$"{Selected.Created:yyyy-MM-dd}_{Safe(Selected.TeamA)}_vs_{Safe(Selected.TeamB)}_{DateTime.Now:HHmmss}_{Guid.NewGuid().ToString("N")[..6]}");
-        try{Directory.CreateDirectory(directory);foreach(var p in rendered)p.Image.Save(Path.Combine(directory,p.Name+".png"),ImageFormat.Png);status.Text=$"{rendered.Count} PNG(s) salvo(s) em:\n{directory}";}catch(Exception ex){status.Text="Falha na exportação: "+ex.Message;}
+        try{Directory.CreateDirectory(directory);foreach(var p in rendered)p.Image.Save(Path.Combine(directory,p.Name+".png"),ImageFormat.Png);status.Text=L.F($"{rendered.Count} PNG(s) salvo(s) em:\n{directory}");}catch(Exception ex){status.Text=L.T("Falha na exportação: ")+ex.Message;}
     }
     internal void VerifySelection(string firstId,string secondId)
     {
