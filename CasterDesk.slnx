@@ -1,0 +1,4 @@
+<Solution>
+ <Project Path="source-core/CasterDesk.Core.csproj" />
+ <Project Path="source-wpf/CasterDesk.Wpf.csproj" />
+</Solution>

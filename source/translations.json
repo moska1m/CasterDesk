@@ -1,4 +1,124 @@
 {
+  "Anúncio": [
+    "Announcement",
+    "Anuncio"
+  ],
+  "Map veto": [
+    "Map veto",
+    "Veto de mapas"
+  ],
+  "Estatísticas da série": [
+    "Series statistics",
+    "Estadísticas de la serie"
+  ],
+  "ASSISTA EM:": [
+    "WATCH AT:",
+    "MÍRALO EN:"
+  ],
+  "CANAL DA TRANSMISSÃO": [
+    "BROADCAST CHANNEL",
+    "CANAL DE TRANSMISIÓN"
+  ],
+  "Ex.: twitch.tv/seucanal ou youtube.com/@seucanal": [
+    "E.g. twitch.tv/yourchannel or youtube.com/@yourchannel",
+    "Ej.: twitch.tv/tucanal o youtube.com/@tucanal"
+  ],
+  "Logo": [
+    "Logo",
+    "Logo"
+  ],
+  "Logo salva para as artes desta partida.": [
+    "Logo saved for this match's artwork.",
+    "Logo guardado para las imágenes de esta partida."
+  ],
+  "CORREÇÕES DO VETO": [
+    "VETO CORRECTIONS",
+    "CORRECCIONES DEL VETO"
+  ],
+  "As escolhas abaixo alteram a arte. Ao aplicar, você pode atualizar também a partida.": [
+    "These choices change the artwork. When applying, you may also update the match.",
+    "Estas opciones cambian la imagen. Al aplicar, también puedes actualizar la partida."
+  ],
+  "Conclua o veto da partida antes de corrigir a arte.": [
+    "Complete the match veto before correcting the artwork.",
+    "Completa el veto de la partida antes de corregir la imagen."
+  ],
+  "Ataque inicial": [
+    "Starting attack",
+    "Ataque inicial"
+  ],
+  "Aplicar correções e gerar": [
+    "Apply corrections and generate",
+    "Aplicar correcciones y generar"
+  ],
+  "Usar veto da partida": [
+    "Use match veto",
+    "Usar veto de la partida"
+  ],
+  "Correções do veto": [
+    "Veto corrections",
+    "Correcciones del veto"
+  ],
+  "Atualizar também o veto da partida selecionada?\n\nSim: salvar na partida e na arte.\nNão: corrigir somente a arte.\nCancelar: continuar editando.": [
+    "Also update the selected match's veto?\n\nYes: save to the match and artwork.\nNo: correct only the artwork.\nCancel: keep editing.",
+    "¿Actualizar también el veto de la partida seleccionada?\n\nSí: guardar en la partida y la imagen.\nNo: corregir solo la imagen.\nCancelar: seguir editando."
+  ],
+  "A partida já tem bans ou rounds registrados. Mantenha esta correção somente na arte.": [
+    "This match already has bans or rounds recorded. Keep this correction in the artwork only.",
+    "Esta partida ya tiene bans o rondas registrados. Mantén esta corrección solo en la imagen."
+  ],
+  "Confira as correções do veto da arte ou restaure o veto da partida.": [
+    "Check the artwork veto corrections or restore the match veto.",
+    "Revisa las correcciones del veto de la imagen o restaura el veto de la partida."
+  ],
+  "Não foi possível salvar os nomes das equipes. Tente novamente antes de continuar.": [
+    "Could not save team names. Retry before continuing.",
+    "No se pudieron guardar los nombres de los equipos. Vuelve a intentarlo antes de continuar."
+  ],
+  "O CasterDesk já está aberto. Use a janela existente para continuar.": [
+    "CasterDesk is already open. Use the existing window to continue.",
+    "CasterDesk ya está abierto. Usa la ventana existente para continuar."
+  ],
+  "Uma configuração inválida foi preservada na pasta Configuracoes. Os valores padrão foram carregados.": [
+    "An invalid configuration was preserved in the Configuracoes folder. Defaults were loaded.",
+    "Se conservó una configuración no válida en la carpeta Configuracoes. Se cargaron los valores predeterminados."
+  ],
+  "Configurações": [
+    "Settings",
+    "Configuración"
+  ],
+  "Aparência": [
+    "Appearance",
+    "Apariencia"
+  ],
+  "Arquivos": [
+    "Files",
+    "Archivos"
+  ],
+  "Criar backup": [
+    "Create backup",
+    "Crear copia de seguridad"
+  ],
+  "Abrir pasta de dados": [
+    "Open data folder",
+    "Abrir carpeta de datos"
+  ],
+  "Tempo inválido. Use hh:mm:ss.": [
+    "Invalid duration. Use hh:mm:ss.",
+    "Duración no válida. Usa hh:mm:ss."
+  ],
+  "ESTILO DO FUNDO": [
+    "BACKGROUND STYLE",
+    "ESTILO DEL FONDO"
+  ],
+  "Clássico": [
+    "Classic",
+    "Clásico"
+  ],
+  "Comunidade · arte JG": [
+    "Community · artwork by JG",
+    "Comunidad · arte de JG"
+  ],
   "ROUND {0:00} • registro rápido": [
     "ROUND {0:00} • quick entry",
     "RONDA {0:00} • registro rápido"
@@ -1244,20 +1364,20 @@
     "Creado por Jeferson “Moska” Sampaio.\r\nHerramientas para community casters • uso interno.\r\n\r\n"
   ],
   "Os ícones de operadores, imagens de mapas e logos de Rainbow Six Siege utilizados neste aplicativo pertencem à Ubisoft e/ou aos respectivos titulares. Rainbow Six, Ubisoft e suas marcas relacionadas pertencem aos respectivos titulares. Logos de campeonatos, equipes e plataformas pertencem aos seus proprietários.\r\n\r\n": [
-    "The operator icons, map images and Rainbow Six Siege logos used in this application belong to Ubisoft and/or their respective owners. Rainbow Six, Ubisoft and related trademarks belong to their respective owners. Championship, team and platform logos belong to their owners.\r\n\r\n",
-    "Los iconos de agentes, imágenes de mapas y logos de Rainbow Six Siege usados en esta aplicación pertenecen a Ubisoft y/o a sus respectivos titulares. Rainbow Six, Ubisoft y sus marcas relacionadas pertenecen a sus respectivos titulares. Los logos de campeonatos, equipos y plataformas pertenecen a sus propietarios.\r\n\r\n"
+    "Operator icons, map images and Rainbow Six Siege logos used in this application belong to Ubisoft and/or their respective owners. Rainbow Six, Ubisoft and related trademarks belong to their respective owners. Tournament, team and platform logos belong to their owners.\r\n\r\n",
+    "Los iconos de operadores, imágenes de mapas y logotipos de Rainbow Six Siege utilizados en esta aplicación pertenecen a Ubisoft y/o a sus respectivos titulares. Rainbow Six, Ubisoft y sus marcas relacionadas pertenecen a sus respectivos titulares. Los logotipos de torneos, equipos y plataformas pertenecen a sus propietarios.\r\n\r\n"
   ],
   "O CasterDesk é uma ferramenta independente. Não representa aprovação, patrocínio ou certificação pela Ubisoft ou pela Microsoft. A autorização de transmissão dos usuários não equivale, por si só, à autorização de redistribuição dos recursos do aplicativo.\r\n\r\n": [
-    "CasterDesk is an independent tool. It does not imply approval, sponsorship or certification by Ubisoft or Microsoft. Users' broadcast authorization does not by itself authorize redistribution of the application's assets.\r\n\r\n",
-    "CasterDesk es una herramienta independiente. No implica aprobación, patrocinio ni certificación de Ubisoft o Microsoft. La autorización de transmisión de los usuarios no autoriza por sí sola la redistribución de los recursos de la aplicación.\r\n\r\n"
+    "CasterDesk is an independent tool. It does not imply approval, sponsorship or certification by Ubisoft or Microsoft. Users’ broadcasting authorization does not, by itself, authorize redistribution of application assets.\r\n\r\n",
+    "CasterDesk es una herramienta independiente. No implica aprobación, patrocinio ni certificación de Ubisoft o Microsoft. La autorización de transmisión de los usuarios no equivale, por sí sola, a una autorización para redistribuir los recursos de la aplicación.\r\n\r\n"
   ],
   "Utilize a ferramenta e as imagens geradas conforme as autorizações aplicáveis, as regras dos campeonatos e os direitos de terceiros. O usuário é responsável pelos dados e materiais que insere e pelo uso que faz dos resultados, nos limites da legislação aplicável. Este aviso não concede direitos sobre recursos de terceiros nem afasta responsabilidades previstas em lei.\r\n\r\n": [
-    "Use the tool and generated images in accordance with applicable permissions, championship rules and third-party rights. Users are responsible for the data and materials they enter and how they use the results, within the limits of applicable law. This notice grants no rights to third-party assets and does not waive statutory responsibilities.\r\n\r\n",
-    "Utiliza la herramienta y las imágenes generadas conforme a las autorizaciones aplicables, las reglas de los campeonatos y los derechos de terceros. El usuario es responsable de los datos y materiales que introduce y del uso de los resultados, dentro de los límites de la legislación aplicable. Este aviso no concede derechos sobre recursos de terceros ni excluye responsabilidades legales.\r\n\r\n"
+    "Use the tool and generated images in accordance with applicable authorizations, tournament rules and third-party rights. Users are responsible for the data and materials they enter and their use of results, within the limits of applicable law. This notice grants no rights to third-party assets and does not exclude liability established by law.\r\n\r\n",
+    "Utiliza la herramienta y las imágenes generadas conforme a las autorizaciones aplicables, las reglas de los torneos y los derechos de terceros. El usuario es responsable de los datos y materiales que introduce y del uso de los resultados, dentro de los límites de la legislación aplicable. Este aviso no concede derechos sobre recursos de terceros ni excluye responsabilidades previstas por ley.\r\n\r\n"
   ],
   "LICENÇAS\r\nO código próprio possui licença MIT. Recursos visuais de terceiros não estão incluídos nessa licença. O acesso ao repositório e às versões permanece privado. Consulte os arquivos LICENSE e THIRD-PARTY-NOTICES.md que acompanham o instalador.": [
-    "LICENSES\r\nOriginal code is licensed under MIT. Third-party visual assets are not covered by that license. Access to the repository and releases remains private. See the LICENSE and THIRD-PARTY-NOTICES.md files included with the installer.",
-    "LICENCIAS\r\nEl código propio tiene licencia MIT. Los recursos visuales de terceros no están incluidos en esa licencia. El acceso al repositorio y a las versiones sigue siendo privado. Consulta LICENSE y THIRD-PARTY-NOTICES.md incluidos con el instalador."
+    "LICENSES\r\nOriginal code is licensed under MIT. Third-party visual assets are not covered by that license. Repository and release access remains private. See the LICENSE and THIRD-PARTY-NOTICES.md files included with the installer.",
+    "LICENCIAS\r\nEl código propio tiene licencia MIT. Los recursos visuales de terceros no están incluidos en esa licencia. El acceso al repositorio y a las versiones sigue siendo privado. Consulta los archivos LICENSE y THIRD-PARTY-NOTICES.md incluidos con el instalador."
   ],
   "\n\nReabra o programa para retomar os dados salvos.": [
     "\n\nReopen the application to resume saved data.",
@@ -1280,7 +1400,7 @@
     "NUEVA PARTIDA"
   ],
   "CAMPEONATO": [
-    "CHAMPIONSHIP",
+    "TOURNAMENT",
     "CAMPEONATO"
   ],
   "TEXTOS PARA OBS": [
@@ -2486,5 +2606,701 @@
   "ATIVOS": [
     "ACTIVE",
     "ACTIVOS"
+  ],
+  "CONFIGURAÇÕES": [
+    "SETTINGS",
+    "CONFIGURACIÓN"
+  ],
+  "Backup e restauração": [
+    "Backup and restore",
+    "Copia de seguridad y restauración"
+  ],
+  "Abrir pasta de arquivos": [
+    "Open files folder",
+    "Abrir carpeta de archivos"
+  ],
+  "Sobre": [
+    "About",
+    "Acerca de"
+  ],
+  "Criar backup…": [
+    "Create backup…",
+    "Crear copia de seguridad…"
+  ],
+  "Restaurar backup…": [
+    "Restore backup…",
+    "Restaurar copia de seguridad…"
+  ],
+  "Inclui a pasta do CasterDesk. Arquivos externos e backups anteriores não entram no ZIP.": [
+    "Includes the CasterDesk folder. External files and previous backups are not included in the ZIP.",
+    "Incluye la carpeta de CasterDesk. Los archivos externos y las copias anteriores no se incluyen en el ZIP."
+  ],
+  "Nome da equipe A": [
+    "Team A name",
+    "Nombre del equipo A"
+  ],
+  "Nome da equipe B": [
+    "Team B name",
+    "Nombre del equipo B"
+  ],
+  "Pause o cronômetro antes de restaurar um backup.": [
+    "Pause the timer before restoring a backup.",
+    "Pausa el temporizador antes de restaurar una copia de seguridad."
+  ],
+  "Backup CasterDesk": [
+    "CasterDesk backup",
+    "Copia de seguridad de CasterDesk"
+  ],
+  "Backup concluído": [
+    "Backup complete",
+    "Copia de seguridad completada"
+  ],
+  "Backup criado. Arquivos salvos fora da pasta do CasterDesk não estão incluídos. Guarde uma cópia em outro disco.": [
+    "Backup created. Files saved outside the CasterDesk folder are not included. Keep a copy on another drive.",
+    "Copia de seguridad creada. No incluye archivos guardados fuera de la carpeta de CasterDesk. Guarda una copia en otro disco."
+  ],
+  "Não foi possível criar o backup:\n": [
+    "Could not create the backup:\n",
+    "No se pudo crear la copia de seguridad:\n"
+  ],
+  "Não foi possível preparar a restauração:\n": [
+    "Could not prepare the restore:\n",
+    "No se pudo preparar la restauración:\n"
+  ],
+  "Conflitos no backup": [
+    "Backup conflicts",
+    "Conflictos en la copia de seguridad"
+  ],
+  "Restaurar backup": [
+    "Restore backup",
+    "Restaurar copia de seguridad"
+  ],
+  "Backup verificado: {0} arquivos.\n{1} arquivos existentes têm conteúdo diferente (incluindo partidas e configurações).\n\nSim: usar as versões do backup.\nNão: manter as versões atuais e adicionar apenas arquivos ausentes.\nCancelar: não restaurar.\n\nUma cópia completa dos dados atuais será criada antes da restauração.": [
+    "Backup verified: {0} files.\n{1} existing files have different contents (including matches and settings).\n\nYes: use the backup versions.\nNo: keep current versions and add only missing files.\nCancel: do not restore.\n\nA full copy of current data will be created before restoring.",
+    "Copia verificada: {0} archivos.\n{1} archivos existentes tienen contenido diferente (incluidas partidas y configuración).\n\nSí: usar las versiones de la copia.\nNo: conservar las versiones actuales y añadir solo los archivos que faltan.\nCancelar: no restaurar.\n\nSe creará una copia completa de los datos actuales antes de restaurar."
+  ],
+  "Restaurar {0} arquivos? O CasterDesk será reiniciado. Uma cópia de segurança será guardada em Backups.\n\nConfira depois os caminhos externos usados no OBS.": [
+    "Restore {0} files? CasterDesk will restart. A safety copy will be saved in Backups.\n\nCheck external paths used in OBS afterwards.",
+    "¿Restaurar {0} archivos? CasterDesk se reiniciará. Se guardará una copia de seguridad en Backups.\n\nRevisa después las rutas externas usadas en OBS."
+  ],
+  "Horizontal · 16:9 · 1920 × 1080": [
+    "Landscape · 16:9 · 1920 × 1080",
+    "Horizontal · 16:9 · 1920 × 1080"
+  ],
+  "MAP POOL": [
+    "MAP POOL",
+    "GRUPO DE MAPAS"
+  ],
+  "Backup restaurado. Confira os caminhos dos TXT no OBS, especialmente se este for outro computador.": [
+    "Backup restored. Check TXT paths in OBS, especially on a different computer.",
+    "Copia restaurada. Revisa las rutas de los TXT en OBS, especialmente si es otro equipo."
+  ],
+  "A restauração não foi concluída. Seus dados e a cópia de segurança foram preservados.\n": [
+    "Restore was not completed. Your data and safety backup were preserved.\n",
+    "La restauración no se completó. Tus datos y la copia de seguridad se conservaron.\n"
+  ],
+  "Não foi possível iniciar o CasterDesk.\n": [
+    "Could not start CasterDesk.\n",
+    "No se pudo iniciar CasterDesk.\n"
+  ],
+  "Central de imagens": [
+    "Image studio",
+    "Central de imágenes"
+  ],
+  "Partida:": [
+    "Match:",
+    "Partida:"
+  ],
+  "TIPO DE ARTE": [
+    "ART TYPE",
+    "TIPO DE DISEÑO"
+  ],
+  "Anúncio da partida": [
+    "Match announcement",
+    "Anuncio de partida"
+  ],
+  "Map veto · OBS e arquivo": [
+    "Map veto · OBS and archive",
+    "Veto de mapas · OBS y archivo"
+  ],
+  "Resultado da série": [
+    "Series result",
+    "Resultado de la serie"
+  ],
+  "Estatísticas por mapa": [
+    "Stats by map",
+    "Estadísticas por mapa"
+  ],
+  "Estatísticas gerais da série": [
+    "Series statistics",
+    "Estadísticas generales de la serie"
+  ],
+  "Horizontal · 1920 × 1080": [
+    "Landscape · 1920 × 1080",
+    "Horizontal · 1920 × 1080"
+  ],
+  "DATA E HORÁRIO": [
+    "DATE AND TIME",
+    "FECHA Y HORA"
+  ],
+  "LOGOS DAS EQUIPES": [
+    "TEAM LOGOS",
+    "LOGOS DE LOS EQUIPOS"
+  ],
+  "FUNDO DA ARTE": [
+    "ART BACKGROUND",
+    "FONDO DEL DISEÑO"
+  ],
+  "Selecionar logo da equipe A": [
+    "Select team A logo",
+    "Seleccionar logo del equipo A"
+  ],
+  "Selecionar logo da equipe B": [
+    "Select team B logo",
+    "Seleccionar logo del equipo B"
+  ],
+  "Usar logos neutras": [
+    "Use neutral logos",
+    "Usar logos neutros"
+  ],
+  "Carregar fundo do campeonato": [
+    "Load tournament background",
+    "Cargar fondo del campeonato"
+  ],
+  "Restaurar fundo do JG": [
+    "Restore JG background",
+    "Restaurar fondo de JG"
+  ],
+  "Fundo JG. Você pode substituir por um fundo do campeonato.": [
+    "JG background. You can replace it with a tournament background.",
+    "Fondo de JG. Puedes reemplazarlo por un fondo del campeonato."
+  ],
+  "Fundo personalizado. Ajustado ao formato; confira o recorte na prévia.": [
+    "Custom background. Fitted to the format; check the crop in the preview.",
+    "Fondo personalizado. Ajustado al formato; revisa el recorte en la vista previa."
+  ],
+  "Gerar arquivos": [
+    "Generate files",
+    "Generar archivos"
+  ],
+  "Abrir pasta da partida": [
+    "Open match folder",
+    "Abrir carpeta de la partida"
+  ],
+  "Copiar caminho para OBS": [
+    "Copy OBS path",
+    "Copiar ruta para OBS"
+  ],
+  "Com fundo": [
+    "With background",
+    "Con fondo"
+  ],
+  "Transparente · OBS": [
+    "Transparent · OBS",
+    "Transparente · OBS"
+  ],
+  "Ao gerar: arquivo transparente fixo no OBS + duas cópias na pasta da partida.": [
+    "Generates a fixed transparent OBS file and two copies in the match folder.",
+    "Genera un archivo transparente fijo para OBS y dos copias en la carpeta de la partida."
+  ],
+  "Prévia pronta. Os arquivos serão salvos na pasta desta partida.": [
+    "Preview ready. Files will be saved in this match folder.",
+    "Vista previa lista. Los archivos se guardarán en la carpeta de esta partida."
+  ],
+  "Caminho copiado. Configure uma fonte de imagem no OBS com este arquivo.": [
+    "Path copied. Set up an image source in OBS using this file.",
+    "Ruta copiada. Configura una fuente de imagen en OBS con este archivo."
+  ],
+  "Salvando arquivos…": [
+    "Saving files…",
+    "Guardando archivos…"
+  ],
+  "Arquivos salvos em:": [
+    "Files saved to:",
+    "Archivos guardados en:"
+  ],
+  "Conferir estatísticas / colar print": [
+    "Review stats / paste screenshot",
+    "Revisar estadísticas / pegar captura"
+  ],
+  "Sem destaque MVP": [
+    "No MVP highlight",
+    "Sin destacar MVP"
+  ],
+  "Estatísticas ainda não conferidas.": [
+    "Stats have not been reviewed yet.",
+    "Las estadísticas aún no se han revisado."
+  ],
+  "Estatísticas completas e conferidas.": [
+    "Complete and reviewed stats.",
+    "Estadísticas completas y revisadas."
+  ],
+  "Estatísticas parciais ou indisponíveis.": [
+    "Partial or unavailable stats.",
+    "Estadísticas parciales o no disponibles."
+  ],
+  "Conclua o veto e defina os lados dos mapas antes de gerar.": [
+    "Complete the veto and set map sides before generating.",
+    "Completa el veto y define los lados de los mapas antes de generar."
+  ],
+  "Confira as estatísticas deste mapa antes de gerar.": [
+    "Review this map's stats before generating.",
+    "Revisa las estadísticas de este mapa antes de generar."
+  ],
+  "Confira as estatísticas de pelo menos um mapa antes de gerar.": [
+    "Review at least one map's stats before generating.",
+    "Revisa las estadísticas de al menos un mapa antes de generar."
+  ],
+  "PRÓXIMA PARTIDA": [
+    "UPCOMING MATCH",
+    "PRÓXIMA PARTIDA"
+  ],
+  "ESTATÍSTICAS DO MAPA": [
+    "MAP STATISTICS",
+    "ESTADÍSTICAS DEL MAPA"
+  ],
+  "ESTATÍSTICAS DA SÉRIE": [
+    "SERIES STATISTICS",
+    "ESTADÍSTICAS DE LA SERIE"
+  ],
+  "RESULTADO": [
+    "RESULT",
+    "RESULTADO"
+  ],
+  "DATA A DEFINIR": [
+    "DATE TO BE CONFIRMED",
+    "FECHA POR DEFINIR"
+  ],
+  "ACOMPANHE O CONFRONTO": [
+    "FOLLOW THE MATCH",
+    "SIGUE EL ENFRENTAMIENTO"
+  ],
+  "ESTATÍSTICAS PARCIAIS · DADOS CONFERIDOS": [
+    "PARTIAL STATISTICS · REVIEWED DATA",
+    "ESTADÍSTICAS PARCIALES · DATOS REVISADOS"
+  ],
+  "ESTATÍSTICAS CONFERIDAS": [
+    "REVIEWED STATISTICS",
+    "ESTADÍSTICAS REVISADAS"
+  ],
+  "ESTATÍSTICAS PARCIAIS": [
+    "PARTIAL STATISTICS",
+    "ESTADÍSTICAS PARCIALES"
+  ],
+  "SÉRIE EM ANDAMENTO": [
+    "SERIES IN PROGRESS",
+    "SERIE EN CURSO"
+  ],
+  "SEM ESTATÍSTICAS": [
+    "NO STATISTICS",
+    "SIN ESTADÍSTICAS"
+  ],
+  "JOGADOR": [
+    "PLAYER",
+    "JUGADOR"
+  ],
+  "Conferir estatísticas": [
+    "Review statistics",
+    "Revisar estadísticas"
+  ],
+  "Abrir print": [
+    "Open screenshot",
+    "Abrir captura"
+  ],
+  "Colar print · Ctrl+V": [
+    "Paste screenshot · Ctrl+V",
+    "Pegar captura · Ctrl+V"
+  ],
+  "Ler novamente": [
+    "Read again",
+    "Leer de nuevo"
+  ],
+  "Confira os dados ao lado antes de confirmar. O print não é enviado à internet.": [
+    "Review the data alongside before confirming. The screenshot is not uploaded.",
+    "Revisa los datos al lado antes de confirmar. La captura no se sube a internet."
+  ],
+  "Equipe no topo do print:": [
+    "Team at the top of the screenshot:",
+    "Equipo en la parte superior de la captura:"
+  ],
+  "Estatísticas completas": [
+    "Complete statistics",
+    "Estadísticas completas"
+  ],
+  "Estatísticas parciais / remake": [
+    "Partial statistics / remake",
+    "Estadísticas parciales / remake"
+  ],
+  "Sem print / sem estatísticas": [
+    "No screenshot / no statistics",
+    "Sin captura / sin estadísticas"
+  ],
+  "Confirmar estatísticas": [
+    "Confirm statistics",
+    "Confirmar estadísticas"
+  ],
+  "E = eliminações · M = mortes · A = assistências. Dados lidos precisam de revisão.": [
+    "K = kills · D = deaths · A = assists. Extracted data needs review.",
+    "E = eliminaciones · M = muertes · A = asistencias. Los datos extraídos deben revisarse."
+  ],
+  "E": [
+    "K",
+    "E"
+  ],
+  "M": [
+    "D",
+    "M"
+  ],
+  "Copie uma imagem antes de colar.": [
+    "Copy an image before pasting.",
+    "Copia una imagen antes de pegarla."
+  ],
+  "Lendo print… Confira os nomes e os números ao terminar.": [
+    "Reading screenshot… Review names and numbers when finished.",
+    "Leyendo captura… Revisa los nombres y los números al terminar."
+  ],
+  "Leitura concluída. Confira equipe, nome e E/M/A de cada jogador.": [
+    "Reading complete. Review each player's team, name and K/D/A.",
+    "Lectura completada. Revisa el equipo, nombre y E/M/A de cada jugador."
+  ],
+  "Não foi possível identificar dez jogadores. Preencha os campos ou marque como parcial.": [
+    "Could not identify ten players. Fill in the fields or mark as partial.",
+    "No se pudieron identificar diez jugadores. Completa los campos o marca como parcial."
+  ],
+  "Leitura interrompida. Você pode preencher os dados manualmente.": [
+    "Reading interrupted. You can fill in the data manually.",
+    "Lectura interrumpida. Puedes completar los datos manualmente."
+  ],
+  "Aguarde a leitura terminar antes de confirmar.": [
+    "Wait for reading to finish before confirming.",
+    "Espera a que termine la lectura antes de confirmar."
+  ],
+  "Use números inteiros nos campos E/M/A.": [
+    "Use whole numbers in the K/D/A fields.",
+    "Usa números enteros en los campos E/M/A."
+  ],
+  "Use uma imagem com até 40 MB.": [
+    "Use an image up to 40 MB.",
+    "Usa una imagen de hasta 40 MB."
+  ],
+  "A imagem é muito grande.": [
+    "The image is too large.",
+    "La imagen es demasiado grande."
+  ],
+  "Estatísticas inválidas.": [
+    "Invalid statistics.",
+    "Estadísticas inválidas."
+  ],
+  "Caminho de print inválido.": [
+    "Invalid screenshot path.",
+    "Ruta de captura inválida."
+  ],
+  "Confira nomes e valores de eliminações, mortes e assistências.": [
+    "Check names and values for kills, deaths and assists.",
+    "Revisa nombres y valores de eliminaciones, muertes y asistencias."
+  ],
+  "Há jogadores repetidos na mesma equipe.": [
+    "Duplicate players in the same team.",
+    "Hay jugadores repetidos en el mismo equipo."
+  ],
+  "Estatísticas completas exigem cinco jogadores por equipe e todos os valores.": [
+    "Complete statistics require five players per team and all values.",
+    "Las estadísticas completas requieren cinco jugadores por equipo y todos los valores."
+  ],
+  "Marque como parcial para guardar os dados disponíveis.": [
+    "Mark as partial to save the available data.",
+    "Marca como parcial para guardar los datos disponibles."
+  ],
+  "Não foi possível iniciar a leitura do print.": [
+    "Could not start screenshot reading.",
+    "No se pudo iniciar la lectura de la captura."
+  ],
+  "Leitura automática indisponível. Você pode preencher os dados manualmente.": [
+    "Automatic reading unavailable. You can enter the data manually.",
+    "Lectura automática no disponible. Puedes ingresar los datos manualmente."
+  ],
+  "Equipe": [
+    "Team",
+    "Equipo"
+  ],
+  "Jogador": [
+    "Player",
+    "Jugador"
+  ],
+  "Arquivos salvos. Use Abrir pasta da partida para acessar.": [
+    "Files saved. Use Open match folder to access them.",
+    "Archivos guardados. Usa Abrir carpeta de la partida para acceder."
+  ],
+  "Fundo padrão": [
+    "Default background",
+    "Fondo predeterminado"
+  ],
+  "Restaurar fundo padrão": [
+    "Restore default background",
+    "Restaurar fondo predeterminado"
+  ],
+  "Carregar fundo": [
+    "Load background",
+    "Cargar fondo"
+  ],
+  "Abrir revisão": [
+    "Open review",
+    "Abrir revisión"
+  ],
+  "Arquivos da partida": [
+    "Match files",
+    "Archivos de la partida"
+  ],
+  "Conciliar jogadores": [
+    "Match player identities",
+    "Conciliar jugadores"
+  ],
+  "Novo jogador": [
+    "New player",
+    "Nuevo jugador"
+  ],
+  "Banir próximo": [
+    "Ban next operator",
+    "Vetear siguiente agente"
+  ],
+  "Clique duas vezes para corrigir um round.": [
+    "Double-click to edit a round.",
+    "Haz doble clic para corregir una ronda."
+  ],
+  "Confirmar": [
+    "Confirm",
+    "Confirmar"
+  ],
+  "Confirmar round": [
+    "Confirm round",
+    "Confirmar ronda"
+  ],
+  "Corrigir round": [
+    "Edit round",
+    "Corregir ronda"
+  ],
+  "Revisar resultado": [
+    "Review result",
+    "Revisar resultado"
+  ],
+  "Defina coin flip e primeiro ban antes do veto.": [
+    "Set the coin flip and first ban before the veto.",
+    "Define el sorteo y el primer veto antes del veto de mapas."
+  ],
+  "Defina os lados antes de escolher os operadores.": [
+    "Set the sides before selecting operators.",
+    "Define los lados antes de elegir los agentes."
+  ],
+  "Disponível na etapa de banimento indicada.": [
+    "Available at the indicated ban stage.",
+    "Disponible en la fase de veto indicada."
+  ],
+  "Escolha os mapas no veto para configurar os lados.": [
+    "Choose maps in the veto to configure sides.",
+    "Elige los mapas del veto para configurar los lados."
+  ],
+  "Escolher mapa": [
+    "Choose map",
+    "Elegir mapa"
+  ],
+  "Importar pacote completo": [
+    "Import complete package",
+    "Importar paquete completo"
+  ],
+  "Exportar pacote completo": [
+    "Export complete package",
+    "Exportar paquete completo"
+  ],
+  "Importar partida JSON": [
+    "Import match JSON",
+    "Importar partida JSON"
+  ],
+  "Exportar partida JSON": [
+    "Export match JSON",
+    "Exportar partida JSON"
+  ],
+  "Pacote concluído.": [
+    "Package completed.",
+    "Paquete completado."
+  ],
+  "Processando pacote da partida…": [
+    "Processing match package…",
+    "Procesando el paquete de la partida…"
+  ],
+  "Permitir remover rounds posteriores se o mapa terminar antes": [
+    "Allow removing later rounds if the map ends earlier",
+    "Permitir eliminar rondas posteriores si el mapa termina antes"
+  ],
+  "Mapa confirmado. Abra uma revisão para corrigir os dados.": [
+    "Map confirmed. Open a review to edit its data.",
+    "Mapa confirmado. Abre una revisión para corregir los datos."
+  ],
+  "Round a round": [
+    "Round history",
+    "Historial de rondas"
+  ],
+  "Sortear coin flip": [
+    "Flip coin",
+    "Realizar sorteo"
+  ],
+  "Leitura cancelada. Os campos podem ser preenchidos manualmente.": [
+    "Reading cancelled. You can enter the data manually.",
+    "Lectura cancelada. Puedes completar los campos manualmente."
+  ],
+  "Leitura descartada para preservar sua edição manual.": [
+    "Reading discarded to preserve your manual edits.",
+    "Lectura descartada para conservar tus cambios manuales."
+  ],
+  "Substituir os dados editados pela leitura de um novo print?": [
+    "Replace edited data with a new screenshot reading?",
+    "¿Reemplazar los datos editados con la lectura de una nueva captura?"
+  ],
+  "Substituir os dados editados por uma nova leitura?": [
+    "Replace edited data with a new reading?",
+    "¿Reemplazar los datos editados con una nueva lectura?"
+  ],
+  "Tempo inválido: mantida a duração salva anteriormente.": [
+    "Invalid time: the previously saved duration was kept.",
+    "Tiempo inválido: se conservó la duración guardada anteriormente."
+  ],
+  "Use um valor de minutos entre 0 e 1440.": [
+    "Enter minutes greater than 0 and no more than 1440.",
+    "Ingresa un valor de minutos mayor que 0 y no superior a 1440."
+  ],
+  "Preferências da arte recuperadas. O arquivo inválido foi preservado.": [
+    "Artwork preferences recovered. The invalid file was preserved.",
+    "Preferencias de la imagen recuperadas. Se conservó el archivo inválido."
+  ],
+  "Este arquivo não contém um pacote de partida.": [
+    "This file does not contain a match package.",
+    "Este archivo no contiene un paquete de partida."
+  ],
+  "Arquivo inesperado no pacote de partida.": [
+    "Unexpected file in the match package.",
+    "Archivo inesperado en el paquete de partida."
+  ],
+  "Configuração inválida.": [
+    "Invalid configuration.",
+    "Configuración inválida."
+  ],
+  "Caminho inválido no backup.": [
+    "Invalid backup path.",
+    "Ruta inválida en la copia de seguridad."
+  ],
+  "Caminho fora da pasta do backup.": [
+    "Path outside the backup folder.",
+    "Ruta fuera de la carpeta de la copia de seguridad."
+  ],
+  "Links não são permitidos no backup.": [
+    "Links are not allowed in backups.",
+    "No se permiten enlaces en la copia de seguridad."
+  ],
+  "Limite de backup: 8 GB.": [
+    "Backup limit: 8 GB.",
+    "Límite de la copia de seguridad: 8 GB."
+  ],
+  "Limite de backup: 49.999 arquivos.": [
+    "Backup limit: 49,999 files.",
+    "Límite de la copia de seguridad: 49.999 archivos."
+  ],
+  "Backup tem arquivos demais.": [
+    "The backup contains too many files.",
+    "La copia de seguridad contiene demasiados archivos."
+  ],
+  "Este ZIP não é um backup do CasterDesk.": [
+    "This ZIP is not a CasterDesk backup.",
+    "Este ZIP no es una copia de seguridad de CasterDesk."
+  ],
+  "Manifesto muito grande.": [
+    "Manifest is too large.",
+    "El manifiesto es demasiado grande."
+  ],
+  "Manifesto inválido.": [
+    "Invalid manifest.",
+    "Manifiesto inválido."
+  ],
+  "Versão ou tamanho do backup não suportado (limite de 8 GB).": [
+    "Unsupported backup version or size (8 GB limit).",
+    "Versión o tamaño de copia no compatible (límite de 8 GB)."
+  ],
+  "Arquivos duplicados ou não listados no backup.": [
+    "Duplicate or unlisted files in the backup.",
+    "Archivos duplicados o no incluidos en el manifiesto de la copia."
+  ],
+  "Arquivo reservado.": [
+    "Reserved file.",
+    "Archivo reservado."
+  ],
+  "Arquivo ausente.": [
+    "Missing file.",
+    "Archivo ausente."
+  ],
+  "Tamanho divergente.": [
+    "File size mismatch.",
+    "El tamaño del archivo no coincide."
+  ],
+  "Tamanho excedido.": [
+    "File size exceeded.",
+    "Se excedió el tamaño del archivo."
+  ],
+  "Backup corrompido: ": [
+    "Corrupted backup: ",
+    "Copia de seguridad dañada: "
+  ],
+  "Esta correção remove rounds posteriores. Confirme a alteração.": [
+    "This edit removes later rounds. Confirm the change.",
+    "Esta corrección elimina rondas posteriores. Confirma el cambio."
+  ],
+  "Corrigir o ban de um mapa confirmado?": [
+    "Edit the ban of a confirmed map?",
+    "¿Corregir el veto de un mapa confirmado?"
+  ],
+  "Informe o motivo da revisão.": [
+    "Enter the reason for the review.",
+    "Indica el motivo de la revisión."
+  ],
+  "Informe o motivo da revisão. O resultado anterior será preservado no histórico da partida.": [
+    "Enter a reason for the review. The previous result will be preserved in the match history.",
+    "Indica el motivo de la revisión. El resultado anterior se conservará en el historial de la partida."
+  ],
+  "Associe variações do nome ao mesmo jogador da série. Nenhuma associação aproximada é feita automaticamente.": [
+    "Associate name variations with the same series player. No approximate matches are made automatically.",
+    "Asocia las variaciones de nombre al mismo jugador de la serie. No se hacen asociaciones aproximadas automáticamente."
+  ],
+  "O CasterDesk encontrou um erro e será encerrado. Reinicie o programa. Os dados já salvos foram preservados; detalhes estão na pasta de logs.": [
+    "CasterDesk encountered an error and will close. Restart the program. Saved data was preserved; details are in the logs folder.",
+    "CasterDesk encontró un error y se cerrará. Reinicia el programa. Se conservaron los datos guardados; los detalles están en la carpeta de registros."
+  ],
+  "Ferramentas para community casters de Rainbow Six Siege. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft.": [
+    "Tools for Rainbow Six Siege community casters. This is not an official product, sponsored or endorsed by Ubisoft.",
+    "Herramientas para casters de la comunidad de Rainbow Six Siege. No es un producto oficial, patrocinado ni avalado por Ubisoft."
+  ],
+  "Backup: {0} arquivos • {1:0.0} MB": [
+    "Backup: {0} files • {1:0.0} MB",
+    "Copia de seguridad: {0} archivos • {1:0.0} MB"
+  ],
+  "Verificar OCR": [
+    "Check OCR",
+    "Verificar OCR"
+  ],
+  "Verificando OCR…": [
+    "Checking OCR…",
+    "Verificando OCR…"
+  ],
+  "OCR disponível. Idiomas: ": [
+    "OCR available. Languages: ",
+    "OCR disponible. Idiomas: "
+  ],
+  "Nome de equipe deve ter até 80 caracteres.": [
+    "Team name must be at most 80 characters.",
+    "El nombre del equipo debe tener como máximo 80 caracteres."
+  ],
+  "Cobertura: {0}/{1} mapas conferidos.": [
+    "Coverage: {0}/{1} maps reviewed.",
+    "Cobertura: {0}/{1} mapas revisados."
+  ],
+  "Confirmar resultado e bloquear os rounds deste mapa?": [
+    "Confirm the result and lock this map’s rounds?",
+    "¿Confirmar el resultado y bloquear las rondas de este mapa?"
   ]
 }

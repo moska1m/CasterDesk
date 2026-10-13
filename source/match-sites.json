@@ -1,0 +1,218 @@
+[
+  {
+    "MapId": "bank",
+    "SiteId": "executive-lounge-ceo-office",
+    "English": "Executive Lounge - CEO Office",
+    "Legacy": "Lounge Executivo - Escritório CEO"
+  },
+  {
+    "MapId": "bank",
+    "SiteId": "staff-room-open-area",
+    "English": "Staff Room - Open Area",
+    "Legacy": "Sala Funcion - Área aberta"
+  },
+  {
+    "MapId": "bank",
+    "SiteId": "tellers-office-archives",
+    "English": "Tellers' Office - Archives",
+    "Legacy": "Escrito. Funcionários - Arquivos"
+  },
+  {
+    "MapId": "bank",
+    "SiteId": "lockers-cctv-room",
+    "English": "Lockers - CCTV Room",
+    "Legacy": "P Armários - Sala de Vigilância"
+  },
+  {
+    "MapId": "border",
+    "SiteId": "armory-lockers-archives",
+    "English": "Armory Lockers - Archives",
+    "Legacy": "Sala Armas e Arsenal - Arquivos"
+  },
+  {
+    "MapId": "border",
+    "SiteId": "ventilation-room-workshop",
+    "English": "Ventilation Room - Workshop",
+    "Legacy": "Ventilação - Oficina"
+  },
+  {
+    "MapId": "border",
+    "SiteId": "bathroom-tellers",
+    "English": "Bathroom - Tellers",
+    "Legacy": "Banheiro - Antendimento"
+  },
+  {
+    "MapId": "border",
+    "SiteId": "customs-inspection-supply-room",
+    "English": "Customs Inspection - Supply Room",
+    "Legacy": "Alfândega: Inspeção - Sala de suprimento"
+  },
+  {
+    "MapId": "chalet",
+    "SiteId": "master-bedroom-office",
+    "English": "Master Bedroom - Office",
+    "Legacy": "Suíte Master - Escritório"
+  },
+  {
+    "MapId": "chalet",
+    "SiteId": "bar-gaming-room",
+    "English": "Bar - Gaming Room",
+    "Legacy": "Bar - Sala de Jogos"
+  },
+  {
+    "MapId": "chalet",
+    "SiteId": "kitchen-dining-room",
+    "English": "Kitchen - Dining Room",
+    "Legacy": "Cozinha - Sala de Jantar"
+  },
+  {
+    "MapId": "chalet",
+    "SiteId": "wine-cellar-snowmobile-garage",
+    "English": "Wine Cellar - Snowmobile Garage",
+    "Legacy": "Adega de Vinhos - Motoneves"
+  },
+  {
+    "MapId": "clubhouse",
+    "SiteId": "gym-bedroom",
+    "English": "Gym - Bedroom",
+    "Legacy": "Academia - Quarto"
+  },
+  {
+    "MapId": "clubhouse",
+    "SiteId": "cctv-room-cash-room",
+    "English": "CCTV Room - Cash Room",
+    "Legacy": "Vigilância - Contabilidade"
+  },
+  {
+    "MapId": "clubhouse",
+    "SiteId": "bar-stage",
+    "English": "Bar - Stage",
+    "Legacy": "Bar - Palco"
+  },
+  {
+    "MapId": "clubhouse",
+    "SiteId": "church-arsenal-room",
+    "English": "Church - Arsenal Room",
+    "Legacy": "Capela - Arsenal"
+  },
+  {
+    "MapId": "kafe-dostoyevsky",
+    "SiteId": "bar-cocktail-lounge",
+    "English": "Bar - Cocktail Lounge",
+    "Legacy": "Bar - Longue Coquetéis"
+  },
+  {
+    "MapId": "kafe-dostoyevsky",
+    "SiteId": "fireplace-hall-mining-room",
+    "English": "Fireplace Hall - Mining Room",
+    "Legacy": "Lareira - Bomba de Purificação"
+  },
+  {
+    "MapId": "kafe-dostoyevsky",
+    "SiteId": "reading-room-fireplace-hall",
+    "English": "Reading Room - Fireplace Hall",
+    "Legacy": "Sala Leitura - Lareira"
+  },
+  {
+    "MapId": "kafe-dostoyevsky",
+    "SiteId": "kitchen-service-kitchen-cooking",
+    "English": "Kitchen Service - Kitchen Cooking",
+    "Legacy": "Copa - Cozinha prep."
+  },
+  {
+    "MapId": "lair",
+    "SiteId": "office-r6-room",
+    "English": "Office - R6 Room",
+    "Legacy": "Escritório - Sala R6"
+  },
+  {
+    "MapId": "lair",
+    "SiteId": "bunk-briefing",
+    "English": "Bunk - Briefing",
+    "Legacy": "Beliche - Briefing"
+  },
+  {
+    "MapId": "lair",
+    "SiteId": "weapon-maintenance-arsenal",
+    "English": "Weapon Maintenance - Arsenal",
+    "Legacy": "Manute. Armas - Arsenal"
+  },
+  {
+    "MapId": "lair",
+    "SiteId": "lab-support-lab",
+    "English": "Lab Support - Lab",
+    "Legacy": "Suport. Labo - Laboratório"
+  },
+  {
+    "MapId": "fortress",
+    "SiteId": "bathroom-commander-s-office",
+    "English": "Bathroom - Commander's Office",
+    "Legacy": "Banheiro - Escritório comandante"
+  },
+  {
+    "MapId": "fortress",
+    "SiteId": "dormitory-games-room",
+    "English": "Dormitory - Games Room",
+    "Legacy": "Dormitório - Salão de jogos"
+  },
+  {
+    "MapId": "fortress",
+    "SiteId": "waiting-room-dining-hall",
+    "English": "Waiting Room - Dining Hall",
+    "Legacy": "Sala de espera - Refeitório"
+  },
+  {
+    "MapId": "fortress",
+    "SiteId": "hammam-sitting-room",
+    "English": "Hammam - Sitting Room",
+    "Legacy": "Hamam - Sala de estar"
+  },
+  {
+    "MapId": "nighthaven-labs",
+    "SiteId": "command-center-servers",
+    "English": "Command Center - Servers",
+    "Legacy": "Centro de comando - Servodores"
+  },
+  {
+    "MapId": "nighthaven-labs",
+    "SiteId": "kitchen-cafeteria",
+    "English": "Kitchen - Cafeteria",
+    "Legacy": "Cozinha - Refeitório"
+  },
+  {
+    "MapId": "nighthaven-labs",
+    "SiteId": "storage-control-room",
+    "English": "Storage - Control Room",
+    "Legacy": "Armazém - Sala de Controle"
+  },
+  {
+    "MapId": "nighthaven-labs",
+    "SiteId": "assembly-tank",
+    "English": "Assembly - Tank",
+    "Legacy": "Montagem - Tanque"
+  },
+  {
+    "MapId": "villa",
+    "SiteId": "aviator-room-games-room",
+    "English": "Aviator Room - Games Room",
+    "Legacy": "Aviação - Jogos"
+  },
+  {
+    "MapId": "villa",
+    "SiteId": "trophy-room-statuary-room",
+    "English": "Trophy Room - Statuary Room",
+    "Legacy": "Troféu - Estatua "
+  },
+  {
+    "MapId": "villa",
+    "SiteId": "kitchen-dining-room",
+    "English": "Kitchen - Dining Room",
+    "Legacy": "Cozinha - Jantar"
+  },
+  {
+    "MapId": "villa",
+    "SiteId": "art-storage-living-room",
+    "English": "Art Storage - Living Room",
+    "Legacy": "Depos. Artes - Escritório"
+  }
+]

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace CronoLive;
@@ -28,6 +28,7 @@ public sealed class MapRecord
     public string[] Bans { get; set; } = new string[12];
     public List<RoundRecord> Rounds { get; set; } = [];
     public DateTimeOffset? ConfirmedAt { get; set; }
+    public MapStatistics? Statistics { get; set; }
     [JsonIgnore] public bool Confirmed => ConfirmedAt.HasValue;
     [JsonIgnore] public bool HasData => Rounds.Count > 0 || Bans.Any(x => !string.IsNullOrEmpty(x));
     public int Attacker(int round) => round <= 6 ? InitialAttack : round <= 12 ? 1 - InitialAttack : (round % 2 == 1 ? OtAttack : 1 - OtAttack);
@@ -69,12 +70,19 @@ internal static class BombsiteNames
         _=>site
     }).Trim();
 }
+[JsonConverter(typeof(MatchJsonConverter))]
 public sealed class SiegeMatch
 {
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 2;
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public DateTime Created { get; set; } = DateTime.Now;
-    public string TeamA { get; set; } = L.T("Equipe A"); public string TeamB { get; set; } = L.T("Equipe B");
+    string nameA="",nameB="";
+    public string TeamA { get=>TeamAIsDefault?L.T("Equipe A"):nameA; set{nameA=value;TeamAIsDefault=string.IsNullOrWhiteSpace(value);} }
+    public string TeamB { get=>TeamBIsDefault?L.T("Equipe B"):nameB; set{nameB=value;TeamBIsDefault=string.IsNullOrWhiteSpace(value);} }
+    public bool TeamAIsDefault {get;set;}=true;
+    public bool TeamBIsDefault {get;set;}=true;
+    [JsonIgnore] public string StoredTeamA=>TeamAIsDefault?"Team A":nameA;
+    [JsonIgnore] public string StoredTeamB=>TeamBIsDefault?"Team B":nameB;
     public string Format { get; set; } = "MD1";
     public int CoinWinner { get; set; } = -1; public int FirstBan { get; set; } = -1;
     public string[] Veto { get; set; } = new string[8];
@@ -116,19 +124,27 @@ public static class MatchStore
         if(File.Exists(path)) File.Copy(path,path+".bak",true);
         File.Move(temp,path,true);
     }
-    public static void Save(SiegeMatch match) => Atomic(Path.Combine(Folder,match.Id+".json"),match);
+    public static void Save(SiegeMatch match)
+    {
+        lock(FileBatch.Gate){using var batch=new FileBatch();Stage(batch,match);batch.Commit();}
+    }
+    public static void Stage(FileBatch batch,SiegeMatch match)
+    {
+        string path=Path.Combine(Folder,match.Id+".json");if(File.Exists(path))batch.Add(path+".bak",p=>File.Copy(path,p));
+        batch.Text(path,JsonSerializer.Serialize(match,Options));MatchFiles.StageSnapshot(batch,match);
+    }
     public static SiegeMatch Read(string path, SiegeCatalog catalog)
     {
         if(new FileInfo(path).Length>2_000_000) throw new InvalidDataException(L.T("Arquivo de partida muito grande."));
-        var m=JsonSerializer.Deserialize<SiegeMatch>(File.ReadAllText(path),Options) ?? throw new InvalidDataException(L.T("Partida vazia."));
-        Validate(m,catalog); return m;
+        SiegeMatch m;try{m=JsonSerializer.Deserialize<SiegeMatch>(File.ReadAllText(path),Options) ?? throw new InvalidDataException(L.T("Partida vazia."));}catch(JsonException ex){throw new InvalidDataException(ex.Message,ex);}
+        Validate(m,catalog);foreach(var map in m.Maps)if(map.Statistics!=null)StatisticsData.Identify(m,map.Statistics);return m;
     }
     public static void Validate(SiegeMatch m,SiegeCatalog c)
     {
         void Need(bool ok,string message) {if(!ok) throw new InvalidDataException(message);}
-        Need(m.Version==1,L.T("Versão de partida incompatível."));
+        Need(m.Version is 1 or 2,L.T("Versão de partida incompatível."));
         Need(Guid.TryParseExact(m.Id,"N",out _),L.T("Identificador inválido."));
-        Need(m.TeamA is not null && m.TeamB is not null && m.TeamA.Length<=12 && m.TeamB.Length<=12,L.T("Nome de equipe deve ter até 12 caracteres."));
+        Need(m.TeamA is not null && m.TeamB is not null && m.TeamA.Length<=80 && m.TeamB.Length<=80,L.T("Nome de equipe deve ter até 80 caracteres."));
         Need(m.Format is "MD1" or "MD3" or "MD5",L.T("Formato inválido."));
         Need(m.CoinWinner is >=-1 and <=1 && m.FirstBan is >=-1 and <=1,L.T("Coin flip inválido."));
         Need(m.Veto is {Length:8} && m.Maps is not null,L.T("Estrutura de partida inválida."));
@@ -140,6 +156,7 @@ public static class MatchStore
         Need(m.Maps!.Count==expected.Maps.Count && m.Maps.Select(x=>(x.MapId,x.Picker)).SequenceEqual(expected.Maps.Select(x=>(x.MapId,x.Picker))),L.T("Mapas não correspondem ao veto."));
         foreach(var map in m.Maps)
         {
+            if(map.Statistics is not null)StatisticsData.Validate(map.Statistics);
             Need(map.InitialAttack is >=-1 and <=1 && map.OtAttack is >=-1 and <=1,L.T("Lados inválidos."));
             Need(map.Rounds is not null && map.Rounds.Count<=15 && map.Bans is {Length:12},L.T("Rounds ou bans inválidos."));
             Need(!map.HasData || map.InitialAttack>=0,L.T("Dados sem lado inicial."));

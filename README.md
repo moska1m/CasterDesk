@@ -1,6 +1,12 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **0.2.0-beta.0.3 — beta privada para validação.**
+Ferramentas para community casters de Rainbow Six Siege. **0.3.0-beta.0.4 — beta privada, campeonato WPF e salvamento recuperável.**
+
+Central em cinco abas, canal do anúncio conforme PSD do JG, logos no cadastro e correção editorial do veto com opção de atualizar também a partida. Entrega, testes e próximas etapas em [PROGRESSO-ESTABILIZACAO.md](PROGRESSO-ESTABILIZACAO.md).
+
+Partidas usam JSON versão 2 com base em inglês e nomes padrão exibidos no idioma local. JSONs antigos continuam importáveis; novos arquivos exigem a versão atualizada em ambos os computadores. Consulte [MATCH-JSON-FORMAT.md](MATCH-JSON-FORMAT.md).
+
+A nova janela, menu, Central de imagens, conferência de estatísticas e textos/cronômetro são WPF. Campeonato, lobby e seletores de mapas/operadores agora também são WPF, sobre uma camada de comandos compartilhada. Consulte [WPF-MIGRATION.md](WPF-MIGRATION.md) para limites e compilação da nova versão.
 
 Aplicativo independente para Windows, em português, inglês e espanhol. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft. O programa registra as informações inseridas pelo usuário; não controla o jogo nem o OBS.
 
@@ -23,7 +29,7 @@ A página de partida se ajusta à janela e mantém as ações inferiores visíve
 - Resumo para remake e guia de configuração de lobby.
 - Cronômetro com adição de tempo durante a contagem e saída TXT para OBS.
 - Casting: nomes e perfis de narrador, comentarista e dois convidados em oito arquivos TXT.
-- PNG: Stories (1080×1920), feed/carrossel (1080×1350) e horizontal (1920×1080), com identificação do caster e logotipo do campeonato.
+- Central de imagens: anúncio, map veto, resultado da série, estatísticas por mapa e estatísticas da série, com logos das equipes e fundo personalizável.
 - Temas Siege e simplificado, claros/escuros; mudança aplicada ao reabrir.
 
 ## Idiomas e arquivos de partida
@@ -36,7 +42,7 @@ Use **Exportar partida** para gerar um nome legível, por exemplo `2026-09-24_18
 
 ## Instalar
 
-Baixe `CasterDesk-0.2.0-beta.0.3-win-x64-Setup.exe` na release privada, execute e escolha se deseja atalho na área de trabalho. O Menu Iniciar recebe um atalho. O instalador inclui o .NET e não requer instalação separada do runtime.
+Execute `CasterDesk-0.2.0-beta.0.8-win-x64-Setup.exe` para instalar ou atualizar. Programa e instalador são de 64 bits e incluem o .NET. Configurações e partidas permanecem em Documentos/CasterDesk. Como alternativa, extraia o ZIP portátil em uma pasta e execute `CasterDesk.exe`; não execute diretamente de dentro do ZIP.
 
 Alvo desta beta: Windows 10/11 x64. Ainda é necessário validar em um segundo computador e em diferentes escalas de tela. O instalador beta não tem assinatura digital própria; o Windows pode pedir confirmação de origem. Não desative as proteções do sistema.
 
@@ -45,14 +51,15 @@ Desinstale pelas configurações de aplicativos do Windows. Dados pessoais são 
 ## Onde ficam os dados
 
 - Programa: `%LOCALAPPDATA%\Programs\CasterDesk`.
-- Dados: `%LOCALAPPDATA%\CasterDesk` (partidas, configurações, logos enviados, logs e saídas TXT padrão).
+- Dados novos: `Documentos\CasterDesk`, respeitando a localização da pasta Documentos no Windows.
+- Dados antigos em `%LOCALAPPDATA%\CasterDesk` são copiados na migração; a origem é preservada.
 - Os caminhos TXT podem ser personalizados no programa. No OBS, selecione a fonte de texto e habilite a leitura do arquivo correspondente.
 
-A beta não altera a cópia anterior do CronoLive/CasterDesk. Para transferir partidas da prévia, exporte nelas e importe na beta, ou use `scripts/Migrate-Preview.ps1`. Depois confira os caminhos usados pelo OBS. Para backup completo, feche o aplicativo e copie a pasta de dados; o JSON da partida não inclui os logos nem todas as preferências.
+A beta não altera a cópia anterior do CronoLive/CasterDesk. Para transferir partidas da prévia, exporte nelas e importe na beta, ou use `scripts/Migrate-Preview.ps1`. Depois confira os caminhos usados pelo OBS. Para backup completo, use Backup e restauração no menu; exportar apenas o JSON não inclui imagens, logos e preferências.
 
 ## Limites da beta
 
-MD5, PDF, correção administrativa de mapas confirmados e atualização automática não estão implementados. O bloqueio de resultado evita alterações acidentais na interface, não é uma assinatura criptográfica do JSON. Regras e map pool representam o perfil configurado neste projeto, não uma promessa de atualização automática para todos os campeonatos.
+PDF, correção administrativa de mapas confirmados e atualização automática não estão implementados. O bloqueio de resultado evita alterações acidentais na interface, não é uma assinatura criptográfica do JSON. Regras e map pool representam o perfil configurado neste projeto, não uma promessa de atualização automática para todos os campeonatos.
 
 ## Compilar e testar
 
@@ -74,6 +81,40 @@ Código próprio sob MIT. **Imagens e marcas de terceiros não estão cobertas p
 
 ## Sobre e assinatura
 
-Na engrenagem, escolha **Sobre o CasterDesk** para consultar autoria, versão, créditos e condições de uso. Criado por Jeferson “Moska” Sampaio. Consulte SIGNING.md para o processo de assinatura; esta beta ainda não é assinada.
+Na engrenagem, escolha **Sobre** para consultar autoria, versão, créditos e condições de uso. Criado por Jeferson “Moska” Sampaio. Consulte SIGNING.md para o processo de assinatura; esta beta ainda não é assinada.
 
 
+
+## Pastas e backup (beta.0.4)
+
+Novas instalações usam Documentos/CasterDesk, respeitando a localização da pasta no Windows. Configuracoes guarda preferências; Textos guarda saídas novas; Imagens é o destino sugerido dos PNGs; Partidas guarda o histórico e Exportadas guarda os JSONs exportados; Backups guarda ZIPs e arquivos de recuperação.
+
+Configurações antigas de TXT permanecem apontando para a pasta anterior, para preservar fontes do OBS. Esses arquivos externos não entram no backup. Para centralizá-los, escolha Textos nos campos de saída e atualize as fontes correspondentes do OBS.
+
+Engrenagem → Backup e restauração permite criar um ZIP ou restaurá-lo. A restauração confere integridade, mostra conflitos e permite manter todos os arquivos atuais ou substituí-los pelas versões do backup. Partidas com o mesmo ID conservam o mesmo arquivo. O programa reinicia para aplicar os dados. Antes disso, cria um backup dos dados atuais. Guarde uma cópia externa ao PC. A desinstalação preserva todos esses dados.
+
+## Central de imagens e estatísticas (beta.0.6)
+
+Escolha a partida na Central de imagens. Anúncios permitem campeonato e logos de cada equipe, seguindo a composição do PSD original. Data, horário e canal não aparecem nesta etapa. Sem logo, utiliza-se o símbolo neutro fornecido. Nesta etapa não há endereço de canal nem Twitch nas artes.
+
+Anúncio, resultado e estatísticas oferecem horizontal (1920×1080), feed (1080×1350) e stories (1080×1920). Map veto usa 1920×1080 e exige veto concluído e lados iniciais definidos. Mapas não jogados aparecem em preto e branco, sem texto de ausência nem placar.
+
+Use a opção de fundo para carregar um PNG/JPEG do campeonato; o programa guarda uma cópia otimizada junto à partida. A imagem é recortada para preencher o formato, por isso confira a prévia. Restaurar o fundo padrão volta à arte de JG.
+
+Ao gerar map veto, o arquivo Documentos/CasterDesk/OBS/map-veto.png é substituído pela seleção atual, sempre com transparência. Configure uma fonte de imagem do OBS para esse caminho uma única vez. A pasta da partida recebe map-veto.png com fundo e map-veto-obs.png transparente.
+
+Cada partida tem uma pasta estável em Partidas, identificada pela data e ID. Ela contém partida.json, arte.json, Imagens, Estatisticas e Recursos. O JSON interno por ID também é preservado para compatibilidade. Renomear equipes não muda o destino dos arquivos. Abrir pasta da partida dá acesso às artes geradas.
+
+Após confirmar cada mapa, pode-se registrar estatísticas. Abra um print ou cole uma imagem com Ctrl+V. A leitura usa o reconhecimento local do Windows, sem enviar o print a um serviço externo. Se indisponível, preencha manualmente. Compare a imagem e os campos E/M/A lado a lado, corrija nomes/números e a equipe do topo e confirme. Sem print, marque ausência; remake e informações incompletas podem ser registrados como parciais.
+
+As estatísticas gerais somam jogadores por equipe e nome: mantenha o mesmo apelido entre mapas. Campos desconhecidos não são convertidos em zero; jogadores com números incompletos ficam fora da arte até completar os dados. Cobertura incompleta é indicada na exportação. MVP é uma seleção manual entre jogadores com estatísticas confirmadas.
+
+O backup ZIP completo inclui pastas de partidas, artes, logos, BGs e prints que estiverem dentro da pasta de dados. Arquivos TXT externos continuam fora do backup.
+
+## Otimização de imagens (beta.0.8)
+
+Os recursos mantêm as mesmas dimensões e pixels. PNGs opacos dispensam o canal alfa; mapas em preto e branco utilizam um único canal. Recursos da Central que são exatamente iguais compartilham um arquivo, com aliases para conservar as referências de idioma e formato.
+
+As novas exportações PNG usam compactação sem perda, sem redução de cores ou resolução. O arquivo transparente do OBS continua no mesmo caminho. A gravação processa as linhas sem criar uma cópia completa adicional do bitmap; o trabalho de exportação continua em segundo plano. A compressão aumenta um pouco o tempo de gravação, em troca de arquivos menores. Arquivos já salvos nas pastas das partidas não são alterados.
+
+Para preparar novos recursos do projeto, scripts/Optimize-Assets.py requer Python, Pillow e NumPy. O script compara os pixels e guarda os originais em work/image-optimization-originals, fora do pacote distribuído. Os PSDs fornecidos permanecem intactos.

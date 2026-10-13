@@ -1,4 +1,4 @@
-﻿; *** Inno Setup version 6.1.0+ Brazilian Portuguese messages made by Cesar82 cesar.zanetti.82@gmail.com ***
+; *** Inno Setup version 6.5.0+ Brazilian Portuguese messages made by Cesar82 cesar.zanetti.82@gmail.com ***
 ;
 ; To download user-contributed translations of this file, go to:
 ;   https://jrsoftware.org/files/istrans/
@@ -17,13 +17,11 @@ LanguageCodePage=1252
 ; If the language you are translating to requires special font faces or
 ; sizes, uncomment any of the following entries and change them accordingly.
 ;DialogFontName=
-;DialogFontSize=8
-;WelcomeFontName=Verdana
-;WelcomeFontSize=12
-;TitleFontName=Arial
-;TitleFontSize=29
-;CopyrightFontName=Arial
-;CopyrightFontSize=8
+;DialogFontSize=9
+;DialogFontBaseScaleWidth=7
+;DialogFontBaseScaleHeight=15
+;WelcomeFontName=Segoe UI
+;WelcomeFontSize=14
 
 [Messages]
 
@@ -55,7 +53,7 @@ WindowsVersionNotSupported=Este programa não suporta a versão do Windows que s
 WindowsServicePackRequired=Este programa requer o %1 Service Pack %2 ou superior.
 NotOnThisPlatform=Este programa não executará no %1.
 OnlyOnThisPlatform=Este programa deve ser executado no %1.
-OnlyOnTheseArchitectures=Este programa só pode ser instalado em versões do Windows projetadas para as seguintes arquiteturas de processadores:%n%n% 1
+OnlyOnTheseArchitectures=Este programa só pode ser instalado em versões do Windows projetadas para as seguintes arquiteturas de processadores:%n%n%1
 WinVersionTooLowError=Este programa requer a %1 versão %2 ou superior.
 WinVersionTooHighError=Este programa não pode ser instalado na %1 versão %2 ou superior.
 AdminPrivilegesRequired=Você deve estar logado como administrador quando instalar este programa.
@@ -79,7 +77,7 @@ ErrorTooManyFilesInDir=Incapaz de criar um arquivo no diretório "%1" porque ele
 
 ; *** Setup common messages
 ExitSetupTitle=Sair do Instalador
-ExitSetupMessage=A Instalação não está completa. Se você sair agora o programa não será instalado.%n%nVocê pode executar o instalador de novo outra hora pra completar a instalação.%n%nSair do instalador?
+ExitSetupMessage=A Instalação não está completa. Se você sair agora o programa não será instalado.%n%nVocê pode executar o instalador novamente outra hora pra completar a instalação.%n%nSair do instalador?
 AboutSetupMenuItem=&Sobre o Instalador...
 AboutSetupTitle=Sobre o Instalador
 AboutSetupMessage=%1 versão %2%n%3%n%n%1 home page:%n%4
@@ -103,7 +101,7 @@ ButtonNewFolder=&Criar Nova Pasta
 
 ; *** "Select Language" dialog messages
 SelectLanguageTitle=Selecione o Idioma do Instalador
-SelectLanguageLabel=Selecione o idioma pra usar durante a instalação:
+SelectLanguageLabel=Selecione o idioma pra usar durante a instalação.
 
 ; *** Common wizard text
 ClickNext=Clique em Avançar pra continuar ou em Cancelar pra sair do instalador.
@@ -121,7 +119,7 @@ WizardPassword=Senha
 PasswordLabel1=Esta instalação está protegida por senha.
 PasswordLabel3=Por favor forneça a senha, então clique em Avançar pra continuar. As senhas são caso-sensitivo.
 PasswordEditLabel=&Senha:
-IncorrectPassword=A senha que você inseriu não está correta. Por favor tente de novo.
+IncorrectPassword=A senha que você inseriu não está correta. Por favor tente novamente.
 
 ; *** "License Agreement" wizard page
 WizardLicense=Acordo de Licença
@@ -151,14 +149,14 @@ WizardSelectDir=Selecione o Local de Destino
 SelectDirDesc=Aonde o [name] deve ser instalado?
 SelectDirLabel3=O instalador instalará o [name] na seguinte pasta.
 SelectDirBrowseLabel=Pra continuar clique em Avançar. Se você gostaria de selecionar uma pasta diferente, clique em Procurar.
-DiskSpaceGBLabel=Pelo menos [gb] MBs de espaço livre em disco são requeridos.
-DiskSpaceMBLabel=Pelo menos [mb] MBs de espaço livre em disco são requeridos.
+DiskSpaceGBLabel=Pelo menos [gb] GB de espaço livre em disco são requeridos.
+DiskSpaceMBLabel=Pelo menos [mb] MB de espaço livre em disco são requeridos.
 CannotInstallToNetworkDrive=O instalador não pode instalar em um drive de rede.
 CannotInstallToUNCPath=O instalador não pode instalar em um caminho UNC.
 InvalidPath=Você deve inserir um caminho completo com a letra do drive; por exemplo:%n%nC:\APP%n%não um caminho UNC no formulário:%n%n\\server\share
 InvalidDrive=O drive ou compartilhamento UNC que você selecionou não existe ou não está acessível. Por favor selecione outro.
 DiskSpaceWarningTitle=Sem Espaço em Disco o Bastante
-DiskSpaceWarning=O instalador requer pelo menos %1 KBs de espaço livre pra instalar mas o drive selecionado só tem %2 KBs disponíveis.%n%nVocê quer continuar de qualquer maneira?
+DiskSpaceWarning=O instalador requer pelo menos %1 KB de espaço livre pra instalar mas o drive selecionado só tem %2 KB disponíveis.%n%nVocê quer continuar de qualquer maneira?
 DirNameTooLong=O nome ou caminho da pasta é muito longo.
 InvalidDirName=O nome da pasta não é válido.
 BadDirName32=Os nomes das pastas não pode incluir quaisquer dos seguintes caracteres:%n%n%1
@@ -177,10 +175,10 @@ CompactInstallation=Instalação compacta
 CustomInstallation=Instalação personalizada
 NoUninstallWarningTitle=O Componente Existe
 NoUninstallWarning=O instalador detectou que os seguintes componentes já estão instalados no seu computador:%n%n%1%n%nNão selecionar estes componentes não desinstalará eles.%n%nVocê gostaria de continuar de qualquer maneira?
-ComponentSize1=%1 KBs
-ComponentSize2=%1 MBs
-ComponentsDiskSpaceGBLabel=A seleção atual requer pelo menos [gb] MBs de espaço em disco.
-ComponentsDiskSpaceMBLabel=A seleção atual requer pelo menos [mb] MBs de espaço em disco.
+ComponentSize1=%1 KB
+ComponentSize2=%1 MB
+ComponentsDiskSpaceGBLabel=A seleção atual requer pelo menos [gb] GB de espaço em disco.
+ComponentsDiskSpaceMBLabel=A seleção atual requer pelo menos [mb] MB de espaço em disco.
 
 ; *** "Select Additional Tasks" wizard page
 WizardSelectTasks=Selecionar Tarefas Adicionais
@@ -211,21 +209,31 @@ ReadyMemoGroup=Pasta do Menu Iniciar:
 ReadyMemoTasks=Tarefas adicionais:
 
 ; *** TDownloadWizardPage wizard page and DownloadTemporaryFile
-DownloadingLabel=Baixando arquivos adicionais...
+DownloadingLabel2=Baixando arquivos...
 ButtonStopDownload=&Parar download
 StopDownload=Tem certeza que deseja parar o download?
 ErrorDownloadAborted=Download abortado
 ErrorDownloadFailed=Download falhou: %1 %2
 ErrorDownloadSizeFailed=Falha ao obter o tamanho: %1 %2
-ErrorFileHash1=Falha no hash do arquivo: %1
-ErrorFileHash2=Hash de arquivo inválido: esperado %1, encontrado %2
 ErrorProgress=Progresso inválido: %1 de %2
 ErrorFileSize=Tamanho de arquivo inválido: esperado %1, encontrado %2
+
+; *** TExtractionWizardPage wizard page and ExtractArchive
+ExtractingLabel=Extraindo arquivos...
+ButtonStopExtraction=&Parar extração
+StopExtraction=Tem certeza de que deseja parar a extração?
+ErrorExtractionAborted=Extração abortada
+ErrorExtractionFailed=Extração falhou: %1
+
+; *** Archive extraction failure details
+ArchiveIncorrectPassword=A senha está incorreta
+ArchiveIsCorrupted=O arquivo compactado está corrompido
+ArchiveUnsupportedFormat=O formato do arquivo compactado não é compatível
 
 ; *** "Preparing to Install" wizard page
 WizardPreparing=Preparando pra Instalar
 PreparingDesc=O instalador está se preparando pra instalar o [name] no seu computador.
-PreviousInstallNotCompleted=A instalação/remoção de um programa anterior não foi completada. Você precisará reiniciar o computador pra completar essa instalação.%n%nApós reiniciar seu computador execute o instalador de novo pra completar a instalação do [name].
+PreviousInstallNotCompleted=A instalação/remoção de um programa anterior não foi completada. Você precisará reiniciar o computador pra completar essa instalação.%n%nApós reiniciar seu computador execute o instalador novamente pra completar a instalação do [name].
 CannotContinue=O instalador não pode continuar. Por favor clique em Cancelar pra sair.
 ApplicationsFound=Os aplicativos a seguir estão usando arquivos que precisam ser atualizados pelo instalador. É recomendados que você permita ao instalador fechar automaticamente estes aplicativos.
 ApplicationsFound2=Os aplicativos a seguir estão usando arquivos que precisam ser atualizados pelo instalador. É recomendados que você permita ao instalador fechar automaticamente estes aplicativos. Após a instalação ter completado, o instalador tentará reiniciar os aplicativos.
@@ -261,16 +269,20 @@ FileNotInDir2=O arquivo "%1" não pôde ser localizado em "%2". Por favor insira
 SelectDirectoryLabel=Por favor especifique o local do próximo disco.
 
 ; *** Installation phase messages
-SetupAborted=A instalação não foi completada.%n%nPor favor corrija o problema e execute o instalador de novo.
+SetupAborted=A instalação não foi completada.%n%nPor favor corrija o problema e execute o instalador novamente.
 AbortRetryIgnoreSelectAction=Selecionar ação
-AbortRetryIgnoreRetry=&Tentar de novo
+AbortRetryIgnoreRetry=&Tentar Novamente
 AbortRetryIgnoreIgnore=&Ignorar o erro e continuar
 AbortRetryIgnoreCancel=Cancelar instalação
+RetryCancelSelectAction=Selecionar ação
+RetryCancelRetry=&Tentar Novamente
+RetryCancelCancel=Cancelar
 
 ; *** Installation status messages
 StatusClosingApplications=Fechando aplicativos...
 StatusCreateDirs=Criando diretórios...
 StatusExtractFiles=Extraindo arquivos...
+StatusDownloadFiles=Baixando arquivos...
 StatusCreateIcons=Criando atalhos...
 StatusCreateIniEntries=Criando entradas INI...
 StatusCreateRegistryEntries=Criando entradas do registro...
@@ -300,10 +312,18 @@ FileAbortRetryIgnoreSkipNotRecommended=&Ignorar este arquivo (não recomendado)
 FileAbortRetryIgnoreIgnoreNotRecommended=&Ignorar o erro e continuar (não recomendado)
 SourceIsCorrupted=O arquivo de origem está corrompido
 SourceDoesntExist=O arquivo de origem "%1" não existe
+SourceVerificationFailed=A verificação do arquivo de origem falhou: %1
+VerificationSignatureDoesntExist=O arquivo de assinatura "%1" não existe
+VerificationSignatureInvalid=O arquivo de assinatura "%1" é inválido
+VerificationKeyNotFound=O arquivo de assinatura "%1" utiliza uma chave desconhecida
+VerificationFileNameIncorrect=O nome do arquivo está incorreto
+VerificationFileTagIncorrect=A tag do arquivo está incorreta
+VerificationFileSizeIncorrect=O tamanho do arquivo está incorreto
+VerificationFileHashIncorrect=O hash do arquivo está incorreto
 ExistingFileReadOnly2=O arquivo existente não pôde ser substituído porque está marcado como somente-leitura.
-ExistingFileReadOnlyRetry=&Remover o atributo somente-leitura e tentar de novo
+ExistingFileReadOnlyRetry=&Remover o atributo somente-leitura e tentar novamente
 ExistingFileReadOnlyKeepExisting=&Manter o arquivo existente
-ErrorReadingExistingDest=Um erro ocorreu enquanto tentava ler o arquivo existente:
+ErrorReadingExistingDest=Ocorreu um erro ao tentar ler o arquivo existente:
 FileExistsSelectAction=Selecione a ação
 FileExists2=O arquivo já existe.
 FileExistsOverwriteExisting=&Sobrescrever o arquivo existente
@@ -314,13 +334,15 @@ ExistingFileNewer2=O arquivo existente é mais recente do que aquele que o Setup
 ExistingFileNewerOverwriteExisting=&Sobrescrever o arquivo existente
 ExistingFileNewerKeepExisting=&Mantenha o arquivo existente (recomendado)
 ExistingFileNewerOverwriteOrKeepAll=&Faça isso para os próximos conflitos
-ErrorChangingAttr=Um erro ocorreu enquanto tentava mudar os atributos do arquivo existente:
-ErrorCreatingTemp=Um erro ocorreu enquanto tentava criar um arquivo no diretório destino:
-ErrorReadingSource=Um erro ocorreu enquanto tentava ler o arquivo de origem:
-ErrorCopying=Um erro ocorreu enquanto tentava copiar um arquivo:
-ErrorReplacingExistingFile=Um erro ocorreu enquanto tentava substituir o arquivo existente:
+ErrorChangingAttr=Ocorreu um erro ao tentar mudar os atributos do arquivo existente:
+ErrorCreatingTemp=Ocorreu um erro ao tentar criar um arquivo no diretório destino:
+ErrorReadingSource=Ocorreu um erro ao tentar ler o arquivo de origem:
+ErrorCopying=Ocorreu um erro ao tentar copiar um arquivo:
+ErrorDownloading=Ocorreu um erro ao tentar baixar um arquivo:
+ErrorExtracting=Ocorreu um erro ao tentar extrair o arquivo compactado:
+ErrorReplacingExistingFile=Ocorreu um erro ao tentar substituir o arquivo existente:
 ErrorRestartReplace=ReiniciarSubstituir falhou:
-ErrorRenamingTemp=Um erro ocorreu enquanto tentava renomear um arquivo no diretório destino:
+ErrorRenamingTemp=Ocorreu um erro ao tentar renomear um arquivo no diretório destino:
 ErrorRegisterServer=Incapaz de registrar a DLL/OCX: %1
 ErrorRegSvr32Failed=O RegSvr32 falhou com o código de saída %1
 ErrorRegisterTypeLib=Incapaz de registrar a biblioteca de tipos: %1
@@ -336,7 +358,7 @@ UninstallDisplayNameMarkAllUsers=Todos os usuários
 UninstallDisplayNameMarkCurrentUser=Usuário atual
 
 ; *** Post-installation errors
-ErrorOpeningReadme=Um erro ocorreu enquanto tentava abrir o arquivo README.
+ErrorOpeningReadme=Ocorreu um erro ao tentar abrir o arquivo README.
 ErrorRestartingComputer=O instalador foi incapaz de reiniciar o computador. Por favor faça isto manualmente.
 
 ; *** Uninstaller messages

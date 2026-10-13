@@ -1,3 +1,47 @@
+# Instalador beta.0.8 — compilação concluída em 08/10/2026
+
+Gerado com Inno Setup 7.1.0 de 64 bits, obtido como arquivos portáteis via Tools.InnoSetup; assinatura digital do ISCC validada (Pyrsys B.V.). Nenhuma ferramenta foi instalada globalmente. O instalador do compilador não chegou a iniciar a preparação portátil; a distribuição em ZIP/NuGet permitiu usar diretamente o compilador.
+
+O instalador CasterDesk também é x64 (SetupArchitecture=x64), com traduções oficiais pt-BR/espanhol atualizadas para Inno Setup 7. Compilação final sem avisos. Arquivo: dist/CasterDesk-0.2.0-beta.0.8-win-x64-Setup.exe, aproximadamente 56,6 MB. SHA256 acompanha o arquivo.
+
+Cabeçalho PE confirma x64. DLL de entrada idêntica ao pacote portátil que passou nos testes; aliases e ausência de dados pessoais nos arquivos de origem conferidos. Manifesto dos hashes de entrada em work/installer-beta0208-inputs.json, na raiz do workspace.
+
+Não foi executada a instalação, a desinstalação, nem o CasterDesk nesta sessão. O payload não foi extraído com a ferramenta antiga, que também falha ao iniciar neste ambiente. Verificação de instalação/atalhos permanece pendente de uso real.
+
+# Validação adicional — 0.2.0-beta.0.8
+
+Em 08/10/2026, doze grupos aprovados com dados fictícios isolados em test-results/c932548d11bb415abed1c0c2e98dc858: menu, backup, cronômetro/casting, campeonato, exportação, Central de imagens, otimização de imagens, desempenho, reinício de tema, cronômetro na interface, navegação e idiomas.
+
+O teste novo compara 13 PNGs pixel a pixel: RGB, escala de cinza, transparência em múltiplos níveis, imagens pequenas e as artes reais renderizadas. Também mede tamanho e tempo de gravação. A Central mantém suas 49 verificações, inclusive transparência do OBS e formatos. O teste de campeonato usa a pasta isolada de teste para arquivos temporários, evitando dependência das permissões de Temp do Windows.
+
+75 assets comparados com os originais por um decodificador independente (Pillow): pixels e dimensões idênticos. Sete duplicatas verificadas por hash. Assets: 28.522.227 → 23.019.956 bytes, redução de 19,3%. PSDs e dados pessoais não foram alterados. Relatórios de preparação em work/image-optimization-report.json e work/image-optimization-summary.json, na raiz do workspace.
+
+As gravações PNG nos exemplos ficaram entre 16% e 40% menores. A compressão levou aproximadamente 0,3 segundo por imagem no PC de desenvolvimento, mais que a gravação padrão; a exportação da Central continua assíncrona. Processamento por scanlines elimina o buffer adicional de largura × altura × 4 bytes do encoder. Não foi realizado benchmark geral de CPU/RAM ou de FPS.
+
+Os testes de interface abriram janelas no PC durante esta validação. Após o aviso do usuário, nenhuma nova execução de teste com janelas foi iniciada.
+
+# Validação adicional — 0.2.0-beta.0.7
+
+Onze grupos de regressão aprovados em test-results/04398f59bdb243e6bf6d1a7f88d84487. Após o ajuste final dos espaçamentos, a Central foi verificada novamente em test-results/jg-correction-final, com 49 verificações incluindo ausência de data/horário em anúncios com metadados antigos.
+
+Posições dos elementos extraídas dos PSDs, preservados sem alteração. Story normalizado de 765×1360 para 1080×1920 por escala uniforme. Promo, resultados, estatísticas e tela de conferência comparados visualmente com as referências. Fontes de estatísticas usam Simplon Mono Medium; cabeçalhos conservam as fontes do PSD. Testes usam partidas fictícias isoladas.
+
+# Validação adicional — 0.2.0-beta.0.6
+
+Os onze grupos de testes passaram em 30/09/2026, com dados isolados, em test-results/15ff9162588b421da1c23a257241da8a: menu, backup, cronômetro/casting, campeonato, exportação, Central de imagens, desempenho, reinício de tema, cronômetro na interface, navegação e idiomas.
+
+A Central passou em 48 verificações: formatos, cinco categorias, MD1/MD3/MD5, transparência do OBS, cópia com fundo opaco, BG personalizado, pasta estável da partida, limites de caminhos, somas de estatísticas, cobertura parcial e botões visíveis em janelas menores. Prévias em português, inglês e espanhol verificadas.
+
+Leitura local testada nos quatro prints reais enviados: dez jogadores detectados em cada imagem. Eliminações/mortes/assistências do print de Consulado comparadas com a referência. Alguns nomes foram reconhecidos incorretamente; campos não reconhecidos ficam em branco. A tela exige conferência humana antes de salvar. Não houve gravação dessas estatísticas em partidas do usuário.
+
+Ciclo real de instalação/atalhos em um segundo PC e qualidade da leitura em outras capturas/resoluções continuam pendentes de validação de uso.
+# Validação adicional — 0.2.0-beta.0.5
+
+Publicação autocontida e instalador compilados em 30/09/2026. Os dez grupos de testes passaram em `test-results/5b667c5ea4f1413d9d09aa1a644279a4`, com dados isolados: menu, backup, cronômetro/casting, campeonato, exportação, desempenho, reinício de tema, cronômetro na interface, navegação e idiomas.
+
+Campeonato inclui ordem dos operadores conforme os dois prints fornecidos, alternância de papéis nos dois lados iniciais, abertura automática de quatro seletores, cancelamento sem mudanças e limites da grade sem rolagem. Layouts MD1/MD3/MD5 conferidos em três tamanhos de janela. Capturas dos seletores em `test-results/order-2e3e9b6b534146c5b0aa63e60c5b150d`.
+
+Instalador extraído para auditoria em `work/beta0205-audit` (na raiz do workspace); SHA256 da DLL idêntico à publicação testada. Checksum do instalador disponível ao lado do EXE. Ciclo real de instalação/atalhos e revisão humana dos termos regionais em espanhol ainda precisam ser conferidos no PC de uso.
 # Validação da beta 0.1.0-beta.1
 
 ## Executado no PC de desenvolvimento
@@ -128,3 +172,26 @@ Uso real pelo caster ainda pendente. Modo Rápido, motivo de fim de round e regr
 - Ajuste final do centro do placar para histórico expandido/lista retestado em work/beta0203-final, relativo à raiz de trabalho.
 - Instalador extraído e comparado ao binário testado. Instalação sobre dados reais não realizada.
 - Imagens de mapas ainda aguardam referências do usuário e JG.
+
+## Fundo Comunidade (JG), em desenvolvimento
+
+Compilação Release sem avisos ou erros. Exportação: 65 verificações aprovadas, incluindo novo fundo nos três formatos, dimensões e quantidade de páginas preservadas. Prévia de feed por mapa conferida visualmente. Estilo salvo por partida; versões anteriores continuam usando Clássico. Nenhum instalador foi publicado nesta etapa.
+
+## 0.2.0-beta.0.4 — 28/09/2026
+
+Suíte completa no executável autocontido aprovada: menu, backup, regras de campeonato, PNG, desempenho, tema/reabertura, timer, temas e idiomas. Relatórios: test-results/ff243728dc6c40bc97cbeb61fda5d00d. Ajuste final de altura do menu e testes de migração retestados em test-results/final-070b6d1adb464733b6034a084012162d. Menu conferido visualmente em captura do próprio painel; conteúdo permanece dentro da janela.
+
+O erro genérico mostrado ao usuário surgiu no primeiro teste automático de tema, que tentava acionar um botão em painel oculto. Teste corrigido e reexecutado. Falhas de testes agora são gravadas em test-error.txt.
+
+Backup: hash dos bytes incluídos, conflitos, partidas sem duplicação, retorno ao estado anterior após falha, rejeição de caminhos inválidos/corrupção. Migração testada com dados isolados: fonte preservada, configuração existente não sobrescrita e caminhos TXT mantidos.
+
+Limites: migração real, restauração pela interface em outro PC e desinstalação interativa aguardam teste de uso. Remoção automática de todos os dados bloqueada pela revisão automática; não foi incluída. Termos são rascunho, sem aceite obrigatório. Dados reais não alterados pelos testes.
+
+Botão de configurações redesenhado com duas engrenagens preenchidas, degradê vermelho ao passar o mouse e destaque enquanto o menu está aberto. Publicação e teste de menu aprovados após esse ajuste. Instalador final extraído e CasterDesk.dll comparado por SHA256 com o binário testado; iguais. SHA256 do instalador: 0F2DBC6B262A73D5C11300F994FA309B7651DEE2A0B058722D2E111C88066B12.
+
+
+Instalador 0.6 compilado e extraído em work/beta0206-audit (raiz do workspace). DLL idêntica à publicação verificada; 36 assets da Central, fontes e leitor local incluídos. Nenhum dado de partida ou símbolo de depuração incluído. A Central extraída passou novamente nas 48 verificações usando o runtime do pacote, em test-results/installer-beta0206. SHA256 acompanha o instalador em dist.
+
+Pacote final testado em test-results/jg-correction-package e novamente após extração em test-results/installer-beta0207: 49 verificações aprovadas. DLL extraída idêntica à publicação; templates, imagens e fontes incluídos, sem dados de partidas. SHA256 acompanha o instalador beta.0.7.
+
+Pacote portátil beta.0.8 criado e verificado: ZIP íntegro, DLL idêntica à publicação testada, aliases presentes, duplicatas removidas e nenhum dado pessoal ou PDB. Checksum SHA256 acompanha o ZIP. O compilador Inno Setup não iniciou devido a erro do Windows de realocação de DLL; nenhum instalador beta.0.8 foi produzido. Não houve instalação ou abertura do pacote na sessão.

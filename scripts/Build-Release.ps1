@@ -6,6 +6,13 @@ Push-Location $root
 try {
     dotnet publish source/CronoLive.csproj -c Release -r win-x64 --self-contained true -o publish
     if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar o aplicativo.' }
+    # Removed duplicate assets must not remain in a reused publication directory.
+    $studioPublish = (Resolve-Path 'publish/assets/studio').Path
+    $publishRoot = (Resolve-Path 'publish').Path + [IO.Path]::DirectorySeparatorChar
+    if (!$studioPublish.StartsWith($publishRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Pasta de publicação inválida.' }
+    $expected = Get-ChildItem 'assets/studio' -File | Select-Object -ExpandProperty Name
+    Get-ChildItem -LiteralPath $studioPublish -File | Where-Object { $_.Name -notin $expected } | ForEach-Object { Remove-Item -LiteralPath $_.FullName }
+
     if ($SignTool) {
         foreach ($file in @('publish/CasterDesk.exe','publish/CasterDesk.dll')) {
             & "$PSScriptRoot/Sign-File.ps1" -SignTool $SignTool -CertificateThumbprint $CertificateThumbprint -TimestampUrl $TimestampUrl -File $file

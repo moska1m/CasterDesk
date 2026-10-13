@@ -40,7 +40,7 @@ public static class ChampionshipTests
         Check(game.ActiveBanHalf(13)==1 && game.ActiveBanHalf(14)==0,"ot bans");
         Check(game.BanRole(0)=="DEF" && game.BanRole(2)=="ATQ" && game.BanRole(6)=="ATQ","ban types");
         Check(MapRecord.BanThreshold(4)==3 && MapRecord.BanThreshold(6)==6 && MapRecord.BanThreshold(10)==9,"ban gates");
-        var temp=Path.Combine(Path.GetTempPath(),"CronoLive-match-test-"+Guid.NewGuid().ToString("N"),"match.json");MatchStore.Atomic(temp,m);var loaded=MatchStore.Read(temp,catalog);Check(loaded.Maps[0].OtAttack==1,"json roundtrip");
+        var temp=Path.Combine(AppPaths.DataDirectory,"CronoLive-match-test-"+Guid.NewGuid().ToString("N"),"match.json");MatchStore.Atomic(temp,m);var loaded=MatchStore.Read(temp,catalog);Check(loaded.Maps[0].OtAttack==1,"json roundtrip");
         Check(loaded.Id==m.Id,"stable match identity");
         m.TeamA="Fnatic";MatchStore.Atomic(temp,m);Check(File.Exists(temp+".bak") && MatchStore.Read(temp+".bak",catalog).TeamA=="Equipe A","backup");
         var duplicate=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(m))!;duplicate.Veto[1]=duplicate.Veto[0];bool rejected=false;try{MatchStore.Validate(duplicate,catalog);}catch(InvalidDataException){rejected=true;}Check(rejected,"duplicate rejected");
@@ -99,4 +99,5 @@ public static class ChampionshipTests
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"championship-tests.txt"),$"{checks} verificações aprovadas (inclui sequências de placar exaustivas, lados, bans, JSON e construção da tela).");
     }
 }
+
 

@@ -1,0 +1,685 @@
+{
+  "Width": 1920,
+  "Height": 1080,
+  "Words": [
+    {
+      "Text": "(B",
+      "X": 54,
+      "Y": 24,
+      "Width": 24,
+      "Height": 24
+    },
+    {
+      "Text": "Retornando",
+      "X": 91,
+      "Y": 28,
+      "Width": 94,
+      "Height": 15
+    },
+    {
+      "Text": "ao",
+      "X": 189,
+      "Y": 32,
+      "Width": 19,
+      "Height": 11
+    },
+    {
+      "Text": "menu",
+      "X": 213,
+      "Y": 32,
+      "Width": 44,
+      "Height": 11
+    },
+    {
+      "Text": "principal",
+      "X": 263,
+      "Y": 28,
+      "Width": 68,
+      "Height": 19
+    },
+    {
+      "Text": "em",
+      "X": 336,
+      "Y": 32,
+      "Width": 24,
+      "Height": 11
+    },
+    {
+      "Text": "2",
+      "X": 365,
+      "Y": 28,
+      "Width": 11,
+      "Height": 15
+    },
+    {
+      "Text": "s",
+      "X": 381,
+      "Y": 32,
+      "Width": 9,
+      "Height": 11
+    },
+    {
+      "Text": "FORMA\u00C7\u00C3O",
+      "X": 119,
+      "Y": 120,
+      "Width": 122,
+      "Height": 38
+    },
+    {
+      "Text": "DA",
+      "X": 247,
+      "Y": 126,
+      "Width": 29,
+      "Height": 24
+    },
+    {
+      "Text": "EQUIPE",
+      "X": 281,
+      "Y": 125,
+      "Width": 78,
+      "Height": 29
+    },
+    {
+      "Text": "BOMBA",
+      "X": 485,
+      "Y": 169,
+      "Width": 57,
+      "Height": 19
+    },
+    {
+      "Text": "CONSULADO",
+      "X": 485,
+      "Y": 205,
+      "Width": 193,
+      "Height": 38
+    },
+    {
+      "Text": "VIT\u00D3RIA",
+      "X": 926,
+      "Y": 7,
+      "Width": 68,
+      "Height": 24
+    },
+    {
+      "Text": "7-5",
+      "X": 942,
+      "Y": 37,
+      "Width": 36,
+      "Height": 19
+    },
+    {
+      "Text": "DEF",
+      "X": 885,
+      "Y": 148,
+      "Width": 29,
+      "Height": 13
+    },
+    {
+      "Text": "ATC",
+      "X": 1200,
+      "Y": 148,
+      "Width": 31,
+      "Height": 13
+    },
+    {
+      "Text": "ATC",
+      "X": 884,
+      "Y": 248,
+      "Width": 31,
+      "Height": 12
+    },
+    {
+      "Text": "0",
+      "X": 1393,
+      "Y": 176,
+      "Width": 15,
+      "Height": 21
+    },
+    {
+      "Text": "0",
+      "X": 1393,
+      "Y": 213,
+      "Width": 15,
+      "Height": 22
+    },
+    {
+      "Text": "20",
+      "X": 1407,
+      "Y": 326,
+      "Width": 21,
+      "Height": 14
+    },
+    {
+      "Text": "14",
+      "X": 1409,
+      "Y": 380,
+      "Width": 18,
+      "Height": 13
+    },
+    {
+      "Text": "g",
+      "X": 1413,
+      "Y": 434,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "11",
+      "X": 1410,
+      "Y": 488,
+      "Width": 14,
+      "Height": 14
+    },
+    {
+      "Text": "18",
+      "X": 1409,
+      "Y": 542,
+      "Width": 18,
+      "Height": 14
+    },
+    {
+      "Text": "BLACK",
+      "X": 198,
+      "Y": 430,
+      "Width": 101,
+      "Height": 39
+    },
+    {
+      "Text": "DRAGONS",
+      "X": 308,
+      "Y": 430,
+      "Width": 151,
+      "Height": 39
+    },
+    {
+      "Text": "TEAM",
+      "X": 258,
+      "Y": 730,
+      "Width": 87,
+      "Height": 38
+    },
+    {
+      "Text": "LIQUID",
+      "X": 355,
+      "Y": 730,
+      "Width": 103,
+      "Height": 45
+    },
+    {
+      "Text": "A",
+      "X": 517,
+      "Y": 313,
+      "Width": 40,
+      "Height": 42
+    },
+    {
+      "Text": "O",
+      "X": 563,
+      "Y": 317,
+      "Width": 30,
+      "Height": 32
+    },
+    {
+      "Text": "ure.BD",
+      "X": 603,
+      "Y": 320,
+      "Width": 73,
+      "Height": 22
+    },
+    {
+      "Text": "0",
+      "X": 563,
+      "Y": 371,
+      "Width": 30,
+      "Height": 32
+    },
+    {
+      "Text": "Fiastryy.BD",
+      "X": 603,
+      "Y": 373,
+      "Width": 101,
+      "Height": 28
+    },
+    {
+      "Text": "0",
+      "X": 563,
+      "Y": 425,
+      "Width": 30,
+      "Height": 32
+    },
+    {
+      "Text": "Muzi.BD",
+      "X": 603,
+      "Y": 428,
+      "Width": 73,
+      "Height": 22
+    },
+    {
+      "Text": "itzmaquina.BD",
+      "X": 603,
+      "Y": 482,
+      "Width": 128,
+      "Height": 28
+    },
+    {
+      "Text": "HudsonHornet.BD",
+      "X": 603,
+      "Y": 535,
+      "Width": 159,
+      "Height": 23
+    },
+    {
+      "Text": "O",
+      "X": 563,
+      "Y": 617,
+      "Width": 30,
+      "Height": 32
+    },
+    {
+      "Text": "AsK.Liquid",
+      "X": 602,
+      "Y": 619,
+      "Width": 94,
+      "Height": 28
+    },
+    {
+      "Text": "0",
+      "X": 563,
+      "Y": 671,
+      "Width": 31,
+      "Height": 32
+    },
+    {
+      "Text": "NESKWGA.Liquid",
+      "X": 603,
+      "Y": 673,
+      "Width": 151,
+      "Height": 28
+    },
+    {
+      "Text": "O",
+      "X": 563,
+      "Y": 725,
+      "Width": 30,
+      "Height": 32
+    },
+    {
+      "Text": "Maia.Liquid",
+      "X": 603,
+      "Y": 727,
+      "Width": 102,
+      "Height": 28
+    },
+    {
+      "Text": "O",
+      "X": 563,
+      "Y": 779,
+      "Width": 30,
+      "Height": 32
+    },
+    {
+      "Text": "resetz.Liquid",
+      "X": 603,
+      "Y": 781,
+      "Width": 113,
+      "Height": 29
+    },
+    {
+      "Text": "Dias.Liquid",
+      "X": 595,
+      "Y": 831,
+      "Width": 96,
+      "Height": 29
+    },
+    {
+      "Text": "2012",
+      "X": 1134,
+      "Y": 326,
+      "Width": 40,
+      "Height": 14
+    },
+    {
+      "Text": "1822",
+      "X": 1134,
+      "Y": 380,
+      "Width": 40,
+      "Height": 13
+    },
+    {
+      "Text": "1813",
+      "X": 1135,
+      "Y": 434,
+      "Width": 38,
+      "Height": 14
+    },
+    {
+      "Text": "17go",
+      "X": 1134,
+      "Y": 488,
+      "Width": 39,
+      "Height": 13
+    },
+    {
+      "Text": "1548",
+      "X": 1134,
+      "Y": 542,
+      "Width": 40,
+      "Height": 14
+    },
+    {
+      "Text": "6092",
+      "X": 1132,
+      "Y": 626,
+      "Width": 43,
+      "Height": 13
+    },
+    {
+      "Text": "5223",
+      "X": 1133,
+      "Y": 680,
+      "Width": 42,
+      "Height": 13
+    },
+    {
+      "Text": "5067",
+      "X": 1133,
+      "Y": 734,
+      "Width": 42,
+      "Height": 13
+    },
+    {
+      "Text": "4562",
+      "X": 1132,
+      "Y": 788,
+      "Width": 43,
+      "Height": 14
+    },
+    {
+      "Text": "4556",
+      "X": 1132,
+      "Y": 842,
+      "Width": 44,
+      "Height": 13
+    },
+    {
+      "Text": "DEF",
+      "X": 1202,
+      "Y": 248,
+      "Width": 29,
+      "Height": 12
+    },
+    {
+      "Text": "4",
+      "X": 1214,
+      "Y": 326,
+      "Width": 11,
+      "Height": 13
+    },
+    {
+      "Text": "3",
+      "X": 1215,
+      "Y": 380,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "6",
+      "X": 1215,
+      "Y": 434,
+      "Width": 10,
+      "Height": 14
+    },
+    {
+      "Text": "5",
+      "X": 1215,
+      "Y": 488,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "3",
+      "X": 1215,
+      "Y": 542,
+      "Width": 10,
+      "Height": 14
+    },
+    {
+      "Text": "15",
+      "X": 1211,
+      "Y": 626,
+      "Width": 18,
+      "Height": 14
+    },
+    {
+      "Text": "10",
+      "X": 1211,
+      "Y": 680,
+      "Width": 18,
+      "Height": 14
+    },
+    {
+      "Text": "8",
+      "X": 1215,
+      "Y": 734,
+      "Width": 10,
+      "Height": 14
+    },
+    {
+      "Text": "2",
+      "X": 1215,
+      "Y": 788,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "4",
+      "X": 1214,
+      "Y": 842,
+      "Width": 11,
+      "Height": 13
+    },
+    {
+      "Text": "g",
+      "X": 1281,
+      "Y": 326,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "8",
+      "X": 1281,
+      "Y": 380,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "7",
+      "X": 1281,
+      "Y": 434,
+      "Width": 9,
+      "Height": 13
+    },
+    {
+      "Text": "7",
+      "X": 1281,
+      "Y": 488,
+      "Width": 9,
+      "Height": 13
+    },
+    {
+      "Text": "8",
+      "X": 1281,
+      "Y": 542,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "4",
+      "X": 1280,
+      "Y": 626,
+      "Width": 11,
+      "Height": 14
+    },
+    {
+      "Text": "4",
+      "X": 1280,
+      "Y": 680,
+      "Width": 11,
+      "Height": 14
+    },
+    {
+      "Text": "4",
+      "X": 1280,
+      "Y": 734,
+      "Width": 11,
+      "Height": 14
+    },
+    {
+      "Text": "5",
+      "X": 1281,
+      "Y": 788,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "4",
+      "X": 1280,
+      "Y": 842,
+      "Width": 11,
+      "Height": 13
+    },
+    {
+      "Text": "3",
+      "X": 1347,
+      "Y": 326,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "2",
+      "X": 1347,
+      "Y": 380,
+      "Width": 10,
+      "Height": 14
+    },
+    {
+      "Text": "o",
+      "X": 1346,
+      "Y": 434,
+      "Width": 11,
+      "Height": 13
+    },
+    {
+      "Text": "o",
+      "X": 1347,
+      "Y": 488,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "2",
+      "X": 1347,
+      "Y": 542,
+      "Width": 10,
+      "Height": 14
+    },
+    {
+      "Text": "3",
+      "X": 1346,
+      "Y": 626,
+      "Width": 12,
+      "Height": 14
+    },
+    {
+      "Text": "2",
+      "X": 1347,
+      "Y": 680,
+      "Width": 10,
+      "Height": 14
+    },
+    {
+      "Text": "2",
+      "X": 1347,
+      "Y": 734,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "5",
+      "X": 1347,
+      "Y": 788,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "2",
+      "X": 1347,
+      "Y": 842,
+      "Width": 10,
+      "Height": 13
+    },
+    {
+      "Text": "BOMBA",
+      "X": 1804,
+      "Y": 15,
+      "Width": 62,
+      "Height": 19
+    },
+    {
+      "Text": "CONSULADO",
+      "X": 1756,
+      "Y": 44,
+      "Width": 110,
+      "Height": 14
+    },
+    {
+      "Text": "0",
+      "X": 1445,
+      "Y": 176,
+      "Width": 16,
+      "Height": 21
+    },
+    {
+      "Text": "0",
+      "X": 1445,
+      "Y": 213,
+      "Width": 16,
+      "Height": 21
+    },
+    {
+      "Text": "o",
+      "X": 1467,
+      "Y": 720,
+      "Width": 44,
+      "Height": 41
+    },
+    {
+      "Text": "ID",
+      "X": 1130,
+      "Y": 902,
+      "Width": 12,
+      "Height": 12
+    },
+    {
+      "Text": "da",
+      "X": 1147,
+      "Y": 901,
+      "Width": 15,
+      "Height": 13
+    },
+    {
+      "Text": "partida:",
+      "X": 1166,
+      "Y": 901,
+      "Width": 50,
+      "Height": 16
+    },
+    {
+      "Text": "fegb0bdg-6ff8-4ef4-g47f-6ce1476d61ca",
+      "X": 1220,
+      "Y": 901,
+      "Width": 296,
+      "Height": 13
+    }
+  ]
+}

@@ -1,43 +1,27 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
 namespace CronoLive;
-
-public sealed class Countdown
-{
-    private readonly Func<double> now;
-    private double remaining, started;
-    public bool Running { get; private set; }
-    public bool Finished { get; private set; }
-    public Countdown(Func<double>? clock = null) => now = clock ?? (() => (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency);
-    public double Remaining => Math.Max(0, remaining - (Running ? now() - started : 0));
-    public void Reset(double seconds) { remaining = seconds; Running = false; Finished = false; }
-    public void Start() { if (!Running && Remaining > 0) { started = now(); Running = true; Finished = false; } }
-    public void Pause() { remaining = Remaining; Running = false; }
-    public void Add(double seconds) { remaining = Remaining + seconds; started = now(); Finished = false; }
-    public void Tick() { if (Running && Remaining <= 0) { remaining = 0; Running = false; Finished = true; } }
-}
-
-public sealed class Settings
-{
-    public string Language { get; set; } = "pt-BR";
-    public bool DarkMode { get; set; } = true;
-    public bool SiegeTheme { get; set; } = true;
-    public bool QuickRounds { get; set; }
-    public decimal Initial { get; set; } = 10;
-    public decimal[] Presets { get; set; } = [2, 3, 4];
-    public string Format { get; set; } = "mm:ss";
-    public string Message { get; set; } = L.T("TEMPO ENCERRADO");
-    public string Output { get; set; } = Path.Combine(AppPaths.DataDirectory, "timer.txt");
-}
 
 static class Program
 {
     [STAThread]
     static void Main(string[] args)
     {
+        try{Run(args);}catch(Exception ex){if(args.Any(a=>a.StartsWith("--"))){File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"test-error.txt"),ex.ToString());Environment.ExitCode=1;}else{MessageBox.Show(L.T("Não foi possível iniciar o CasterDesk.\n")+ex.Message,"CasterDesk");}}
+    }
+    static void Run(string[] args)
+    {
+        if(!args.Any(a=>a.StartsWith("--") && a!="--language"))DataBackup.ProcessPending();
         L.LoadPreference();
+        int languageArg=Array.IndexOf(args,"--language");
+        if(languageArg>=0 && languageArg+1<args.Length && L.Languages.Contains(args[languageArg+1]) && !File.Exists(AppPaths.ConfigFile("settings.json")))
+        {
+            L.Set(args[languageArg+1]);
+            File.WriteAllText(AppPaths.ConfigFile("settings.json"),JsonSerializer.Serialize(new Settings{Language=L.Current,Message=L.T("TEMPO ENCERRADO")}));
+        }
+        if(args.Contains("--image-optimization-test")){ImageOptimizationTests.Run();return;}
         if (args.Contains("--self-test"))
         {
             double t = 0;
@@ -97,18 +81,18 @@ static class Program
                 tabs.SelectedIndex=i;Application.DoEvents();if(form.Size!=size)throw new Exception("Tab changed window size");
                 var inner=tabs.TabPages[0].Controls.OfType<ChampionshipPanel>().Single().Controls.OfType<TabControl>().Single();
                 int count=i==0?inner.TabCount:1;
-                for(int j=0;j<count;j++){if(i==0)inner.SelectedIndex=j;Application.DoEvents();if(i==0 && j==2)inner.TabPages[2].Controls.OfType<ImageExportPanel>().Single().WaitForPreview();using var image=new Bitmap(form.Width,form.Height);form.DrawToBitmap(image,new Rectangle(Point.Empty,form.Size));image.Save(Path.Combine(AppPaths.DataDirectory,$"app-preview-{theme}-{i}-{j}.png"));}
+                for(int j=0;j<count;j++){if(i==0)inner.SelectedIndex=j;Application.DoEvents();if(i==2)tabs.TabPages[2].Controls.OfType<ImageStudioPanel>().Single().WaitForPreview();using var image=new Bitmap(form.Width,form.Height);form.DrawToBitmap(image,new Rectangle(Point.Empty,form.Size));image.Save(Path.Combine(AppPaths.DataDirectory,$"app-preview-{theme}-{i}-{j}.png"));}
             }}
             return;
         }
         if(args.Contains("--theme-restart-test"))
         {
-            string path=Path.Combine(AppPaths.DataDirectory,"settings.json");string? original=File.Exists(path)?File.ReadAllText(path):null;
+            string path=AppPaths.ConfigFile("settings.json");string? original=File.Exists(path)?File.ReadAllText(path):null;
             try {
                 using(var form=new MainForm()){
                     form.Show();form.SetAppearance(true,true);
-                    var bar=form.Controls.OfType<NavigationBar>().Single();var menu=bar.SettingsButton!.ContextMenuStrip!;
-                    ((ToolStripMenuItem)menu.Items[6]).PerformClick();
+                    var menu=form.Controls.OfType<SettingsMenu>().Single();menu.Show();menu.Colors(true);
+                    menu.Controls.OfType<FlowLayoutPanel>().Single().Controls.OfType<Button>().Single(b=>b.Text==L.T("Claro")).PerformClick();
                     if(!AppTheme.Dark)throw new Exception("Theme changed before restart");
                     var saved=JsonSerializer.Deserialize<Settings>(File.ReadAllText(path))!;if(saved.DarkMode)throw new Exception("Theme preference not saved");form.Close();
                 }
@@ -137,12 +121,28 @@ static class Program
             var inner=tabs.TabPages[0].Controls.OfType<ChampionshipPanel>().Single().Controls.OfType<TabControl>().Single();
             var gear=form.Controls.OfType<NavigationBar>().Single().SettingsButton!;
             using var timer=new System.Windows.Forms.Timer {Interval=600};int step=0;
-            timer.Tick+=(_,_)=>{if(step==8){timer.Stop();form.Close();return;}int mode=step/2;form.SetAppearance(mode<2,mode%2==0);tabs.SelectedIndex=step%2;inner.SelectedIndex=2;if(step==0){gear.PerformClick();gear.ContextMenuStrip!.Close();}step++;};
+            timer.Tick+=(_,_)=>{if(step==12){timer.Stop();form.Close();return;}int mode=step/3;form.SetAppearance(mode<2,mode%2==0);tabs.SelectedIndex=step%3;inner.SelectedIndex=1;if(step==0){gear.PerformClick();form.Controls.OfType<SettingsMenu>().Single().Hide();}step++;};
             timer.Start();Application.Run(form);
-            if(step!=8)throw new Exception("Theme navigation failed");
+            if(step!=12)throw new Exception("Theme navigation failed");
             File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"theme-smoke.txt"),"4 temas, abas e engrenagem verificados com o cronômetro ativo.");return;
         }
+        if(args.Contains("--menu-test"))
+        {
+            using var form=new MainForm();form.WindowState=FormWindowState.Normal;form.Size=new Size(1200,800);form.Show();Application.DoEvents();
+            var menu=form.Controls.OfType<SettingsMenu>().Single();menu.Toggle(form);Application.DoEvents();
+            foreach(var page in new[]{"home","appearance","colors","rounds"})
+            {
+                if(page=="appearance")menu.Appearance();if(page=="colors")menu.Colors(true);if(page=="rounds")menu.Rounds();menu.Fit(form);Application.DoEvents();
+                if(!menu.Visible || !form.ClientRectangle.Contains(menu.Bounds))throw new Exception("Menu outside window");
+                using var bitmap=new Bitmap(form.Width,form.Height);form.DrawToBitmap(bitmap,new Rectangle(Point.Empty,form.Size));bitmap.Save(Path.Combine(AppPaths.DataDirectory,"menu-"+page+".png"));
+                using var panelImage=new Bitmap(menu.Width,menu.Height);menu.DrawToBitmap(panelImage,new Rectangle(Point.Empty,menu.Size));panelImage.Save(Path.Combine(AppPaths.DataDirectory,"panel-"+page+".png"));
+            }
+            form.Close();return;
+        }
+        if(args.Contains("--backup-test")){try{BackupTests.Run();}catch(Exception ex){File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"test-error.txt"),ex.ToString());Environment.ExitCode=1;}return;}
         if(args.Contains("--export-test")){ExportTests.Run();return;}
+        if(args.Contains("--studio-test")){StudioTests.Run();return;}
+        if(args.Contains("--ocr-test")){StatisticsOcrTests.Run(args.SkipWhile(a=>a!="--ocr-test").Skip(1).ToArray());return;}
         AppLog.Install();
         try{Application.Run(new MainForm());}
         catch(Exception ex){AppLog.Write("STARTUP ERROR "+ex);MessageBox.Show(L.T("Não foi possível abrir o CasterDesk. Consulte a pasta Logs dos dados do aplicativo.\n")+ex.Message,"CasterDesk");}
@@ -153,7 +153,7 @@ static class Program
 public sealed class MainForm : Form
 {
     readonly Countdown clock = new();
-    readonly string settingsPath = Path.Combine(AppPaths.DataDirectory, "settings.json");
+    readonly string settingsPath = AppPaths.ConfigFile("settings.json");
     Settings settings = new();
     readonly TextBox preview = new() { ReadOnly = true, TextAlign = HorizontalAlignment.Center, BackColor = Color.FromArgb(220, 232, 244), Width = 300 };
     readonly Label status = new() { AutoSize = true };
@@ -167,7 +167,7 @@ public sealed class MainForm : Form
     long retryAfter;
     public MainForm()
     {
-        Text = "CasterDesk • 0.2.0-beta.0.3";
+        Text = "CasterDesk • 0.2.0-beta.0.8";
         var area=Screen.PrimaryScreen!.WorkingArea;
         Size = new Size(Math.Min(1280,area.Width),Math.Min(990,area.Height)); MinimumSize = new Size(1140,760);
         StartPosition=FormStartPosition.CenterScreen;WindowState=FormWindowState.Maximized;
@@ -183,6 +183,10 @@ public sealed class MainForm : Form
         championshipPage.Controls.Add(championship);tabs.TabPages.Add(championshipPage);
         var textsPage=new TabPage(L.T("Textos para OBS")){BackColor=Color.White,Padding=new Padding(8),AutoScroll=true};
         tabs.TabPages.Add(textsPage);
+        var studio=new ImageStudioPanel(()=>championship.Matches,SiegeCatalog.Load());
+        var studioPage=new TabPage(L.T("Central de imagens"));studioPage.Controls.Add(studio);tabs.TabPages.Add(studioPage);
+        tabs.Selecting+=(_,e)=>{if(e.TabPage==studioPage){championship.FlushNames();studio.RefreshMatches(championship.CurrentMatchId);AppTheme.Apply(studio);}};
+        championship.MapConfirmed+=(match,map)=>studio.PromptStatistics(match,map);
         var split=new TableLayoutPanel {Dock=DockStyle.Fill,ColumnCount=2,RowCount=1,MinimumSize=new Size(1090,500)};
         split.ColumnStyles.Add(new(SizeType.Percent,50));split.ColumnStyles.Add(new(SizeType.Percent,50));
         var castingGroup=new ThemeGroup {Text="CASTING",Dock=DockStyle.Fill,Padding=new Padding(8)};
@@ -196,36 +200,14 @@ public sealed class MainForm : Form
         host.Controls.Add(tabs); Controls.Add(host); Controls.Add(footer);
         var themeBar=new NavigationBar(tabs,true);Controls.Add(themeBar);
         var gear=themeBar.SettingsButton!;
-        var menu=new ContextMenuStrip();gear.ContextMenuStrip=menu;
-        var siege=new ToolStripMenuItem("Siege");var simple=new ToolStripMenuItem(L.T("Simplificado"));
-        var dark=new ToolStripMenuItem(L.T("Escuro"));var light=new ToolStripMenuItem(L.T("Claro"));
-        menu.Items.Add(new ToolStripMenuItem(L.T("TEMÁTICA")) {Enabled=false});menu.Items.AddRange([siege,simple,new ToolStripSeparator(),new ToolStripMenuItem(L.T("APARÊNCIA")){Enabled=false},dark,light]);
-        menu.Items.Add(new ToolStripSeparator());menu.Items.Add(new ToolStripMenuItem(L.T("Aplicar na próxima abertura")){Enabled=false});
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(new ToolStripMenuItem(L.T("Sobre o CasterDesk"),null,(_,_)=>{using var dialog=new AboutDialog();dialog.ShowDialog(this);}));
-        var languageMenu=new ToolStripMenuItem(L.T("Idioma"));
-        foreach(var (code,label) in new[]{("pt-BR","Português (Brasil)"),("en","English"),("es","Español")})
-        {
-            var choice=new ToolStripMenuItem(label){Checked=settings.Language==code,Tag=code};
-            choice.Click+=(_,_)=>{settings.Language=code;Save();foreach(ToolStripMenuItem item in languageMenu.DropDownItems)item.Checked=Equals(item.Tag,code);footerLabel.Text=L.T("Idioma salvo. Feche e reabra o CasterDesk para aplicar.");};
-            languageMenu.DropDownItems.Add(choice);
-        }
-        menu.Items.Add(new ToolStripSeparator());menu.Items.Add(languageMenu);
-        var roundMode=new ToolStripMenuItem(L.T("Registro de rounds"));
-        var listMode=new ToolStripMenuItem(L.T("Lista")){Checked=!settings.QuickRounds};
-        var quickMode=new ToolStripMenuItem(L.T("Modo rápido")){Checked=settings.QuickRounds};
-        void ChangeRoundMode(bool quick){settings.QuickRounds=quick;championship.SetQuickMode(quick);listMode.Checked=!quick;quickMode.Checked=quick;Save();}
-        listMode.Click+=(_,_)=>ChangeRoundMode(false);quickMode.Click+=(_,_)=>ChangeRoundMode(true);
-        roundMode.DropDownItems.AddRange([listMode,quickMode]);menu.Items.Add(roundMode);
-        void ChangeTheme(bool style,bool isDark)
-        {
-            settings.SiegeTheme=style;settings.DarkMode=isDark;Save();
-            footerLabel.Text=(style!=AppTheme.Siege || isDark!=AppTheme.Dark)?L.T("Tema salvo • será aplicado na próxima abertura do CasterDesk."):L.T("CasterDesk • Ferramentas para community casters");
-        }
-        siege.Click+=(_,_)=>ChangeTheme(true,settings.DarkMode);simple.Click+=(_,_)=>ChangeTheme(false,settings.DarkMode);
-        dark.Click+=(_,_)=>ChangeTheme(settings.SiegeTheme,true);light.Click+=(_,_)=>ChangeTheme(settings.SiegeTheme,false);
-        gear.Click+=(_,_)=>{siege.Checked=settings.SiegeTheme;simple.Checked=!settings.SiegeTheme;dark.Checked=settings.DarkMode;light.Checked=!settings.DarkMode;menu.BackColor=AppTheme.Surface;menu.ForeColor=AppTheme.Text;menu.Show(gear,new Point(gear.Width-menu.PreferredSize.Width,gear.Height));};
-        FormClosed+=(_,_)=>menu.Dispose();
+        var menu=new SettingsMenu(settings,
+            quick=>{settings.QuickRounds=quick;championship.SetQuickMode(quick);Save();},
+            (style,dark)=>{settings.SiegeTheme=style;settings.DarkMode=dark;Save();footerLabel.Text=L.T("Tema salvo • será aplicado na próxima abertura do CasterDesk.");},
+            code=>{settings.Language=code;Save();footerLabel.Text=L.T("Idioma salvo. Feche e reabra o CasterDesk para aplicar.");},
+            ()=>BackupUi.Create(this,()=>{Save();casting.SaveDraft();championship.FlushNames();studio.FlushPreferences();}),
+            ()=>{if(clock.Running){MessageBox.Show(this,L.T("Pause o cronômetro antes de restaurar um backup."),"CasterDesk");return;}BackupUi.Restore(this);},
+            ()=>{using var dialog=new AboutDialog();dialog.ShowDialog(this);});
+        Controls.Add(menu);menu.VisibleChanged+=(_,_)=>{if(gear is SettingsGear icon){icon.MenuOpen=menu.Visible;icon.Invalidate();}};gear.Click+=(_,_)=>menu.Toggle(this);Resize+=(_,_)=>menu.Fit(this);
         var layout = new TableLayoutPanel { Dock = DockStyle.Top, Height=400, ColumnCount = 1, RowCount = 3 };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 168));
@@ -273,7 +255,7 @@ public sealed class MainForm : Form
         clock.Reset((double)initial.Value); RefreshOutput();
         AppTheme.Apply(this);
         pulse.Tick += (_, _) => { clock.Tick(); RefreshOutput(); };
-        FormClosing += (_, e) => { if (clock.Running && MessageBox.Show(this, L.T("Fechar e interromper a contagem? O TXT manterá o último texto."), L.T("Sair"), MessageBoxButtons.YesNo) != DialogResult.Yes) { e.Cancel = true; return; } Save(); casting.SaveDraft(); championship.FlushNames(); };
+        FormClosing += (_, e) => { if (clock.Running && MessageBox.Show(this, L.T("Fechar e interromper a contagem? O TXT manterá o último texto."), L.T("Sair"), MessageBoxButtons.YesNo) != DialogResult.Yes) { e.Cancel = true; return; } Save(); casting.SaveDraft(); championship.FlushNames();studio.FlushPreferences(); };
     }
     internal void VerifyTimerStart(){if(pulse.Enabled)throw new Exception("Idle timer is polling");clock.Reset(2);clock.Start();RefreshOutput();if(!pulse.Enabled)throw new Exception("Timer did not start");}
     internal void VerifyTimerEnd(){if(!clock.Finished || pulse.Enabled || File.ReadAllText(output.Text)!=finalMessage.Text)throw new Exception("Timer completion failed");}

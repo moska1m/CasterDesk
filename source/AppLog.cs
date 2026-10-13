@@ -10,13 +10,8 @@ public static class AppLog
     }
     public static void Install()
     {
-        Write($"START version={typeof(AppLog).Assembly.GetName().Version} runtime={Environment.Version}");
+        Write($"START version={BuildInfo.Version} runtime={Environment.Version}");
         AppDomain.CurrentDomain.UnhandledException+=(_,e)=>Write("FATAL "+e.ExceptionObject);
-        Application.ThreadException+=(_,e)=>
-        {
-            Write("UI ERROR "+e.Exception);
-            MessageBox.Show(L.T("Ocorreu um erro de interface. O diagnóstico foi registrado em:\n")+file+L.T("\n\nReabra o programa para retomar os dados salvos."),L.T("CasterDesk — erro"),MessageBoxButtons.OK,MessageBoxIcon.Error);
-        };
-        Application.ApplicationExit+=(_,_)=>Write("EXIT");
+        TaskScheduler.UnobservedTaskException+=(_,e)=>Write("ASYNC ERROR "+e.Exception);
     }
 }

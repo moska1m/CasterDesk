@@ -3,36 +3,9 @@ using System.Text.Json;
 
 namespace CronoLive;
 
-public sealed class Talent
-{
-    public string Name { get; set; } = "";
-    public string Handle { get; set; } = "";
-}
-
-public sealed class CastingSettings
-{
-    public string Folder { get; set; } = Path.Combine(AppPaths.DataDirectory, "Casting");
-    public Talent[] People { get; set; } = [new(), new(), new(), new()];
-}
-
-public static class CastingFiles
-{
-    public static readonly string[] Keys = ["narrador", "comentarista", "convidado1", "convidado2"];
-    public static string Handle(string value) => string.IsNullOrWhiteSpace(value.Trim().TrimStart('@')) ? "" : "@" + value.Trim().TrimStart('@');
-    public static void Write(string folder, Talent[] people)
-    {
-        Directory.CreateDirectory(folder);
-        for (int i = 0; i < Keys.Length; i++)
-        {
-            File.WriteAllText(Path.Combine(folder, Keys[i] + ".txt"), people[i].Name.Trim(), new UTF8Encoding(false));
-            File.WriteAllText(Path.Combine(folder, "@" + Keys[i] + ".txt"), Handle(people[i].Handle), new UTF8Encoding(false));
-        }
-    }
-}
-
 public sealed class CastingPanel : UserControl
 {
-    readonly string config = Path.Combine(AppPaths.DataDirectory, "casting-settings.json");
+    readonly string config = AppPaths.ConfigFile("casting-settings.json");
     CastingSettings settings = new();
     readonly TextBox[] names = new TextBox[4], handles = new TextBox[4];
     readonly TextBox folder = new() { ReadOnly = true, Dock = DockStyle.Fill };

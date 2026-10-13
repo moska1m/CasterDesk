@@ -40,6 +40,18 @@ public static class ExportTests
             foreach(var page in pages){Need(page.Image.Width==(aspect==ExportAspect.Horizontal?1920:1080));Need(page.Image.Height==(aspect==ExportAspect.Stories?1920:aspect==ExportAspect.Feed?1350:1080));page.Image.Save(Path.Combine(folder,$"{aspect}_{page.Name}.png"),System.Drawing.Imaging.ImageFormat.Png);page.Dispose();}
             Need(before==System.Text.Json.JsonSerializer.Serialize(match));
         }
+        brand.BackgroundStyle="JG";
+        foreach(var aspect in Enum.GetValues<ExportAspect>())
+        {
+            var themed=ResultRenderer.Render(match,catalog,brand,aspect);
+            var classicBrand=new ExportBrand();
+            var classic=ResultRenderer.Render(match,catalog,classicBrand,aspect);
+            Need(themed.Count==classic.Count);
+            Need(themed[0].Image.GetPixel(5,5)!=classic[0].Image.GetPixel(5,5));
+            foreach(var page in themed){page.Image.Save(Path.Combine(folder,$"JG_{aspect}_{page.Name}.png"),System.Drawing.Imaging.ImageFormat.Png);page.Dispose();}
+            foreach(var page in classic)page.Dispose();
+        }
+        brand.BackgroundStyle="Classic";
         var partial=new SiegeMatch{TeamA="ABCDEFGHIJKL",TeamB="MNOPQRSTUVWX",Format="MD1",Maps=[new(){MapId="bank",InitialAttack=0,Rounds=[new(){Winner=1}]}]};
         foreach(var aspect in Enum.GetValues<ExportAspect>()){var pages=ResultRenderer.Render(partial,catalog,brand,aspect);foreach(var page in pages){page.Image.Save(Path.Combine(folder,$"partial_{aspect}_{page.Name}.png"),System.Drawing.Imaging.ImageFormat.Png);page.Dispose();}Need(true);}
         var ended=new MapRecord {InitialAttack=0};

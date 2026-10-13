@@ -1,6 +1,7 @@
-﻿param([string]$Executable)
+param([string]$Executable,[switch]$Legacy,[string]$PublishFolder='publish-wpf-validation')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
+if(!$Legacy -and !$Executable){& "$PSScriptRoot/Test-Wpf.ps1" -PublishFolder $PublishFolder;return}
 if (!$Executable) {
     dotnet build (Join-Path $root 'source/CronoLive.csproj') -c Release
     if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar os testes.' }
@@ -11,7 +12,7 @@ $previous = $env:CASTERDESK_DATA_DIR
 $results = Join-Path $root ('test-results/' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force $results | Out-Null
 try {
-    foreach ($test in @('self-test','championship-test','export-test','perf-test','theme-restart-test','timer-ui-test','theme-smoke','localization-test')) {
+    foreach ($test in @('menu-test','backup-test','self-test','championship-test','export-test','studio-test','image-optimization-test','perf-test','theme-restart-test','timer-ui-test','theme-smoke','localization-test')) {
         $env:CASTERDESK_DATA_DIR = Join-Path $results $test
         $p = Start-Process $Executable -ArgumentList "--$test" -PassThru -WindowStyle Hidden
         if (!$p.WaitForExit(120000)) { throw "Teste demorou mais de 120 segundos: $test (PID $($p.Id))." }

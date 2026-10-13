@@ -25,16 +25,22 @@ internal sealed class OperatorBanCard : Button
         if(Width<3 || Height<20)return;
         var g=e.Graphics;g.Clear(BackColor);
         // Keep a standing card even on an ultrawide window. The whole slot remains clickable.
-        int height=Math.Min(Height-1,(int)(140*DeviceDpi/96f));
-        int width=Math.Min(Width-2,Math.Max(42,(int)(height*9f/16)));
+        bool spacious=(FindForm()?.ClientSize.Height??0)>=850*DeviceDpi/96f && Height>=130*DeviceDpi/96f && Width>=100*DeviceDpi/96f;
+        int height=Math.Min(Height-1,(int)((spacious?210:140)*DeviceDpi/96f));
+        int width=Math.Min(Width-6,Math.Max(42,spacious?Width-6:(int)(height*9f/16)));
         var card=new Rectangle((Width-width)/2,0,width,height);
         using(var fill=new LinearGradientBrush(card,AppTheme.Surface,AppTheme.Field,90f))g.FillRectangle(fill,card);
         if(Portrait is not null)
         {
-            float scale=Math.Max(card.Width/(float)Portrait.Width,card.Height/(Portrait.Height*.7f));
+            float scale=spacious?Math.Min(card.Width/(float)Portrait.Width,(card.Height-35)/(float)Portrait.Height):Math.Max(card.Width/(float)Portrait.Width,card.Height/(Portrait.Height*.7f));
             float sourceWidth=card.Width/scale,sourceHeight=card.Height/scale;
             g.InterpolationMode=InterpolationMode.HighQualityBilinear;
-            g.DrawImage(Portrait,card,new RectangleF((Portrait.Width-sourceWidth)/2,0,sourceWidth,sourceHeight),GraphicsUnit.Pixel);
+            if(spacious)
+            {
+                int pw=(int)(Portrait.Width*scale),ph=(int)(Portrait.Height*scale);
+                g.DrawImage(Portrait,new Rectangle(card.X+(card.Width-pw)/2,card.Y,pw,ph));
+            }
+            else g.DrawImage(Portrait,card,new RectangleF((Portrait.Width-sourceWidth)/2,0,sourceWidth,sourceHeight),GraphicsUnit.Pixel);
         }
         bool known=OperatorIcon is not null;
         int footer=Math.Min(56,card.Height/2);

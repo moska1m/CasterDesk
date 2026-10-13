@@ -8,12 +8,16 @@ public sealed class ChampionshipPanel : UserControl
     readonly SiegeCatalog catalog=SiegeCatalog.Load();
     readonly List<SiegeMatch> matches=[];
     SiegeMatch match=new(); MapRecord? current;
-    bool loading, correctBans;
+    bool loading, correctBans,namesDirty;
     readonly HashSet<string> shownBanReminders=[];
     internal Action<int[]>? BanReminderPreview;
+    internal Action<Form,int>? OperatorPickerPreview;
+    public event Action<SiegeMatch,MapRecord>? MapConfirmed;
+    public IReadOnlyList<SiegeMatch> Matches=>matches;
+    public string CurrentMatchId=>match.Id;
     string vetoKey="",sidesKey="",bansKey="",roundsKey="",savedKey="";
     readonly ComboBox saved=Combo(), format=Combo(), coin=Combo(), first=Combo(), mapSelect=Combo();
-    readonly TextBox teamA=new(){MaxLength=12},teamB=new(){MaxLength=12};
+    readonly TextBox teamA=new(){MaxLength=12,PlaceholderText=L.T("Nome da equipe A")},teamB=new(){MaxLength=12,PlaceholderText=L.T("Nome da equipe B")};
     static readonly Font ScoreFont=AppFonts.Body(24,FontStyle.Bold),CompactScoreFont=AppFonts.Body(18,FontStyle.Bold);
     readonly Label score=new(){TextAlign=ContentAlignment.MiddleCenter,Font=ScoreFont,Dock=DockStyle.Fill,AutoEllipsis=true};
     readonly Label notice=new(){AutoSize=true,ForeColor=Color.Firebrick,MaximumSize=new Size(1150,0)};
@@ -65,8 +69,8 @@ public sealed class ChampionshipPanel : UserControl
         var leftHost=new Panel{Dock=DockStyle.Fill};leftHost.Controls.Add(left);compactSetup=new ThemeButton{Dock=DockStyle.Top,Height=27,Visible=false};compactSetup.Click+=(_,_)=>{showCompactSides=!showCompactSides;AdjustLayout();};leftHost.Controls.Add(compactSetup);canvas.Controls.Add(leftHost,0,1);canvas.SetRowSpan(leftHost,2);
         var confrontation=Group(L.T("Confronto"),left,0,0);var fields=Table(4,4);fields.Padding=new Padding(6);confrontation.Controls.Add(fields);
         fields.ColumnStyles.Clear();foreach(float w in new[]{22,28,22,28})fields.ColumnStyles.Add(new(SizeType.Percent,w));
-        fields.Controls.Add(Caption(L.T("Equipe A:")),0,0);var aField=TeamField(teamA,Color.FromArgb(64,143,179));fields.Controls.Add(aField,1,0);fields.SetColumnSpan(aField,3);
-        fields.Controls.Add(Caption(L.T("Equipe B:")),0,1);var bField=TeamField(teamB,Color.FromArgb(255,119,55));fields.Controls.Add(bField,1,1);fields.SetColumnSpan(bField,3);
+        fields.Controls.Add(Caption(L.T("Equipe A:")),0,0);var aField=TeamField(teamA,Color.FromArgb(64,143,179),0);fields.Controls.Add(aField,1,0);fields.SetColumnSpan(aField,3);
+        fields.Controls.Add(Caption(L.T("Equipe B:")),0,1);var bField=TeamField(teamB,Color.FromArgb(255,119,55),1);fields.Controls.Add(bField,1,1);fields.SetColumnSpan(bField,3);
         fields.Controls.Add(Caption(L.T("Formato:")),0,2);fields.Controls.Add(format,1,2);format.Items.AddRange([L.FormatName("MD1"),L.FormatName("MD3"),L.FormatName("MD5")]);
         fields.Controls.Add(Caption(L.T("Coin flip:")),0,3);fields.Controls.Add(coin,1,3);fields.Controls.Add(Caption(L.T("Primeiro ban:")),2,3);fields.Controls.Add(first,3,3);
         sidesViewport=new Panel{Dock=DockStyle.Fill,AutoScroll=true};sideRows.Dock=DockStyle.Top;
@@ -85,9 +89,7 @@ public sealed class ChampionshipPanel : UserControl
         var finish=new Panel(){Dock=DockStyle.Right,Width=230};confirmWinner.AutoSize=false;confirmWinner.Dock=DockStyle.Fill;finish.Controls.Add(confirmWinner);footer.Controls.Add(finish);confirmWinner.Click+=(_,_)=>ConfirmWinner();
         notice.AutoSize=false;notice.Dock=DockStyle.Fill;notice.AutoEllipsis=true;notice.MaximumSize=Size.Empty;canvas.Controls.Add(notice,0,5);canvas.SetColumnSpan(notice,2);
         var guide=new TabPage(L.T("Configurar lobby"));tabs.TabPages.Add(guide);guide.Controls.Add(new LobbyGuidePanel());
-        var exportPage=new TabPage(L.T("Exportar imagem"));var exporter=new ImageExportPanel(()=>matches,catalog);exportPage.Controls.Add(exporter);tabs.TabPages.Add(exportPage);
         Controls.Add(new NavigationBar(tabs));
-        tabs.Selecting+=(_,e)=>{if(e.TabPage==exportPage){FlushNames();exporter.RefreshMatches(match.Id);AppTheme.Apply(exporter);}};
         rounds.Columns.Add(new DataGridViewTextBoxColumn(){Name=L.T("Round"),ReadOnly=true,FillWeight=45,MinimumWidth=46});
         rounds.Columns.Add(new DataGridViewTextBoxColumn(){Name=L.T("Ataque"),ReadOnly=true,FillWeight=90});rounds.Columns.Add(new DataGridViewTextBoxColumn(){Name=L.T("Defesa"),ReadOnly=true,FillWeight=90});
         rounds.Columns.Add(new DataGridViewComboBoxColumn(){Name="Bomb site",FillWeight=180,FlatStyle=FlatStyle.Standard});
@@ -98,9 +100,9 @@ public sealed class ChampionshipPanel : UserControl
         rounds.CellValueChanged+=RoundChanged;
         rounds.DefaultCellStyle.Alignment=DataGridViewContentAlignment.MiddleCenter;rounds.ColumnHeadersDefaultCellStyle.Alignment=DataGridViewContentAlignment.MiddleCenter;rounds.CellBorderStyle=DataGridViewCellBorderStyle.SingleHorizontal;rounds.BorderStyle=BorderStyle.None;rounds.CellPainting+=PaintRoundCell;
         rounds.DataError+=(_,e)=>{e.ThrowException=false;Warn(L.T("Seleção inválida. Confira o campo."));};
-        saved.SelectedIndexChanged+=(_,_)=>{if(!loading && saved.SelectedItem is SiegeMatch selected){BeginInvoke((Action)(()=>{if(IsDisposed)return;FlushNames();match=selected;current=null;LoadMatch();}));}};
+        saved.SelectedIndexChanged+=(_,_)=>{if(!loading && saved.SelectedItem is SiegeMatch selected){BeginInvoke((Action)(()=>{if(IsDisposed)return;try{FlushNames();match=selected;current=null;LoadMatch();}catch(Exception ex){Warn(ex.Message);loading=true;saved.SelectedItem=match;loading=false;}}));}};
         teamA.TextChanged+=(_,_)=>NameChanged();teamB.TextChanged+=(_,_)=>NameChanged();
-        nameSave.Tick+=(_,_)=>{nameSave.Stop();Persist();RefreshMatch();};
+        nameSave.Tick+=(_,_)=>{nameSave.Stop();if(Persist())namesDirty=false;RefreshMatch();};
         format.SelectedIndexChanged+=(_,_)=>ChangeSetup("format");coin.SelectedIndexChanged+=(_,_)=>ChangeSetup("coin");first.SelectedIndexChanged+=(_,_)=>ChangeSetup("first");
         mapSelect.SelectedIndexChanged+=(_,_)=>{if(!loading){current=match.Maps.ElementAtOrDefault(mapSelect.SelectedIndex);correctBans=false;RefreshMatch();}};
         Directory.CreateDirectory(MatchStore.Folder);
@@ -132,12 +134,28 @@ public sealed class ChampionshipPanel : UserControl
         if(editable){using var pen=new Pen(ink,1.6f);int x=bounds.Right-12,y=bounds.Y+bounds.Height/2;e.Graphics.DrawLines(pen,new[]{new Point(x-4,y-2),new Point(x,y+2),new Point(x+4,y-2)});}
         e.Handled=true;
     }
-    static Control TeamField(TextBox name,Color color)
+    Control TeamField(TextBox name,Color color,int team)
     {
-        var row=new BufferedTable(){Dock=DockStyle.Fill,ColumnCount=2,RowCount=1,Margin=Padding.Empty};
+        var row=new BufferedTable(){Dock=DockStyle.Fill,ColumnCount=3,RowCount=1,Margin=Padding.Empty};
         row.ColumnStyles.Add(new(SizeType.Absolute,25));row.ColumnStyles.Add(new(SizeType.Percent,100));
         row.Controls.Add(new Panel(){BackColor=color,Size=new Size(17,17),Margin=new Padding(3,5,3,0),AccessibleName=L.T("Cor fixa da equipe")},0,0);
-        name.Dock=DockStyle.Fill;row.Controls.Add(name,1,0);return row;
+        row.ColumnStyles.Add(new(SizeType.Absolute,58));
+        name.Dock=DockStyle.Fill;row.Controls.Add(name,1,0);var logo=Btn(L.T("Logo"),()=>ChooseTeamLogo(team));logo.Dock=DockStyle.Fill;logo.Margin=Padding.Empty;row.Controls.Add(logo,2,0);return row;
+    }
+    void ChooseTeamLogo(int team)
+    {
+        using var dialog=new OpenFileDialog{Filter=L.T("Imagem PNG ou JPEG|*.png;*.jpg;*.jpeg")};if(dialog.ShowDialog(this)!=DialogResult.OK)return;
+        try{FlushNames();var brand=MatchFiles.ReadBrand(match);var path=MatchFiles.Resource(match,team==0?"logo-a":"logo-b",dialog.FileName);if(team==0)brand.TeamALogo=path;else brand.TeamBLogo=path;MatchFiles.SaveBrand(match,brand);notice.Text=L.T("Logo salva para as artes desta partida.");}
+        catch(Exception ex){Warn(ex.Message);}
+    }
+    public bool ApplyArtworkVeto(string id,ImageBrand brand)
+    {
+        var target=matches.Single(m=>m.Id==id);var copy=MatchFiles.ArtworkMatch(target,catalog,brand);
+        if(target.Maps.Any(m=>m.HasData||m.Confirmed))throw new InvalidOperationException(L.T("A partida já tem bans ou rounds registrados. Mantenha esta correção somente na arte."));
+        MatchStore.Validate(copy,catalog);var oldVeto=target.Veto;var oldMaps=target.Maps;
+        try{target.Veto=copy.Veto;target.Maps=copy.Maps;MatchStore.Save(target);}
+        catch{target.Veto=oldVeto;target.Maps=oldMaps;throw;}
+        if(target==match){current=null;LoadMatch();}return true;
     }
     static ComboBox Combo()=>new ThemeCombo(){DropDownStyle=ComboBoxStyle.DropDownList,Dock=DockStyle.Fill};
     static Label Caption(string text)=>new ThemeCaption{Text=text,Dock=DockStyle.Fill,TextAlign=ContentAlignment.MiddleLeft};
@@ -217,8 +235,8 @@ public sealed class ChampionshipPanel : UserControl
         if(!Persist()){current.Rounds.RemoveAt(current.Rounds.Count-1);return false;}
         RefreshMatch();QueueBanReminder(current);return true;
     }
-    void NameChanged(){if(loading || match.HasConfirmed)return;match.TeamA=teamA.Text;match.TeamB=teamB.Text;nameSave.Stop();nameSave.Start();}
-    public void FlushNames(){if(!nameSave.Enabled)return;nameSave.Stop();Persist();}
+    void NameChanged(){if(loading || match.HasConfirmed)return;if(teamA.Text!=match.TeamA)match.TeamA=teamA.Text;if(teamB.Text!=match.TeamB)match.TeamB=teamB.Text;namesDirty=true;nameSave.Stop();nameSave.Start();}
+    public void FlushNames(){if(!namesDirty)return;if(!Persist())throw new IOException(L.T("Não foi possível salvar os nomes das equipes. Tente novamente antes de continuar."));namesDirty=false;nameSave.Stop();}
     bool Persist(){try{MatchStore.Save(match);notice.Text=L.T("Salvo automaticamente • ")+DateTime.Now.ToString("HH:mm:ss");notice.ForeColor=AppTheme.Success;return true;}catch(Exception ex){Warn(L.T("Falha ao salvar: ")+ex.Message);return false;}}
     void LoadMatch()
     {
@@ -228,10 +246,11 @@ public sealed class ChampionshipPanel : UserControl
     void ChangeSetup(string field)
     {
         if(loading || match.HasConfirmed)return;
-        if(field=="coin"){match.CoinWinner=coin.SelectedIndex;Persist();RefreshMatch();return;}
+        if(field=="coin"){int previous=match.CoinWinner;match.CoinWinner=coin.SelectedIndex;if(!Persist())match.CoinWinner=previous;RefreshMatch();return;}
         if(match.Veto.Any(x=>!string.IsNullOrEmpty(x)) && !Confirm(L.T("Alterar o formato ou primeiro ban limpa o veto e os registros desta partida. Continuar?"))){LoadMatch();return;}
+        string oldFormat=match.Format;int oldFirst=match.FirstBan;var oldVeto=match.Veto;var oldMaps=match.Maps;var oldCurrent=current;
         if(field=="format")match.Format=format.SelectedIndex switch { 2 => "MD5", 1 => "MD3", _ => "MD1" };else match.FirstBan=first.SelectedIndex;
-        match.Veto=new string[8];match.Maps.Clear();current=null;Persist();RefreshMatch();
+        match.Veto=new string[8];match.Maps=new();current=null;if(!Persist()){match.Format=oldFormat;match.FirstBan=oldFirst;match.Veto=oldVeto;match.Maps=oldMaps;current=oldCurrent;}LoadMatch();
     }
     Image? Picture(string file)
     {
@@ -331,7 +350,7 @@ public sealed class ChampionshipPanel : UserControl
         if(!CanEditBan(slot))return false;
         if(!catalog.Operators.Any(o=>o.Id==selected && o.Role==current!.BanRole(slot)))return false;
         if(Enumerable.Range(slot/6*6,6).Any(i=>i!=slot && current!.Bans[i]==selected))return false;
-        current!.Bans[slot]=selected;Persist();RefreshMatch();return true;
+        string? previous=current!.Bans[slot];current.Bans[slot]=selected;if(!Persist()){current.Bans[slot]=previous;RefreshMatch();return false;}RefreshMatch();return true;
     }
     void PickMap(int step)
     {
@@ -348,16 +367,17 @@ public sealed class ChampionshipPanel : UserControl
         var backup=match.Veto[step];var oldMaps=match.Maps.ToList();match.Veto[step]=chosen;match.SyncMaps(catalog);
         if(oldMaps.Any(m=>m.Confirmed && !match.Maps.Contains(m))){match.Veto[step]=backup;match.Maps=oldMaps;Warn(L.T("Esta escolha mudaria um mapa confirmado. Alteração bloqueada."));return;}
         if(oldMaps.Any(m=>m.HasData && !match.Maps.Contains(m)) && !Confirm(L.T("Esta troca muda um mapa com bans ou rounds registrados. Limpar apenas os registros do mapa substituído?"))){match.Veto[step]=backup;match.Maps=oldMaps;return;}
-        Persist();RefreshMatch();
+        if(!Persist()){match.Veto[step]=backup;match.Maps=oldMaps;}RefreshMatch();
     }
     void SetSide(MapRecord m,bool overtime,int attacker)
     {
         AppLog.Write($"SET SIDE match={match.Id} map={m.MapId} overtime={overtime} attacker={attacker}");
         if(m.Confirmed || match.Complete)return;
         if(m.HasData && !Confirm(overtime?L.T("Recalcular os lados do overtime com esta escolha?"):L.T("Alterar o lado inicial recalcula ataque/defesa dos rounds e limpa os bans deste mapa, pois mudam os tipos permitidos. Continuar?"))){RefreshMatch();return;}
+        int oldInitial=m.InitialAttack,oldOt=m.OtAttack;var oldBans=m.Bans.ToArray();var oldEndings=m.Rounds.Select(r=>r.Ending).ToArray();
         if(overtime)m.OtAttack=attacker;else{m.InitialAttack=attacker;m.Bans=new string[12];}
         for(int i=0;i<m.Rounds.Count;i++)if(!RoundEnding.Allowed(m.Rounds[i].Ending,m.Rounds[i].Winner,m.Attacker(i+1)))m.Rounds[i].Ending="";
-        Persist();RefreshMatch();
+        if(!Persist()){m.InitialAttack=oldInitial;m.OtAttack=oldOt;m.Bans=oldBans;for(int i=0;i<m.Rounds.Count;i++)m.Rounds[i].Ending=oldEndings[i];}RefreshMatch();
     }
     void RenderBans()
     {
@@ -366,7 +386,7 @@ public sealed class ChampionshipPanel : UserControl
         {
             int round=current is null?1:Math.Min(15,current.Rounds.Count+(current.Score().Winner>=0?0:1));
             bool active=current is not null && current.InitialAttack>=0 && (round<=12 || current.OtAttack>=0) && current.ActiveBanHalf(round)==half;
-            string sides=current is null || current.InitialAttack<0?L.T("Defina o lado inicial"):L.F($"{match.Team(half==0?current.InitialAttack:1-current.InitialAttack)} ATQ / {match.Team(half==0?1-current.InitialAttack:current.InitialAttack)} DEF");
+            string sides=current is null || current.InitialAttack<0?L.T("Defina o lado inicial"):L.F($"{match.Team(half==0?current.InitialAttack:1-current.InitialAttack)} {L.Role("ATQ")} / {match.Team(half==0?1-current.InitialAttack:current.InitialAttack)} {L.Role("DEF")}");
             var pending=current?.PendingBans(half)??[];
             var header=new BanHalfHeading{Active=active,Text=$"{L.T("Round")} {(half==0?"1–6":"7–12")} • {sides}{(correctBans?L.T(" • Corrigindo"):"")}",Dock=DockStyle.Fill};header.Font=SmallFont;header.BackColor=active?Color.FromArgb(220,235,250):Color.WhiteSmoke;
             if(pending.Length>0)
@@ -383,7 +403,7 @@ public sealed class ChampionshipPanel : UserControl
             bans.Controls.Add(header,0,half*2);bans.SetColumnSpan(header,6);
             for(int local=0;local<6;local++)
             {
-                int slot=half*6+local;var op=catalog.Operators.FirstOrDefault(x=>x.Id==current?.Bans[slot]);bool unlocked=current is not null && current.BanStageReached(slot);
+                int slot=BanDisplayOrder(half)[local];var op=catalog.Operators.FirstOrDefault(x=>x.Id==current?.Bans[slot]);bool unlocked=current is not null && current.BanStageReached(slot);
                 string name=op?.Name.ToUpperInvariant() ?? (unlocked?L.T("! Pendente"):L.T("Bloqueado"));
                 string team=match.Team(MapRecord.BanTeam(slot));
                 var card=new OperatorBanCard{Portrait=op is null?null:Picture(op.Id+"-portrait.png"),OperatorIcon=op is null?null:Picture(op.Icon),OperatorName=name,TeamName=team,Stage=$"R{MapRecord.BanThreshold(slot)+1:00}",Placeholder=current is null || current.InitialAttack<0?"—":L.Role(current.BanRole(slot)),Pending=op is null && unlocked,TeamColor=MapRecord.BanTeam(slot)==0?Color.FromArgb(64,143,179):Color.FromArgb(255,119,55),Enabled=CanEditBan(slot) && (op is null || correctBans),AccessibleName=$"{name} • {team} • R{MapRecord.BanThreshold(slot)+1:00}"};
@@ -393,16 +413,45 @@ public sealed class ChampionshipPanel : UserControl
             }
         }
     }
+    int[] BanDisplayOrder(int half)
+    {
+        int first=half*6;
+        if(current is null || current.InitialAttack<0)return Enumerable.Range(first,6).ToArray();
+        var initial=Enumerable.Range(first,4).ToArray();
+        var defense=initial.Where(i=>current.BanRole(i)=="DEF").ToArray();
+        var attack=initial.Where(i=>current.BanRole(i)=="ATQ").ToArray();
+        var extra=Enumerable.Range(first+4,2).OrderBy(i=>current.BanRole(i)=="DEF"?0:1);
+        return new[]{defense[0],attack[0],defense[1],attack[1]}.Concat(extra).ToArray();
+    }
     void PickOperator(int slot)
     {
-        if(current is null || !CanEditBan(slot))return;using var dialog=new Form(){Text=L.F($"{match.Team(MapRecord.BanTeam(slot))} bane {L.Role(current.BanRole(slot))}"),Size=new Size(700,550),StartPosition=FormStartPosition.CenterParent};
-        var search=new TextBox(){Dock=DockStyle.Top,PlaceholderText=L.T("Buscar operador…")};var flow=new FlowLayoutPanel(){Dock=DockStyle.Fill,AutoScroll=true};dialog.Controls.Add(flow);dialog.Controls.Add(search);string? selected=null;
-        void Fill(){Clear(flow);foreach(var op in catalog.Operators.Where(o=>o.Role==current.BanRole(slot) && o.Name.Contains(search.Text,StringComparison.OrdinalIgnoreCase)).OrderBy(o=>o.Name))
+        if(current is null || !CanEditBan(slot))return;
+        bool editing=!string.IsNullOrEmpty(current.Bans[slot]);
+        while(current is not null && CanEditBan(slot))
         {
-            bool used=current.Bans.Skip(slot/6*6).Take(6).Contains(op.Id) && current.Bans[slot]!=op.Id;
-            var b=new ThemeButton(){Text=op.Name,Width=100,Height=88,TextImageRelation=TextImageRelation.ImageAboveText,Image=Picture(op.Icon) is Image img?new Bitmap(img,new Size(42,42)):null,Enabled=!used};b.Disposed+=(_,_)=>b.Image?.Dispose();b.Click+=(_,_)=>{selected=op.Id;dialog.DialogResult=DialogResult.OK;};flow.Controls.Add(b);
-        }}search.TextChanged+=(_,_)=>Fill();Fill();
-        AppTheme.Apply(dialog);if(dialog.ShowDialog(this)==DialogResult.OK && selected is not null)SetOperator(slot,selected);
+            string role=current.BanRole(slot);
+            var available=OperatorOrder.Sort(catalog.Operators,role).ToArray();
+            var area=Screen.FromControl(this).WorkingArea;
+            int width=Math.Min(1180,area.Width-60),columns=Math.Min(11,Math.Max(5,(width-24)/90));
+            int rows=(available.Length+columns-1)/columns;
+            int cellHeight=Math.Min(94,Math.Max(58,(area.Height-150)/Math.Max(1,rows)));
+            using var dialog=new Form(){Text=L.F($"{match.Team(MapRecord.BanTeam(slot))} bane {L.Role(role)}"),ClientSize=new Size(width,rows*(cellHeight+6)+65),StartPosition=FormStartPosition.CenterParent,MinimizeBox=false,MaximizeBox=false};
+            var search=new TextBox(){Dock=DockStyle.Top,PlaceholderText=L.T("Buscar operador…")};
+            var flow=new FlowLayoutPanel(){Dock=DockStyle.Fill,Padding=new Padding(6),AutoScroll=false};
+            dialog.Controls.Add(flow);dialog.Controls.Add(search);string? selected=null;
+            void Fill(){Clear(flow);foreach(var op in available.Where(o=>o.Name.Contains(search.Text,StringComparison.OrdinalIgnoreCase)))
+            {
+                bool used=current.Bans.Skip(slot/6*6).Take(6).Contains(op.Id) && current.Bans[slot]!=op.Id;
+                var b=new ThemeButton(){Text=op.Name,Width=(width-24)/columns-6,Height=cellHeight,Margin=new Padding(3),TextImageRelation=TextImageRelation.ImageAboveText,Image=Picture(op.Icon) is Image img?new Bitmap(img,new Size(cellHeight<80?32:42,cellHeight<80?32:42)):null,Enabled=!used};
+                b.Disposed+=(_,_)=>b.Image?.Dispose();b.Click+=(_,_)=>{selected=op.Id;dialog.DialogResult=DialogResult.OK;};flow.Controls.Add(b);
+            }}
+            search.TextChanged+=(_,_)=>Fill();Fill();AppTheme.Apply(dialog);
+            if(OperatorPickerPreview is not null)dialog.Shown+=(_,_)=>OperatorPickerPreview(dialog,slot);
+            if(dialog.ShowDialog(this)!=DialogResult.OK || selected is null || !SetOperator(slot,selected))return;
+            if(editing || correctBans)return;
+            int next=BanDisplayOrder(slot/6).FirstOrDefault(i=>MapRecord.BanThreshold(i)==MapRecord.BanThreshold(slot) && current.BanStageReached(i) && string.IsNullOrEmpty(current.Bans[i]),-1);
+            if(next<0)return;slot=next;
+        }
     }
     void RenderRounds()
     {
@@ -472,7 +521,7 @@ public sealed class ChampionshipPanel : UserControl
             if(e.ColumnIndex==6){Warn(L.T("Finalização incompatível com o vencedor."));roundsKey="";BeginInvoke((Action)RefreshMatch);return;}
             ending="";
         }
-        var snapshot=JsonSerializer.Deserialize<List<RoundRecord>>(JsonSerializer.Serialize(current.Rounds))!;
+        var snapshot=JsonSerializer.Deserialize<List<RoundRecord>>(JsonSerializer.Serialize(current.Rounds))!;var banSnapshot=current.Bans.ToArray();
         if(row==current.Rounds.Count){if(current.Score().Winner>=0){Warn(L.T("Vencedor já definido. Confira os rounds."));return;}current.Rounds.Add(new(){Winner=who,Site=site==L.T("Selecionar…")?"":site,Ending=ending});}
         else{current.Rounds[row].Winner=who;current.Rounds[row].Site=site==L.T("Selecionar…")?"":site;current.Rounds[row].Ending=ending;}
         var result=current.Score();
@@ -482,7 +531,7 @@ public sealed class ChampionshipPanel : UserControl
             current.Rounds.RemoveRange(result.EndAt,current.Rounds.Count-result.EndAt);
             for(int i=0;i<12;i++)if(MapRecord.BanThreshold(i)>current.Rounds.Count)current.Bans[i]="";
         }
-        bool savedRound=Persist();BeginInvoke((Action)RefreshMatch);
+        bool savedRound=Persist();if(!savedRound){current.Rounds=snapshot;current.Bans=banSnapshot;}BeginInvoke((Action)RefreshMatch);
         if(savedRound && current.Rounds.Count>snapshot.Count)QueueBanReminder(current);
     }
     void QueueBanReminder(MapRecord map)
@@ -507,7 +556,11 @@ public sealed class ChampionshipPanel : UserControl
             }
         }));
     }
-    void NewMatch(){if(!Persist())return;SiegeMatch next;do{next=new();}while(matches.Any(m=>m.Id==next.Id)||File.Exists(Path.Combine(MatchStore.Folder,next.Id+".json")));match=next;matches.Insert(0,match);current=null;correctBans=false;Persist();LoadMatch();}
+    void NewMatch()
+    {
+        try{FlushNames();if(!Persist())return;SiegeMatch next;do{next=new();}while(matches.Any(m=>m.Id==next.Id)||File.Exists(Path.Combine(MatchStore.Folder,next.Id+".json")));MatchStore.Save(next);match=next;matches.Insert(0,match);current=null;correctBans=false;LoadMatch();}
+        catch(Exception ex){Warn(L.T("Falha ao salvar: ")+ex.Message);}
+    }
     void ConfirmWinner()
     {
         if(current is null || IsLocked || current.Score().Winner<0)return;
@@ -518,11 +571,12 @@ public sealed class ChampionshipPanel : UserControl
         current.ConfirmedAt=DateTimeOffset.Now;
         if(!Persist()){current.ConfirmedAt=null;return;}
         correctBans=false;RefreshMatch();
+        MapConfirmed?.Invoke(match,current);
     }
     void Export()
     {
         FlushNames();
-        using var dialog=new SaveFileDialog(){Filter=L.T("Partida JSON|*.json"),FileName=MatchStore.ExportFileName(match)};
+        using var dialog=new SaveFileDialog(){InitialDirectory=AppPaths.Ensure("Partidas/Exportadas"),Filter=L.T("Partida JSON|*.json"),FileName=MatchStore.ExportFileName(match)};
         if(dialog.ShowDialog(this)!=DialogResult.OK)return;try{MatchStore.Atomic(dialog.FileName,match);notice.Text=L.T("Partida exportada.");}catch(Exception ex){Warn(ex.Message);}
     }
     void Import()
@@ -703,12 +757,42 @@ public sealed class ChampionshipPanel : UserControl
     internal void VerifyResponsiveDesign()
     {
         var window=FindForm()!;Size oldSize=window.ClientSize;bool oldDark=AppTheme.Dark;
+        foreach(int side in new[]{0,1})
+        {
+            current=new MapRecord{InitialAttack=side};
+            foreach(int half in new[]{0,1})
+            {
+                var order=BanDisplayOrder(half);
+                if(!order.Take(4).Select(current.BanRole).SequenceEqual(new[]{"DEF","ATQ","DEF","ATQ"}) || order.Distinct().Count()!=6)throw new Exception("Ban role order or identity changed");
+            }
+        }
         void Need(bool value,string message){if(!value)throw new Exception(message);}
         foreach(string mode in new[]{"MD1","MD3","MD5"})
         {
             match=new(){TeamA="Liquid",TeamB="FaZe",Format=mode,CoinWinner=0,FirstBan=0,Veto=catalog.Maps.Take(8).Select(x=>x.Id).ToArray()};match.SyncMaps(catalog);matches.Add(match);
             foreach(var map in match.Maps){map.InitialAttack=0;map.OtAttack=1;}
             current=match.Maps[0];current.Rounds=Enumerable.Range(0,4).Select(i=>new RoundRecord{Winner=i%2,Site=catalog.Maps.Single(m=>m.Id==current.MapId).Sites[i%4],Ending="elimination"}).ToList();
+            if(mode=="MD1")
+            {
+                var visited=new List<string>();
+                OperatorPickerPreview=(dialog,slot)=>
+                {
+                    visited.Add(current.BanRole(slot));
+                    var flow=dialog.Controls.OfType<FlowLayoutPanel>().Single();
+                    var buttons=flow.Controls.OfType<Button>().ToArray();
+                    Need(buttons.All(b=>b.Right<=flow.ClientSize.Width && b.Bottom<=flow.ClientSize.Height),"Operator picker requires scrolling");
+                    var expected=OperatorOrder.Sort(catalog.Operators,current.BanRole(slot)).Select(o=>o.Name);
+                    Need(buttons.Select(b=>b.Text).SequenceEqual(expected),"Operator grid order differs from Siege");
+                    if(visited.Count<=2){using var bmp=new Bitmap(dialog.Width,dialog.Height);dialog.DrawToBitmap(bmp,new Rectangle(Point.Empty,dialog.Size));bmp.Save(Path.Combine(AppPaths.DataDirectory,"operator-picker-"+current.BanRole(slot)+".png"));}
+                    buttons.First(b=>b.Enabled).PerformClick();
+                };
+                LoadMatch();PickOperator(BanDisplayOrder(0)[0]);OperatorPickerPreview=null;
+                Need(visited.SequenceEqual(new[]{"DEF","ATQ","DEF","ATQ"}),"Automatic ban sequence wrong");
+                Need(current.Bans.Take(4).All(b=>!string.IsNullOrEmpty(b)) && current.Bans.Skip(4).All(string.IsNullOrEmpty),"Ban sequence crossed phase boundary");
+                current.Bans=new string[12];
+                OperatorPickerPreview=(dialog,slot)=>dialog.Close();PickOperator(BanDisplayOrder(0)[0]);OperatorPickerPreview=null;
+                Need(current.Bans.All(string.IsNullOrEmpty),"Cancelled picker recorded a ban");
+            }
             for(int slot=0;slot<6;slot++)current.Bans[slot]=catalog.Operators.Where(o=>o.Role==current.BanRole(slot)).Skip(slot).First().Id;
             LoadMatch();SetQuickMode(true);AppTheme.Dark=true;
             foreach(var size in new[]{new Size(1920,920),new Size(1366,640),new Size(1140,600)})

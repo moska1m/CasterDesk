@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>disable</ImplicitUsings><Nullable>enable</Nullable>
+    <AssemblyName>CasterDesk</AssemblyName><PackageId>CasterDesk.Desktop.Wpf</PackageId><Product>CasterDesk</Product>
+    <ApplicationIcon>../assets/casterdesk.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup><ProjectReference Include="../source-core/CasterDesk.Core.csproj"/>
+    <Compile Include="../source/MatchInterchangeTests.cs;../source/ImageOptimizationTests.cs;../source/BackupTests.cs" Link="Checks/%(Filename)%(Extension)"/>
+  </ItemGroup>
+<ItemGroup><Content Include="../tests/Fixtures/Ocr/*.json" Link="test-fixtures/ocr/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/></ItemGroup></Project>

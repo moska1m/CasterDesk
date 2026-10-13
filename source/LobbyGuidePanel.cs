@@ -41,7 +41,7 @@ public sealed class LobbyGuidePanel : UserControl
         Block(2,L.T("07   INTERRUPÇÃO TÁTICA"),(L.T("Solicitações por equipe"),"1"),(L.T("Permitir solicitações de"),L.T("Jogadores")),(L.T("Duração da interrupção"),"45"),(L.T("Intervalo de troca de função"),L.T("Ligado")),(L.T("Duração do intervalo"),"120"));
         Block(2,L.T("08   MODO BOMBA"),(L.T("Instalar / desativar"),"7 / 7"),(L.T("Detonação"),"45"),(L.T("Portador do desativador"),L.T("Ligado")),(L.T("Preparação / ação"),"45 / 180"),("Repick",L.T("Ligado")));
         Block(2,L.T("09   DUPLICAR E SALVAR"),(L.T("Configure o primeiro mapa."),""),(L.T("Duplique e altere apenas o mapa."),""),(L.T("Repita para os 9 mapas do campeonato."),""),(L.T("Salve as condições de jogo."),""));
-        Block(1,"MAP POOL",(L.T("Banco • Fronteira • Chalé"),""),(L.T("Clube • Fortaleza • Café Dostoyevsky"),""),(L.T("Laboratórios Nighthaven • Covil • Mansão"),""));
+        Block(1,L.T("MAP POOL"),(L.T("Banco • Fronteira • Chalé"),""),(L.T("Clube • Fortaleza • Café Dostoyevsky"),""),(L.T("Laboratórios Nighthaven • Covil • Mansão"),""));
         var note=new Label(){Text=L.T("Guia de consulta: configure os valores dentro do jogo. As partidas duplicadas mantêm as configurações."),AutoSize=false,Height=45};
         canvas.Controls.Add(note);
         void LayoutGuide()

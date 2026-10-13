@@ -1,3 +1,27 @@
+# 0.3.0-beta.0.3
+
+- JSON de partida versão 2 com base em inglês: equipes padrão explícitas, BO1/BO3/BO5, IDs de mapas existentes e 36 IDs fixos de bombsites com nomes-base legíveis.
+- Equipes padrão acompanham o idioma de quem importa; nomes personalizados são preservados, inclusive quando iguais ao texto de um padrão.
+- Importação compatível com JSON versão 1 e nomes conhecidos de mapas/bombsites em PT/EN/ES. Novos arquivos exigem um leitor com suporte ao formato 2.
+- 599 verificações de portabilidade entre idiomas integradas ao teste WPF. Detalhes em MATCH-JSON-FORMAT.md.
+
+# 0.3.0-beta.0.2
+
+- Central de imagens organizada em cinco abas, com partida compartilhada e formato lembrado por categoria; anúncio em feed e story.
+- Canal da transmissão editável no anúncio, nas posições e fontes originais do PSD do JG. Data e horário permanecem ausentes.
+- Seleção de logos junto dos nomes das equipes; artes reutilizam os recursos da partida.
+- Veto da arte separado do veto registrado. Ao aplicar ou gerar uma correção, opção de atualizar também a partida; atualização real bloqueada quando já existem bans/rounds.
+- Falhas de salvamento revertem mudanças em veto, lados, bans e histórico. Nomes pendentes impedem sair/trocar de partida se a gravação falhar; nova partida só entra na lista após ser salva.
+- Cronômetro aplica o tempo editado ao iniciar, invalida o cache ao trocar caminho e preserva a exibição de 24 horas. Casting pode ser aplicado independentemente de um tempo inválido.
+- Normalização de configurações antigas, preservação de JSON inválido, logs WPF e bloqueio de segunda instância por pasta de dados.
+- Validação WPF e regressão de PNG exigidas pelo script de empacotamento. Migração completa do campeonato e demais pontos da revisão continuam planejados.
+
+# 0.3.0-beta.0.1
+
+- Primeira etapa WPF: janela, navegação, menu, Central de imagens, conferência de estatísticas e textos/cronômetro nativos.
+- Menu contido na janela; ações de geração fixas; prévias em segundo plano e controles com tamanho consistente.
+- Campeonato e seus diálogos ainda integrados em WinForms. Dados, regras e renderizadores das artes preservados. Detalhes em WPF-MIGRATION.md.
+
 # 0.2.0-beta.0.3
 
 - Alinhamento dos campos de lados e do placar sobre o histórico; conteúdo da tabela centralizado e seletores com chevrons.

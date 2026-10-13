@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 namespace CronoLive;
 public static class LocalizationTests
@@ -37,7 +37,7 @@ public static class LocalizationTests
             {
                 var panel=new ChampionshipPanel(true);form.Controls.Add(panel);form.Show();Application.DoEvents();
                 var tabs=panel.Controls.OfType<TabControl>().Single();
-                for(int i=0;i<3;i++){tabs.SelectedIndex=i;Application.DoEvents();if(i==2)tabs.TabPages[i].Controls.OfType<ImageExportPanel>().Single().WaitForPreview();using var bmp=new Bitmap(form.Width,form.Height);form.DrawToBitmap(bmp,new Rectangle(Point.Empty,form.Size));bmp.Save(Path.Combine(AppPaths.DataDirectory,$"locale-{language}-{i}.png"));}
+                for(int i=0;i<tabs.TabCount;i++){tabs.SelectedIndex=i;Application.DoEvents();using var bmp=new Bitmap(form.Width,form.Height);form.DrawToBitmap(bmp,new Rectangle(Point.Empty,form.Size));bmp.Save(Path.Combine(AppPaths.DataDirectory,$"locale-{language}-{i}.png"));}
                 form.Close();
             }
             var completed=JsonSerializer.Deserialize<SiegeMatch>(baseline)!;completed.Maps[0].Rounds=Enumerable.Range(0,7).Select(_=>new RoundRecord{Winner=0}).ToList();completed.Maps[0].ConfirmedAt=DateTimeOffset.Now;
@@ -46,22 +46,20 @@ public static class LocalizationTests
         L.Set("pt-BR");Check(MatchStore.ExportFileName(m)=="2026-09-24_18-30-00_Liquid_vs_FaZe_aberta.json","Portuguese filename");
         m.TeamA="../A:B*?";m.TeamB="<>|";Check(MatchStore.ExportFileName(m).IndexOfAny(Path.GetInvalidFileNameChars())<0,"unsafe filename");
         // Preference changes must be persistent but not live: same behavior as themes.
-        string settings=Path.Combine(AppPaths.DataDirectory,"settings.json");
+        string settings=AppPaths.ConfigFile("settings.json");
         File.WriteAllText(settings,JsonSerializer.Serialize(new Settings{Language="pt-BR",Message="MY CUSTOM TEXT"}));
         using(var form=new MainForm())
         {
-            form.Show();var menu=form.Controls.OfType<NavigationBar>().Single().SettingsButton!.ContextMenuStrip!;
-            var languages=menu.Items.OfType<ToolStripMenuItem>().Single(i=>i.DropDownItems.Count==3);
-            ((ToolStripMenuItem)languages.DropDownItems[1]).PerformClick();
+            form.Show();var menu=form.Controls.OfType<SettingsMenu>().Single();menu.Show();menu.Languages();
+            menu.Controls.OfType<FlowLayoutPanel>().Single().Controls.OfType<Button>().Single(b=>b.Text=="English").PerformClick();
             Check(L.Current=="pt-BR","language changed without restart");
             Check(JsonSerializer.Deserialize<Settings>(File.ReadAllText(settings))!.Language=="en","language not saved");form.Close();
         }
         L.LoadPreference();Check(L.Current=="en","language not loaded after restart");
         using(var form=new MainForm())
         {
-            form.Show();Application.DoEvents();var menu=form.Controls.OfType<NavigationBar>().Single().SettingsButton!.ContextMenuStrip!;
-            var modes=menu.Items.OfType<ToolStripMenuItem>().Single(i=>i.Text==L.T("Registro de rounds"));
-            ((ToolStripMenuItem)modes.DropDownItems[1]).PerformClick();Application.DoEvents();
+            form.Show();Application.DoEvents();var menu=form.Controls.OfType<SettingsMenu>().Single();menu.Show();menu.Rounds();
+            menu.Controls.OfType<FlowLayoutPanel>().Single().Controls.OfType<Button>().Single(b=>b.Text.EndsWith(L.T("Modo rápido"))).PerformClick();Application.DoEvents();
             Check(JsonSerializer.Deserialize<Settings>(File.ReadAllText(settings))!.QuickRounds,"quick preference not saved");form.Close();
         }
         using(var form=new MainForm()){form.Show();Application.DoEvents();Check(JsonSerializer.Deserialize<Settings>(File.ReadAllText(settings))!.Message=="MY CUSTOM TEXT","custom timer message changed");using var bmp=new Bitmap(form.Width,form.Height);form.DrawToBitmap(bmp,new Rectangle(Point.Empty,form.Size));bmp.Save(Path.Combine(AppPaths.DataDirectory,"locale-main-en.png"));form.Close();}

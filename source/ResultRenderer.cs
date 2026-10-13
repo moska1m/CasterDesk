@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace CronoLive;
 
 public enum ExportAspect { Stories, Feed, Horizontal }
-public sealed class ExportBrand { public string EventName {get;set;}=""; public string LogoFile {get;set;}=""; public string CasterName {get;set;}=""; public string Channel {get;set;}=""; public string Platform {get;set;}="Twitch"; public List<string>? Platforms {get;set;} public Dictionary<string,string> PlatformChannels {get;set;}=new(); public string[] SelectedPlatforms()=> (Platforms??new List<string>{Platform}).Where(p=>p is "Twitch" or "YouTube" or "Kick").Distinct().ToArray(); public string ChannelFor(string p)=>PlatformChannels.TryGetValue(p,out var value)&&!string.IsNullOrWhiteSpace(value)?value.Trim():Channel.Trim(); }
+public sealed class ExportBrand { public string BackgroundStyle {get;set;}="Classic"; public string EventName {get;set;}=""; public string LogoFile {get;set;}=""; public string CasterName {get;set;}=""; public string Channel {get;set;}=""; public string Platform {get;set;}="Twitch"; public List<string>? Platforms {get;set;} public Dictionary<string,string> PlatformChannels {get;set;}=new(); public string[] SelectedPlatforms()=> (Platforms??new List<string>{Platform}).Where(p=>p is "Twitch" or "YouTube" or "Kick").Distinct().ToArray(); public string ChannelFor(string p)=>PlatformChannels.TryGetValue(p,out var value)&&!string.IsNullOrWhiteSpace(value)?value.Trim():Channel.Trim(); }
 public sealed record ResultPage(string Name, Bitmap Image) : IDisposable {public void Dispose()=>Image.Dispose();}
 public static class ResultRenderer
 {
@@ -54,6 +54,16 @@ public static class ResultRenderer
     {
         int w=aspect==ExportAspect.Horizontal?1920:1080,h=aspect==ExportAspect.Horizontal?1080:aspect==ExportAspect.Feed?1350:1920;
         var image=Base(new(w,h));
+        if(brand.BackgroundStyle=="JG")
+        {
+            using var background=Image.FromFile(Path.Combine(AppContext.BaseDirectory,"assets","promo","background.png"));
+            using var canvas=Graphics.FromImage(image);
+            canvas.InterpolationMode=InterpolationMode.HighQualityBicubic;
+            // Preserve the complete frame for every aspect; trim the PSD bleed.
+            canvas.DrawImage(background,new Rectangle(0,0,w,h),new Rectangle(4,5,1080,1350),GraphicsUnit.Pixel);
+            using var shade=new SolidBrush(Color.FromArgb(125,8,15,22));
+            canvas.FillRectangle(shade,0,0,w,h);
+        }
         try
         {
             using var g=Graphics.FromImage(image);g.SmoothingMode=SmoothingMode.AntiAlias;g.InterpolationMode=InterpolationMode.HighQualityBicubic;g.TextRenderingHint=TextRenderingHint.AntiAliasGridFit;

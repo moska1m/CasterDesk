@@ -3,13 +3,13 @@ namespace CronoLive;
 
 public sealed class AboutDialog : Form
 {
-    public AboutDialog()
+    public AboutDialog(string? displayedVersion = null)
     {
         Text=L.T("Sobre o CasterDesk"); StartPosition=FormStartPosition.CenterParent;
         ClientSize=new Size(650,500); MinimumSize=new Size(530,430);
         Font=new Font("Segoe UI",10); AutoScaleMode=AutoScaleMode.Dpi;
         MinimizeBox=false; MaximizeBox=false; ShowInTaskbar=false;
-        var version=typeof(AboutDialog).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "beta";
+        var version=displayedVersion ?? typeof(AboutDialog).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "beta";
         var text=new TextBox {Multiline=true,ReadOnly=true,ScrollBars=ScrollBars.Vertical,Dock=DockStyle.Fill,BorderStyle=BorderStyle.None,TabStop=true,AccessibleName=L.T("Créditos e avisos"),Text=
             $"CASTERDESK • {version}\r\n\r\n"+
             L.T("Criado por Jeferson “Moska” Sampaio.\r\nFerramentas para community casters • uso interno.\r\n\r\n")+
