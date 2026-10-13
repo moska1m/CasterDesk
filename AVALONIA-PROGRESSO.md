@@ -1,5 +1,19 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Sexta entrega — publicação e instalador Avalonia Preview
+
+Gerado `dist/CasterDesk-Avalonia-0.3.0-beta.0.5-win-x64-Setup.exe`, **64 MiB**, versão de arquivo 0.3.0.5. SHA-256: `93e452a2c7e726e46fb20e9bf3ce8f4fb18337ba50112b6c91455276e4b2406f`. Há arquivos `.sha256` e `.manifest.json` ao lado do instalador. O manifesto lista 558 arquivos da publicação com tamanho/hash; não é uma assinatura digital. Authenticode: **NotSigned**.
+
+Publicação autossuficiente Windows x64, com runtimes .NET/Windows Desktop 10.0.11, Avalonia, Skia/HarfBuzz, recursos competitivos, artes e OCR. Receita reproduzível em `scripts/Package-Avalonia.ps1`, usando Inno Setup 7 x64. O compilador antigo 32 bits disponível no workspace falhou no carregador do Windows; a ferramenta 64 bits já existente compilou com sucesso. Não foi instalado um compilador no PC.
+
+O pacote usa identidade/diretório de instalação separados (`CasterDesk-Avalonia` / CasterDesk Avalonia Preview), preservando a instalação anterior. Os dados continuam em Documentos/CasterDesk e o mutex compartilhado impede abrir duas instâncias sobre a mesma pasta. Não há execução automática do programa ao finalizar o instalador. A desinstalação desta prévia mantém os dados; a escolha de excluir dados e o texto de consentimento específico continuam pendentes, sem texto legal novo aprovado nesta entrega.
+
+A escolha de idioma do instalador configura o primeiro uso por `--language`; não substitui preferências existentes. Dois testes verificam essas condições. O executável **publicado** foi executado somente com `--avalonia-check`, dados isolados e backend Headless: **254 verificações de interface/fluxos + 713 do núcleo**, sem erros/avisos de compilação. O script aguarda o término do apphost Windows com `Start-Process -Wait -WindowStyle Hidden`, em vez de verificar os relatórios antes de ele terminar.
+
+Evidência: publicação `publish-avalonia-0.3.0-beta.0.5-fbe16f1a`, UI `test-results/avalonia-ui-42aa7a556a004a91b8a811b4b1292499/`, núcleo `test-results/avalonia-core-4e33a19f6d3b48158050ebe9e976c9cf/`. Conferidos SHA do instalador, presença dos arquivos do manifesto, runtimeconfig e versão PE. O instalador **não foi executado**: instalação/desinstalação, arranque normal, DPI/monitores, seletores, clipboard/OCR e OBS ainda exigem validação interativa. Não foi aberto programa nativo, instalador ou OBS na área de trabalho. Nenhum envio ao GitHub.
+
+Pendências reais: testes nativos e revisão regional de termos; fluxo de consentimento e escolha de remoção dos dados; assinatura/distribuição. A geração do instalador mencionada como pendente nos registros anteriores foi atendida, mas isso não certifica uma versão final pronta para distribuição ampla.
+
 ## Quinta entrega — revisão de idioma e nomes personalizados
 
 Revisados os chamadores de tradução das telas Avalonia, lobby, seletores e diálogos, usando o catálogo JSON existente. Acrescentadas **sete chaves EN/ES**: cancelamento, bombsite, duplicata de partida, dica de correção de round, filtro de imagens, descarte de edição e aplicação editorial do veto. As traduções existentes não foram substituídas em bloco. Placeholders de todas as entradas são comparados com a chave fonte nos testes; isso verifica estrutura, não certifica qualidade linguística regional.

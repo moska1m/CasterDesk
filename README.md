@@ -1,6 +1,8 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **A linha de desenvolvimento atual é Avalonia.** A versão anterior 0.3.0-beta.0.4 permanece preservada. Central de imagens, campeonato, lobby, menu, cronômetro/TXTs e backup/restauração já compilaram e passaram nos testes Headless. Escolha de idioma está no menu; controles PT/EN/ES preservam nomes personalizados. Revisão linguística regional, validação interativa e instalador continuam pendentes. Estado, evidências e limitações em [AVALONIA-PROGRESSO.md](AVALONIA-PROGRESSO.md).
+Ferramentas para community casters de Rainbow Six Siege. **A linha de desenvolvimento atual é Avalonia.** A versão anterior 0.3.0-beta.0.4 permanece preservada. A **0.3.0-beta.0.5 Avalonia Preview** tem publicação autossuficiente Windows x64 e instalador separado, gerado mas ainda não instalado/testado interativamente. Central, campeonato, lobby, cronômetro/TXTs, backup/restauração e idiomas passaram nos testes Headless. Revisão regional, testes nativos e acabamento do instalador continuam pendentes. Estado, evidências e limitações em [AVALONIA-PROGRESSO.md](AVALONIA-PROGRESSO.md).
+
+`scripts/Package-Avalonia.ps1 -Iscc <ISCC-x64.exe> -Dotnet <dotnet.exe>` verifica o núcleo, publica, testa o executável em modo Headless e compila o instalador. Não instala nem abre o programa. `-RestoreConfig` aceita um arquivo NuGet explícito. Artefatos e SHA-256 ficam em `dist/` e não são versionados no Git.
 
 Central em cinco abas, canal do anúncio conforme PSD do JG, logos no cadastro e correção editorial do veto com opção de atualizar também a partida. Entrega, testes e próximas etapas em [PROGRESSO-ESTABILIZACAO.md](PROGRESSO-ESTABILIZACAO.md).
 

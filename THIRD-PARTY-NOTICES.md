@@ -20,6 +20,8 @@ Twitch, YouTube e Kick são marcas de seus respectivos titulares; os símbolos e
 
 ## Componentes
 
+A linha Avalonia inclui Avalonia 12.0.0 (MIT, conforme o metadata do pacote), SkiaSharp e HarfBuzzSharp. Avisos em `assets/licenses/AVALONIA-LICENSE.txt`, `SKIASHARP-LICENSE.txt` e `HARFBUZZSHARP-LICENSE.txt`; os dois últimos foram copiados dos pacotes usados nesta publicação. Os avisos do runtime .NET também acompanham o instalador.
+
 O pacote autocontido inclui componentes Microsoft .NET, sujeitos às licenças e avisos distribuídos pelo próprio runtime (`LICENSE.txt` e `THIRD-PARTY-NOTICES.txt`, quando fornecidos). O instalador é produzido com Inno Setup, de Jordan Russell e Martijn Laan, conforme a licença do compilador. Nenhum desses componentes é desenvolvido ou endossado pelo CasterDesk.
 
 As traduções pt-BR e espanhol do instalador são as distribuídas com Inno Setup 7.1.0, com créditos preservados nos arquivos installer/Languages. A licença correspondente está em assets/licenses/INNO-SETUP-LICENSE.txt.

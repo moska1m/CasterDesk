@@ -5,6 +5,15 @@ namespace CasterDesk.Avalonia;
 
 internal static class Program
 {
+    internal static string[] InitialArguments { get; private set; } = [];
+    internal static void ApplyInitialLanguage(string[] args)
+    {
+        if (File.Exists(AppPaths.ConfigFile("settings.json"))) return;
+        int index = Array.IndexOf(args, "--language");
+        if (index < 0 || index + 1 >= args.Length || !L.Languages.Contains(args[index + 1])) return;
+        L.Set(args[index + 1]);
+        MatchFiles.AtomicText(AppPaths.ConfigFile("settings.json"), System.Text.Json.JsonSerializer.Serialize(new Settings { Language = L.Current }));
+    }
     [STAThread]
     public static void Main(string[] args)
     {
@@ -15,6 +24,7 @@ internal static class Program
             SynchronizationContext.SetSynchronizationContext(new AvaloniaSynchronizationContext());
             Checks.Run(); return;
         }
+        InitialArguments = args;
         string key = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
             System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(AppPaths.DataDirectory).ToUpperInvariant())));
         using var instance = new Mutex(false, "Local\\CasterDesk-" + key);
@@ -42,7 +52,7 @@ public sealed class App : Application
                 try {
                     string? notice = null;
                     await Task.Run(() => { FileBatch.Recover(); DataBackup.ProcessPending(text => notice = text); });
-                    L.LoadPreference(); var shell = new StudioShell();
+                    L.LoadPreference(); Program.ApplyInitialLanguage(Program.InitialArguments); var shell = new StudioShell();
                     if (notice != null) shell.Notify(notice);
                     desktop.MainWindow = shell; shell.Show(); working = false; startup.Close();
                 } catch (Exception ex) {

@@ -13,6 +13,12 @@ internal static class LocalizationChecks
     {
         Need(L.Entries.All(e => e.Value.Length == 2 && e.Value.All(v => !string.IsNullOrWhiteSpace(v))), "All entries have EN and ES values");
         Need(L.Entries.All(e => e.Value.All(v => Slots(v) == Slots(e.Key))), "Translation placeholders match source");
+        string settingsFile = AppPaths.ConfigFile("settings.json"), preservedSettings = Path.Combine(AppPaths.BackupDirectory, "initial-language-settings.json");
+        string settingsText = File.ReadAllText(settingsFile);
+        Program.ApplyInitialLanguage(["--language", "es"]); Need(File.ReadAllText(settingsFile) == settingsText, "Installer language does not overwrite existing preferences");
+        File.Move(settingsFile, preservedSettings, true);
+        try { Program.ApplyInitialLanguage(["--language", "es"]); Need(ConfigurationStore.Read<Settings>("settings.json").Language == "es", "First installation language applied"); }
+        finally { File.Move(preservedSettings, settingsFile, true); L.Set("pt-BR"); }
         string file = Path.Combine(AppPaths.BackupDirectory, "language-match.json");
         var custom = new SiegeMatch { TeamA = "Banco", TeamB = "Clube" }; MatchStore.Atomic(file, custom);
         var session = new MatchSession(); session.AttachImported(custom);
