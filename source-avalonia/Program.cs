@@ -21,7 +21,7 @@ internal static class Program
         bool acquired;
         try { acquired = instance.WaitOne(0); } catch (AbandonedMutexException) { acquired = true; }
         if (!acquired) { AppLog.Write("An instance already owns this data folder."); return; }
-        try { AppBuilder.Configure<App>().UsePlatformDetect().StartWithClassicDesktopLifetime(args); }
+        try { AppBuilder.Configure<App>().UseWin32().UseSkia().UseHarfBuzz().StartWithClassicDesktopLifetime(args); }
         finally { instance.ReleaseMutex(); }
     }
 }
@@ -61,3 +61,4 @@ public sealed class StudioShell : Window
         Closed += (_, _) => studio.Stop();
     }
 }
+

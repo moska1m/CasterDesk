@@ -19,9 +19,10 @@ internal static class Checks
         MatchStore.Save(match);
         var studio = new StudioView(() => new[] { match }, catalog);
         var owner = new Window { Content = studio, Background = Ui.Canvas };
-        // No UsePlatformDetect, Window.Show, native dialogs, clipboard or real user data.
-        studio.Refresh(match.Id); Wait(studio.Render());
-        if (!studio.PreviewReady || studio.FormatCount != 2) throw new Exception("Announcement preview / format check failed.");
+        // The window belongs only to Avalonia.Headless: no native windows, dialogs or real data.
+        owner.Show();
+        studio.Refresh(match.Id); Wait(studio.Render()); Wait(studio.SettlePreview());
+        if (!studio.PreviewReady || studio.FormatCount != 2) throw new Exception($"Announcement preview={studio.PreviewReady}, formats={studio.FormatCount}, selected={studio.Selected?.Id}: {studio.CheckStatus}");
         foreach (var size in new[] { new Size(980, 640), new Size(1280, 800), new Size(1920, 1080) }) {
             owner.Width = size.Width; owner.Height = size.Height;
             owner.Measure(size); owner.Arrange(new Rect(size)); Dispatcher.UIThread.RunJobs();
@@ -34,7 +35,7 @@ internal static class Checks
             Wait(studio.CheckCategory(category));
             if (!studio.PreviewReady) throw new Exception($"Category {category} preview failed.");
         }
-        studio.Stop(); owner.Content = null;
+        studio.Stop(); owner.Content = null; owner.Close();
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-check.txt"), "PASS: five image categories, announcement feed/story, three layouts and generate bounds. No desktop window was opened.");
     }
 
@@ -48,3 +49,5 @@ internal static class Checks
         task.GetAwaiter().GetResult();
     }
 }
+
+

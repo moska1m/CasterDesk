@@ -84,11 +84,12 @@ internal static class Ui
         app.Styles.Add(new global::Avalonia.Themes.Fluent.FluentTheme());
         app.RequestedThemeVariant = ThemeVariant.Dark;
         var primary = new Style(x => x.OfType<Button>().Class("primary"));
-        primary.Setters.Add(new Setter(Button.BackgroundProperty, Brush.Parse("#327FA8")));
-        primary.Setters.Add(new Setter(Button.ForegroundProperty, Brushes.White));
+        primary.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, Brush.Parse("#327FA8")));
+        primary.Setters.Add(new Setter(global::Avalonia.Controls.Button.ForegroundProperty, Brushes.White));
         app.Styles.Add(primary);
         var hover = new Style(x => x.OfType<Button>().Class("primary").Class(":pointerover"));
-        hover.Setters.Add(new Setter(Button.BackgroundProperty, Brush.Parse("#FF4335")));
+        hover.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, Brush.Parse("#FF4335")));
         app.Styles.Add(hover);
     }
 }
+

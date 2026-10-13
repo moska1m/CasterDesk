@@ -9,8 +9,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../source-core/CasterDesk.Core.csproj" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.0" />
+    <PackageReference Include="Avalonia.Win32" Version="12.0.0" />
+    <PackageReference Include="Avalonia.Skia" Version="12.0.0" />
+    <PackageReference Include="Avalonia.HarfBuzz" Version="12.0.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.0" />
     <PackageReference Include="Avalonia.Headless" Version="12.0.0" />
   </ItemGroup>
 </Project>
+

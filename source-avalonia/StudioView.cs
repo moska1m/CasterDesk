@@ -38,7 +38,7 @@ public sealed class StudioView : Grid
  MapRecord? Map=>Selected?.Maps.ElementAtOrDefault(maps.SelectedIndex);
  public StudioView(Func<IReadOnlyList<SiegeMatch>> list,SiegeCatalog catalog,Func<string,ImageBrand,bool>? applyVeto=null)
  {
-  this.list=list;this.catalog=catalog;this.applyVeto=applyVeto;Margin=new Thickness(18);
+  this.list=list;this.catalog=catalog;this.applyVeto=applyVeto;Margin=new Thickness(18);Background=Ui.Canvas;
   RowDefinitions.Add(new(){Height=GridLength.Auto});RowDefinitions.Add(new(){Height=GridLength.Auto});RowDefinitions.Add(new());
   ColumnDefinitions.Add(new(){Width=new GridLength(300)});ColumnDefinitions.Add(new());
   var top=new StackPanel{Orientation=Orientation.Horizontal};top.Children.Add(new TextBlock{Text=L.T("Partida:"),VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(0,0,12,10)});matches.Width=360;top.Children.Add(matches);Children.Add(top);SetColumnSpan(top,2);
@@ -57,7 +57,7 @@ public sealed class StudioView : Grid
   generate=Ui.Button("Gerar arquivos",()=>_=(Kind==ArtKind.MapVeto&&brand.ArtVeto!=null?ApplyCorrections():Export()),true);generate.IsEnabled=false;footer.Children.Add(generate);footer.Children.Add(Ui.Button("Abrir pasta da partida",()=>{if(Selected!=null)Ui.OpenFolder(MatchFiles.Ensure(Selected));}));copy=Ui.Button("Copiar caminho para OBS",()=>{try{Ui.CopyText(MatchFiles.ObsVeto);status.Text=L.T("Caminho copiado. Configure uma fonte de imagem no OBS com este arquivo.");}catch(Exception ex){status.Text=ex.Message;}});footer.Children.Add(copy);footer.Children.Add(status);status.FontSize=12;status.MaxHeight=70;
   var frame=new Border{Background=new SolidColorBrush(Color.FromRgb(11,16,23)),Padding=new Thickness(14),Child=preview};SetRow(frame,2);SetColumn(frame,1);Children.Add(frame);
   matches.SelectionChanged+=(_,e)=>{if(e.Source!=matches)return;if(!loading)LoadSelection();};kind.SelectionChanged+=(_,e)=>{if(e.Source!=kind)return;if(!loading){Configure();_=Render();}};aspect.SelectionChanged+=(_,e)=>{if(e.Source!=aspect)return;if(!loading){formats[(int)Kind]=aspect.SelectedIndex;_=Render();}};maps.SelectionChanged+=(_,e)=>{if(e.Source!=maps)return;if(!loading){if(Selected!=null&&Map!=null)rememberedMaps[(Selected.Id,Kind)]=Map.MapId;Configure();_=Render();}};mode.SelectionChanged+=(_,_)=>ShowPreview();
-  eventName.TextChanged+=(_,_)=>{if(!loading){brand.EventName=eventName.Text??"";Changed();}};mvp.SelectionChanged+=(_,_)=>{if(!loading){brand.Mvp=(mvp.SelectedItem as Choice)?.Key??"";Changed();}};
+  eventName.TextChanged+=(_,_)=>{if(!loading){brand.EventName=eventName.Text??"";Changed();}};mvp.SelectionChanged+=(_,_)=>{if(!loading){var value=(mvp.SelectedItem as Choice)?.Key??"";if(value==brand.Mvp)return;brand.Mvp=value;Changed();}};
   channel.TextChanged+=(_,_)=>{if(!loading){brand.BroadcastChannel=channel.Text??"";Changed();}};
   debounce.Tick+=(_,_)=>{debounce.Stop();if(Flush())_=Render();};SizeChanged+=(_,_)=>{matches.Width=Math.Max(220,Math.Min(360,Bounds.Width-95));ColumnDefinitions[0].Width=new GridLength(Bounds.Width<1100?260:300);};Configure();
  }
@@ -77,7 +77,7 @@ public sealed class StudioView : Grid
   try
   {
    if(Selected!=null){string? savedMap=rememberedMaps.GetValueOrDefault((Selected.Id,Kind));int index=Selected.Maps.FindIndex(m=>m.MapId==savedMap);maps.SelectedIndex=Selected.Maps.Count==0?-1:Math.Max(0,index);}bool veto=Kind==ArtKind.MapVeto,hasStats=Kind is ArtKind.MapStats or ArtKind.SeriesStats or ArtKind.Results;
-   aspect.ItemsSource=new[]{"Stories · 1080 × 1920","Feed · 1080 × 1350","Horizontal · 1920 × 1080"}.Take(Kind==ArtKind.Announcement?2:3).Select(L.T).ToArray();aspect.IsEnabled=!veto;aspect.SelectedIndex=veto?2:Math.Min(formats[(int)Kind],aspect.Items.Count-1);vetoOptions.IsVisible=veto;
+   if(aspect.Items.Count!=(Kind==ArtKind.Announcement?2:3))aspect.ItemsSource=new[]{"Stories · 1080 × 1920","Feed · 1080 × 1350","Horizontal · 1920 × 1080"}.Take(Kind==ArtKind.Announcement?2:3).Select(L.T).ToArray();aspect.IsEnabled=!veto;aspect.SelectedIndex=veto?2:Math.Min(formats[(int)Kind],aspect.Items.Count-1);vetoOptions.IsVisible=veto;
    foreach(Control control in new Control[]{channel,channelTitle,channelHint})control.IsVisible=Kind==ArtKind.Announcement;
    foreach(Control control in new Control[]{maps,mapTitle,statsEdit,stats})control.IsVisible=hasStats;
    foreach(Control control in new Control[]{mode,modeTitle,copy})control.IsVisible=veto;
@@ -143,7 +143,11 @@ public sealed class StudioView : Grid
  public bool Flush()
  {debounce.Stop();if(owner==null||!brandDirty)return true;try{MatchFiles.SaveBrand(owner,brand);brandDirty=false;return true;}catch(Exception ex){status.Text=ex.Message;return false;}}
  void Clear(){generation++;preview.Source=null;foreach(var bitmap in previewPages.Values)bitmap.Dispose();previewPages.Clear();foreach(var p in rendered)p.Dispose();rendered.Clear();generate.IsEnabled=false;}
- public async Task Render()
+ Task? currentRender;
+ public Task Render()=>currentRender=RenderCore();
+ internal async Task SettlePreview()
+ {Task? previous;do{previous=currentRender;if(previous!=null)await previous;await Dispatcher.UIThread.InvokeAsync(()=>{},DispatcherPriority.Background);if(debounce.IsEnabled){if(!Flush())throw new IOException(CheckStatus);await Render();}}while(previous!=currentRender);}
+ async Task RenderCore()
  {
   Clear();if(Selected==null||closed)return;int request=generation;status.Text=L.T("Preparando prévia… Você pode continuar navegando.");
   var match=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(Selected))!;var b=JsonSerializer.Deserialize<ImageBrand>(JsonSerializer.Serialize(brand))!;var k=Kind;var a=Aspect;var map=match.Maps.ElementAtOrDefault(maps.SelectedIndex);
@@ -172,9 +176,12 @@ public sealed class StudioView : Grid
  public bool Exporting=>exporting||applying;
  public void Stop(){closed=true;debounce.Stop();Clear();}
  internal bool GenerateVisible=>generate.IsVisible;
- internal Task CheckCategory(int index){kind.SelectedIndex=index;return Render();}
+ internal async Task CheckCategory(int index){kind.SelectedIndex=index;await Render();await SettlePreview();}
  internal int FormatCount=>aspect.Items.Count;
+ internal string CheckStatus=>status.Text??"";
  internal bool PreviewReady=>preview.Source!=null&&rendered.Count>0;
  internal Rect GenerateBounds=>new(generate.TranslatePoint(default,this)??default,generate.Bounds.Size);
  sealed record Choice(string Key,string Name){public override string ToString()=>Name;}
 }
+
+

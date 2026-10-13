@@ -1,5 +1,17 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Atualização após restauração das dependências
+
+O usuário restaurou os pacotes pelo PowerShell. A interface Avalonia agora compila com **zero erros e zero avisos**. Foi corrigida uma colisão entre o método Ui.Button e o tipo Button. A verificação de prévias passou a aguardar também pedidos adiados pelo debounce, preservando a rejeição de resultados antigos.
+
+Nesta entrega Windows, o projeto referencia Avalonia.Win32, Skia e HarfBuzz em vez do pacote agregado Desktop. Isso removeu do grafo o suporte X11/D-Bus e a dependência Tmds.DBus.Protocol 0.90.3 sinalizada pelo NU1903. Não houve supressão do aviso. Referência do aviso: https://github.com/advisories/GHSA-xrw6-gwf8-vvr9.
+
+**Test-Avalonia aprovado**, dados isolados em `test-results/avalonia-ui-aaff4aa51c7444b2b750c79affeebf18/`: cinco categorias com prévia, anúncio limitado a feed/story e layouts em 980×640, 1280×800 e 1920×1080, com ação Gerar dentro dos limites. Prévia 1280 inspecionada visualmente. As janelas de teste pertencem exclusivamente ao backend Headless em memória; nenhuma janela nativa foi aberta na área de trabalho.
+
+Ainda faltam testes interativos de arquivos/clipboard/OCR, diálogos de estatísticas e atualização de veto, outras categorias visualmente inspecionadas e as demais áreas do programa. Nenhum instalador Avalonia foi gerado. O bloqueio de dependências descrito abaixo é histórico e foi resolvido.
+
+## Registro da preparação inicial (histórico)
+
 ## Estado conferido
 
 A base encontrada foi **0.3.0-beta.0.4**, commit `7bf6a74`, já registrado localmente antes desta etapa. `ESTABILIZACAO-0.3.0-beta.0.4.md`, `PROGRESSO-ESTABILIZACAO.md` e `WPF-VALIDATION.md` registram a estabilização anterior. Não reconstruí versões antigas nem executei uma migração para WPF.
