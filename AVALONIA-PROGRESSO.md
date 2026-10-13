@@ -1,5 +1,17 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Quinta entrega — revisão de idioma e nomes personalizados
+
+Revisados os chamadores de tradução das telas Avalonia, lobby, seletores e diálogos, usando o catálogo JSON existente. Acrescentadas **sete chaves EN/ES**: cancelamento, bombsite, duplicata de partida, dica de correção de round, filtro de imagens, descarte de edição e aplicação editorial do veto. As traduções existentes não foram substituídas em bloco. Placeholders de todas as entradas são comparados com a chave fonte nos testes; isso verifica estrutura, não certifica qualidade linguística regional.
+
+`Ui.RawCombo`/`RawText` separam dados do usuário de rótulos traduzíveis. Coin flip, primeiro ban, lados, revisão de rounds, correção editorial e estatísticas preservam nomes como **Banco** e **Clube**, sem convertê-los para os nomes dos mapas em EN/ES. Nomes padrão continuam vindo do modelo no idioma atual. IDs de mapas, JSON e convenções de importação não mudaram. Cabeçalhos de round/bans usam a tradução de Round; a dica do histórico agora descreve corretamente um clique.
+
+Os testes também reproduziram um problema em estatísticas: eventos de inicialização adiados marcavam a tela como editada e podiam trocar a associação de equipe. Os handlers agora comparam o valor efetivo anterior; abrir/fechar sem edição não pede descarte, enquanto uma edição manual continua exigindo confirmação.
+
+**Zero erros e zero avisos.** A suíte Headless passou em **252 verificações de interface/fluxos** (164 campeonato/menu, 30 textos, 27 backup, 31 idioma/estatísticas), além das prévias da Central. As 713 verificações do núcleo passaram novamente. Evidência: `test-results/avalonia-ui-d9626ef94df94ae0885bd030e7da7417/` e `test-results/avalonia-core-6fa10a20842347659dcf8b6577eda143/`. Lobby renderizado em PT/EN/ES; prévia ES em 1280×800 inspecionada. Testados importação entre idiomas, defaults, nomes personalizados nos controles e avisos de edição real.
+
+Pendências: revisão linguística por falante nativo e confirmação de termos regionais/oficiais de mapas/bombsites; inspeção visual de todos os estados e mensagens dinâmicas; testes reais de OCR, clipboard, arquivos, DPI/monitores e inicialização/restauração; preparar e validar instalador Avalonia. Esta entrega não declara uma auditoria integral de tradução nem validação nativa concluída. Sem abertura do programa/OBS/instalador e sem envio ao GitHub.
+
 ## Quarta entrega — backup, restauração e idioma
 
 O menu Avalonia agora inclui **Backup e restauração** e seleção de Português/English/Español, persistida e aplicada na próxima abertura. Os novos rótulos de backup/inicialização têm traduções EN/ES; isso não equivale à revisão completa das traduções existentes.

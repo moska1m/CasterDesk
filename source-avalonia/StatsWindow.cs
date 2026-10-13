@@ -35,7 +35,8 @@ public sealed class StatsWindow : Window
         actions.Children.Add(Ui.Button("Ler novamente", () => _ = Read()));
         actions.Children.Add(Ui.Button("Conciliar jogadores", () => _ = Reconcile()));
         body.Children.Add(actions);
-        top = Ui.Combo(match.TeamA, match.TeamB);
+        top = Ui.RawCombo(match.TeamA, match.TeamB);
+        top.Name = "stats-top-team";
         var choices = new StackPanel { Margin = new Thickness(12, 0, 0, 8) };
         choices.Children.Add(Ui.Text("Equipe no topo do print:")); choices.Children.Add(top); choices.Children.Add(coverage);
         body.Children.Add(choices); Grid.SetColumn(choices, 1);
@@ -49,12 +50,15 @@ public sealed class StatsWindow : Window
         confirm = Ui.Button("Confirmar estatísticas", () => _ = Save(), true); footer.Children.Add(confirm); Grid.SetColumn(confirm, 1);
         body.Children.Add(footer); Grid.SetRow(footer, 2); Grid.SetColumnSpan(footer, 2);
         Fill(map.Statistics?.Players ?? []);
+        int lastTop = top.SelectedIndex, lastCoverage = coverage.SelectedIndex;
         top.SelectionChanged += (_, _) => {
+            if (top.SelectedIndex < 0 || top.SelectedIndex == lastTop) return;
+            lastTop = top.SelectedIndex;
             foreach (var row in rows) { row.Team = 1 - row.Team; row.TeamLabel.Text = match.Team(row.Team); row.PlayerId = ""; }
             foreach (var group in groups) if (group.Rows.Count > 0) group.Heading.Text = match.Team(group.Rows[0].Team);
             edited = true;
         };
-        coverage.SelectionChanged += (_, _) => edited = true;
+        coverage.SelectionChanged += (_, _) => { if (coverage.SelectedIndex != lastCoverage) { lastCoverage = coverage.SelectedIndex; edited = true; } };
         KeyDown += (_, e) => { if (e.Key == Key.V && e.KeyModifiers.HasFlag(KeyModifiers.Control)) { e.Handled = true; _ = Paste(); } };
         string? file = MatchFiles.Resolve(match, map.Statistics?.Screenshot);
         if (file != null) { using var saved = System.Drawing.Image.FromFile(file); ReplaceImage(saved); }
@@ -70,12 +74,13 @@ public sealed class StatsWindow : Window
     {
         entries.Children.Clear(); rows.Clear(); groups.Clear();
         for (int team = 0; team < 2; team++) {
-            var heading = Ui.Text(match.Team(team), true); entries.Children.Add(heading);
+            var heading = Ui.RawText(match.Team(team), true); entries.Children.Add(heading);
             var groupRows = new List<Entry>(); groups.Add((heading, groupRows));
             var group = data.Where(p => p.Team == team).ToArray();
             for (int n = 0; n < Math.Max(5, group.Length); n++) {
                 var p = group.ElementAtOrDefault(n);
                 var row = new Entry { Team = team, PlayerId = p?.PlayerId ?? "" };
+                row.Name.Name = $"stats-player-{team}-{n}";
                 row.TeamLabel.Text = match.Team(team);
                 row.Name.Text = p?.Name ?? ""; row.Kills.Text = p?.Kills?.ToString() ?? "";
                 row.Deaths.Text = p?.Deaths?.ToString() ?? ""; row.Assists.Text = p?.Assists?.ToString() ?? "";
@@ -84,7 +89,8 @@ public sealed class StatsWindow : Window
                 for (int i = 0; i < inputs.Length; i++) {
                     var column = new StackPanel { Margin = new Thickness(3) }; column.Children.Add(Ui.Text(labels[i])); column.Children.Add(inputs[i]);
                     grid.Children.Add(column); Grid.SetColumn(column, i);
-                    inputs[i].TextChanged += (_, _) => edited = true;
+                    var input = inputs[i]; string? lastValue = input.Text;
+                    input.TextChanged += (_, _) => { if (input.Text != lastValue) { lastValue = input.Text; edited = true; } };
                 }
                 entries.Children.Add(grid); rows.Add(row); groupRows.Add(row);
             }

@@ -18,6 +18,6 @@ internal static class LobbyView
   Add("08   MODO BOMBA",new[]{( "Instalar / desativar", "7 / 7" ),( "Detonação", "45" ),( "Portador do desativador", "Ligado" ),( "Preparação / ação", "45 / 180" )});
   Add("09   DUPLICAR E SALVAR",new[]{( "Configure o primeiro mapa.", "" ),( "Duplique e altere apenas o mapa.", "" ),( "Repita para os 9 mapas do campeonato.", "" ),( "Salve as condições de jogo.", "" )});
   Add("MAP POOL",new[]{( "Banco • Fronteira • Chalé", "" ),( "Clube • Fortaleza • Café Dostoyevsky", "" ),( "Laboratórios Nighthaven • Covil • Mansão", "" )});
-  return new ScrollViewer{Content=panel,VerticalScrollBarVisibility=ScrollBarVisibility.Auto};
+  return new ScrollViewer{Content=panel,Background=Ui.Canvas,VerticalScrollBarVisibility=ScrollBarVisibility.Auto};
  }
 }

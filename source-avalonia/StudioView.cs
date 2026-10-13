@@ -113,7 +113,7 @@ public sealed class StudioView : Grid
    foreach(var map in artwork.Maps)
    {
     vetoOptions.Children.Add(Ui.Text(catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName+" · "+L.T("Ataque inicial")));
-    var side=Ui.Combo(L.T("Selecionar…"),Selected.TeamA,Selected.TeamB);side.SelectedIndex=map.InitialAttack+1;vetoOptions.Children.Add(side);
+    var side=Ui.RawCombo(L.T("Selecionar…"),Selected.TeamA,Selected.TeamB);side.SelectedIndex=map.InitialAttack+1;vetoOptions.Children.Add(side);
     side.SelectionChanged+=(_,_)=>{brand.ArtVeto??=Selected.Veto.ToArray();brand.ArtFormat=Selected.Format;brand.ArtSides[map.MapId]=side.SelectedIndex-1;Changed();};
    }
   }

@@ -1,6 +1,6 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **A linha de desenvolvimento atual é Avalonia.** A versão anterior 0.3.0-beta.0.4 permanece preservada. Central de imagens, campeonato, lobby, menu, cronômetro/TXTs e backup/restauração já compilaram e passaram nos testes Headless. Escolha de idioma está no menu; revisão integral das traduções, validação interativa e instalador continuam pendentes. Estado, evidências e limitações em [AVALONIA-PROGRESSO.md](AVALONIA-PROGRESSO.md).
+Ferramentas para community casters de Rainbow Six Siege. **A linha de desenvolvimento atual é Avalonia.** A versão anterior 0.3.0-beta.0.4 permanece preservada. Central de imagens, campeonato, lobby, menu, cronômetro/TXTs e backup/restauração já compilaram e passaram nos testes Headless. Escolha de idioma está no menu; controles PT/EN/ES preservam nomes personalizados. Revisão linguística regional, validação interativa e instalador continuam pendentes. Estado, evidências e limitações em [AVALONIA-PROGRESSO.md](AVALONIA-PROGRESSO.md).
 
 Central em cinco abas, canal do anúncio conforme PSD do JG, logos no cadastro e correção editorial do veto com opção de atualizar também a partida. Entrega, testes e próximas etapas em [PROGRESSO-ESTABILIZACAO.md](PROGRESSO-ESTABILIZACAO.md).
 

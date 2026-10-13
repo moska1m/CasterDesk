@@ -3379,6 +3379,13 @@
     "The language will be applied the next time CasterDesk opens.",
     "El idioma se aplicará la próxima vez que abras CasterDesk."
   ],
+  "Cancelar": ["Cancel", "Cancelar"],
+  "Bomb site": ["Bomb site", "Zona de bombas"],
+  "Esta partida já existe no programa.": ["This match already exists in the application.", "Esta partida ya existe en el programa."],
+  "Clique para corrigir um round.": ["Click to correct a round.", "Haz clic para corregir una ronda."],
+  "Imagem PNG ou JPEG": ["PNG or JPEG image", "Imagen PNG o JPEG"],
+  "Descartar as alterações não salvas?": ["Discard unsaved changes?", "¿Descartar los cambios sin guardar?"],
+  "Atualizar também o veto da partida selecionada?\n\nSim: salvar na partida e na arte.\nNão: corrigir somente a arte.\nCancelar: continuar editando.": ["Also update the selected match's veto?\n\nYes: save to the match and artwork.\nNo: correct only the artwork.\nCancel: continue editing.", "¿Actualizar también el veto de la partida seleccionada?\n\nSí: guardar en la partida y en la imagen.\nNo: corregir solo la imagen.\nCancelar: continuar editando."],
   "Preparando os dados do CasterDesk…": [
     "Preparing CasterDesk data…",
     "Preparando los datos de CasterDesk…"

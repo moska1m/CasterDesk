@@ -126,8 +126,8 @@ public sealed partial class ChampionshipView : Grid
         var settings = Columns("*,*,*");
         var format = Ui.Combo(L.FormatName("MD1"), L.FormatName("MD3"), L.FormatName("MD5")); format.Name = "setup-format";
         format.SelectedIndex = match.Format == "MD5" ? 2 : match.Format == "MD3" ? 1 : 0;
-        var coin = Ui.Combo("Coin flip:", match.TeamA, match.TeamB); coin.Name = "setup-coin"; coin.SelectedIndex = match.CoinWinner + 1;
-        var first = Ui.Combo("Primeiro ban:", match.TeamA, match.TeamB); first.Name = "setup-first"; first.SelectedIndex = match.FirstBan + 1;
+        var coin = Ui.RawCombo(L.T("Coin flip:"), match.TeamA, match.TeamB); coin.Name = "setup-coin"; coin.SelectedIndex = match.CoinWinner + 1;
+        var first = Ui.RawCombo(L.T("Primeiro ban:"), match.TeamA, match.TeamB); first.Name = "setup-first"; first.SelectedIndex = match.FirstBan + 1;
         void Field(int column, string label, Control control) { var field = new StackPanel(); var heading = Ui.Text(label); heading.FontSize = 12; heading.Margin = new Thickness(0, 0, 0, 3); field.Children.Add(heading); field.Children.Add(control); Add(settings, field, column); }
         Field(0, "Formato:", format); Field(1, "Coin flip:", coin); Field(2, "Primeiro ban:", first); settings.IsEnabled = !match.HasConfirmed;
         async Task Configure()
@@ -152,9 +152,9 @@ public sealed partial class ChampionshipView : Grid
         var headings = Columns("2*,2*,2*"); Add(headings, Ui.Text("Mapa"), 0); Add(headings, Ui.Text("Lado inicial"), 1); Add(headings, Ui.Text("OT"), 2); panel.Children.Add(headings);
         foreach (var record in match.Maps) {
             var line = Columns("2*,2*,2*"); var label = Ui.Text(Session.Catalog.Maps.Single(m => m.Id == record.MapId).DisplayName); label.VerticalAlignment = VerticalAlignment.Center; label.Margin = new Thickness(0, 0, 8, 10); Add(line, label, 0);
-            var initial = Ui.Combo("Selecionar…", match.TeamA + " · " + L.Role("ATQ"), match.TeamB + " · " + L.Role("ATQ")); initial.SelectedIndex = record.InitialAttack + 1;
+            var initial = Ui.RawCombo(L.T("Selecionar…"), match.TeamA + " · " + L.Role("ATQ"), match.TeamB + " · " + L.Role("ATQ")); initial.SelectedIndex = record.InitialAttack + 1;
             initial.Name = "side-initial-" + record.MapId;
-            var ot = Ui.Combo("Selecionar…", match.TeamA + " · " + L.Role("ATQ"), match.TeamB + " · " + L.Role("ATQ")); ot.SelectedIndex = record.OtAttack + 1;
+            var ot = Ui.RawCombo(L.T("Selecionar…"), match.TeamA + " · " + L.Role("ATQ"), match.TeamB + " · " + L.Role("ATQ")); ot.SelectedIndex = record.OtAttack + 1;
             initial.IsEnabled = ot.IsEnabled = !record.Confirmed && !match.Complete; Add(line, initial, 1); Add(line, ot, 2);
             initial.SelectionChanged += (_, _) => _ = Run(async () => {
                 int selected = initial.SelectedIndex - 1; if (building || TopLevel.GetTopLevel(initial) == null || selected == record.InitialAttack) return;
@@ -206,7 +206,7 @@ public sealed partial class ChampionshipView : Grid
             int attacker = half == 0 ? map.InitialAttack : 1 - map.InitialAttack;
             var heading = Columns("Auto,*");
             if (map.ActiveBanHalf(Math.Min(15, map.Rounds.Count + 1)) == half) Add(heading, new Border { Background = Brush.Parse("#247348"), Padding = new Thickness(8, 3), Child = new TextBlock { Text = L.T("ATIVOS"), Foreground = Brushes.White, FontSize = 11 } }, 0);
-            var text = Ui.Text($"Round {half * 6 + 1}–{half * 6 + 6} · {Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; Add(heading, text, 1); panel.Children.Add(heading);
+            var text = Ui.RawText($"{L.T("Round")} {half * 6 + 1}–{half * 6 + 6} · {Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; Add(heading, text, 1); panel.Children.Add(heading);
             var grid = new UniformGrid { Columns = 6 };
             for (int slot = half * 6; slot < half * 6 + 6; slot++) {
                 int field = slot; var op = Session.Catalog.Operators.FirstOrDefault(o => o.Id == map.Bans[slot]);
@@ -214,7 +214,7 @@ public sealed partial class ChampionshipView : Grid
                 string file = op == null ? StudioRenderer.Asset(map.BanRole(slot) == "DEF" ? "Icon_Defender.png" : "Icon_Attacker.png") : SiegeCatalog.Asset(op.Id + "-portrait.png");
                 try { content.Children.Add(new Image { Source = Ui.FileImage(file, compact && op != null), Height = op == null ? 50 : compact ? 76 : 180, Stretch = op == null ? Stretch.Uniform : Stretch.UniformToFill }); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
                 content.Children.Add(new TextBlock { Text = op?.Name ?? L.T(map.BanStageReached(slot) ? "Selecionar…" : "Bloqueado"), FontSize = op?.Name.Length > 10 ? 10 : 11, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap });
-                content.Children.Add(new TextBlock { Text = Session.Current.Team(MapRecord.BanTeam(slot)) + "\nRound " + (MapRecord.BanThreshold(slot) + 1), FontSize = 10, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap });
+                content.Children.Add(new TextBlock { Text = Session.Current.Team(MapRecord.BanTeam(slot)) + "\n" + L.T("Round") + " " + (MapRecord.BanThreshold(slot) + 1), FontSize = 10, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap });
                 var button = Action("", async () => { if (!map.Confirmed || await Ui.Ask(this, "Corrigir o ban de um mapa confirmado?") == 1) await PickBan(field); });
                 button.Name = "ban-slot-" + slot; button.Padding = new Thickness(3); button.Margin = new Thickness(3); button.Content = content;
                 button.IsEnabled = map.BanStageReached(slot) && !map.Confirmed; button.BorderThickness = new Thickness(0, 0, 0, 3); button.BorderBrush = Ui.Team(MapRecord.BanTeam(slot)); grid.Children.Add(button);

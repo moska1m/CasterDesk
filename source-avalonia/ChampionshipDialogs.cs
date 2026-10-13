@@ -75,7 +75,7 @@ public sealed partial class ChampionshipView
         var panel = new StackPanel { Margin = new Thickness(18) };
         var sites = Ui.Combo(); sites.ItemsSource = Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites.Select(s => new Choice(s, BombsiteNames.Display(map.MapId, s))).ToArray();
         sites.SelectedItem = sites.Items.OfType<Choice>().FirstOrDefault(c => c.Id == map.Rounds[index].Site);
-        var teams = Ui.Combo(Session.Current.TeamA, Session.Current.TeamB); teams.SelectedIndex = map.Rounds[index].Winner;
+        var teams = Ui.RawCombo(Session.Current.TeamA, Session.Current.TeamB); teams.SelectedIndex = map.Rounds[index].Winner;
         var ends = Ui.Combo(); ends.ItemsSource = RoundEnding.Codes.Select(c => new Choice(c, RoundEnding.Label(c))).ToArray(); ends.SelectedItem = ends.Items.OfType<Choice>().FirstOrDefault(c => c.Id == map.Rounds[index].Ending);
         panel.Children.Add(Ui.Text("Bomb site")); panel.Children.Add(sites); panel.Children.Add(Ui.Text("Vencedor")); panel.Children.Add(teams); panel.Children.Add(Ui.Text("Finalização")); panel.Children.Add(ends);
         var trim = new CheckBox { Content = L.T("Permitir remover rounds posteriores se o mapa terminar antes"), Margin = new Thickness(0, 8), Name = "review-trim" }; panel.Children.Add(trim);

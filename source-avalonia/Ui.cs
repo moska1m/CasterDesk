@@ -67,13 +67,15 @@ internal static class Ui
         return button;
     }
 
-    public static TextBlock Text(string text, bool heading = false) => new() {
-        Text = L.T(text), FontSize = heading ? 18 : 14,
+    public static TextBlock Text(string text, bool heading = false) => RawText(L.T(text), heading);
+    public static TextBlock RawText(string text, bool heading = false) => new() {
+        Text = text, FontSize = heading ? 18 : 14,
         FontWeight = heading ? FontWeight.SemiBold : FontWeight.Normal,
         TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, heading ? 10 : 0, 0, 8) };
 
-    public static ComboBox Combo(params string[] choices) => new() {
-        ItemsSource = choices.Select(L.T).ToArray(), SelectedIndex = choices.Length > 0 ? 0 : -1,
+    public static ComboBox Combo(params string[] choices) => RawCombo(choices.Select(L.T).ToArray());
+    public static ComboBox RawCombo(params string[] choices) => new() {
+        ItemsSource = choices, SelectedIndex = choices.Length > 0 ? 0 : -1,
         HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 0, 0, 10) };
 
     public static Bitmap Bitmap(System.Drawing.Image source)

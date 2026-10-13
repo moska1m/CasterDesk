@@ -34,7 +34,7 @@ public sealed partial class ChampionshipView
     {
         int round = map.Rounds.Count + 1, attacker = map.Attacker(round);
         var form = new Grid { RowDefinitions = new("Auto,*"), ColumnDefinitions = new("*,*") };
-        var heading = Ui.Text($"ROUND {round:00} · {Session.Current.Team(attacker)} {L.T("Ataque")} / {Session.Current.Team(1 - attacker)} {L.T("Defesa")}"); heading.FontSize = 12; form.Children.Add(heading); SetColumnSpan(heading, 2);
+        var heading = Ui.RawText($"{L.T("Round")} {round:00} · {Session.Current.Team(attacker)} {L.T("Ataque")} / {Session.Current.Team(1 - attacker)} {L.T("Defesa")}"); heading.FontSize = 12; form.Children.Add(heading); SetColumnSpan(heading, 2);
         var sites = new UniformGrid { Columns = 2 };
         foreach (string bombsite in Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites) {
             var button = Ui.Button(BombsiteNames.Display(map.MapId, bombsite), () => { site = bombsite; Refresh(); }, site == bombsite);
@@ -76,7 +76,7 @@ public sealed partial class ChampionshipView
         var sites = Ui.Combo(); sites.ItemsSource = Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites
             .Where(s => !map.SiteBlocked(s, map.Rounds.Count + 1)).Select(s => new Choice(s, BombsiteNames.Display(map.MapId, s))).ToArray();
         sites.SelectedItem = sites.Items.OfType<Choice>().FirstOrDefault(c => c.Id == site);
-        var teams = Ui.Combo("Selecionar…", Session.Current.TeamA, Session.Current.TeamB); teams.SelectedIndex = winner + 1;
+        var teams = Ui.RawCombo(L.T("Selecionar…"), Session.Current.TeamA, Session.Current.TeamB); teams.SelectedIndex = winner + 1;
         var ends = Ui.Combo(); ends.ItemsSource = RoundEnding.Codes.Where(c => c == "" || winner >= 0 && RoundEnding.Allowed(c, winner, map.Attacker(map.Rounds.Count + 1))).Select(c => new Choice(c, RoundEnding.Label(c))).ToArray();
         ends.SelectedItem = ends.Items.OfType<Choice>().FirstOrDefault(c => c.Id == ending);
         sites.SelectionChanged += (_, _) => { if (sites.SelectedItem is Choice c && c.Id != site) { site = c.Id; Refresh(); } };
@@ -97,7 +97,7 @@ public sealed partial class ChampionshipView
                 BombsiteNames.Display(map.MapId, record.Site), Session.Current.Team(record.Winner), $"{a}–{b}", RoundEnding.Label(record.Ending), "›" ]);
             var button = Action("", () => EditRound(row)); button.Content = line; button.Name = "history-round-" + index;
             button.HorizontalContentAlignment = HorizontalAlignment.Stretch; button.Background = Ui.Team(record.Winner, false); button.Foreground = Brushes.White; button.Margin = new Thickness(0); button.Padding = new Thickness(2);
-            ToolTip.SetTip(button, L.T("Clique duas vezes para corrigir um round.")); panel.Children.Add(button);
+            ToolTip.SetTip(button, L.T("Clique para corrigir um round.")); panel.Children.Add(button);
         }
         if (map.Rounds.Count == 0) panel.Children.Add(Ui.Text("Nenhum round registrado."));
         return new ScrollViewer { Content = panel, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
