@@ -38,27 +38,3 @@ public sealed class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 }
-
-// Stage one: standalone image studio. The existing installed release remains usable.
-public sealed class StudioShell : Window
-{
-    readonly StudioView studio;
-    public StudioShell()
-    {
-        Title = "CasterDesk • Avalonia • Central de imagens"; Width = 1440; Height = 900; MinWidth = 980; MinHeight = 640;
-        FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
-        var session = new MatchSession();
-        studio = new StudioView(() => session.Matches, session.Catalog, session.ApplyArtworkVeto);
-        var layout = new Grid { RowDefinitions = new("Auto,*,Auto") }; Content = layout;
-        var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 32, Margin = new Thickness(20, 16) };
-        header.Children.Add(Ui.Text("CASTERDESK", true));
-        var active = Ui.Text("Central de imagens", true); active.Foreground = Brush.Parse("#FF4335"); header.Children.Add(active);
-        layout.Children.Add(header); layout.Children.Add(studio); Grid.SetRow(studio, 1);
-        var footer = Ui.Text("CasterDesk • Avalonia — etapa 1"); footer.Margin = new Thickness(20, 4, 20, 10);
-        layout.Children.Add(footer); Grid.SetRow(footer, 2);
-        studio.Refresh();
-        Closing += (_, e) => { if (studio.Exporting || !studio.Flush()) e.Cancel = true; };
-        Closed += (_, _) => studio.Stop();
-    }
-}
-

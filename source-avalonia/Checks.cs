@@ -36,7 +36,8 @@ internal static class Checks
             if (!studio.PreviewReady) throw new Exception($"Category {category} preview failed.");
         }
         studio.Stop(); owner.Content = null; owner.Close();
-        File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-check.txt"), "PASS: five image categories, announcement feed/story, three layouts and generate bounds. No desktop window was opened.");
+        ChampionshipChecks.Run();
+        File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-check.txt"), "PASS: five image categories, announcement feed/story, three layouts, generate bounds and championship UI flow. No desktop window was opened.");
     }
 
     static void Wait(Task task)
@@ -49,5 +50,3 @@ internal static class Checks
         task.GetAwaiter().GetResult();
     }
 }
-
-

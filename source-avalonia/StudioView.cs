@@ -183,5 +183,3 @@ public sealed class StudioView : Grid
  internal Rect GenerateBounds=>new(generate.TranslatePoint(default,this)??default,generate.Bounds.Size);
  sealed record Choice(string Key,string Name){public override string ToString()=>Name;}
 }
-
-

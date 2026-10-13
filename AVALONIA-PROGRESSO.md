@@ -1,5 +1,24 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Segunda entrega — campeonato e navegação
+
+Campeonato e instruções de lobby agora têm controles Avalonia ligados ao mesmo `MatchSession` da base estabilizada. Inclui nomes/logos, configuração progressiva, nove mapas competitivos, lados por mapa, cards responsivos, seleção por ícones em grade de 11 colunas na ordem do jogo e abertura automática do próximo ban. A responsabilidade das equipes e a alternância DEF/ATQ vêm do núcleo existente.
+
+Registro rápido é o padrão: bombsites, ataque/defesa com cores fixas, finalização compatível, confirmação e histórico centralizado. Resultados confirmados exigem revisão auditada antes de edição. Importação/exportação de JSON e pacotes usa os serviços existentes. O menu fica sobre a área da janela, sem reservar largura quando fechado, com opção ativa destacada, temas claro/escuro e engrenagens reativas. Segoe UI permanece na interface; fontes e composição das artes foram preservadas.
+
+Validação final: **zero erros e zero avisos**, **164 verificações de controles Avalonia** e **713 verificações do núcleo**. Os controles testados percorrem configuração, oito escolhas de veto, bans automáticos, sete rounds, confirmação, bloqueio de edição e revisão auditada; também verificam seletores MD1/MD3/MD5, lobby, navegação e menu. Séries completas MD3/MD5 e prorrogação são verificadas pelo núcleo, não por uma série completa de cliques Avalonia.
+
+Evidência: `test-results/avalonia-ui-31fd854315dd4562839f8bff79235cd9/` e `test-results/avalonia-core-6c1d42aba5874fdf96e561345d2e1029/`. Prévias em 980×640, 1280×800 e 1920×1080; inspeção final de campeonato em 1280 e da janela completa em 980. Em altura reduzida, configuração concluída é recolhida e formulários usam rolagem. Testes executados exclusivamente com dados isolados e backend Headless, sem abrir programa/OBS na área de trabalho.
+
+Pendências atuais:
+
+1. Adaptar telas de cronômetro/TXTs, backup/restauração e demais configurações/idioma. Serviços preservados; tradução integral e revisão regional continuam pendentes.
+2. Testar diálogos nativos de arquivos, clipboard/Ctrl+V, OCR real e revisão de estatísticas com o usuário. A nova cópia do carregador de configurações ainda não tem testes específicos de recuperação de JSON inválido.
+3. Conferir operação real em DPI/monitores, teclado e modo clássico. O modo clássico foi selecionado nos testes, mas não percorreu uma partida completa pela interface.
+4. Preparar e validar distribuição/instalador Avalonia depois dessas entregas. Não foi gerado instalador nem enviado código ao GitHub nesta fase.
+
+Os registros abaixo são históricos; as pendências de campeonato/menu ali foram parcialmente resolvidas nesta segunda entrega. Não significam que toda a migração foi concluída.
+
 ## Atualização após restauração das dependências
 
 O usuário restaurou os pacotes pelo PowerShell. A interface Avalonia agora compila com **zero erros e zero avisos**. Foi corrigida uma colisão entre o método Ui.Button e o tipo Button. A verificação de prévias passou a aguardar também pedidos adiados pelo debounce, preservando a rejeição de resultados antigos.

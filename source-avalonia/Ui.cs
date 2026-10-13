@@ -6,7 +6,58 @@ namespace CasterDesk.Avalonia;
 
 internal static class Ui
 {
-    public static readonly IBrush Canvas = Brush.Parse("#182637"), Panel = Brush.Parse("#233448");
+    public static bool Dark { get; private set; } = true;
+    public static IBrush Canvas => Brush.Parse(Dark ? "#182637" : "#E7EDF3");
+    public static IBrush Panel => Brush.Parse(Dark ? "#233448" : "#F6F8FA");
+    public static IBrush Team(int team, bool selected = true) => new SolidColorBrush(
+        Color.FromArgb(selected ? (byte)255 : (byte)150, team == 0 ? (byte)64 : (byte)255,
+            team == 0 ? (byte)143 : (byte)119, team == 0 ? (byte)179 : (byte)55));
+    public static void Theme(bool dark) { Dark = dark; if (Application.Current != null) Application.Current.RequestedThemeVariant = dark ? ThemeVariant.Dark : ThemeVariant.Light; }
+
+    public static Border Card(string title, Control child)
+    {
+        var body = new Grid { RowDefinitions = new("Auto,*") };
+        var label = Text(title, true); label.FontSize = 14; label.Margin = new Thickness(0, 0, 0, 8);
+        body.Children.Add(label); body.Children.Add(child); Grid.SetRow(child, 1);
+        return new Border { Background = Panel, Padding = new Thickness(10), Margin = new Thickness(4), Child = body };
+    }
+
+    static readonly Dictionary<string, WeakReference<Bitmap>> images = new(StringComparer.OrdinalIgnoreCase);
+    public static Bitmap FileImage(string path, bool compactPortrait = false)
+    {
+        string key = Path.GetFullPath(path) + File.GetLastWriteTimeUtc(path).Ticks + compactPortrait;
+        if (images.TryGetValue(key, out var weak) && weak.TryGetTarget(out var saved)) return saved;
+        using var source = System.Drawing.Image.FromFile(path);
+        Bitmap result;
+        if (compactPortrait) {
+            using var crop = new System.Drawing.Bitmap(source.Width, Math.Max(1, (int)(source.Height * .48)));
+            using (var g = System.Drawing.Graphics.FromImage(crop))
+                g.DrawImage(source, new System.Drawing.Rectangle(0, 0, crop.Width, crop.Height), new System.Drawing.Rectangle(0, 0, crop.Width, crop.Height), System.Drawing.GraphicsUnit.Pixel);
+            result = Bitmap(crop);
+        } else result = Bitmap(source);
+        if (images.Count >= 128) images.Clear();
+        images[key] = new(result); return result;
+    }
+
+    public static Window Dialog(Control owner, string title, Control content, double width = 700, double height = 500)
+    {
+        var parent = Owner(owner);
+        var available = parent.Screens.ScreenFromWindow(parent)?.WorkingArea;
+        double scale = parent.RenderScaling;
+        var dialog = new Window { Title = L.T(title), Background = Canvas, FontFamily = new FontFamily("Segoe UI"), FontSize = 14,
+            Width = Math.Min(width, available?.Width / scale ?? width), Height = Math.Min(height, available?.Height / scale ?? height),
+            WindowStartupLocation = WindowStartupLocation.CenterOwner, Content = content };
+        return dialog;
+    }
+
+    public static async Task<string?> PickFile(Control owner, string title, string extension, bool save = false, string? name = null)
+    {
+        var type = new FilePickerFileType(title) { Patterns = ["*." + extension] };
+        if (save) return (await Owner(owner).StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+            Title = L.T(title), SuggestedFileName = name, DefaultExtension = extension, FileTypeChoices = [type] }))?.TryGetLocalPath();
+        return (await Owner(owner).StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+            Title = L.T(title), AllowMultiple = false, FileTypeFilter = [type] })).FirstOrDefault()?.TryGetLocalPath();
+    }
     public static Button Button(string text, Action action, bool primary = false)
     {
         var button = new Button { Content = L.T(text), Margin = new Thickness(0, 0, 0, 8),
@@ -62,6 +113,7 @@ internal static class Ui
         new System.Diagnostics.ProcessStartInfo("explorer.exe", path) { UseShellExecute = true });
 
     // Yes / No / Cancel, using an Avalonia dialog rather than WPF or WinForms UI.
+    internal static Window? ActiveQuestion { get; private set; }
     public static async Task<int> Ask(Control owner, string message)
     {
         var dialog = new Window { Title = "CasterDesk", Width = 540, Height = 260,
@@ -72,10 +124,13 @@ internal static class Ui
         var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
         foreach (var choice in new[] { (1, "Sim"), (0, "Não"), (-1, "Cancelar") }) {
             int result = choice.Item1;
-            actions.Children.Add(Button(choice.Item2, () => { answer = result; dialog.Close(result); }, result == 1));
+            var choiceButton = Button(choice.Item2, () => { answer = result; dialog.Close(result); }, result == 1);
+            choiceButton.Name = "ask-" + result; actions.Children.Add(choiceButton);
         }
         content.Children.Add(actions); dialog.Content = content;
-        await dialog.ShowDialog<int>(Owner(owner));
+        ActiveQuestion = dialog;
+        try { await dialog.ShowDialog<int>(Owner(owner)); }
+        finally { if (ActiveQuestion == dialog) ActiveQuestion = null; }
         return answer;
     }
 
@@ -92,4 +147,3 @@ internal static class Ui
         app.Styles.Add(hover);
     }
 }
-

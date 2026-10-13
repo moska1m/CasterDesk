@@ -229,7 +229,7 @@
   ],
   "CasterDesk • Ferramentas para community casters": [
     "CasterDesk • Tools for community casters",
-    "CasterDesk • Herramientas para community casters"
+    "CasterDesk • Herramientas para casters de la comunidad"
   ],
   "Simplificado": [
     "Simplified",
@@ -3302,5 +3302,33 @@
   "Confirmar resultado e bloquear os rounds deste mapa?": [
     "Confirm the result and lock this map’s rounds?",
     "¿Confirmar el resultado y bloquear las rondas de este mapa?"
+  ],
+  "Modo clássico": [
+    "Classic mode",
+    "Modo clásico"
+  ],
+  "Pacote CasterDesk": [
+    "CasterDesk package",
+    "Paquete CasterDesk"
+  ],
+  "Conclua o veto de mapas para registrar rounds.": [
+    "Complete the map veto to record rounds.",
+    "Completa el veto de mapas para registrar rondas."
+  ],
+  "Conclua o veto de mapas para escolher os operadores.": [
+    "Complete the map veto to select operators.",
+    "Completa el veto de mapas para elegir operadores."
+  ],
+  "Conclua os bans de operadores para registrar o próximo round.": [
+    "Complete the operator bans to record the next round.",
+    "Completa los baneos de operadores para registrar la siguiente ronda."
+  ],
+  "Nenhum round registrado.": [
+    "No rounds recorded.",
+    "No hay rondas registradas."
+  ],
+  "Ferramentas para community casters de Rainbow Six Siege.": [
+    "Tools for Rainbow Six Siege community casters.",
+    "Herramientas para casters de la comunidad de Rainbow Six Siege."
   ]
 }
