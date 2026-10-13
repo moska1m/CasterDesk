@@ -1,5 +1,17 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Terceira entrega — textos OBS e cronômetro
+
+A navegação superior inclui **Textos para OBS**. A tela Avalonia reaproveita `Countdown`, `CastingFiles` e os modelos de configuração: quatro participantes, nome e @, oito arquivos TXT, pasta de saída, contagem regressiva, pausa/retomada/reset, acréscimos editáveis, formatos mm:ss/hh:mm:ss, mensagem final e caminho copiável. Trocar de aba mantém a contagem. Escolha de pasta/arquivo usa o provedor nativo Avalonia; não foi exercitada em janela real.
+
+Gravação dos TXT roda em segundo plano, com uma fila que mantém a atualização mais recente, serialização e aviso de falha. A escrita trunca conteúdo antigo e usa UTF-8 sem BOM, mantendo o caminho configurado no OBS. Construir a tela não sobrescreve arquivos; a saída ao vivo começa ao abrir a janela. O fechamento aguarda exportações pendentes. Configurações e participantes são salvos ao sair da aba/fechar; duração inválida mantém a última duração válida. O serviço de casting anterior continua responsável pelos oito TXT: não foi transformado numa transação única de oito arquivos nesta etapa.
+
+**Zero erros e zero avisos.** Passaram novamente os testes da Central e os **164 testes de campeonato/menu**, mais **28 verificações de textos/cronômetro/configuração**: relógio controlado, pausa, retomada, acréscimo sem pausa, término, limite de 24h, formatos, troca/falha de destino, conteúdo truncado, UTF-8, participantes persistidos, fechamento durante exportação e recuperação de JSON inválido preservando o original. Dados isolados: `test-results/avalonia-ui-aa56705e94d640fb98fe42470a28d04f/`. Prévias da tela inspecionadas em 980×640 e 1280×800; áreas usam rolagem quando necessário. Não foram repetidas as 713 verificações do núcleo, pois os serviços do núcleo não mudaram nesta entrega.
+
+Pendências atuais: telas de backup/restauração, configurações de idioma e revisão de tradução; validação real de clipboard/OCR, seletores de arquivo, DPI/monitores e integração OBS; empacotamento/instalador Avalonia. Testes Headless não comprovam o comportamento dos seletores nativos ou do OBS. Nenhuma janela nativa foi aberta e nenhum envio remoto foi realizado.
+
+As pendências de cronômetro/TXTs e testes específicos do carregador de configurações mencionadas nas entregas abaixo são históricas e foram atendidas nesta terceira entrega.
+
 ## Segunda entrega — campeonato e navegação
 
 Campeonato e instruções de lobby agora têm controles Avalonia ligados ao mesmo `MatchSession` da base estabilizada. Inclui nomes/logos, configuração progressiva, nove mapas competitivos, lados por mapa, cards responsivos, seleção por ícones em grade de 11 colunas na ordem do jogo e abertura automática do próximo ban. A responsabilidade das equipes e a alternância DEF/ATQ vêm do núcleo existente.

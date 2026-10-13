@@ -11,4 +11,5 @@ try {
     if($LASTEXITCODE -ne 0 -or !(Test-Path (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-check.txt'))){throw "Validação Avalonia falhou: $env:CASTERDESK_DATA_DIR"}
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-championship-check.txt')
+    Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-texts-check.txt')
 } finally {$env:CASTERDESK_DATA_DIR=$previousData;Pop-Location}

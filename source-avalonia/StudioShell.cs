@@ -8,11 +8,12 @@ public sealed class StudioShell : Window
     readonly Settings settings;
     internal readonly ChampionshipView Championship;
     readonly StudioView studio;
+    internal readonly TextsView Texts;
     readonly ContentControl page = new();
     readonly StackPanel drawer = new();
     readonly Border drawerPanel;
     readonly Button gear;
-    readonly Button[] tabs = new Button[2];
+    readonly Button[] tabs = new Button[3];
     readonly TextBlock footer = Ui.Text("CasterDesk • Ferramentas para community casters");
     int selected;
     bool menuOpen;
@@ -24,6 +25,8 @@ public sealed class StudioShell : Window
         FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
         Championship = new ChampionshipView(session); Championship.SetQuickMode(settings.QuickRounds);
         studio = new StudioView(() => Championship.Session.Matches, Championship.Session.Catalog, Championship.Session.ApplyArtworkVeto);
+        Texts = new TextsView(settings, SaveSettings);
+        Opened += (_, _) => Texts.StartLive();
         Championship.MapConfirmed += async (match, map) => {
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }
             catch (Exception ex) { footer.Text = ex.Message; }
@@ -40,7 +43,7 @@ public sealed class StudioShell : Window
         gear.PointerEntered += (_, _) => PaintGear(true); gear.PointerExited += (_, _) => PaintGear(menuOpen);
         DockPanel.SetDock(gear, Dock.Right); header.Children.Add(gear);
         var nav = new StackPanel { Orientation = Orientation.Horizontal };
-        string[] labels = ["CAMPEONATO", "Central de imagens"];
+        string[] labels = ["CAMPEONATO", "Central de imagens", "TEXTOS PARA OBS"];
         for (int n = 0; n < labels.Length; n++) {
             int index = n; var tab = Ui.Button(labels[n], () => Navigate(index)); tab.Margin = new Thickness(0); tab.Padding = new Thickness(20, 17);
             tab.Foreground = Brushes.White; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
@@ -54,12 +57,22 @@ public sealed class StudioShell : Window
         KeyDown += (_, e) => { if (e.Key == Key.Escape && menuOpen) { ToggleMenu(); e.Handled = true; } };
         Navigate(0);
         if (ConfigurationStore.RecoveryNotice.Length > 0) footer.Text = ConfigurationStore.RecoveryNotice;
-        Closing += (_, e) => {
+        bool closing = false, waitingToClose = false;
+        Closing += async (_, e) => {
+            if (closing) return;
+            if (waitingToClose) { e.Cancel = true; return; }
             if (studio.Exporting || Championship.Processing) { e.Cancel = true; footer.Text = L.T("Salvando arquivos…"); return; }
-            try { Championship.FlushNames(); if (!studio.Flush()) e.Cancel = true; }
+            try {
+                Championship.FlushNames(); if (!studio.Flush()) { e.Cancel = true; return; }
+                if (Texts.Busy) {
+                    e.Cancel = true; waitingToClose = true;
+                    await Texts.Applying; Texts.Save(); Texts.Stop(); await Texts.Writes; closing = true; Close();
+                } else Texts.Save();
+            }
             catch (Exception ex) { e.Cancel = true; footer.Text = ex.Message; }
+            finally { waitingToClose = false; }
         };
-        Closed += (_, _) => { Championship.Stop(); studio.Stop(); };
+        Closed += (_, _) => { Championship.Stop(); studio.Stop(); Texts.Stop(); };
     }
 
     internal void Navigate(int index)
@@ -67,7 +80,8 @@ public sealed class StudioShell : Window
         if (studio.Exporting || Championship.Processing) return;
         try {
             Championship.FlushNames(); if (!studio.Flush()) return;
-            selected = index; page.Content = index == 0 ? Championship : studio;
+            if (selected == 2) Texts.Save();
+            selected = index; page.Content = index == 0 ? Championship : index == 1 ? studio : Texts;
             if (index == 1) studio.Refresh(Championship.Session.Current.Id);
             for (int n = 0; n < tabs.Length; n++) { tabs[n].BorderBrush = n == index ? Brush.Parse("#FF4335") : Brushes.Transparent; tabs[n].Background = n == index ? Brush.Parse("#1C2B39") : Brushes.Transparent; }
             if (menuOpen) ToggleMenu();
@@ -92,7 +106,7 @@ public sealed class StudioShell : Window
         {
             var button = Ui.Button(label, () => {
                 bool oldDark = settings.DarkMode, oldQuick = settings.QuickRounds;
-                try { Championship.FlushNames(); if (!studio.Flush()) return; change(); SaveSettings(); Menu(); }
+                try { Championship.FlushNames(); if (!studio.Flush()) return; Texts.Save(); change(); SaveSettings(); Menu(); }
                 catch (Exception ex) { settings.QuickRounds = oldQuick; Appearance(oldDark); Championship.SetQuickMode(oldQuick); Menu(); footer.Text = ex.Message; }
             }, active);
             button.BorderThickness = new Thickness(0, 0, 0, active ? 3 : 0); button.BorderBrush = Brush.Parse("#FF4335"); parent.Children.Add(button);
@@ -111,7 +125,7 @@ public sealed class StudioShell : Window
     void Appearance(bool dark)
     {
         settings.DarkMode = dark; Ui.Theme(dark); Background = Ui.Canvas; drawerPanel.Background = Ui.Panel;
-        Championship.Refresh(); studio.Background = Ui.Canvas;
+        Championship.Refresh(); studio.Background = Ui.Canvas; Texts.RefreshColors();
     }
     internal double MenuWidth => menuOpen ? drawerPanel.Width : 0;
 

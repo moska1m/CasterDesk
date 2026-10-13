@@ -37,6 +37,7 @@ internal static class Checks
         }
         studio.Stop(); owner.Content = null; owner.Close();
         ChampionshipChecks.Run();
+        TextsChecks.Run();
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-check.txt"), "PASS: five image categories, announcement feed/story, three layouts, generate bounds and championship UI flow. No desktop window was opened.");
     }
 
