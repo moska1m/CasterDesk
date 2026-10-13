@@ -1,12 +1,12 @@
 # CasterDesk
 
-Ferramentas para community casters de Rainbow Six Siege. **0.3.0-beta.0.4 — beta privada, campeonato WPF e salvamento recuperável.**
+Ferramentas para community casters de Rainbow Six Siege. **A linha de desenvolvimento atual é Avalonia.** A versão anterior 0.3.0-beta.0.4 permanece preservada; a primeira etapa Avalonia está em código e ainda depende de restauração/compilação dos pacotes. Estado, evidências e pendências em [AVALONIA-PROGRESSO.md](AVALONIA-PROGRESSO.md).
 
 Central em cinco abas, canal do anúncio conforme PSD do JG, logos no cadastro e correção editorial do veto com opção de atualizar também a partida. Entrega, testes e próximas etapas em [PROGRESSO-ESTABILIZACAO.md](PROGRESSO-ESTABILIZACAO.md).
 
 Partidas usam JSON versão 2 com base em inglês e nomes padrão exibidos no idioma local. JSONs antigos continuam importáveis; novos arquivos exigem a versão atualizada em ambos os computadores. Consulte [MATCH-JSON-FORMAT.md](MATCH-JSON-FORMAT.md).
 
-A nova janela, menu, Central de imagens, conferência de estatísticas e textos/cronômetro são WPF. Campeonato, lobby e seletores de mapas/operadores agora também são WPF, sobre uma camada de comandos compartilhada. Consulte [WPF-MIGRATION.md](WPF-MIGRATION.md) para limites e compilação da nova versão.
+A base estabilizada anterior usa WPF sobre comandos compartilhados. A Central de imagens e conferência de estatísticas estão sendo adaptadas para Avalonia reutilizando esses serviços. `CasterDesk.slnx` e `scripts/Build-Avalonia.ps1` são as entradas da nova linha; `CasterDesk.Legacy.slnx` preserva a base anterior. A documentação WPF é histórica e não comprova validação Avalonia.
 
 Aplicativo independente para Windows, em português, inglês e espanhol. Não é um produto oficial, patrocinado ou aprovado pela Ubisoft. O programa registra as informações inseridas pelo usuário; não controla o jogo nem o OBS.
 

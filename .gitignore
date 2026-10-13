@@ -2,6 +2,7 @@
 **/obj/
 publish/
 publish-wpf*/
+publish-avalonia*/
 dist/
 test-results/
 .vs/

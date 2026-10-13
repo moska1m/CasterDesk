@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AssemblyName>CasterDesk.Core</AssemblyName></PropertyGroup>
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AssemblyName>CasterDesk.Core</AssemblyName></PropertyGroup>
+  <!-- Drawing/OCR remain Windows services. The shared engine has no WPF UI dependency. -->
+  <ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" /></ItemGroup>
   <ItemGroup>
     <Compile Include="../source/AppPaths.cs;../source/AppLog.cs;../source/Localization.cs;../source/MatchModel.cs;../source/MatchJsonConverter.cs;../source/StatisticsData.cs;../source/MatchFiles.cs;../source/FileBatch.cs;../source/DataBackup.cs;../source/ResultRenderer.cs;../source/StudioRenderer.cs;../source/JgArtRenderer.cs;../source/OptimizedPng.cs;../source/OperatorOrder.cs" Link="%(Filename)%(Extension)" />
     <EmbeddedResource Include="../source/translations.json" LogicalName="CasterDesk.translations.json"/><EmbeddedResource Include="../source/match-sites.json" LogicalName="CasterDesk.match-sites.json"/>

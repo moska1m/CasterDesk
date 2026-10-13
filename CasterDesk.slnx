@@ -1,4 +1,5 @@
 <Solution>
  <Project Path="source-core/CasterDesk.Core.csproj" />
- <Project Path="source-wpf/CasterDesk.Wpf.csproj" />
+ <Project Path="source-avalonia/CasterDesk.Avalonia.csproj" />
+ <Project Path="source-core-checks/CasterDesk.CoreChecks.csproj" />
 </Solution>
