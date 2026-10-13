@@ -19,7 +19,7 @@ internal static class Ui
         var body = new Grid { RowDefinitions = new("Auto,*") };
         var label = Text(title, true); label.FontSize = 14; label.Margin = new Thickness(0, 0, 0, 8);
         body.Children.Add(label); body.Children.Add(child); Grid.SetRow(child, 1);
-        return new Border { Background = Panel, Padding = new Thickness(10), Margin = new Thickness(4), Child = body };
+        return new Border { Background = Panel, Padding = new Thickness(10), Margin = new Thickness(4), Child = body, ClipToBounds = true };
     }
 
     static readonly Dictionary<string, WeakReference<Bitmap>> images = new(StringComparer.OrdinalIgnoreCase);

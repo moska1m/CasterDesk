@@ -1,5 +1,15 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Sétima entrega — layout de partida e lobby, Preview 0.3.0-beta.0.6
+
+O bloco superior recebe mais altura (proporção 3:2, com limite de altura no bloco inferior). Bans permanecem embaixo à esquerda; registro rápido e histórico ficam lado a lado dentro do bloco direito, com placar acima do histórico. Os 12 cards têm tamanhos iguais entre operadores e símbolos de lados, fundo da equipe responsável e duas fileiras sem rolagem. Cards compactam conforme a altura disponível. Cabeçalhos permanecem fora da rolagem dos campos; em telas menores os campos de configuração ainda podem exigir rolagem interna.
+
+Removido somente o sorteio de coin flip: seletores registram o vencedor externo e quem inicia os bans. Regras, dados e fluxo progressivo foram preservados. Lobby agora tem menu de dez seções, imagem competitiva de fundo e linhas de opção/valor, incluindo repick; seção escolhida permanece ativa. Rótulos usam o catálogo de tradução, com novas chaves EN/ES para vencedor do coin flip e histórico. Central de imagens e composições das artes não foram alteradas.
+
+Compilação sem erros/avisos; **279 verificações Headless** (189 campeonato/menu, 30 textos, 27 backup, 33 idioma), incluindo layout em 980×640, 1280×800 e 1920×1080, os 12 bans preenchidos e proteção de mapas confirmados. Prévias inspecionadas em memória. Nenhuma janela nativa, instalador ou OBS foi aberto; testes de DPI/monitores e operação nativa continuam pendentes. O instalador desta entrega substitui o artefato 0.6 intermediário anterior ao último ajuste de altura.
+
+Empacotamento concluído com **713 verificações do núcleo** e nova execução das 279 verificações no executável publicado. Publicação `publish-avalonia-0.3.0-beta.0.6-ee7ba64c`; evidências `test-results/avalonia-ui-ff3ef737529d4f1386e3d6876130a077/` e `test-results/avalonia-core-d66623f82ee34bb8ac3deb67737cf9c2/`. Instalador `dist/CasterDesk-Avalonia-0.3.0-beta.0.6-win-x64-Setup.exe`, autossuficiente x64, sem assinatura digital; SHA-256 `92f92982038ede860ca1c879306d9ba5be94242e440b53c47e98f0c1e2da74b0`. Hash do instalador e de cada arquivo publicado conferidos com o manifesto. Instalação nativa continua não testada. Snapshot local, sem envio ao GitHub.
+
 ## Sexta entrega — publicação e instalador Avalonia Preview
 
 Gerado `dist/CasterDesk-Avalonia-0.3.0-beta.0.5-win-x64-Setup.exe`, **64 MiB**, versão de arquivo 0.3.0.5. SHA-256: `93e452a2c7e726e46fb20e9bf3ce8f4fb18337ba50112b6c91455276e4b2406f`. Há arquivos `.sha256` e `.manifest.json` ao lado do instalador. O manifesto lista 558 arquivos da publicação com tamanho/hash; não é uma assinatura digital. Authenticode: **NotSigned**.

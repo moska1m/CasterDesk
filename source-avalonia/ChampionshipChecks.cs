@@ -20,6 +20,7 @@ internal static class ChampionshipChecks
         var owner = new Window { Content = view, Background = Ui.Canvas, Width = 1280, Height = 800 };
         owner.Show(); Pump();
         Need(!Find<Button>(view, "veto-0").IsEnabled, "Veto must wait for setup");
+        Need(!view.GetVisualDescendants().OfType<Button>().Any(b => Equals(b.Content, L.T("Sortear coin flip"))), "Coin flip is recorded externally, never drawn by the app");
         Find<TextBox>(view, "team-a").Text = "Team North"; Find<TextBox>(view, "team-b").Text = "Team South"; Pump(); view.FlushNames(); Pump();
         Need(session.Current.TeamA == "Team North" && session.Current.TeamB == "Team South", "Team edits persisted");
         Find<ComboBox>(view, "setup-coin").SelectedIndex = 1; Pump();
@@ -60,12 +61,25 @@ internal static class ChampionshipChecks
             var frame = action.GetVisualAncestors().OfType<Border>().First(b => b.Child is Grid g && g.Children.OfType<TextBlock>().Any(t => t.Text == L.T("Round a round")));
             var inside = action.TranslatePoint(default, frame)!.Value;
             Need(inside.Y >= 0 && inside.Y + action.Bounds.Height <= frame.Bounds.Height, "Confirm round cannot overlap footer");
+            var history = Find<Grid>(view, "round-history-panel");
+            Need(frame.TranslatePoint(default, view)!.Value.X < history.TranslatePoint(default, view)!.Value.X, "Round entry stays left of history");
+            Need(frame.TranslatePoint(default, view)!.Value.X >= Find<Border>(view, "bans-panel").TranslatePoint(default, view)!.Value.X + Find<Border>(view, "bans-panel").Bounds.Width, "Bans stay left; both round controls and history stay in the right block");
+            var cards = Enumerable.Range(0, 12).Select(n => Find<Button>(view, "ban-slot-" + n)).ToArray();
+            Need(cards.Select(c => c.Bounds.Height).Distinct().Count() == 1, "All ban cards share the same height");
+            Need(Enumerable.Range(0, 12).Select(n => Find<Image>(view, "ban-image-" + n).Height).Distinct().Count() == 1, "Role symbols and operators share the same image frame");
+            var banArea = Find<Grid>(view, "ban-groups");
+            Need(cards.All(c => c.TranslatePoint(default, banArea)!.Value.Y + c.Bounds.Height <= banArea.Bounds.Height + 1), "All twelve bans fit without scrolling at " + size + "; available " + banArea.Bounds.Height + "; bottom " + cards.Max(c => c.TranslatePoint(default, banArea)!.Value.Y + c.Bounds.Height));
+            var title = view.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == L.T("Confronto"));
+            var prior = title.TranslatePoint(default, view)!.Value; Find<ScrollViewer>(view, "setup-scroll").Offset = new Vector(0, 50); Pump();
+            Need(title.TranslatePoint(default, view)!.Value == prior, "Confronto title remains fixed when fields scroll");
+            Find<ScrollViewer>(view, "setup-scroll").Offset = default; Pump();
             Snapshot(view, size, "championship-active");
         }
         var compactShell = new StudioShell(session) { Width = 980, Height = 640 }; compactShell.Show(); Pump();
         compactShell.Championship.Refresh(); Pump(); Snapshot((Control)compactShell.Content!, new Size(980, 640), "shell-active");
         var compactAction = compactShell.Championship.RoundConfirm!;
         Need(compactAction.Bounds.Height > 0 && compactAction.TranslatePoint(default, compactShell.Championship)!.Value.Y + compactAction.Bounds.Height <= compactShell.Championship.Bounds.Height, "Full shell compact confirmation visible");
+        Need(Find<ScrollViewer>(compactShell.Championship, "round-entry-scroll").Bounds.Height >= 32, "Compact shell retains a usable round form viewport");
         compactShell.Close();
         for (int round = 0; round < 7; round++) {
             int targetSite = Array.FindIndex(session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites, s => !map.SiteBlocked(s, round + 1));
@@ -95,6 +109,20 @@ internal static class ChampionshipChecks
         Pump(); Need(session.Current.Maps.Count == 1 && !view.BansReady && Find<ComboBox>(view, "side-initial-" + session.Map!.MapId).IsEnabled, "Picked map side unlocks before veto finishes");
         TextButton(view, "Configurar lobby"); Pump();
         Need(view.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == L.T("03   RODADAS")), "Lobby guidance available");
+        Click(Find<Button>(view, "lobby-section-2")); Pump();
+        Need(view.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == L.T("Número de rodadas")), "Lobby section selection displays setting rows");
+        var completed = new SiegeMatch { TeamA = "Team North", TeamB = "Team South", CoinWinner = 0, FirstBan = 0, Veto = session.Catalog.Maps.Take(8).Select(m => m.Id).ToArray() };
+        completed.SyncMaps(session.Catalog); var finished = completed.Maps[0]; finished.InitialAttack = 0; finished.OtAttack = 0;
+        var sites = session.Catalog.Maps.Single(m => m.Id == finished.MapId).Sites;
+        for(int n=0;n<15;n++) finished.Rounds.Add(new RoundRecord { Winner=n%2, Site=sites[n%4], Ending="elimination" });
+        for(int slot=0;slot<12;slot++) finished.Bans[slot] = session.Catalog.Operators.First(o => o.Role==finished.BanRole(slot) && !finished.Bans.Skip(slot/6*6).Take(6).Contains(o.Id)).Id;
+        finished.ConfirmedAt=DateTimeOffset.Now;
+        var completeSession=new MatchSession();completeSession.AttachImported(completed);var completeView=new ChampionshipView(completeSession);
+        var completeOwner=new Window { Content=completeView,Background=Ui.Canvas,Width=1920,Height=1080 };completeOwner.Show();Pump();completeView.Refresh();Pump();
+        Need(Enumerable.Range(0,12).All(n => !Find<Button>(completeView,"ban-slot-"+n).IsEnabled), "Confirmed bans remain protected");
+        Need(Enumerable.Range(0,12).All(n => Find<Button>(completeView,"ban-slot-"+n).GetVisualDescendants().OfType<Border>().Any(b => Equals(b.Background,Find<Button>(completeView,"ban-slot-"+n).Background))), "Team backgrounds retained on confirmed bans");
+        Need(Enumerable.Range(0,12).All(n => !Find<Button>(completeView,"ban-slot-"+n).GetVisualAncestors().OfType<ScrollViewer>().Any()), "All twelve assigned bans require no scrolling");
+        Snapshot(completeView,new Size(1920,1080),"championship-all-bans");completeView.Stop();completeOwner.Close();
         view.Stop(); owner.Content = null; owner.Close();
         var shell = new StudioShell(session); shell.Show(); Pump();
         Need(shell.MenuWidth == 0, "Closed menu reserves no width"); shell.ToggleMenu(); Pump(); Need(shell.MenuWidth > 0 && shell.MenuWidth <= 300, "Menu inside available width");

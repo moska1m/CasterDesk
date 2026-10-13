@@ -3379,6 +3379,8 @@
     "The language will be applied the next time CasterDesk opens.",
     "El idioma se aplicará la próxima vez que abras CasterDesk."
   ],
+  "Vencedor do coin flip": ["Coin flip winner", "Ganador del coin flip"],
+  "Histórico de rounds": ["Round history", "Historial de rondas"],
   "Cancelar": ["Cancel", "Cancelar"],
   "Bomb site": ["Bomb site", "Zona de bombas"],
   "Esta partida já existe no programa.": ["This match already exists in the application.", "Esta partida ya existe en el programa."],

@@ -7,6 +7,8 @@ public sealed partial class ChampionshipView : Grid
     public event Action<SiegeMatch, MapRecord>? MapConfirmed;
     readonly ContentControl body = new();
     readonly TextBlock notice = Ui.Text("");
+    readonly Button[] sectionTabs = new Button[2];
+    int lobbySection;
     readonly DispatcherTimer namesTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
     readonly DispatcherTimer resizeTimer = new() { Interval = TimeSpan.FromMilliseconds(120) };
     TextBox teamA = new(), teamB = new();
@@ -25,9 +27,14 @@ public sealed partial class ChampionshipView : Grid
     {
         Session = session ?? new MatchSession();
         Margin = new Thickness(10); Background = Ui.Canvas; RowDefinitions = new("Auto,*,Auto");
-        var tabs = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
-        tabs.Children.Add(Action("Partida", () => { lobby = false; Refresh(); }));
-        tabs.Children.Add(Action("Configurar lobby", () => { lobby = true; Refresh(); }));
+        var tabs = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 0 };
+        sectionTabs[0] = Action("Partida", () => { lobby = false; Refresh(); });
+        sectionTabs[1] = Action("Configurar lobby", () => { lobby = true; Refresh(); });
+        foreach (var tab in sectionTabs) {
+            tab.Padding = new Thickness(20, 10); tab.Margin = new Thickness(0); tabs.Children.Add(tab);
+            tab.PointerEntered += (_, _) => tab.Background = Brush.Parse("#FF4335");
+            tab.PointerExited += (_, _) => tab.Background = tab == sectionTabs[lobby ? 1 : 0] ? Ui.Panel : Brushes.Transparent;
+        }
         Children.Add(tabs); Children.Add(body); SetRow(body, 1);
         notice.FontSize = 12; notice.Margin = new Thickness(4); Children.Add(notice); SetRow(notice, 2);
         Session.Changed += Refresh; Session.MapConfirmed += Confirmed;
@@ -64,40 +71,45 @@ public sealed partial class ChampionshipView : Grid
         string context = Session.Current.Id + ":" + Session.Map?.MapId + ":" + Session.Map?.Rounds.Count;
         if (context != roundContext) { site = ending = ""; winner = -1; roundContext = context; }
         building = true;
-        try { body.Content = lobby ? LobbyView.Create() : Match(); }
+        try {
+            for (int n = 0; n < sectionTabs.Length; n++) { bool active = lobby == (n == 1); sectionTabs[n].BorderThickness = new Thickness(0, 0, 0, 3); sectionTabs[n].BorderBrush = active ? Brush.Parse("#FF4335") : Brushes.Transparent; sectionTabs[n].Background = active ? Ui.Panel : Brushes.Transparent; }
+            body.Content = lobby ? LobbyView.Create(lobbySection, index => lobbySection = index) : Match();
+        }
         finally { building = false; }
     }
 
     Control Match()
     {
         var match = Session.Current; var map = Session.Map;
-        var layout = new Grid { RowDefinitions = new("Auto,Auto,Auto,*,Auto"), ColumnDefinitions = new("44*,56*") };
+        var layout = new Grid { Name = "match-layout", RowDefinitions = new("Auto,3*,2*,Auto"), ColumnDefinitions = new("40*,60*") };
+        layout.RowDefinitions[2].MaxHeight = compact ? 300 : 350;
+        if (Bounds.Height < 650 && BansReady) layout.RowDefinitions[1].Height = new GridLength(88);
         var toolbar = new WrapPanel(); toolbar.Children.Add(Action("Nova partida", Session.New, true));
         var saved = Ui.Combo(); saved.Width = 370; saved.ItemsSource = Session.Matches.ToArray(); saved.SelectedItem = match;
         saved.SelectionChanged += (_, _) => { if (!building && saved.SelectedItem is SiegeMatch picked && picked.Id != Session.Current.Id) _ = Run(() => { Session.Select(picked.Id); return Task.CompletedTask; }); };
         toolbar.Children.Add(saved); Add(layout, toolbar, 0); SetColumnSpan(toolbar, 2);
-        var left = new StackPanel();
-        if (compact && match.Maps.Count > 0) left.Children.Add(new Expander { Header = L.T("Confronto"), Content = Setup(match), HorizontalAlignment = HorizontalAlignment.Stretch });
-        else left.Children.Add(Ui.Card("Confronto", Setup(match)));
-        bool shortReady = Bounds.Height < 650 && BansReady;
-        if (shortReady) left.Children.Add(new Expander { Header = L.T("Mapas da partida • lados da equipe indicada"), Content = Sides(match), HorizontalAlignment = HorizontalAlignment.Stretch });
-        else left.Children.Add(Ui.Card("Mapas da partida • lados da equipe indicada", Sides(match)));
-        Add(layout, new ScrollViewer { Content = left, MaxHeight = Bounds.Height < 700 ? 190 : compact ? 260 : 340 }, 0, 1);
-        Add(layout, shortReady
-            ? new Expander { Header = L.T("Mapas • picks e bans"), Content = Veto(match), HorizontalAlignment = HorizontalAlignment.Stretch }
-            : Ui.Card("Mapas • picks e bans", Veto(match)), 1, 1);
-        var score = map?.Score(); var bar = new Grid();
+        var left = new Grid { RowDefinitions = new("1.6*,*") };
+        left.Children.Add(Ui.Card("Confronto", new ScrollViewer { Name = "setup-scroll", Content = Setup(match) }));
+        Add(left, Ui.Card("Mapas da partida • lados da equipe indicada", new ScrollViewer { Content = Sides(match) }), 0, 1);
+        Add(layout, left, 0, 1);
+        Add(layout, Ui.Card("Mapas • picks e bans", Veto(match)), 1, 1);
+        var score = map?.Score();
         var selectedMap = Ui.Combo(); selectedMap.Width = 190; selectedMap.HorizontalAlignment = HorizontalAlignment.Left;
         selectedMap.ItemsSource = match.Maps.Select(m => new Choice(m.MapId, Session.Catalog.Maps.Single(c => c.Id == m.MapId).DisplayName)).ToArray();
         selectedMap.SelectedIndex = map == null ? -1 : match.Maps.IndexOf(map);
         selectedMap.SelectionChanged += (_, _) => { if (!building && selectedMap.SelectedItem is Choice item && Session.Map?.MapId != item.Id) _ = Run(() => { Session.SelectMap(item.Id); return Task.CompletedTask; }); };
-        Add(bar, selectedMap, 0);
+        var bansPanel = Ui.Card("Bans de operadores", Bans());
+        var bansBody = (Grid)bansPanel.Child!; selectedMap.Width = 180; selectedMap.Margin = new Thickness(0); selectedMap.HorizontalAlignment = HorizontalAlignment.Right;
+        bansBody.Children.Add(selectedMap);
+        bansPanel.Name = "bans-panel"; Add(layout, bansPanel, 0, 2);
         var scoreText = Ui.Text($"{match.TeamA}   {score?.A ?? 0} × {score?.B ?? 0}   {match.TeamB}", true);
         scoreText.Name = "match-score"; scoreText.TextAlignment = TextAlignment.Center; scoreText.HorizontalAlignment = HorizontalAlignment.Center;
-        scoreText.MaxWidth = Math.Max(160, Bounds.Width * .56 - 400); scoreText.Margin = new Thickness(8); Add(bar, scoreText, 0);
-        Add(layout, bar, 1, 2);
-        Add(layout, Ui.Card("Bans de operadores", Bans()), 0, 3);
-        Add(layout, Ui.Card("Round a round", Rounds()), 1, 3);
+        scoreText.MaxWidth = Math.Max(200, Bounds.Width * .58); scoreText.Margin = new Thickness(4);
+        var roundArea = new Grid { Name = "round-area", ColumnDefinitions = new("44*,56*") };
+        Add(roundArea, Ui.Card("Round a round", Rounds()), 0);
+        var history = new Grid { Name = "round-history-panel", RowDefinitions = new("Auto,*") }; history.Children.Add(scoreText);
+        Add(history, Ui.Card("Histórico de rounds", map == null ? Ui.Text("Escolha um mapa primeiro.") : History(map)), 0, 1);
+        Add(roundArea, history, 1); Add(layout, roundArea, 1, 2);
         var actions = new WrapPanel();
         actions.Children.Add(Action("Banir próximo", OpenNextBan));
         actions.Children.Add(Action("Resumo para remake", () => Ui.CopyText(Session.Summary())));
@@ -106,7 +118,7 @@ public sealed partial class ChampionshipView : Grid
         var confirm = Action("Confirmar vencedor", async () => { if (await Ui.Ask(this, "Confirmar resultado e bloquear os rounds deste mapa?") == 1) Session.Confirm(); }, true);
         confirm.IsEnabled = map != null && !map.Confirmed && map.Score().Winner >= 0; actions.Children.Add(confirm);
         var review = Action("Revisar resultado", Review); review.IsEnabled = map?.Confirmed == true; actions.Children.Add(review);
-        Add(layout, actions, 0, 4); SetColumnSpan(actions, 2);
+        Add(layout, actions, 0, 3); SetColumnSpan(actions, 2);
         return layout;
     }
 
@@ -126,10 +138,10 @@ public sealed partial class ChampionshipView : Grid
         var settings = Columns("*,*,*");
         var format = Ui.Combo(L.FormatName("MD1"), L.FormatName("MD3"), L.FormatName("MD5")); format.Name = "setup-format";
         format.SelectedIndex = match.Format == "MD5" ? 2 : match.Format == "MD3" ? 1 : 0;
-        var coin = Ui.RawCombo(L.T("Coin flip:"), match.TeamA, match.TeamB); coin.Name = "setup-coin"; coin.SelectedIndex = match.CoinWinner + 1;
-        var first = Ui.RawCombo(L.T("Primeiro ban:"), match.TeamA, match.TeamB); first.Name = "setup-first"; first.SelectedIndex = match.FirstBan + 1;
-        void Field(int column, string label, Control control) { var field = new StackPanel(); var heading = Ui.Text(label); heading.FontSize = 12; heading.Margin = new Thickness(0, 0, 0, 3); field.Children.Add(heading); field.Children.Add(control); Add(settings, field, column); }
-        Field(0, "Formato:", format); Field(1, "Coin flip:", coin); Field(2, "Primeiro ban:", first); settings.IsEnabled = !match.HasConfirmed;
+        var coin = Ui.RawCombo(L.T("Selecionar…"), match.TeamA, match.TeamB); coin.Name = "setup-coin"; coin.SelectedIndex = match.CoinWinner + 1;
+        var first = Ui.RawCombo(L.T("Selecionar…"), match.TeamA, match.TeamB); first.Name = "setup-first"; first.SelectedIndex = match.FirstBan + 1;
+        void Field(int column, string label, Control control) { var field = new StackPanel(); var heading = Ui.Text(label); heading.FontSize = 12; heading.Height = 32; heading.Margin = new Thickness(0, 0, 0, 3); field.Children.Add(heading); field.Children.Add(control); Add(settings, field, column); }
+        Field(0, "Formato:", format); Field(1, "Vencedor do coin flip", coin); Field(2, "Primeiro ban:", first); settings.IsEnabled = !match.HasConfirmed;
         async Task Configure()
         {
             if (building || TopLevel.GetTopLevel(settings) == null || Session.Current.Id != match.Id) return;
@@ -142,7 +154,6 @@ public sealed partial class ChampionshipView : Grid
         }
         format.SelectionChanged += (_, _) => _ = Run(Configure); coin.SelectionChanged += (_, _) => _ = Run(Configure); first.SelectionChanged += (_, _) => _ = Run(Configure);
         panel.Children.Add(settings);
-        var toss = Action("Sortear coin flip", () => Session.Setup(match.Format, Random.Shared.Next(2), match.FirstBan, false)); toss.IsEnabled = !match.HasConfirmed; panel.Children.Add(toss);
         return panel;
     }
 
@@ -177,7 +188,7 @@ public sealed partial class ChampionshipView : Grid
             var map = Session.Catalog.Maps.FirstOrDefault(m => m.Id == id);
             string label = i == 8 ? "09 · DECIDER" : $"{i + 1:00} · {match.Action(i)} · {match.Team(match.FirstBan < 0 ? 0 : match.Actor(i))}";
             var button = Action("", () => ChooseMap(step)); button.Name = "veto-" + step;
-            button.Height = Bounds.Height < 650 ? 38 : compact ? 62 : 88; button.Margin = new Thickness(3); button.Padding = new Thickness(0);
+            button.MinHeight = 0; button.Margin = new Thickness(2); button.Padding = new Thickness(0); button.VerticalAlignment = VerticalAlignment.Stretch;
             button.HorizontalContentAlignment = HorizontalAlignment.Stretch; button.VerticalContentAlignment = VerticalAlignment.Stretch; button.Content = MapCard(map, label, i < 8 ? match.Action(i) : "PICK");
             button.IsEnabled = i < 8 && VetoReady && !match.Complete && (next < 0 || i <= next);
             ToolTip.SetTip(button, L.T("Defina coin flip e primeiro ban antes do veto.")); grid.Children.Add(button);
@@ -201,27 +212,36 @@ public sealed partial class ChampionshipView : Grid
         var map = Session.Map;
         if (!VetoComplete) return Ui.Text("Conclua o veto de mapas para escolher os operadores.");
         if (!BansReady || map == null) return Ui.Text("Defina os lados antes de escolher os operadores.");
-        var panel = new StackPanel();
+        var panel = new Grid { Name = "ban-groups", RowDefinitions = new("*,*") };
         for (int half = 0; half < 2; half++) {
+            var group = new StackPanel { Margin = new Thickness(2) };
             int attacker = half == 0 ? map.InitialAttack : 1 - map.InitialAttack;
             var heading = Columns("Auto,*");
             if (map.ActiveBanHalf(Math.Min(15, map.Rounds.Count + 1)) == half) Add(heading, new Border { Background = Brush.Parse("#247348"), Padding = new Thickness(8, 3), Child = new TextBlock { Text = L.T("ATIVOS"), Foreground = Brushes.White, FontSize = 11 } }, 0);
-            var text = Ui.RawText($"{L.T("Round")} {half * 6 + 1}–{half * 6 + 6} · {Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; Add(heading, text, 1); panel.Children.Add(heading);
+            var text = Ui.RawText($"{L.T("Round")} {half * 6 + 1}–{half * 6 + 6} · {Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; Add(heading, text, 1); group.Children.Add(heading);
             var grid = new UniformGrid { Columns = 6 };
             for (int slot = half * 6; slot < half * 6 + 6; slot++) {
                 int field = slot; var op = Session.Catalog.Operators.FirstOrDefault(o => o.Id == map.Bans[slot]);
                 var content = new StackPanel();
                 string file = op == null ? StudioRenderer.Asset(map.BanRole(slot) == "DEF" ? "Icon_Defender.png" : "Icon_Attacker.png") : SiegeCatalog.Asset(op.Id + "-portrait.png");
-                try { content.Children.Add(new Image { Source = Ui.FileImage(file, compact && op != null), Height = op == null ? 50 : compact ? 76 : 180, Stretch = op == null ? Stretch.Uniform : Stretch.UniformToFill }); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
-                content.Children.Add(new TextBlock { Text = op?.Name ?? L.T(map.BanStageReached(slot) ? "Selecionar…" : "Bloqueado"), FontSize = op?.Name.Length > 10 ? 10 : 11, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap });
-                content.Children.Add(new TextBlock { Text = Session.Current.Team(MapRecord.BanTeam(slot)) + "\n" + L.T("Round") + " " + (MapRecord.BanThreshold(slot) + 1), FontSize = 10, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap });
+                try {
+                    var portrait = new Grid { Height = Bounds.Height < 650 ? 24 : compact ? 26 : 66 };
+                    portrait.Children.Add(new Image { Name = "ban-image-" + slot, Source = Ui.FileImage(file, op != null), Height = portrait.Height, Stretch = op == null || !compact ? Stretch.Uniform : Stretch.UniformToFill });
+                    if (op != null) portrait.Children.Add(new Image { Source = Ui.FileImage(SiegeCatalog.Asset(op.Icon)), Height = compact ? 16 : 20, Width = compact ? 16 : 20, VerticalAlignment = VerticalAlignment.Bottom, HorizontalAlignment = HorizontalAlignment.Center });
+                    content.Children.Add(portrait);
+                } catch (Exception ex) { AppLog.Write(ex.ToString()); }
+                content.Children.Add(new TextBlock { Text = op?.Name ?? L.T(map.BanStageReached(slot) ? "Selecionar…" : "Bloqueado"), FontSize = compact ? 9 : op?.Name.Length > 10 ? 10 : 11, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
+                content.Children.Add(new TextBlock { Text = Session.Current.Team(MapRecord.BanTeam(slot)), FontSize = 10, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
                 var button = Action("", async () => { if (!map.Confirmed || await Ui.Ask(this, "Corrigir o ban de um mapa confirmado?") == 1) await PickBan(field); });
                 button.Name = "ban-slot-" + slot; button.Padding = new Thickness(3); button.Margin = new Thickness(3); button.Content = content;
+                ToolTip.SetTip(button, (op?.Name ?? L.Role(map.BanRole(slot))) + " · " + Session.Current.Team(MapRecord.BanTeam(slot)) + " · " + L.T("Round") + " " + (MapRecord.BanThreshold(slot) + 1));
+                button.Height = Bounds.Height < 650 ? 62 : compact ? 66 : 108; button.MaxWidth = compact ? 100 : 110; button.Background = Ui.Team(MapRecord.BanTeam(slot), false); button.Foreground = Brushes.White;
+                button.Template = new global::Avalonia.Controls.Templates.FuncControlTemplate<Button>((control, _) => new Border { Background = control.Background, BorderBrush = control.BorderBrush, BorderThickness = control.BorderThickness, Padding = control.Padding, Child = new global::Avalonia.Controls.Presenters.ContentPresenter { Content = control.Content, HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Center } });
                 button.IsEnabled = map.BanStageReached(slot) && !map.Confirmed; button.BorderThickness = new Thickness(0, 0, 0, 3); button.BorderBrush = Ui.Team(MapRecord.BanTeam(slot)); grid.Children.Add(button);
             }
-            panel.Children.Add(grid);
+            group.Children.Add(grid); Add(panel, group, 0, half);
         }
-        return new ScrollViewer { Content = panel };
+        return panel;
     }
 
     sealed record Choice(string Id, string Name) { public override string ToString() => Name; }

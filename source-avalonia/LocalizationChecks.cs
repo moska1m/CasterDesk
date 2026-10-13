@@ -33,7 +33,7 @@ internal static class LocalizationChecks
                 var coin = view.GetVisualDescendants().OfType<ComboBox>().Single(b => b.Name == "setup-coin");
                 Need(coin.Items.Cast<string>().Skip(1).SequenceEqual(new[] { "Banco", "Clube" }), "Custom names not translated in coin selector");
                 Need(view.GetVisualDescendants().OfType<Button>().Any(b => Equals(b.Content, L.T("Configurar lobby"))), "Localized lobby navigation");
-                owner.Content = LobbyView.Create(); Dispatcher.UIThread.RunJobs();
+                owner.Content = LobbyView.Create(2); Dispatcher.UIThread.RunJobs();
                 Need(((Control)owner.Content).GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == L.T("03   RODADAS")), "Localized lobby heading");
                 Need(((Control)owner.Content).GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text!.StartsWith(L.T("Número de rodadas"))), "Localized lobby instructions");
                 ((Control)owner.Content).Measure(new Size(1280, 800)); ((Control)owner.Content).Arrange(new Rect(0, 0, 1280, 800)); Dispatcher.UIThread.RunJobs();
