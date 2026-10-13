@@ -17,6 +17,8 @@ public sealed class TextsView : Grid
     readonly TextBlock readout = Ui.Text(""), status = Ui.Text(""), castingStatus = Ui.Text(""), clockState = Ui.Text("");
     readonly List<Border> cards = [];
     bool durationEdited, live, stopped;
+    bool writesSuspended;
+    public bool WritesSuspended { get => writesSuspended; set { writesSuspended = value; if (!value) Update(); } }
     string? lastPath, lastText;
     long retry;
     (string Path, string Text)? pending;
@@ -108,7 +110,7 @@ public sealed class TextsView : Grid
         string text = clock.Finished ? message.Text ?? "" : format.SelectedIndex == 1 ? DurationText(seconds) : $"{seconds / 60:00}:{seconds % 60:00}";
         readout.Text = text; clockState.Text = L.T(clock.Running ? "● Em andamento" : clock.Finished ? "Contagem encerrada" : "Pausado / pronto");
         string path = output.Text ?? "";
-        if (!live || stopped || (path == lastPath && text == lastText) || Environment.TickCount64 < retry) return;
+        if (!live || stopped || writesSuspended || (path == lastPath && text == lastText) || Environment.TickCount64 < retry) return;
         pending = (path, text); if (writing.IsCompleted) writing = WritePending();
     }
     async Task WritePending() {

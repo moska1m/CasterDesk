@@ -17,6 +17,7 @@ public sealed class StudioShell : Window
     readonly TextBlock footer = Ui.Text("CasterDesk • Ferramentas para community casters");
     int selected;
     bool menuOpen;
+    bool backupOpen;
 
     public StudioShell(MatchSession? session = null)
     {
@@ -61,7 +62,7 @@ public sealed class StudioShell : Window
         Closing += async (_, e) => {
             if (closing) return;
             if (waitingToClose) { e.Cancel = true; return; }
-            if (studio.Exporting || Championship.Processing) { e.Cancel = true; footer.Text = L.T("Salvando arquivos…"); return; }
+            if (backupOpen || studio.Exporting || Championship.Processing) { e.Cancel = true; footer.Text = L.T("Salvando arquivos…"); return; }
             try {
                 Championship.FlushNames(); if (!studio.Flush()) { e.Cancel = true; return; }
                 if (Texts.Busy) {
@@ -77,7 +78,7 @@ public sealed class StudioShell : Window
 
     internal void Navigate(int index)
     {
-        if (studio.Exporting || Championship.Processing) return;
+        if (backupOpen || studio.Exporting || Championship.Processing) return;
         try {
             Championship.FlushNames(); if (!studio.Flush()) return;
             if (selected == 2) Texts.Save();
@@ -105,9 +106,9 @@ public sealed class StudioShell : Window
         void Option(StackPanel parent, string label, bool active, System.Action change)
         {
             var button = Ui.Button(label, () => {
-                bool oldDark = settings.DarkMode, oldQuick = settings.QuickRounds;
+                bool oldDark = settings.DarkMode, oldQuick = settings.QuickRounds; string oldLanguage = settings.Language;
                 try { Championship.FlushNames(); if (!studio.Flush()) return; Texts.Save(); change(); SaveSettings(); Menu(); }
-                catch (Exception ex) { settings.QuickRounds = oldQuick; Appearance(oldDark); Championship.SetQuickMode(oldQuick); Menu(); footer.Text = ex.Message; }
+                catch (Exception ex) { settings.Language = oldLanguage; settings.QuickRounds = oldQuick; Appearance(oldDark); Championship.SetQuickMode(oldQuick); Menu(); footer.Text = ex.Message; }
             }, active);
             button.BorderThickness = new Thickness(0, 0, 0, active ? 3 : 0); button.BorderBrush = Brush.Parse("#FF4335"); parent.Children.Add(button);
         }
@@ -116,6 +117,13 @@ public sealed class StudioShell : Window
         var appearance = new StackPanel();
         Option(appearance, "Escuro", settings.DarkMode, () => Appearance(true)); Option(appearance, "Claro", !settings.DarkMode, () => Appearance(false));
         drawer.Children.Add(new Expander { Header = L.T("Aparência") + " · Siege", Content = appearance, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });
+        var languages = new StackPanel();
+        foreach (var language in new[] { ("pt-BR", "Português"), ("en", "English"), ("es", "Español") }) {
+            string code = language.Item1;
+            Option(languages, language.Item2, settings.Language == code, () => { settings.Language = code; footer.Text = L.T("O idioma será aplicado na próxima abertura do CasterDesk."); });
+        }
+        drawer.Children.Add(new Expander { Header = L.T("Idioma"), Content = languages, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });
+        var backups = Ui.Button("Backup e restauração", () => _ = OpenBackup()); backups.Name = "backup-menu"; drawer.Children.Add(backups);
         drawer.Children.Add(Ui.Button("Sobre", async () => {
             var panel = new StackPanel { Margin = new Thickness(20) }; panel.Children.Add(Ui.Text("CasterDesk", true)); panel.Children.Add(Ui.Text(BuildInfo.Version));
             panel.Children.Add(Ui.Text("Ferramentas para community casters de Rainbow Six Siege."));
@@ -128,6 +136,23 @@ public sealed class StudioShell : Window
         Championship.Refresh(); studio.Background = Ui.Canvas; Texts.RefreshColors();
     }
     internal double MenuWidth => menuOpen ? drawerPanel.Width : 0;
+    internal void Notify(string text) => footer.Text = text;
+    internal async Task OpenBackup()
+    {
+        if (backupOpen || studio.Exporting || Championship.Processing) return;
+        if (menuOpen) ToggleMenu();
+        backupOpen = true;
+        try {
+            var dialog = new BackupWindow(this, async () => {
+                Championship.FlushNames(); if (!studio.Flush()) throw new InvalidOperationException(L.T("Salvando arquivos…"));
+                await Texts.Applying; Texts.Save(); Texts.WritesSuspended = true; await Texts.Writes;
+            }, () => Texts.WritesSuspended = false);
+            bool restore = await dialog.ShowDialog<bool>(this);
+            backupOpen = false;
+            if (restore) { Notify(L.T("Restauração agendada. Ela será aplicada na próxima abertura do CasterDesk.")); Close(); }
+        } catch (Exception ex) { footer.Text = ex.Message; }
+        finally { backupOpen = false; Texts.WritesSuspended = false; }
+    }
 
     sealed class GearIcon : Control
     {

@@ -32,8 +32,26 @@ public sealed class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-            AppLog.Install(); L.LoadPreference(); FileBatch.Recover();
-            desktop.MainWindow = new StudioShell();
+            AppLog.Install(); L.LoadPreference();
+            var waiting = new StackPanel { Margin = new Thickness(24) };
+            var status = Ui.Text("Preparando os dados do CasterDesk…"); waiting.Children.Add(status);
+            waiting.Children.Add(new ProgressBar { IsIndeterminate = true });
+            var startup = new Window { Title = "CasterDesk", Width = 520, Height = 180, Background = Ui.Canvas, Content = waiting };
+            bool working = true; startup.Closing += (_, e) => { if (working) e.Cancel = true; };
+            startup.Opened += async (_, _) => {
+                try {
+                    string? notice = null;
+                    await Task.Run(() => { FileBatch.Recover(); DataBackup.ProcessPending(text => notice = text); });
+                    L.LoadPreference(); var shell = new StudioShell();
+                    if (notice != null) shell.Notify(notice);
+                    desktop.MainWindow = shell; shell.Show(); working = false; startup.Close();
+                } catch (Exception ex) {
+                    AppLog.Write("AVALONIA STARTUP: " + ex); working = false;
+                    status.Text = L.T("Não foi possível iniciar o CasterDesk.\n") + ex.Message;
+                    waiting.Children.Add(Ui.Button("Fechar", () => startup.Close()));
+                }
+            };
+            desktop.MainWindow = startup;
         }
         base.OnFrameworkInitializationCompleted();
     }

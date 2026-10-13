@@ -31,6 +31,9 @@ internal static class TextsChecks
         Need(view.Remaining == 108 && !view.Running, "Add while paused");
         Click(view, "timer-start"); time += 2; view.Tick();
         Click(view, "timer-add-0"); Flush(view); Need(view.Running && view.Remaining == 166, "Add without pausing");
+        string priorOutput = File.ReadAllText(settings.Output); view.WritesSuspended = true; time += 2; view.Tick(); Flush(view);
+        Need(view.Running && File.ReadAllText(settings.Output) == priorOutput, "Backup suspension preserves TXT while clock continues");
+        view.WritesSuspended = false; Flush(view); Need(File.ReadAllText(settings.Output) != priorOutput, "Latest output written when backup releases suspension");
         Find<TextBox>(view, "timer-initial").Text = "00:00:03"; Click(view, "timer-reset"); Flush(view);
         Find<ComboBox>(view, "timer-format").SelectedIndex = 1; Flush(view);
         Need(File.ReadAllText(settings.Output) == "00:00:03", "Hour format");

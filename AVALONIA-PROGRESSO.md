@@ -1,5 +1,21 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Quarta entrega — backup, restauração e idioma
+
+O menu Avalonia agora inclui **Backup e restauração** e seleção de Português/English/Español, persistida e aplicada na próxima abertura. Os novos rótulos de backup/inicialização têm traduções EN/ES; isso não equivale à revisão completa das traduções existentes.
+
+Backup usa `DataBackup.Create` em segundo plano, após salvar edições e suspender somente a escrita de TXT. O relógio continua contando; ao terminar, a saída recebe o valor atual. O diálogo modal protege contra alterações simultâneas. Inclui a pasta de dados do CasterDesk; caminhos externos e arquivos de backups anteriores ficam excluídos, conforme o serviço existente.
+
+Restauração copia o ZIP selecionado para uma área privada, valida integridade/estrutura e mostra quantos arquivos têm conteúdo diferente. Oferece manter os atuais/adicionar ausentes ou usar versões do backup; cancelamento e confirmação final são explícitos. A política escolhida é agendada sem alterar partidas carregadas. Após confirmação, o programa fecha e a restauração ocorre na próxima abertura; não há relançamento automático. Antes de aplicar, o serviço cria o ZIP `Antes-da-restauracao_*`. A cópia privada impede que uma mudança posterior no ZIP original altere o conteúdo já verificado. Limpeza de prévias e processamento pendente rodam em segundo plano.
+
+Inicialização normal agora aguarda recuperação de transações e `ProcessPending` antes de carregar os dados da interface, com tela de preparação. Recarrega o idioma após a restauração. Falhas de inicialização são registradas e exibidas; o diálogo de restauração rejeita arquivos inválidos sem agendar aplicação.
+
+**Zero erros e zero avisos.** Testes Headless: **164 campeonato/menu + 30 textos/configuração + 27 backup/restauração/idioma = 221 verificações**, além das prévias da Central. Exercitados: criação, conflitos, cancelamento, confirmação, políticas manter/substituir, aplicação pendente em dados isolados, ZIP preventivo, cópia verificada mesmo após alteração do original e rejeição de ZIP inválido. O núcleo passou novamente em **713 verificações**. Evidência: `test-results/avalonia-ui-8a85e5e24a4b4678ba0d6fedcd320415/` e `test-results/avalonia-core-586c1551213e4f03ba72783ec1366062/`. Prévia do diálogo inspecionada em 760×610.
+
+Limitações: abertura/reabertura nativa e tela de preparação ainda não foram testadas na área de trabalho; `ProcessPending` foi exercitado diretamente no backend de testes. Seletores nativos, OCR/clipboard, DPI/monitores e OBS seguem para validação real após aviso ao usuário. Ainda falta revisar a tradução integral da interface e preparar/validar o instalador Avalonia. Nenhuma janela nativa, instalador ou OBS foi aberto e nenhum código foi enviado ao GitHub.
+
+As pendências de telas de backup/restauração e escolha de idioma citadas abaixo são históricas e foram atendidas nesta quarta entrega.
+
 ## Terceira entrega — textos OBS e cronômetro
 
 A navegação superior inclui **Textos para OBS**. A tela Avalonia reaproveita `Countdown`, `CastingFiles` e os modelos de configuração: quatro participantes, nome e @, oito arquivos TXT, pasta de saída, contagem regressiva, pausa/retomada/reset, acréscimos editáveis, formatos mm:ss/hh:mm:ss, mensagem final e caminho copiável. Trocar de aba mantém a contagem. Escolha de pasta/arquivo usa o provedor nativo Avalonia; não foi exercitada em janela real.

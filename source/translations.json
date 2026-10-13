@@ -2613,7 +2613,7 @@
   ],
   "Backup e restauração": [
     "Backup and restore",
-    "Copia de seguridad y restauración"
+    "Copias de seguridad y restauración"
   ],
   "Abrir pasta de arquivos": [
     "Open files folder",
@@ -3330,5 +3330,57 @@
   "Ferramentas para community casters de Rainbow Six Siege.": [
     "Tools for Rainbow Six Siege community casters.",
     "Herramientas para casters de la comunidad de Rainbow Six Siege."
+  ],
+  "Pasta de dados": [
+    "Data folder",
+    "Carpeta de datos"
+  ],
+  "O backup inclui partidas, artes, prints, textos e configurações dentro da pasta CasterDesk. Arquivos em caminhos externos e backups anteriores não são incluídos.": [
+    "The backup includes matches, artwork, screenshots, texts and settings inside the CasterDesk folder. Files in external locations and previous backups are excluded.",
+    "La copia incluye partidas, imágenes, capturas, textos y configuraciones de la carpeta CasterDesk. No incluye archivos externos ni copias anteriores."
+  ],
+  "Já existe uma restauração agendada. Feche e abra o CasterDesk para concluí-la.": [
+    "A restore is already scheduled. Close and reopen CasterDesk to complete it.",
+    "Ya hay una restauración programada. Cierra y vuelve a abrir CasterDesk para completarla."
+  ],
+  "Verificando integridade do backup…": [
+    "Verifying backup integrity…",
+    "Verificando la integridad de la copia…"
+  ],
+  "Backup verificado: {0} arquivos. {1} arquivos existentes têm conteúdo diferente.": [
+    "Backup verified: {0} files. {1} existing files have different content.",
+    "Copia verificada: {0} archivos. {1} archivos existentes tienen contenido diferente."
+  ],
+  "Escolha como tratar os arquivos existentes. Uma cópia dos dados atuais será criada antes da restauração. A restauração acontece na próxima abertura do programa.": [
+    "Choose how to handle existing files. Current data will be backed up before restoration. Restore takes place the next time the application opens.",
+    "Elige qué hacer con los archivos existentes. Se guardará una copia de los datos actuales antes de restaurar. La restauración se realizará la próxima vez que abras el programa."
+  ],
+  "Manter arquivos atuais": [
+    "Keep current files",
+    "Conservar los archivos actuales"
+  ],
+  "Usar versões do backup": [
+    "Use backup versions",
+    "Usar las versiones de la copia"
+  ],
+  "Restauração cancelada. Nenhum dado foi alterado.": [
+    "Restore cancelled. No data was changed.",
+    "Restauración cancelada. No se modificaron los datos."
+  ],
+  "Agendar a restauração e fechar o CasterDesk? Ela será aplicada na próxima abertura. Uma cópia dos dados atuais será guardada em Backups.": [
+    "Schedule the restore and close CasterDesk? It will be applied on the next launch. A copy of current data will be saved in Backups.",
+    "¿Programar la restauración y cerrar CasterDesk? Se aplicará la próxima vez que lo abras. Se guardará una copia de los datos actuales en Backups."
+  ],
+  "Restauração agendada. Ela será aplicada na próxima abertura do CasterDesk.": [
+    "Restore scheduled. It will be applied the next time CasterDesk opens.",
+    "Restauración programada. Se aplicará la próxima vez que abras CasterDesk."
+  ],
+  "O idioma será aplicado na próxima abertura do CasterDesk.": [
+    "The language will be applied the next time CasterDesk opens.",
+    "El idioma se aplicará la próxima vez que abras CasterDesk."
+  ],
+  "Preparando os dados do CasterDesk…": [
+    "Preparing CasterDesk data…",
+    "Preparando los datos de CasterDesk…"
   ]
 }
