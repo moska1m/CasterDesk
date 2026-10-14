@@ -1,4 +1,4 @@
-using Avalonia.Input;
+﻿using Avalonia.Input;
 using Avalonia.VisualTree;
 
 namespace CasterDesk.Avalonia;
@@ -17,16 +17,17 @@ public sealed partial class ChampionshipView
         var match = Session.Current; var map = Session.Map;
         string draftKey = match.Id + ":" + match.Format + ":" + string.Join(",", match.Maps.Select(m => m.MapId));
         if (draftKey != specDraftKey) { specDraftKey = draftKey; specFormat = match.Format; specMaps = new string[match.Format == "MD5" ? 5 : match.Format == "MD3" ? 3 : 1]; for (int i = 0; i < Math.Min(specMaps.Length, match.Maps.Count); i++) specMaps[i] = match.Maps[i].MapId; specEditing = -1; }
-        var toolbar = new StackPanel { Orientation = Orientation.Horizontal };
-        var create = Action("Nova partida", Session.New, true); create.Height = 32; create.Margin = new Thickness(0); toolbar.Children.Add(create);
-        var selected = Ui.Combo(); selected.Name = "match-selector"; selected.Width = Math.Min(370, Math.Max(250, Bounds.Width * .25)); selected.Height = 32; selected.MinHeight=0; selected.Margin=new Thickness(0); selected.ItemsSource = Session.Matches.Select(m=>new Choice(m.Id,$"{m.Created:dd/MM HH:mm} · {(m.TeamAIsDefault?L.T("Equipe Azul"):m.TeamA)} × {(m.TeamBIsDefault?L.T("Equipe Laranja"):m.TeamB)} · {L.T(m.Complete?"Concluída":"Aberta")}")).ToArray(); selected.SelectedItem = selected.Items.OfType<Choice>().First(c=>c.Id==match.Id);
+        bool wide = Bounds.Width >= 1500;
+        var toolbar = new StackPanel { Name = "spec-match-toolbar", Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+        var create = Action("Nova partida", Session.New, true); create.Name = "new-match"; create.IsVisible = wide; create.VerticalAlignment = VerticalAlignment.Center; create.MinHeight = 0; create.Height = 32; create.Margin = new Thickness(0); toolbar.Children.Add(create);
+        var selected = Ui.Combo(); selected.Name = "match-selector"; selected.IsVisible = wide; selected.VerticalAlignment = VerticalAlignment.Center; selected.Width = Math.Min(370, Math.Max(250, Bounds.Width * .25)); selected.Height = 32; selected.MinHeight=0; selected.Margin=new Thickness(0); selected.ItemsSource = Session.Matches.Select(m=>new Choice(m.Id,$"{m.Created:dd/MM HH:mm} · {(m.TeamAIsDefault?L.T("Equipe Azul"):m.TeamA)} × {(m.TeamBIsDefault?L.T("Equipe Laranja"):m.TeamB)} · {L.T(m.Complete?"Concluída":"Aberta")}")).ToArray(); selected.SelectedItem = selected.Items.OfType<Choice>().First(c=>c.Id==match.Id);
         selected.SelectionChanged += (_, _) => { if (!building && selected.SelectedItem is Choice m && m.Id != Session.Current.Id) _ = Run(() => { Session.Select(m.Id); return Task.CompletedTask; }); };
-        toolbar.Children.Add(selected); foreach(bool export in new[]{false,true}){bool operation=export;var b=Action(export?"Exportar":"Importar",()=>FileOperation(operation,false));b.Height=32;b.Margin=new Thickness(3,0,0,0);toolbar.Children.Add(b);} matchToolbar.Content = toolbar;
-        var root = new Grid { Name = "spec-layout", RowDefinitions = new("Auto,Auto,*"), ColumnDefinitions = new("40*,60*") };
-        var top = Columns("*,40,*"); top.Width=Math.Min(840,Math.Max(520,Bounds.Width*.7));top.HorizontalAlignment=HorizontalAlignment.Center; top.Margin = new Thickness(4, 8);
+        toolbar.Children.Add(selected); foreach(bool export in new[]{false,true}){bool operation=export;var b=Action(export?"Exportar":"Importar",()=>FileOperation(operation,false));b.IsVisible=wide;b.VerticalAlignment=VerticalAlignment.Center;b.MinHeight=0;b.Height=32;b.Margin=new Thickness(3,0,0,0);toolbar.Children.Add(b);} matchToolbar.Content = toolbar;
+        var root = new Grid { Name = "spec-layout", RowDefinitions = new("Auto,*"), ColumnDefinitions = new("40*,60*") };
+        var top = Columns("*,110,*"); top.MaxWidth=840;top.HorizontalAlignment=HorizontalAlignment.Stretch; top.Margin = new Thickness(10, 0);
         for (int t = 0; t < 2; t++) {
             int team = t;
-            var input = new TextBox { Name = "spec-team-" + t, Text = SpecTeam(t), IsReadOnly = true, Height=40, VerticalContentAlignment=VerticalAlignment.Center, FontSize = 21, FontWeight = FontWeight.Bold, Foreground = Ui.Team(t), TextAlignment = TextAlignment.Center, MaxLength = 80, Margin = new Thickness(4) };
+            var input = new TextBox { Name = "spec-team-" + t, Text = SpecTeam(t), IsReadOnly = true, Height=36, MinWidth=0, VerticalContentAlignment=VerticalAlignment.Center, FontSize = wide ? 20 : 16, FontWeight = FontWeight.Bold, Foreground = Ui.Team(t), TextAlignment = TextAlignment.Center, MaxLength = 80, Margin = new Thickness(0) };
             ToolTip.SetTip(input, L.T("Clique no nome para editar."));
             input.AddHandler(PointerPressedEvent, (_, _) => { if (!match.HasConfirmed) { namesDirty = true; namesTimer.Stop(); input.IsReadOnly = false; input.SelectAll(); } }, global::Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
             input.TextChanged += (_, _) => { if (!building && !input.IsReadOnly && input.Text != SpecTeam(team)) { namesDirty = true; } };
@@ -34,7 +35,7 @@ public sealed partial class ChampionshipView
             input.KeyDown += (_, e) => { if (e.Key == Key.Enter) { input.IsReadOnly = true; _=Run(()=>{FlushNames();return Task.CompletedTask;}); e.Handled = true; } };
             if (t == 0) teamA = input; else teamB = input; Add(top, input, t == 0 ? 0 : 2);
         }
-        var versus=Ui.RawText("VS");versus.FontSize=18;versus.FontWeight=FontWeight.Bold;versus.TextAlignment=TextAlignment.Center;versus.VerticalAlignment=VerticalAlignment.Center;versus.Margin=new Thickness(0);Add(top,versus,1); root.Children.Add(top); SetColumnSpan(top, 2);
+        var score=map?.Score(); var versus=Ui.RawText($"{score?.A ?? 0} VS {score?.B ?? 0}");versus.Name="spec-score";versus.FontSize=22;versus.FontWeight=FontWeight.Bold;versus.TextAlignment=TextAlignment.Center;versus.VerticalAlignment=VerticalAlignment.Center;versus.Margin=new Thickness(0);Add(top,versus,1); specMatchHeader.Content=top;
         var setup = new Grid { ColumnDefinitions = new("90,1.1*,1.1*,1.3*,1.3*"), Margin = new Thickness(4, 0, 4, 8) };
         var format = Ui.RawCombo(L.FormatName("MD1"), L.FormatName("MD3"), L.FormatName("MD5")); format.Name = "spec-format"; format.Width = 90; format.SelectedIndex = specFormat == "MD5" ? 2 : specFormat == "MD3" ? 1 : 0;
         format.SelectionChanged += (_, _) => { if (building) return; string f = format.SelectedIndex == 2 ? "MD5" : format.SelectedIndex == 1 ? "MD3" : "MD1"; if (match.Maps.Any(m => m.HasData || m.Confirmed)) { notice.Text = L.T("Esta troca muda um mapa com bans ou rounds registrados."); Refresh(); return; } specFormat = f; specMaps = new string[f == "MD5" ? 5 : f == "MD3" ? 3 : 1]; Refresh(); };
@@ -61,7 +62,7 @@ public sealed partial class ChampionshipView
             Add(setup,field,ot?4:3);
         }
 
-        Add(root, setup, 0, 1); SetColumnSpan(setup, 2);
+        Add(root, setup, 0, 0); SetColumnSpan(setup, 2);
         var left = new Grid { RowDefinitions = new("Auto,Auto,Auto"), VerticalAlignment=VerticalAlignment.Top };
         var entry = Ui.Card("Registrar round", Rounds()); entry.Name = "spec-round-entry"; left.Children.Add(entry);
         if (map != null) {
@@ -69,11 +70,10 @@ public sealed partial class ChampionshipView
             var title=((Grid)entry.Child!).Children.OfType<TextBlock>().First();title.Text=(L.T("Registrar round")+" · "+round.Text).ToUpperInvariant();title.FontSize=12;title.TextWrapping=TextWrapping.Wrap;
         }
         Add(left, Ui.Card("Bans de operadores", SpecBans()), 0, 1);
-        var tools = new WrapPanel(); var remake = Action("Resumo para remake", ShowRemake); remake.Name = "remake-summary"; tools.Children.Add(remake); tools.Children.Add(Action("Arquivos da partida", Files)); tools.Children.Add(Action("Salvar agora", () => MatchStore.Save(Session.Current))); Add(left, tools, 0, 2); Add(root, new ScrollViewer { Name="spec-left-scroll",Content=left,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled }, 0, 2);
-        var right = new Grid { RowDefinitions = new("Auto,*,Auto") };
-        var score = map?.Score(); var scoreboard = Ui.RawText($"{SpecTeam(0)}   {score?.A ?? 0} × {score?.B ?? 0}   {SpecTeam(1)}", true); scoreboard.FontSize = 25; scoreboard.FontWeight = FontWeight.Bold; scoreboard.TextAlignment = TextAlignment.Center; scoreboard.Name = "spec-score"; right.Children.Add(scoreboard);
-        Add(right, Ui.Card("Histórico de rounds", SpecHistory()), 0, 1);
-        var confirm = Action("Confirmar vencedor", async () => { if (await Ui.Ask(this, "Confirmar resultado e bloquear os rounds deste mapa?", winnerConfirmation: true) == 1) Session.Confirm(); }, true); confirm.Name = "confirm-winner"; confirm.IsEnabled = map != null && !map.Confirmed && map.Score().Winner >= 0; Add(right, confirm, 0, 2); Add(root, right, 1, 2);
+        var tools = new WrapPanel(); var remake = Action("Resumo para remake", ShowRemake); remake.Name = "remake-summary"; tools.Children.Add(remake); tools.Children.Add(Action("Arquivos da partida", Files)); tools.Children.Add(Action("Salvar agora", () => MatchStore.Save(Session.Current))); Add(left, tools, 0, 2); Add(root, new ScrollViewer { Name="spec-left-scroll",Content=left,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled }, 0, 1);
+        var right = new Grid { RowDefinitions = new("*,Auto") };
+        var history=Ui.Card("Histórico de rounds", SpecHistory()); history.Name="spec-history-card"; Add(right, history, 0, 0);
+        var confirm = Action("Confirmar vencedor", async () => { if (await Ui.Ask(this, "Confirmar resultado e bloquear os rounds deste mapa?", winnerConfirmation: true) == 1) Session.Confirm(); }, true); confirm.Name = "confirm-winner"; confirm.IsEnabled = map != null && !map.Confirmed && map.Score().Winner >= 0; Add(right, confirm, 0, 1); Add(root, right, 1, 1);
         return root;
     }
     static StackPanel SpecField(string title, Control control) { var field = new StackPanel { Margin = new Thickness(3) }; var text = Ui.Text(title); text.FontSize = 12; field.Children.Add(text); field.Children.Add(control); return field; }

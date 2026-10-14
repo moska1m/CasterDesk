@@ -1,4 +1,4 @@
-using Avalonia.VisualTree;
+﻿using Avalonia.VisualTree;
 using Avalonia.Input;
 using Avalonia.Headless;
 using Avalonia.Media.Imaging;
@@ -52,7 +52,17 @@ internal static class SpecChecks
         before=System.Text.Json.JsonSerializer.Serialize(session.Current,MatchStore.Options);refused=false;try{session.CorrectRound(6,sites[0],0);}catch(InvalidOperationException){refused=true;}
         Need(refused&&before==System.Text.Json.JsonSerializer.Serialize(session.Current,MatchStore.Options),"early end correction preserves later rounds on refusal");
         Click(view,"spec-edit-2");
-        foreach(var size in new[]{new Size(980,640),new Size(1280,800),new Size(1920,1080)}){owner.Width=size.Width;owner.Height=size.Height;owner.Measure(size);owner.Arrange(new Rect(size));Dispatcher.UIThread.RunJobs();view.Measure(size);view.Arrange(new Rect(size));Dispatcher.UIThread.RunJobs();var spec=view.GetVisualDescendants().OfType<Grid>().Single(g=>g.Name=="spec-layout");Need(spec.Bounds.Width<=size.Width&&spec.Bounds.Height<=size.Height,"SPEC fits viewport "+size.Width);using var image=new RenderTargetBitmap(new PixelSize((int)size.Width,(int)size.Height),new Vector(96,96));image.Render(view);image.Save(Path.Combine(AppPaths.DataDirectory,"spec-"+size.Width+".png"));}
+        foreach(var size in new[]{new Size(980,640),new Size(1280,800),new Size(1920,1080)}){owner.Width=size.Width;owner.Height=size.Height;owner.Measure(size);owner.Arrange(new Rect(size));Dispatcher.UIThread.RunJobs();view.Measure(size);view.Arrange(new Rect(size));Dispatcher.UIThread.RunJobs();view.Refresh();Dispatcher.UIThread.RunJobs();view.Measure(size);view.Arrange(new Rect(size));Dispatcher.UIThread.RunJobs();
+            var all=view.GetVisualDescendants().OfType<Control>().ToArray();
+            var header=all.Single(c=>c.Name=="spec-match-header");var scoreText=all.OfType<TextBlock>().Single(c=>c.Name=="spec-score");
+            Need(scoreText.GetVisualAncestors().Contains(header)&&scoreText.Text=="6 VS 2","score appears once in navigation and uses canonical score");
+            var create=all.OfType<Button>().Single(c=>c.Name=="new-match");var selector=all.OfType<ComboBox>().Single(c=>c.Name=="match-selector");
+            Need(create.IsVisible==(size.Width>=1500)&&selector.IsVisible==create.IsVisible,"secondary match actions hide and restore with width "+size.Width);
+            if(create.IsVisible)Need(Math.Abs(create.TranslatePoint(default,view)!.Value.Y-selector.TranslatePoint(default,view)!.Value.Y)<.1&&create.Bounds.Height==selector.Bounds.Height,"new match and selector share top and height");
+            var entry=all.Single(c=>c.Name=="spec-round-entry");var history=all.Single(c=>c.Name=="spec-history-card");
+            Need(Math.Abs(entry.TranslatePoint(default,view)!.Value.Y-history.TranslatePoint(default,view)!.Value.Y)<.1,"registration and history headings align");
+            Need(scoreText.TranslatePoint(default,view)!.Value.X>=0&&scoreText.TranslatePoint(new Point(scoreText.Bounds.Width,0),view)!.Value.X<=size.Width,"score fits narrow header");
+            var spec=view.GetVisualDescendants().OfType<Grid>().Single(g=>g.Name=="spec-layout");Need(spec.Bounds.Width<=size.Width&&spec.Bounds.Height<=size.Height,"SPEC fits viewport "+size.Width);using var image=new RenderTargetBitmap(new PixelSize((int)size.Width,(int)size.Height),new Vector(96,96));image.Render(view);image.Save(Path.Combine(AppPaths.DataDirectory,"spec-"+size.Width+".png"));}
         session.New();Dispatcher.UIThread.RunJobs();var f=view.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="spec-format");f.SelectedIndex=1;Dispatcher.UIThread.RunJobs();view.Measure(new Size(1280,800));view.Arrange(new Rect(0,0,1280,800));Dispatcher.UIThread.RunJobs();
         var choose=view.GetVisualDescendants().OfType<Button>().Single(b=>b.Name=="spec-series-maps");((Flyout)choose.Flyout!).ShowAt(choose);Dispatcher.UIThread.RunJobs();var content=(Control)((Flyout)choose.Flyout).Content!;
         for(int n=0;n<3;n++){content.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="spec-map-"+n).SelectedIndex=n;Dispatcher.UIThread.RunJobs();}

@@ -1,3 +1,10 @@
+﻿# 1.0.1
+
+- SPEC: equipes editáveis e placar no centro da barra das abas; placar duplicado removido do histórico.
+- Histórico e registro de rounds com cabeçalhos alinhados.
+- Nova partida e seletor com altura e alinhamento iguais; ações secundárias ocultas em janelas estreitas e restauradas ao ampliar.
+- Plugin e tema do OBS preservados.
+
 # 0.3.0-beta.0.13
 
 - OBS: abas PARTIDA → REMAKE → CRONÔMETRO, com histórico removido de PARTIDA.

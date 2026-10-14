@@ -1,6 +1,12 @@
-# CasterDesk — progresso e validação
+﻿# CasterDesk — progresso e validação
 
 Diretriz de 14/10/2026: priorizar entregas locais; não atualizar/publicar o GitHub a cada ajuste. Usar o remoto quando solicitado ou necessário ao processo, como compilação nativa do plugin. Apresentação centrada no CasterDesk, sem destacar a base de interface; nomes técnicos permanecem somente onde necessários à compilação e compatibilidade. Referências às bases nas entregas antigas registram o contexto histórico.
+
+## Versão 1.0.1 — 14/10/2026
+
+Ajuste local do layout SPEC: confronto editável e placar na barra de navegação, sem placar acima do histórico. Cabeçalhos de registro/histórico alinhados. Ações de nova partida, seleção e importação/exportação do topo ocultas abaixo de 1500 pixels úteis; restauradas ao ampliar. Arquivos da partida e demais controles permanecem acessíveis no corpo. Nova partida e seletor alinhados nos dois modos. OBS não alterado.
+
+Compilação sem avisos/erros e 53 verificações SPEC aprovadas em modo Headless, incluindo alinhamento, atualização do placar e responsividade a 980, 1280 e 1920 pixels. Empacotamento concluído: 713 verificações do núcleo e 472 da interface/API/SPEC aprovadas. Manifesto de 709 arquivos e ícones dos executáveis conferidos. Instalador local dist/CasterDesk-1.0.1-win-x64-Setup.exe; SHA256 aacd6b7080586dba666fd39a25e9614d62a7c7a6cec013888051c0df93725623. Sem teste interativo ou instalação na área de trabalho. Sem envio ao GitHub nesta atualização.
 
 ## Versão 1.0.0 — 14/10/2026
 

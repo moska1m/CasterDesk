@@ -1,4 +1,4 @@
-namespace CasterDesk.Avalonia;
+﻿namespace CasterDesk.Avalonia;
 
 public sealed partial class ChampionshipView : Grid
 {
@@ -9,6 +9,7 @@ public sealed partial class ChampionshipView : Grid
     readonly TextBlock notice = Ui.Text("");
     readonly Button[] sectionTabs = new Button[2];
     readonly ContentControl matchToolbar = new();
+    readonly ContentControl specMatchHeader = new() { Name = "spec-match-header", VerticalAlignment = VerticalAlignment.Center };
     int lobbySection;
     string lobbyBackground = "";
     readonly DispatcherTimer namesTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
@@ -51,8 +52,9 @@ public sealed partial class ChampionshipView : Grid
             tab.PointerEntered += (_, _) => tab.Background = Brush.Parse("#FF4335");
             tab.PointerExited += (_, _) => tab.Background = tab == sectionTabs[lobby ? 1 : 0] ? Ui.Panel : Brushes.Transparent;
         }
-        var navigation = new Grid { ColumnDefinitions = new("*,Auto") }; navigation.Children.Add(tabs);
-        navigation.Children.Add(matchToolbar); SetColumn(matchToolbar,1);
+        var navigation = new Grid { Name = "match-navigation", ColumnDefinitions = new("Auto,*,Auto") }; navigation.Children.Add(tabs);
+        navigation.Children.Add(specMatchHeader); SetColumn(specMatchHeader,1);
+        navigation.Children.Add(matchToolbar); SetColumn(matchToolbar,2);
         Children.Add(navigation); Children.Add(body); SetRow(body, 1);
         notice.FontSize = 12; notice.Margin = new Thickness(4); Children.Add(notice); SetRow(notice, 2);
         Session.Changed += Refresh; Session.MapConfirmed += Confirmed;
@@ -95,6 +97,7 @@ public sealed partial class ChampionshipView : Grid
             sectionTabs[0].Content=L.T(SpecMode?"Partida · SPEC":"Partida");
             for (int n = 0; n < sectionTabs.Length; n++) { bool active = lobby == (n == 1); sectionTabs[n].BorderThickness = new Thickness(0, 0, 0, 3); sectionTabs[n].BorderBrush = active ? Brush.Parse("#FF4335") : Brushes.Transparent; sectionTabs[n].Background = active ? Ui.Panel : Brushes.Transparent; }
             matchToolbar.IsVisible = !lobby;
+            specMatchHeader.IsVisible = SpecMode && !lobby;
             body.Content = lobby ? LobbyView.Create(lobbySection, index => lobbySection = index, lobbyBackground) : SpecMode ? SpecMatch() : Match();
         }
         finally { building = false; }
@@ -107,11 +110,11 @@ public sealed partial class ChampionshipView : Grid
         layout.RowDefinitions[2].MaxHeight = compact ? 300 : 350;
         if (Bounds.Height < 650 && BansReady) layout.RowDefinitions[1].Height = new GridLength(88);
         var toolbar = new StackPanel { Name = "match-toolbar", Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-        var newMatch = Action("Nova partida", Session.New, true); newMatch.Name = "new-match"; newMatch.Height = 32; newMatch.Margin = new Thickness(0); toolbar.Children.Add(newMatch);
+        var newMatch = Action("Nova partida", Session.New, true); newMatch.Name = "new-match"; newMatch.VerticalAlignment = VerticalAlignment.Center; newMatch.MinHeight = 0; newMatch.Height = 32; newMatch.Margin = new Thickness(0); toolbar.Children.Add(newMatch);
         var saved = Ui.Combo(); saved.Width = 370; saved.ItemsSource = Session.Matches.ToArray(); saved.SelectedItem = match;
         saved.SelectionChanged += (_, _) => { if (!building && saved.SelectedItem is SiegeMatch picked && picked.Id != Session.Current.Id) _ = Run(() => { Session.Select(picked.Id); return Task.CompletedTask; }); };
         saved.Name = "match-selector"; saved.Width = Math.Min(370, Math.Max(250, Bounds.Width * .25));
-        saved.Height = 32; saved.MinHeight = 0; saved.Margin = new Thickness(0);
+        saved.VerticalAlignment = VerticalAlignment.Center; saved.Height = 32; saved.MinHeight = 0; saved.Margin = new Thickness(0);
         toolbar.Children.Add(saved); matchToolbar.Content = toolbar;
         var left = new Grid { RowDefinitions = new("1.6*,*") };
         left.Children.Add(Ui.Card("Confronto", new ScrollViewer { Name = "setup-scroll", Content = Setup(match) }));
