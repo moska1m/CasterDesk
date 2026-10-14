@@ -75,7 +75,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     newRound = new QPushButton("Novo round"); newRound->setObjectName("new-round"); roundLayout->addWidget(newRound); newRound->hide();
     connect(newRound,&QPushButton::clicked,this,[this]{roundIndex=-1;renderRounds(true);});
     auto *historyTitle = new QLabel("Histórico de rounds"); historyTitle->setObjectName("history-title"); partidaLayout->addWidget(historyTitle);
-    roundHistory = new QTableWidget(); roundHistory->setObjectName("round-history"); roundHistory->setColumnCount(4); roundHistory->setMinimumWidth(0); roundHistory->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred); roundHistory->setMinimumHeight(130); roundHistory->setMaximumHeight(220);
+    roundHistory = new QTableWidget(); roundHistory->setObjectName("round-history"); roundHistory->setColumnCount(7); roundHistory->setMinimumWidth(0); roundHistory->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred); roundHistory->setMinimumHeight(130); roundHistory->setMaximumHeight(220);
     roundHistory->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); roundHistory->verticalHeader()->hide(); roundHistory->setEditTriggers(QAbstractItemView::NoEditTriggers); roundHistory->setSelectionBehavior(QAbstractItemView::SelectRows); roundHistory->setSelectionMode(QAbstractItemView::SingleSelection); partidaLayout->addWidget(roundHistory);
     connect(roundHistory,&QTableWidget::cellClicked,this,[this](int row,int){roundIndex=row;renderRounds(true);});
     auto *banPage = new QWidget(); banPage->setObjectName("ban-page"); auto *banLayout = new QVBoxLayout(banPage); partidaLayout->addWidget(banPage);
@@ -113,6 +113,12 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     for(auto *button:{start,pause,add,subtract,set}){button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setMinimumWidth(44);}
     for(auto *page:{timerPage,banPage,roundPage,partida}){page->layout()->invalidate();page->layout()->activate();}
     updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
+}
+void CasterDeskPanel::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    // Narrow docks retain result/site/ending; full-width docks also show both sides.
+    if(roundHistory){roundHistory->setColumnHidden(1,width()<520);roundHistory->setColumnHidden(2,width()<520);}
 }
 CasterDeskPanel::~CasterDeskPanel()
 {
@@ -216,8 +222,8 @@ void CasterDeskPanel::renderRounds(bool force)
     if(roundIndex>=0){const auto row=history[roundIndex].toObject();roundWinner=row["winner"].toInt();roundSite=row["site"].toString();roundEnding=row["ending"].toString();}
     clearLayout(roundSites);int n=0;
     for(const auto &value:data["sites"].toArray()){const auto site=value.toObject();auto *button=choiceButton(site["label"].toString(),QString("round-site-%1").arg(n));button->setProperty("site",site["id"]);button->setProperty("available",roundIndex>=0||!site["blocked"].toBool());roundSites->addWidget(button,n/2,n%2);++n;connect(button,&QPushButton::clicked,this,[this,button]{roundSite=button->property("site").toString();updateRoundChoices();});}
-    roundHistory->setHorizontalHeaderLabels({label("round","Round"),label("site","Bomb site"),label("winner","Vencedor"),label("ending","Finalização")});roundHistory->setRowCount(history.size());int a=0,b=0;
-    for(int row=0;row<history.size();++row){const auto r=history[row].toObject();const int team=r["winner"].toInt();team==0?++a:++b;QString siteText=r["site"].toString(),endText=r["ending"].toString();for(const auto &value:data["sites"].toArray())if(value.toObject()["id"]==r["site"])siteText=value.toObject()["label"].toString();for(const auto &value:data["endings"].toArray())if(value.toObject()["id"]==r["ending"])endText=value.toObject()["label"].toString();QStringList values{QString("%1 · %2–%3").arg(row+1).arg(a).arg(b),siteText,match[team==0?"teamA":"teamB"].toString(),endText};for(int col=0;col<4;++col){auto *item=new QTableWidgetItem(values[col]);item->setToolTip(values[col]);item->setTextAlignment(Qt::AlignCenter);item->setBackground(QColor(team==0?"#305975":"#895333"));item->setForeground(Qt::white);roundHistory->setItem(row,col,item);}roundHistory->setRowHeight(row,30);}
+    roundHistory->setHorizontalHeaderLabels({label("round","Round"),label("atq","ATQ"),label("def","DEF"),label("site","Bomb site"),label("winner","Vencedor"),label("score","Placar"),label("ending","Finalização")});roundHistory->setRowCount(history.size());int a=0,b=0;
+    for(int row=0;row<history.size();++row){const auto r=history[row].toObject();const int team=r["winner"].toInt();team==0?++a:++b;QString siteText=r["site"].toString(),endText=r["ending"].toString();for(const auto &value:data["sites"].toArray())if(value.toObject()["id"]==r["site"])siteText=value.toObject()["label"].toString();for(const auto &value:data["endings"].toArray())if(value.toObject()["id"]==r["ending"])endText=value.toObject()["label"].toString();const int attacker=r["attacker"].toInt();QStringList values{QString::number(row+1),match[attacker==0?"teamA":"teamB"].toString(),match[attacker==0?"teamB":"teamA"].toString(),siteText,match[team==0?"teamA":"teamB"].toString(),QString("%1–%2").arg(a).arg(b),endText};for(int col=0;col<7;++col){auto *item=new QTableWidgetItem(values[col]);item->setToolTip(values[col]);item->setTextAlignment(Qt::AlignCenter);item->setBackground(QColor(team==0?"#305975":"#895333"));item->setForeground(Qt::white);roundHistory->setItem(row,col,item);}roundHistory->setRowHeight(row,30);}
     if(follow)roundHistory->scrollToBottom();
     roundSave->setText(label(roundIndex<0?"confirmRound":"editRound",roundIndex<0?"Confirmar round":"Corrigir round"));newRound->setVisible(roundIndex>=0);newRound->setText(label("newRound","Novo round"));
     int attacker=data["attacker"].toInt(-1);if(roundIndex>=0)attacker=history[roundIndex].toObject()["attacker"].toInt();

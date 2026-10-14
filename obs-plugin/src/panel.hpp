@@ -22,6 +22,8 @@ public:
     void poll();
     static QString configurationPath();
     static int parseDuration(const QString &text);
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 private:
     QString configPath, key, baseUrl, rendered;
     QNetworkAccessManager network;
@@ -35,7 +37,7 @@ private:
     QPushButton *start, *pause, *add, *subtract, *set;
     bool connected = false, busy = false;
     QGridLayout *roundSites, *roundEndings;
-    QTableWidget *roundHistory;
+    QTableWidget *roundHistory = nullptr;
     QPushButton *roundTeams[2], *roundSave;
     QLabel *roundHeading;
     int roundWinner = -1;
