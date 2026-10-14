@@ -81,10 +81,12 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     connect(set,&QPushButton::clicked,this,[this]{const int seconds=parseDuration(duration->text());if(seconds<0){error->setText(label("invalidTime","Use mm:ss ou hh:mm:ss."));return;}command({{"action","set"},{"seconds",seconds}});});
     connect(search,&QLineEdit::textChanged,this,[this]{renderOperators();});
     timer.setInterval(1000); connect(&timer,&QTimer::timeout,this,[this]{poll();});
+    for(auto *page:{timerPage,banPage,roundPage})page->ensurePolished();
     for(auto *text:findChildren<QLabel *>())text->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);
     duration->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);duration->setMinimumWidth(60);
     search->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);search->setMinimumWidth(60);
     for(auto *button:{start,pause,add,subtract,set}){button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setMinimumWidth(44);}
+    for(auto *page:{timerPage,banPage,roundPage}){page->layout()->invalidate();page->layout()->activate();}
     updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
 }
 CasterDeskPanel::~CasterDeskPanel()
