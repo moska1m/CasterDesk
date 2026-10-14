@@ -1,7 +1,7 @@
 ![CasterDesk — organize a partida, cuide da transmissão](docs/media/banner.svg)
 
 <p align="center">
-  <img alt="Versão 0.3.0-beta.0.11" src="https://img.shields.io/badge/vers%C3%A3o-0.3.0--beta.0.11-327FA8" />
+  <img alt="Versão 0.3.0-beta.0.12" src="https://img.shields.io/badge/vers%C3%A3o-0.3.0--beta.0.12-327FA8" />
   <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448" />
   <img alt="Português, inglês e espanhol" src="https://img.shields.io/badge/idiomas-PT%20%C2%B7%20EN%20%C2%B7%20ES-233448" />
   <img alt="Licença MIT para o código próprio" src="https://img.shields.io/badge/c%C3%B3digo-MIT-25834C" />
@@ -56,8 +56,8 @@ As artes preservam as proporções das bases fornecidas. Mapas não jogados fica
 
 ## Começar a usar
 
-1. Abra [Releases](https://github.com/moska1m/CasterDesk/releases) e escolha a versão desejada. A linha atual é **0.3.0-beta.0.11** para Windows x64.
-2. Baixe o instalador `CasterDesk-0.3.0-beta.0.11-win-x64-Setup.exe` e confira o SHA-256 disponibilizado junto dele.
+1. Abra [Releases](https://github.com/moska1m/CasterDesk/releases) e escolha a versão desejada. A linha atual é **0.3.0-beta.0.12** para Windows x64.
+2. Baixe o instalador `CasterDesk-0.3.0-beta.0.12-win-x64-Setup.exe` e confira o SHA-256 disponibilizado junto dele.
 3. Instale e abra **CasterDesk**. O pacote inclui o runtime .NET; não é necessário instalar o SDK para usar.
 4. Crie uma partida, informe as equipes e registre o coin flip feito fora do programa. Complete o veto, defina os lados e inicie os bans por clique.
 5. Registre os rounds, confirme o resultado de cada mapa e confira os prints antes de exportar estatísticas.
@@ -68,7 +68,7 @@ Na engrenagem, selecione Português (Brasil), English ou Español. O idioma é a
 
 ## Usar com OBS
 
-Na versão 0.3.0-beta.0.11, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
+Na versão 0.3.0-beta.0.12, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
 
 O painel beta registra/corrige rounds, seleciona mapas de séries e controla o mesmo timer e os bans sem alternar de janela. Marque a instalação opcional do plugin OBS no instalador para conexão automática. As instruções e limites estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
 
@@ -96,6 +96,7 @@ Importar só um JSON não transporta todos os recursos: use pacotes/backup para 
 | **0.3 até beta.0.4** | Estabilização de comandos, persistência, importação, backup e adaptação anterior da interface. |
 | **0.3 beta.0.5–0.6** | Linha Avalonia, publicação autossuficiente e ajustes de partida/lobby. |
 | **0.3 beta.0.7** | Aplicação da marca aprovada. |
+| **0.3 beta.0.12** | OBS com rounds por botões, histórico e bans juntos; timer completo e ajustes de layout/menu. |
 | **0.3 beta.0.11** | Rounds e mapas da série no OBS, bans durante toda a partida e modo explícito sem popups. |
 | **0.3 beta.0.10** | Plugin opcional OBS com descoberta automática. |
 | **0.3 beta.0.9** | Painel local para timer/bans no OBS, ativação explícita e proteção de comandos. |

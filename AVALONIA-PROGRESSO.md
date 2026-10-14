@@ -1,5 +1,17 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Décima terceira entrega — painel Partida e ajustes visuais, 14/10/2026, 0.3.0-beta.0.12
+
+Layout aprovado pelo usuário por esboço: no OBS, Partida reúne rounds por botões, histórico clicável e bans; Cronômetro separado. No programa, histórico continua à direita. Bombsites com altura uniforme, equipes em uma linha e contexto round/lados ao lado do título. Confirmação do vencedor especializada em confirmar/cancelar, texto maior centralizado e vermelho escuro; outros diálogos com Sim/Não/Cancelar preservados quando possuem ações distintas. Selo ATIVOS retirado e menu fecha ao clicar fora. Histórico segue novos rounds após layout concluído, inclusive em reconstruções consecutivas, preservando a posição de leitura nas demais atualizações.
+
+Timer nativo passa a configurar duração inicial, formato, mensagem final e três acréscimos, além de reiniciar. Configurar não reinicia uma contagem em andamento. O TXT e estado são os mesmos do aplicativo; copiar caminho retorna a pasta que contém o TXT. Caminho de saída continua selecionado no aplicativo. Regras, revisões, arquivos, estatísticas e composições de arte preservados.
+
+Build sem avisos/erros. 396 verificações UI/API aprovadas (208 campeonato, 35 textos/timer, 27 backup, 33 idioma, 16 regras e 77 HTTP), além das prévias e marca. Testes novos exercitam clique fora, botões uniformes, confirmação com duas ações, acompanhamento do último round, posição de leitura preservada e configuração/reset do timer. Plugin final compilado em f378c160994168d31e9b2ac2a5b800e5a4ba1966: https://github.com/moska1m/CasterDesk/actions/runs/38613443587. 45 checks Qt minimal aprovados, incluindo rounds por botões, correção por linha do histórico, timer completo, desconexão e largura compacta. Testes nativos executados no runner GitHub; testes locais apenas Avalonia.Headless/HTTP em dados isolados. OBS, programa e instaladores não abertos na área de trabalho.
+
+O usuário confirmou o carregamento e operação inicial das versões anteriores. Encaixe, clipboard real, instalação/UAC e operação desta entrega dentro do OBS permanecem para teste do usuário. Ícones decorativos de painéis permanecem futuros. Histórico das entregas abaixo é preservado e descreve o estado de cada versão.
+
+Empacotamento aprovado: 713 checks do núcleo e 396 UI/API na publicação independente. Núcleo em test-results/avalonia-core-b9a7c80b8feb49e68001674149726770, UI em test-results/avalonia-ui-ce6f8a39c89844d9956a8ddd901feea4; publicação publish-avalonia-0.3.0-beta.0.12-148b000c. 709 arquivos conferidos por SHA-256 e sete resoluções do ícone byte a byte em aplicativo/Setup/componente OBS. Instalador principal SHA-256 a64420aaf91e257d6b3f44bc78a5721805ecd119b02df11fb7935701bba3da2e; componente OBS b0c81460a0de7ce7eb87866ea29e1a76fda92454d27778db9472245c7218079b. Sem assinatura digital ou execução de instaladores.
+
 ## Décima segunda entrega — rounds e etapas no OBS, 14/10/2026, 0.3.0-beta.0.11
 
 Terceira aba nativa de registro/revisão de rounds; ordem Round a round → Bans → Cronômetro, marca centralizada e seleção de mapas de séries por IDs. Nova API reaproveita MatchSession.Round/SelectMap, revisões e transações. Sem descarte silencioso de rounds: correções que exigem trim permanecem recusadas. Popup automático no programa passa a ser controlado pelo modo Plugin OBS salvo na configuração; cliques manuais continuam disponíveis. Resolvido o bloqueio dos bans intermediários/segunda metade pelo seletor modal automático do programa.

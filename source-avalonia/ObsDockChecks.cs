@@ -45,6 +45,9 @@ internal static class ObsDockChecks
         using(var r=Send("/api/command",key,new{action="adjust",seconds=-1000}))Need(r.IsSuccessStatusCode&&texts.Remaining==0&&!texts.Running,"Subtract clamps and ends running timer");
         using(var r=Send("/api/command",key,new{action="set",seconds=100000}))Need(r.StatusCode==HttpStatusCode.BadRequest&&texts.Remaining==0,"Invalid duration preserves timer");
         allowed=false;using(var r=Send("/api/command",key,new{action="set",seconds=60}))Need(r.StatusCode==HttpStatusCode.Conflict&&texts.Remaining==0,"Modal/backup guard blocks commands");allowed=true;
+        using(var r=Send("/api/command",key,new{action="timerConfig",seconds=150,format="hh:mm:ss",message="ENCERRADO",presets=new[]{1.5,3.0,4.0}}))Need(r.IsSuccessStatusCode&&texts.Remaining==0,"Timer configuration does not reset the live countdown");
+        using(var r=Send("/api/command",key,new{action="reset"}))Need(r.IsSuccessStatusCode&&texts.Remaining==150&&!texts.Running,"Reset uses shared configured initial time");
+        using(var r=Send("/api/command",key,new{action="timerConfig",seconds=150,format="invalid",message="",presets=new[]{2.0,3.0,4.0}}))Need(r.StatusCode==HttpStatusCode.BadRequest&&texts.Remaining==150,"Invalid configuration preserves countdown");
         session.Setup("MD1",0,0,false);for(int n=0;n<8;n++)session.Veto(n,session.Catalog.Maps[n].Id);session.Side(session.Map!.MapId,false,0);
         JsonDocument State(){using var r=Send("/api/state",key);return JsonDocument.Parse(Wait(r.Content.ReadAsStringAsync()));}
         long previous=-1;string mapId=session.Map!.MapId;

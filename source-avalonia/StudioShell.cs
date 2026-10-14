@@ -1,4 +1,5 @@
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using System.Text.Json;
 
 namespace CasterDesk.Avalonia;
@@ -73,6 +74,12 @@ public sealed class StudioShell : Window
         layout.Children.Add(drawerPanel); Grid.SetRow(drawerPanel, 1);
         footer.FontSize = 12; footer.Margin = new Thickness(18, 4); layout.Children.Add(footer); Grid.SetRow(footer, 2);
         KeyDown += (_, e) => { if (e.Key == Key.Escape && menuOpen) { ToggleMenu(); e.Handled = true; } };
+        AddHandler(PointerPressedEvent, (_, e) => {
+            if (!menuOpen || e.Source is not global::Avalonia.Visual source) return;
+            for (global::Avalonia.Visual? current = source; current != null; current = current.GetVisualParent())
+                if (current == drawerPanel || current == gear) return;
+            ToggleMenu();
+        }, global::Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
         Navigate(0);
         if (ConfigurationStore.RecoveryNotice.Length > 0) footer.Text = ConfigurationStore.RecoveryNotice;
         bool closing = false, waitingToClose = false;

@@ -16,6 +16,7 @@ public sealed class TextsView : Grid
     readonly ComboBox format = Ui.Combo("mm:ss", "hh:mm:ss");
     readonly TextBlock readout = Ui.Text(""), status = Ui.Text(""), castingStatus = Ui.Text(""), clockState = Ui.Text("");
     readonly List<Border> cards = [];
+    readonly List<TextBox> presetInputs = [];
     bool durationEdited, live, stopped;
     bool writesSuspended;
     public bool WritesSuspended { get => writesSuspended; set { writesSuspended = value; if (!value) Update(); } }
@@ -28,6 +29,20 @@ public sealed class TextsView : Grid
     public bool Busy => !writing.IsCompleted || !Applying.IsCompleted;
     public bool Running => clock.Running;
     internal double Remaining => clock.Remaining;
+    double InitialSeconds { get { try { return Parse(initial.Text ?? ""); } catch (InvalidDataException) { return (double)settings.Initial * 60; } } }
+    internal object TimerOptions => new { initial = InitialSeconds, format = format.SelectedIndex == 1 ? "hh:mm:ss" : "mm:ss", message = message.Text ?? "", presets = settings.Presets, output = output.Text ?? "", folder = OutputFolder(output.Text ?? ""), readout = readout.Text, status = clockState.Text };
+    internal void ResetClock() { clock.Reset(Parse(initial.Text ?? "")); durationEdited = false; Update(); }
+    internal void ConfigureTimer(double seconds, string outputFormat, string finalMessage, double[] presets) {
+        if (!double.IsFinite(seconds) || seconds < 0 || seconds > 86400 || outputFormat is not ("mm:ss" or "hh:mm:ss") || finalMessage.Length > 500 || presets.Length != settings.Presets.Length || presets.Any(p => !double.IsFinite(p) || p <= 0 || p > 1440)) throw new InvalidDataException(L.T("Tempo inválido. Use hh:mm:ss."));
+        bool changed = InitialSeconds != seconds;
+        initial.Text = DurationText(seconds); durationEdited = changed || durationEdited;
+        format.SelectedIndex = outputFormat == "hh:mm:ss" ? 1 : 0; message.Text = finalMessage;
+        for (int i = 0; i < presets.Length; i++) {
+            settings.Presets[i] = (decimal)presets[i];
+            presetInputs[i].Text = settings.Presets[i].ToString();
+        }
+        Save(true); Update();
+    }
     internal event Action? ClockChanged;
     internal void PauseClock() { clock.Pause(); Update(); }
     internal void StartFromHeader() { try { Start(); } catch(Exception ex) { status.Text = ex.Message; } }
@@ -78,6 +93,7 @@ public sealed class TextsView : Grid
         var additions = new WrapPanel();
         for (int n = 0; n < settings.Presets.Length; n++) {
             int index = n; var field = Input("timer-preset-" + n, settings.Presets[n].ToString()); field.Width = 65;
+            presetInputs.Add(field);
             var button = Command($"+ {settings.Presets[n]} min", "timer-add-" + n, () => {
                 if (!decimal.TryParse(field.Text, out decimal minutes) || minutes <= 0 || minutes > 1440) throw new InvalidDataException(L.T("Use um valor de minutos entre 0 e 1440."));
                 settings.Presets[index] = minutes; this.clock.Add((double)minutes * 60); Update();
@@ -88,7 +104,7 @@ public sealed class TextsView : Grid
         timer.Children.Add(additions); right.Children.Add(Card("CRONÔMETRO", timer));
         var target = new StackPanel(); output.Name = "timer-output"; output.Text = settings.Output; target.Children.Add(output);
         target.Children.Add(Ui.Button("Escolher TXT", async () => { try { if (await Ui.PickFile(this, "Escolher TXT", "txt", true, "timer.txt") is string path) output.Text = path; } catch (Exception ex) { status.Text = ex.Message; } }));
-        target.Children.Add(Command("Copiar caminho", "timer-copy", () => Ui.CopyText(output.Text ?? ""))); target.Children.Add(status);
+        target.Children.Add(Command("Copiar caminho", "timer-copy", () => Ui.CopyText(OutputFolder(output.Text ?? "")))); target.Children.Add(status);
         status.Name = "timer-status"; right.Children.Add(Card("Arquivo de saída • OBS", target));
         this.clock.Reset((double)settings.Initial * 60); Update();
         initial.TextChanged += (_, _) => durationEdited = true;
@@ -98,6 +114,7 @@ public sealed class TextsView : Grid
     }
 
     static TextBox Input(string name, string value) => new() { Name = name, Text = value, Margin = new Thickness(0, 0, 6, 8) };
+    internal static string OutputFolder(string path) => string.IsNullOrWhiteSpace(path) ? "" : Path.GetDirectoryName(Path.GetFullPath(path)) ?? "";
     Border Card(string title, Control content) { var card = Ui.Card(title, content); cards.Add(card); return card; }
     public void RefreshColors() { Background = Ui.Canvas; foreach (var card in cards) card.Background = Ui.Panel; }
     Button Command(string label, string name, System.Action action, bool primary = false) {

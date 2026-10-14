@@ -122,7 +122,18 @@ public sealed partial class ChampionshipView : Grid
         scoreText.Name = "match-score"; scoreText.TextAlignment = TextAlignment.Center; scoreText.HorizontalAlignment = HorizontalAlignment.Center;
         scoreText.MaxWidth = Math.Max(200, Bounds.Width * .58); scoreText.Margin = new Thickness(4);
         var roundArea = new Grid { Name = "round-area", ColumnDefinitions = new("44*,56*") };
-        Add(roundArea, Ui.Card("Round a round", Rounds()), 0);
+        var roundCard = Ui.Card("Round a round", Rounds());
+        roundCard.Name = "round-entry-card";
+        var roundBody = (Grid)roundCard.Child!;
+        var roundTitle = roundBody.Children.OfType<TextBlock>().First(); roundBody.Children.Remove(roundTitle);
+        var roundHeader = Columns("Auto,*"); Add(roundHeader, roundTitle, 0);
+        if (map?.InitialAttack >= 0) {
+            int number = map.Rounds.Count + 1, attacker = map.Attacker(number);
+            var info = Ui.RawText($"{L.T("Round")} {number:00} · {match.Team(attacker)} {L.Role("ATQ")} / {match.Team(1-attacker)} {L.Role("DEF")}");
+            info.Name = "round-header-context"; info.FontSize = 11; info.TextAlignment = TextAlignment.Right;
+            info.Margin = new Thickness(8, 0, 0, 8); ToolTip.SetTip(info, info.Text); Add(roundHeader, info, 1);
+        }
+        roundBody.Children.Add(roundHeader); Add(roundArea, roundCard, 0);
         var history = new Grid { Name = "round-history-panel", RowDefinitions = new("Auto,*,Auto") }; history.Children.Add(scoreText);
         Add(history, Ui.Card("Histórico de rounds", map == null ? Ui.Text("Escolha um mapa primeiro.") : History(map)), 0, 1);
         Add(roundArea, history, 1); Add(layout, roundArea, 1, 2);
@@ -131,7 +142,7 @@ public sealed partial class ChampionshipView : Grid
         actions.Children.Add(Action("Resumo para remake", () => Ui.CopyText(Session.Summary())));
         actions.Children.Add(Action("Salvar agora", () => MatchStore.Save(Session.Current)));
         actions.Children.Add(Action("Arquivos da partida", Files));
-        var confirm = Action("Confirmar vencedor", async () => { if (await Ui.Ask(this, "Confirmar resultado e bloquear os rounds deste mapa?") == 1) Session.Confirm(); }, true);
+        var confirm = Action("Confirmar vencedor", async () => { if (await Ui.Ask(this, "Confirmar resultado e bloquear os rounds deste mapa?", winnerConfirmation: true) == 1) Session.Confirm(); }, true);
         confirm.Name = "confirm-winner"; confirm.IsEnabled = map != null && !map.Confirmed && map.Score().Winner >= 0;
         confirm.Background = confirm.IsEnabled ? Brush.Parse("#25834C") : Brush.Parse("#334354");
         confirm.Opacity = confirm.IsEnabled ? 1 : .5; Add(history, confirm, 0, 2);
@@ -235,7 +246,6 @@ public sealed partial class ChampionshipView : Grid
             var group = new Grid { Margin = new Thickness(2), RowDefinitions = new("24,*"), ClipToBounds = true };
             int attacker = half == 0 ? map.InitialAttack : 1 - map.InitialAttack;
             var heading = Columns("Auto,*");
-            if (map.ActiveBanHalf(Math.Min(15, map.Rounds.Count + 1)) == half) Add(heading, new Border { Background = Brush.Parse("#247348"), Padding = new Thickness(8, 3), Child = new TextBlock { Text = L.T("ATIVOS"), Foreground = Brushes.White, FontSize = 11 } }, 0);
             var text = Ui.RawText($"{L.T("Round")} {half * 6 + 1}–{half * 6 + 6} · {Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; text.TextWrapping = TextWrapping.NoWrap; text.TextTrimming = TextTrimming.CharacterEllipsis; ToolTip.SetTip(text, text.Text); Add(heading, text, 1); group.Children.Add(heading);
             var grid = new UniformGrid { Columns = 6 };
             foreach (int slot in map.BanOrder(half)) {

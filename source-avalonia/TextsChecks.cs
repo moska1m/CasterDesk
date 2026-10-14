@@ -20,6 +20,7 @@ internal static class TextsChecks
     public static void Run() {
         double time = 0;
         var settings = new Settings { Initial = 1, Output = Path.Combine(AppPaths.TextDirectory, "test-timer.txt") };
+        Need(TextsView.OutputFolder(settings.Output) == Path.GetFullPath(AppPaths.TextDirectory), "Timer copy uses containing folder instead of TXT file");
         var view = new TextsView(settings, () => MatchFiles.AtomicText(AppPaths.ConfigFile("settings.json"), JsonSerializer.Serialize(settings)), new Countdown(() => time));
         Need(!File.Exists(settings.Output), "Construction does not overwrite output");
         var window = new Window { Content = view, Width = 1280, Height = 800 }; window.Show(); Dispatcher.UIThread.RunJobs();

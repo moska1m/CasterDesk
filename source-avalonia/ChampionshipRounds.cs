@@ -2,6 +2,10 @@ namespace CasterDesk.Avalonia;
 
 public sealed partial class ChampionshipView
 {
+    ScrollViewer? historyScroll;
+    string historyMap = "";
+    int historyCount;
+    bool historyPendingFollow;
     Control Rounds()
     {
         RoundConfirm = null; var map = Session.Map;
@@ -32,18 +36,18 @@ public sealed partial class ChampionshipView
     Control QuickRound(MapRecord map)
     {
         int round = map.Rounds.Count + 1, attacker = map.Attacker(round);
-        var form = new Grid { RowDefinitions = new("Auto,Auto"), ColumnDefinitions = new("*,*"), VerticalAlignment = VerticalAlignment.Top };
-        var heading = Ui.RawText($"{L.T("Round")} {round:00} · {Session.Current.Team(attacker)} {L.T("Ataque")} / {Session.Current.Team(1 - attacker)} {L.T("Defesa")}"); heading.FontSize = 12; form.Children.Add(heading); SetColumnSpan(heading, 2);
+        var form = new Grid { RowDefinitions = new("Auto"), ColumnDefinitions = new("*,*"), VerticalAlignment = VerticalAlignment.Top };
         var sites = new UniformGrid { Columns = 2, VerticalAlignment = VerticalAlignment.Top };
         foreach (string bombsite in Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites) {
             var button = Ui.Button(BombsiteNames.Display(map.MapId, bombsite), () => { site = bombsite; Refresh(); }, site == bombsite);
             button.Content = new TextBlock { Text = BombsiteNames.Display(map.MapId, bombsite), TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, FontSize = 12 };
             button.Name = "round-site-" + Array.IndexOf(Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites, bombsite);
             button.IsEnabled = !map.SiteBlocked(bombsite, round); button.Margin = new Thickness(3); button.FontSize = 12;
+            button.Height = 54; button.Padding = new Thickness(4);
             if (site == bombsite) button.BorderBrush = Brushes.White;
             sites.Children.Add(button);
         }
-        Add(form, sites, 0, 1);
+        Add(form, sites, 0);
         var decisions = new StackPanel();
         var teams = new UniformGrid { Columns = 2 };
         for (int team = 0; team < 2; team++) {
@@ -52,10 +56,8 @@ public sealed partial class ChampionshipView
                 winner = selected; if (!RoundEnding.Allowed(ending, winner, attacker)) ending = ""; Refresh();
             });
             button.Name = "round-winner-" + team; button.Margin = new Thickness(3);
-            button.Content = new StackPanel { Children = {
-                new TextBlock { Text = L.T(team == attacker ? "Ataque" : "Defesa"), FontSize = 11, TextAlignment = TextAlignment.Center },
-                new TextBlock { Text = Session.Current.Team(team), FontSize = 12, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis }
-            } };
+            button.Content = new TextBlock { Text = Session.Current.Team(team), FontSize = 12, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            button.Height = 34; button.Padding = new Thickness(4); ToolTip.SetTip(button, Session.Current.Team(team) + " · " + L.Role(team == attacker ? "ATQ" : "DEF"));
             button.Background = Ui.Team(team, winner == team); button.Foreground = Brushes.White;
             button.BorderThickness = new Thickness(winner == team ? 2 : 0); button.BorderBrush = Brushes.White; teams.Children.Add(button);
         }
@@ -65,9 +67,10 @@ public sealed partial class ChampionshipView
             var button = Ui.Button(RoundEnding.Label(code), () => { ending = code; Refresh(); }, ending == code);
             button.Content = new TextBlock { Text = RoundEnding.Label(code), TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, FontSize = 11 }; button.Padding = new Thickness(4);
             button.Name = "round-ending-" + code; button.Margin = new Thickness(3); button.FontSize = 12;
+            button.Height = 34;
             button.IsEnabled = winner >= 0 && RoundEnding.Allowed(code, winner, attacker); ends.Children.Add(button);
         }
-        decisions.Children.Add(ends); Add(form, decisions, 1, 1); return form;
+        decisions.Children.Add(ends); Add(form, decisions, 1); return form;
     }
 
     Control CompactRound(MapRecord map)
@@ -101,7 +104,21 @@ public sealed partial class ChampionshipView
             ToolTip.SetTip(button, L.T("Clique para corrigir um round.")); panel.Children.Add(button);
         }
         if (map.Rounds.Count == 0) panel.Children.Add(Ui.Text("Nenhum round registrado."));
-        return new ScrollViewer { Content = panel, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        string context = Session.Current.Id + ":" + map.MapId;
+        bool follow = context != historyMap || map.Rounds.Count > historyCount || historyPendingFollow;
+        historyPendingFollow = follow;
+        Vector offset = historyScroll?.Offset ?? default;
+        historyMap = context; historyCount = map.Rounds.Count;
+        var scroll = new ScrollViewer { Name = "round-history-scroll", Content = panel, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        historyScroll = scroll;
+        void RestorePosition(object? sender, EventArgs args) {
+            if (scroll.Viewport.Height <= 0 || scroll.Extent.Height <= 0) return;
+            scroll.LayoutUpdated -= RestorePosition;
+            if (historyScroll != scroll) return;
+            if (follow) { scroll.ScrollToEnd(); historyPendingFollow = false; } else scroll.Offset = offset;
+        }
+        scroll.LayoutUpdated += RestorePosition;
+        return scroll;
     }
     static Grid HistoryLine(string[] values)
     {

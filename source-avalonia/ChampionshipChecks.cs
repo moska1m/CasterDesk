@@ -1,6 +1,8 @@
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.VisualTree;
+using Avalonia.Headless;
+using Avalonia.Input;
 
 namespace CasterDesk.Avalonia;
 
@@ -61,9 +63,10 @@ internal static class ChampionshipChecks
             view.Measure(size); view.Arrange(new Rect(size));
             var action = view.RoundConfirm!; var position = action.TranslatePoint(default, view)!.Value;
             Need(action.Bounds.Height > 0 && position.Y >= 0 && position.Y + action.Bounds.Height <= size.Height, "Confirm round visible at " + size);
-            var frame = action.GetVisualAncestors().OfType<Border>().First(b => b.Child is Grid g && g.Children.OfType<TextBlock>().Any(t => t.Text == L.T("Round a round")));
+            var frame = Find<Border>(view, "round-entry-card");
             var inside = action.TranslatePoint(default, frame)!.Value;
             Need(inside.Y >= 0 && inside.Y + action.Bounds.Height <= frame.Bounds.Height, "Confirm round cannot overlap footer");
+            Need(view.GetVisualDescendants().OfType<Button>().Where(b => b.Name?.StartsWith("round-site-") == true).Select(b => b.Height).Distinct().Count() == 1, "Bombsite buttons keep a uniform height");
             var history = Find<Grid>(view, "round-history-panel");
             Need(frame.TranslatePoint(default, view)!.Value.X < history.TranslatePoint(default, view)!.Value.X, "Round entry stays left of history");
             Need(frame.TranslatePoint(default, view)!.Value.X >= Find<Border>(view, "bans-panel").TranslatePoint(default, view)!.Value.X + Find<Border>(view, "bans-panel").Bounds.Width, "Bans stay left; both round controls and history stay in the right block");
@@ -84,6 +87,7 @@ internal static class ChampionshipChecks
         Need(compactAction.Bounds.Height > 0 && compactAction.TranslatePoint(default, compactShell.Championship)!.Value.Y + compactAction.Bounds.Height <= compactShell.Championship.Bounds.Height, "Full shell compact confirmation visible");
         Need(Find<ScrollViewer>(compactShell.Championship, "round-entry-scroll").Bounds.Height >= 32, "Compact shell retains a usable round form viewport");
         compactShell.Close();
+        owner.Width = 980; owner.Height = 640; Pump(); view.Refresh(); Pump();
         for (int round = 0; round < 7; round++) {
             int targetSite = Array.FindIndex(session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites, s => !map.SiteBlocked(s, round + 1));
             Click(Find<Button>(view, "round-site-" + targetSite)); Click(Find<Button>(view, "round-winner-0"));
@@ -92,7 +96,13 @@ internal static class ChampionshipChecks
             Need(session.Map!.Rounds.Count == round + 1, "One round saved per UI confirmation");
         }
         Need(session.Map!.Score().A == 7 && session.Map.Score().B == 0, "UI score 7-0");
-        TextButton(view, "Confirmar vencedor"); Need(Ui.ActiveQuestion != null, "Confirm result question"); Click(Find<Button>(Ui.ActiveQuestion!, "ask-1")); Pump();
+        var roundScroll = Find<ScrollViewer>(view, "round-history-scroll");
+        Need(roundScroll.Offset.Y >= Math.Max(0, roundScroll.Extent.Height - roundScroll.Viewport.Height) - 1, "New rounds follow the bottom of history");
+        roundScroll.Offset = default; view.Refresh(); Pump();
+        Need(Find<ScrollViewer>(view, "round-history-scroll").Offset.Y == 0, "Refresh preserves manual history position without new rounds");
+        TextButton(view, "Confirmar vencedor"); Need(Ui.ActiveQuestion != null, "Confirm result question");
+        Need(Ui.ActiveQuestion!.GetVisualDescendants().OfType<Button>().Count() == 2, "Winner confirmation has only confirm and cancel");
+        Click(Find<Button>(Ui.ActiveQuestion!, "ask-1")); Pump();
         Need(session.Map.Confirmed && session.Current.Complete, "Confirmed result retained");
         Click(Find<Button>(view, "history-round-0")); Need(view.ActiveDialog == null && session.Map.Rounds.Count == 7, "Confirmed rounds cannot be edited silently");
         foreach (var size in new[] { new Size(980, 640), new Size(1280, 800), new Size(1920, 1080) }) {
@@ -133,6 +143,8 @@ internal static class ChampionshipChecks
         TextButton(shell, "Modo rápido"); Pump(); Need(shell.Championship.QuickMode, "Quick registration option applies");
         TextButton(shell, "Claro"); Pump(); Need(!Ui.Dark, "Light theme option applies"); TextButton(shell, "Escuro"); Pump(); Need(Ui.Dark, "Dark theme option applies");
         shell.ToggleMenu(); Need(shell.MenuWidth == 0, "Menu closes compactly"); shell.Navigate(1); Pump();
+        shell.ToggleMenu(); Pump(); shell.MouseDown(new Point(20, 200), MouseButton.Left); shell.MouseUp(new Point(20, 200), MouseButton.Left); Pump();
+        Need(shell.MenuWidth == 0, "Clicking outside settings closes menu");
         Need(shell.GetVisualDescendants().OfType<StudioView>().Any(), "Navigation to shared studio");
         shell.Navigate(0); shell.Width = 1280; shell.Height = 800; Pump(); Snapshot((Control)shell.Content!, new Size(1280, 800), "shell"); shell.Close();
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-championship-check.txt"), $"PASS: {checks} UI checks: progressive setup, map picks, release-order operator grid, automatic ban chaining, rounds, confirmation, protected edits, review, MD formats, lobby, menu and appearance. Headless backend only.");

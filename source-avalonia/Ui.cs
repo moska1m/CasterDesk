@@ -127,18 +127,24 @@ internal static class Ui
 
     // Yes / No / Cancel, using an Avalonia dialog rather than WPF or WinForms UI.
     internal static Window? ActiveQuestion { get; private set; }
-    public static async Task<int> Ask(Control owner, string message)
+    public static async Task<int> Ask(Control owner, string message, bool winnerConfirmation = false)
     {
         var dialog = new Window { Title = "CasterDesk", Width = 540, Height = 260,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner, Background = Canvas };
+            WindowStartupLocation = WindowStartupLocation.CenterOwner, Background = winnerConfirmation ? Brush.Parse("#48242B") : Canvas,
+            FontFamily = new FontFamily("Segoe UI") };
         var content = new StackPanel { Margin = new Thickness(20) };
-        content.Children.Add(Text(message));
+        var question = Text(message);
+        if (winnerConfirmation) { question.FontSize = 21; question.TextAlignment = TextAlignment.Center; question.Foreground = Brushes.White; question.Margin = new Thickness(0, 12, 0, 28); }
+        content.Children.Add(question);
         int answer = -1;
-        var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
-        foreach (var choice in new[] { (1, "Sim"), (0, "Não"), (-1, "Cancelar") }) {
+        var actions = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12,
+            HorizontalAlignment = winnerConfirmation ? HorizontalAlignment.Center : HorizontalAlignment.Left };
+        var choices = winnerConfirmation ? new[] { (1, "Confirmar vencedor"), (-1, "Cancelar") } : new[] { (1, "Sim"), (0, "Não"), (-1, "Cancelar") };
+        foreach (var choice in choices) {
             int result = choice.Item1;
             var choiceButton = Button(choice.Item2, () => { answer = result; dialog.Close(result); }, result == 1);
             choiceButton.Name = "ask-" + result; actions.Children.Add(choiceButton);
+            if (winnerConfirmation) { choiceButton.FontSize = 17; choiceButton.MinHeight = 46; choiceButton.Padding = new Thickness(18, 10); }
         }
         content.Children.Add(actions); dialog.Content = content;
         ActiveQuestion = dialog;

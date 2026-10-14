@@ -1,6 +1,6 @@
 # CasterDesk dentro do OBS
 
-## Plugin opcional — beta.0.11
+## Plugin opcional — beta.0.12
 
 1. Feche OBS e execute o instalador do CasterDesk.
 2. Marque **Instalar o painel CasterDesk no OBS**. O componente OBS pede permissão de administrador; o aplicativo permanece instalado por usuário.
@@ -14,13 +14,19 @@ A conexão é ativada automaticamente uma vez quando a instalação opcional foi
 
 ## Rounds, bans e mapas
 
-Abas na ordem **Round a round → Bans de operadores → Cronômetro**. Selecione bombsite, vencedor e finalização e confirme. Use o seletor de histórico para corrigir um round existente; a confirmação não acrescenta outro round nem autoriza remover rounds posteriores. Mapas confirmados exigem abrir revisão no programa.
+Abas **Partida → Cronômetro**. Partida reúne registro rápido por botões de bombsite, vencedor e finalização, histórico abaixo e bans de operadores em seguida. Os bombsites têm altura uniforme e seleções destacadas. Clique em uma linha do histórico para corrigir; Novo round volta ao registro. A confirmação de uma correção não acrescenta outro round nem autoriza remover rounds posteriores. Mapas confirmados exigem abrir revisão no programa. Docks largos exibem também ataque/defesa no histórico; em docks estreitos essas duas colunas ficam ocultas para preservar a leitura do resultado.
 
-Bans de cada etapa são liberados no próprio painel. Ao liberar bans e concluir a etapa, o painel alterna entre bans e rounds, preservando a aba Cronômetro quando ela está em uso. Os lados e a prorrogação precisam estar configurados no programa.
+Bans de cada etapa são liberados no próprio painel, na mesma aba dos rounds. Os lados e a prorrogação precisam estar configurados no programa.
 
 No bloco Bans de operadores do CasterDesk, ligue **Plugin OBS** para impedir seletores automáticos depois dos rounds. Essa preferência fica salva e não desativa o cronômetro ou a conexão. Desligado, mantém o fluxo automático no programa. Clicar manualmente em um ban ou em Banir próximo continua funcionando em ambos os modos.
 
 Em MD3/MD5, o seletor de mapa do plugin usa os mapas da partida e atualiza a seleção do programa. Em MD1 não há seletor editável. A seleção não apaga registros.
+
+## Cronômetro e TXT
+
+Controle iniciar/retomar, pausar, definir tempo, retirar/acrescentar um minuto e reiniciar. Configure tempo inicial, formato mm:ss/hh:mm:ss, mensagem final e três acréscimos em minutos; Aplicar configurações salva esses valores sem reiniciar a contagem em andamento. Definir tempo altera imediatamente a contagem; Resetar tempo volta à duração inicial salva. A mensagem final aparece ao encerrar a contagem. Contagem, configurações e TXT são compartilhados com o programa.
+
+Copiar caminho copia somente a pasta que contém o TXT, no painel e no CasterDesk. No seletor de arquivos do OBS, abra essa pasta e escolha o TXT. A seleção de outro arquivo de saída continua na aba Textos para OBS do programa.
 
 ## Painel de navegador anterior
 

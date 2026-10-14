@@ -1,3 +1,14 @@
+# 0.3.0-beta.0.12
+
+- OBS: Partida reúne registro por botões, histórico clicável e bans; Cronômetro em aba separada.
+- Cronômetro com mensagem final, formato, duração inicial, três acréscimos configuráveis e reset sincronizados com o aplicativo.
+- Copiar caminho do timer copia a pasta do TXT, mantendo o arquivo de saída.
+- No programa, histórico permanece à direita; round/lados no cabeçalho e bombsites de altura uniforme.
+- Novos rounds acompanham o final do histórico; demais atualizações preservam a posição de leitura.
+- Confirmação do vencedor com somente confirmar/cancelar, texto maior e alerta vermelho escuro centralizado.
+- Selo ATIVOS removido e configurações fecham ao clicar fora.
+- Composições de imagem, cronômetro/TXT e regras de partida preservados; sem execução de OBS/instaladores na área de trabalho.
+
 # 0.3.0-beta.0.11
 
 - Plugin com abas Round a round → Bans de operadores → Cronômetro e marca centralizada.

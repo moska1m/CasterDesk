@@ -95,7 +95,7 @@ internal sealed class ObsDockServer : IAsyncDisposable
         bool editable=map!=null&&!map.Confirmed&&!match.Complete;
         return new {
             version=BuildInfo.Version,revision,language=L.Current,controllable=canControl()&&championship.DockReady&&!stopping,
-            timer=new{seconds=texts.Remaining,running=texts.Running},
+            timer=new{seconds=texts.Remaining,running=texts.Running,options=texts.TimerOptions},
             match=new{id=match.Id,teamA=match.TeamA,teamB=match.TeamB,mapId=map?.MapId,map=map==null?"":session.Catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName,confirmed=map?.Confirmed??false,
                 maps=match.Maps.Select(m=>new{id=m.MapId,label=session.Catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName}).ToArray()},
             pending=pending.Length>0?(int?)pending[0]:null,role,
@@ -106,10 +106,10 @@ internal sealed class ObsDockServer : IAsyncDisposable
                 history=map==null?[]:map.Rounds.Select((r,i)=>new{index=i,site=r.Site,winner=r.Winner,ending=r.Ending,attacker=map.Attacker(i+1)}).ToArray()},
             bans=map==null?[]:map.BanOrder(half).Select(slot=>new{slot,team=MapRecord.BanTeam(slot),role=map.BanRole(slot),name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==map.Bans[slot])?.Name??"",unlocked=map.BanStageReached(slot)}).ToArray(),
             operators=role==""?[]:OperatorOrder.Sort(session.Catalog.Operators,role).Select(op=>new{id=op.Id,name=op.Name,enabled=!map!.Bans.Skip(half*6).Take(6).Contains(op.Id)}).ToArray(),
-            labels=new{rounds=L.T("Round a round"),newRound=L.T("Novo round"),confirmRound=L.T("Confirmar round"),editRound=L.T("Corrigir round"),roundWait=L.T(map?.Score().Winner>=0?"Vencedor já definido. Confira os rounds.":map?.Rounds.Count>=12&&map.OtAttack<0?"Overtime sem lado definido.":"Conclua os bans de operadores para registrar o próximo round."),timer=L.T("CRONÔMETRO"),bans=L.T("Bans de operadores"),start=L.T("Iniciar / Retomar"),pause=L.T("Pausar"),set=L.T("Definir tempo"),select=L.T("Selecionar…"),blocked=L.T("Bloqueado"),wait=L.T(!championship.BansReady?"Conclua o veto e defina os lados na partida.":"Nenhum ban pendente."),connected=L.T("Conectado"),disconnected=L.T("Desconectado"),duration=L.T("Tempo inicial:"),search=L.T("Filtrar operadores"),invalidTime=L.T("Use mm:ss ou hh:mm:ss."),busy=L.T("Conclua a edição aberta no CasterDesk para usar os controles."),team=L.T("Equipe"),def=L.Role("DEF"),atq=L.Role("ATQ")}
+            labels=new{partida=L.T("Partida"),history=L.T("Histórico de rounds"),round=L.T("Round"),site=L.T("Bomb site"),winner=L.T("Vencedor"),ending=L.T("Finalização"),reset=L.T("Resetar tempo"),applyTimer=L.T("Aplicar configurações"),copy=L.T("Copiar caminho"),message=L.T("Mensagem final:"),rounds=L.T("Round a round"),newRound=L.T("Novo round"),confirmRound=L.T("Confirmar round"),editRound=L.T("Corrigir round"),roundWait=L.T(map?.Score().Winner>=0?"Vencedor já definido. Confira os rounds.":map?.Rounds.Count>=12&&map.OtAttack<0?"Overtime sem lado definido.":"Conclua os bans de operadores para registrar o próximo round."),timer=L.T("CRONÔMETRO"),bans=L.T("Bans de operadores"),start=L.T("Iniciar / Retomar"),pause=L.T("Pausar"),set=L.T("Definir tempo"),select=L.T("Selecionar…"),blocked=L.T("Bloqueado"),wait=L.T(!championship.BansReady?"Conclua o veto e defina os lados na partida.":"Nenhum ban pendente."),connected=L.T("Conectado"),disconnected=L.T("Desconectado"),duration=L.T("Tempo inicial:"),search=L.T("Filtrar operadores"),invalidTime=L.T("Use mm:ss ou hh:mm:ss."),busy=L.T("Conclua a edição aberta no CasterDesk para usar os controles."),team=L.T("Equipe"),def=L.Role("DEF"),atq=L.Role("ATQ")}
         };
     }
-    internal sealed record DockCommand(string Action,double Seconds=0,string MatchId="",string MapId="",long Revision=-1,int Slot=-1,string OperatorId="",string Site="",int Winner=-1,string Ending="",int RoundIndex=-1,string TargetMapId="");
+    internal sealed record DockCommand(string Action,double Seconds=0,string MatchId="",string MapId="",long Revision=-1,int Slot=-1,string OperatorId="",string Site="",int Winner=-1,string Ending="",int RoundIndex=-1,string TargetMapId="",string Format="mm:ss",string Message="",double[]? Presets=null);
     IResult Execute(DockCommand command)
     {
         if(stopping||!canControl()||!championship.DockReady)return Results.Conflict(new{error=L.T("Bloqueado")});
@@ -137,6 +137,8 @@ internal sealed class ObsDockServer : IAsyncDisposable
                 case "pause":texts.PauseClock();break;
                 case "adjust": if(!double.IsFinite(command.Seconds)||Math.Abs(command.Seconds)>86400)return Results.BadRequest(); texts.AdjustClock(command.Seconds);break;
                 case "set":texts.SetClock(command.Seconds);break;
+                case "reset":texts.ResetClock();break;
+                case "timerConfig":texts.ConfigureTimer(command.Seconds,command.Format??"",command.Message??"",command.Presets??[]);break;
                 default:return Results.BadRequest();
             }
             return Results.Json(State());
