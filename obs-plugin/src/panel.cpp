@@ -24,7 +24,7 @@
 static void clearLayout(QLayout *layout)
 {
     while (auto *item = layout->takeAt(0)) {
-        if (item->widget()) item->widget()->deleteLater();
+        if (item->widget()) { item->widget()->hide(); item->widget()->setObjectName({}); item->widget()->deleteLater(); }
         if (item->layout()) clearLayout(item->layout());
         delete item;
     }
@@ -62,7 +62,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     controls->addWidget(start,0,0); controls->addWidget(pause,0,1); controls->addWidget(subtract,1,0); controls->addWidget(add,1,1);
     auto *timeRow = new QHBoxLayout(); duration = new QLineEdit(); duration->setPlaceholderText("10:00"); duration->setObjectName("duration"); duration->setMaxLength(8);
     set = new QPushButton("Definir tempo"); set->setObjectName("set"); timeRow->addWidget(duration,1); timeRow->addWidget(set); timerLayout->addLayout(timeRow); timerLayout->addStretch();
-    tabs->addTab(timerPage,"Cronômetro");
+    auto *timerScroll = new QScrollArea(); timerScroll->setWidgetResizable(true); timerScroll->setWidget(timerPage); tabs->addTab(timerScroll,"Cronômetro");
     auto *partida = new QWidget(); partida->setObjectName("match-page"); auto *partidaLayout = new QVBoxLayout(partida);
     auto *matchScroll = new QScrollArea(); matchScroll->setWidgetResizable(true); matchScroll->setWidget(partida);
     auto *roundPage = new QWidget(); auto *roundLayout = new QVBoxLayout(roundPage); partidaLayout->addWidget(roundPage);
@@ -74,6 +74,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     roundSave = new QPushButton("Confirmar round"); roundSave->setObjectName("round-save"); roundSave->setMinimumHeight(36); roundLayout->addWidget(roundSave);
     newRound = new QPushButton("Novo round"); newRound->setObjectName("new-round"); roundLayout->addWidget(newRound); newRound->hide();
     connect(newRound,&QPushButton::clicked,this,[this]{roundIndex=-1;renderRounds(true);});
+    auto *historyTitle = new QLabel("Histórico de rounds"); historyTitle->setObjectName("history-title"); partidaLayout->addWidget(historyTitle);
     roundHistory = new QTableWidget(); roundHistory->setObjectName("round-history"); roundHistory->setColumnCount(4); roundHistory->setMinimumWidth(0); roundHistory->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred); roundHistory->setMinimumHeight(130); roundHistory->setMaximumHeight(220);
     roundHistory->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); roundHistory->verticalHeader()->hide(); roundHistory->setEditTriggers(QAbstractItemView::NoEditTriggers); roundHistory->setSelectionBehavior(QAbstractItemView::SelectRows); roundHistory->setSelectionMode(QAbstractItemView::SingleSelection); partidaLayout->addWidget(roundHistory);
     connect(roundHistory,&QTableWidget::cellClicked,this,[this](int row,int){roundIndex=row;renderRounds(true);});
@@ -168,7 +169,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(mapsToken!=mapsRendered){mapsRendered=mapsToken;buildingMaps=true;mapChoice->clear();for(const auto &value:match["maps"].toArray()){const auto map=value.toObject();mapChoice->addItem(map["label"].toString(),map["id"].toString());}mapChoice->setCurrentIndex(mapChoice->findData(match["mapId"].toString()));mapChoice->setVisible(mapChoice->count()>1);buildingMaps=false;}
     const auto time=data["timer"].toObject();int seconds=static_cast<int>(std::ceil(time["seconds"].toDouble()));seconds=qBound(0,seconds,86400);const int hours=seconds/3600;
     clock->setText((hours>0?QString("%1:").arg(hours,2,10,QChar('0')):QString())+QString("%1:%2").arg((seconds/60)%60,2,10,QChar('0')).arg(seconds%60,2,10,QChar('0')));
-    start->setText("▶");start->setToolTip(label("start","Iniciar / Retomar"));start->setAccessibleName(start->toolTip());pause->setText("Ⅱ");pause->setToolTip(label("pause","Pausar"));pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(1,label("timer","Cronômetro"));tabs->setTabText(0,label("partida","Partida"));findChild<QLabel *>("ban-title")->setText(label("bans","Bans de operadores"));search->setPlaceholderText(label("search","Filtrar operadores"));
+    start->setText(label("start","Iniciar / Retomar"));start->setToolTip(start->text());start->setAccessibleName(start->toolTip());pause->setText(label("pause","Pausar"));pause->setToolTip(pause->text());pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(1,label("timer","Cronômetro"));tabs->setTabText(0,label("partida","Partida"));findChild<QLabel *>("ban-title")->setText(label("bans","Bans de operadores"));findChild<QLabel *>("history-title")->setText(label("history","Histórico de rounds"));search->setPlaceholderText(label("search","Filtrar operadores"));
     if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
     const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
     if(next!=rendered){rendered=next;clearLayout(banSlots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");
@@ -176,12 +177,12 @@ void CasterDeskPanel::receive(const QJsonObject &data)
         phase->setText(nextPhase);renderOperators();}
     renderRounds();updateEnabled();
     Q_UNUSED(previousPending);
-    const auto options=time["options"].toObject();const auto optionToken=QString::fromUtf8(QJsonDocument(options).toJson(QJsonDocument::Compact));
+    const auto options=time["options"].toObject();
     // Polling must not overwrite text or preset values while the caster is typing.
     const auto settingsToken=QString::number(options["initial"].toDouble())+options["format"].toString()+options["message"].toString()+QString::fromUtf8(QJsonDocument(options["presets"].toArray()).toJson());
     if(settingsToken!=timerOptionsRendered){timerOptionsRendered=settingsToken;if(!duration->hasFocus()){int initial=options["initial"].toInt(600);duration->setText(QString("%1:%2:%3").arg(initial/3600,2,10,QChar('0')).arg(initial/60%60,2,10,QChar('0')).arg(initial%60,2,10,QChar('0')));}if(!finalMessage->hasFocus())finalMessage->setText(options["message"].toString());if(!timeFormat->hasFocus())timeFormat->setCurrentText(options["format"].toString("mm:ss"));auto presets=options["presets"].toArray();for(int i=0;i<3&&i<presets.size();++i)if(!presetValues[i]->hasFocus())presetValues[i]->setValue(presets[i].toDouble());}
     timerStatus->setText(options["status"].toString());outputFolder->setText(options["folder"].toString());outputFolder->setToolTip(options["output"].toString());
-    if(time["seconds"].toDouble()<=0&&!options["readout"].toString().isEmpty())clock->setText(options["readout"].toString());
+    if(!options["readout"].toString().isEmpty())clock->setText(options["readout"].toString());
     reset->setText(label("reset","Resetar tempo"));timerSave->setText(label("applyTimer","Aplicar configurações"));copyFolder->setText(label("copy","Copiar caminho"));finalMessage->setPlaceholderText(label("message","Mensagem final:"));
     for(int i=0;i<3;++i)presetButtons[i]->setText(QString("+ %1 min").arg(presetValues[i]->value()));
 
@@ -220,7 +221,7 @@ void CasterDeskPanel::renderRounds(bool force)
     if(follow)roundHistory->scrollToBottom();
     roundSave->setText(label(roundIndex<0?"confirmRound":"editRound",roundIndex<0?"Confirmar round":"Corrigir round"));newRound->setVisible(roundIndex>=0);newRound->setText(label("newRound","Novo round"));
     int attacker=data["attacker"].toInt(-1);if(roundIndex>=0)attacker=history[roundIndex].toObject()["attacker"].toInt();
-    roundHeading->setText(QString("%1 · %2 %3 / %4 %5 · %6").arg(roundIndex<0?data["number"].toInt():roundIndex+1).arg(match[attacker==0?"teamA":"teamB"].toString(),label("atq","ATQ"),match[attacker==0?"teamB":"teamA"].toString(),label("def","DEF"),data["score"].toString()));
+    roundHeading->setText(label("rounds","Round a round")+" · "+QString("%1 · %2 %3 / %4 %5 · %6").arg(roundIndex<0?data["number"].toInt():roundIndex+1).arg(match[attacker==0?"teamA":"teamB"].toString(),label("atq","ATQ"),match[attacker==0?"teamB":"teamA"].toString(),label("def","DEF"),data["score"].toString()));
     if(roundIndex<0&&!data["ready"].toBool())roundHeading->setText(roundHeading->text()+"\n"+label("roundWait","Conclua os bans e os lados para continuar."));
     updateRoundChoices();
 }
