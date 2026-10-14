@@ -53,7 +53,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     auto *timeRow = new QHBoxLayout(); duration = new QLineEdit(); duration->setPlaceholderText("10:00"); duration->setObjectName("duration"); duration->setMaxLength(8);
     set = new QPushButton("Definir tempo"); set->setObjectName("set"); timeRow->addWidget(duration,1); timeRow->addWidget(set); timerLayout->addLayout(timeRow); timerLayout->addStretch();
     tabs->addTab(timerPage,"Cronômetro");
-    auto *banPage = new QWidget(); auto *banLayout = new QVBoxLayout(banPage); slots = new QGridLayout(); banLayout->addLayout(slots);
+    auto *banPage = new QWidget(); auto *banLayout = new QVBoxLayout(banPage); banSlots = new QGridLayout(); banLayout->addLayout(banSlots);
     phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
     search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
     auto *scroll = new QScrollArea(); scroll->setWidgetResizable(true); auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setAlignment(Qt::AlignTop); scroll->setWidget(grid); banLayout->addWidget(scroll,1); tabs->addTab(banPage,"Bans de operadores");
@@ -116,8 +116,8 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     start->setText("▶ "+label("start","Iniciar / Retomar"));pause->setText("Ⅱ "+label("pause","Pausar"));set->setText(label("set","Definir tempo"));tabs->setTabText(0,label("timer","Cronômetro"));tabs->setTabText(1,label("bans","Bans de operadores"));search->setPlaceholderText(label("search","Filtrar operadores"));
     if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
     const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
-    if(next!=rendered){rendered=next;clearLayout(slots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");
-        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setStyleSheet(QString("padding:5px;border-bottom:3px solid %1;").arg(ban["team"].toInt()==0?"#408fb3":"#ff7737"));slots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
+    if(next!=rendered){rendered=next;clearLayout(banSlots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");
+        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setStyleSheet(QString("padding:5px;border-bottom:3px solid %1;").arg(ban["team"].toInt()==0?"#408fb3":"#ff7737"));banSlots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
         phase->setText(nextPhase);renderOperators();}
     updateEnabled();
 }

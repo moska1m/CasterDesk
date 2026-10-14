@@ -27,7 +27,7 @@ private:
     QLabel *status, *context, *clock, *error, *phase;
     QTabWidget *tabs;
     QLineEdit *duration, *search;
-    QGridLayout *slots, *operators;
+    QGridLayout *banSlots, *operators;
     QPushButton *start, *pause, *add, *subtract, *set;
     bool connected = false, busy = false;
     bool discover();
