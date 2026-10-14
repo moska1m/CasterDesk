@@ -12,6 +12,8 @@
 #include <QHash>
 #include <QIcon>
 #include <QComboBox>
+#include <QTableWidget>
+#include <QDoubleSpinBox>
 
 class CasterDeskPanel final : public QWidget {
 public:
@@ -32,15 +34,25 @@ private:
     QGridLayout *banSlots, *operators;
     QPushButton *start, *pause, *add, *subtract, *set;
     bool connected = false, busy = false;
-    QComboBox *roundHistory, *roundSite, *roundEnding;
+    QGridLayout *roundSites, *roundEndings;
+    QTableWidget *roundHistory;
     QPushButton *roundTeams[2], *roundSave;
     QLabel *roundHeading;
     int roundWinner = -1;
+    int roundIndex = -1;
+    QString roundSite, roundEnding;
+    QPushButton *newRound;
     bool buildingRounds = false;
     QString roundsRendered;
     QComboBox *mapChoice;
     bool buildingMaps = false;
     QString mapsRendered;
+    QLineEdit *finalMessage, *outputFolder;
+    QComboBox *timeFormat;
+    QDoubleSpinBox *presetValues[3];
+    QPushButton *presetButtons[3], *timerSave, *reset, *copyFolder;
+    QString timerOptionsRendered;
+    QLabel *timerStatus;
     void renderRounds(bool force = false);
     void updateRoundChoices();
     bool discover();
