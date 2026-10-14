@@ -13,7 +13,7 @@ public sealed partial class ChampionshipView
             var form = QuickMode ? QuickRound(map) : CompactRound(map);
             Add(panel, new ScrollViewer { Name = "round-entry-scroll", Content = form, MaxHeight = compact ? 190 : 285 }, 0);
             RoundConfirm = Action("Confirmar round", async () => {
-                Session.Round(site, winner, ending); site = ending = ""; winner = -1; Refresh(); await OpenNextBan();
+                Session.Round(site, winner, ending); site = ending = ""; winner = -1; Refresh(); if(!UseObsForBans)await OpenNextBan();
             }, true);
             RoundConfirm.Name = "confirm-round";
             RoundConfirm.IsEnabled = !string.IsNullOrEmpty(site) && winner >= 0 && !string.IsNullOrEmpty(ending);

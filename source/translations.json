@@ -1,4 +1,8 @@
 {
+  "Plugin OBS": ["OBS plugin", "Plugin OBS"],
+  "Usar plugin do OBS": ["Use OBS plugin", "Usar plugin de OBS"],
+  "Novo round": ["New round", "Nueva ronda"],
+  "Partida alterada. Atualize o painel.": ["Match changed. Refresh the panel.", "La partida cambió. Actualiza el panel."],
   "O plugin do OBS encontra a conexão automaticamente. Abra o CasterDesk e selecione Painéis → CasterDesk no OBS.": ["The OBS plugin discovers the connection automatically. Open CasterDesk and select Docks → CasterDesk in OBS.", "El plugin de OBS detecta la conexión automáticamente. Abre CasterDesk y selecciona Paneles → CasterDesk en OBS."],
   "Conclua a edição aberta no CasterDesk para usar os controles.": ["Finish the open edit in CasterDesk to use the controls.", "Finaliza la edición abierta en CasterDesk para usar los controles."],
   "Painel OBS": ["OBS panel", "Panel OBS"],

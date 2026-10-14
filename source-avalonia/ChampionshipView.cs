@@ -24,6 +24,8 @@ public sealed partial class ChampionshipView : Grid
         && Session.Current.CoinWinner >= 0 && Session.Current.FirstBan >= 0;
     internal bool VetoComplete => Session.Current.Veto.All(v => !string.IsNullOrEmpty(v));
     internal bool BansReady => VetoComplete && Session.Map?.InitialAttack >= 0;
+    internal bool UseObsForBans { get; set; }
+    internal Action<bool>? ObsBansModeChanged { get; set; }
     internal bool DockReady => !stopped && !building && !namesDirty && !Processing && ActiveDialog == null && Ui.ActiveQuestion == null;
 
     public ChampionshipView(MatchSession? session = null)
@@ -108,6 +110,13 @@ public sealed partial class ChampionshipView : Grid
         var bansPanel = Ui.Card("Bans de operadores", Bans());
         var bansBody = (Grid)bansPanel.Child!; selectedMap.Width = 180; selectedMap.Margin = new Thickness(0); selectedMap.HorizontalAlignment = HorizontalAlignment.Right;
         bansBody.Children.Add(selectedMap);
+        bansBody.Children.Remove(selectedMap);
+        var title=bansBody.Children.OfType<TextBlock>().First();bansBody.Children.Remove(title);
+        var banHeader=Columns("*,Auto,Auto");Add(banHeader,title,0);selectedMap.Width=compact?140:180;Add(banHeader,selectedMap,2);
+        var obsMode=new ToggleSwitch {Name="use-obs-bans",Content=L.T("Plugin OBS"),IsChecked=UseObsForBans,FontSize=12,Margin=new Thickness(4,0,8,0)};
+        ToolTip.SetTip(obsMode,L.T("Usar plugin do OBS"));
+        obsMode.IsCheckedChanged+=(_,_)=>{bool value=obsMode.IsChecked==true;try{ObsBansModeChanged?.Invoke(value);UseObsForBans=value;}catch(Exception ex){notice.Text=ex.Message;obsMode.IsChecked=UseObsForBans;}};
+        Add(banHeader,obsMode,1);bansBody.Children.Add(banHeader);
         bansPanel.Name = "bans-panel"; Add(layout, bansPanel, 0, 2);
         var scoreText = Ui.Text($"{match.TeamA}   {score?.A ?? 0} × {score?.B ?? 0}   {match.TeamB}", true);
         scoreText.Name = "match-score"; scoreText.TextAlignment = TextAlignment.Center; scoreText.HorizontalAlignment = HorizontalAlignment.Center;

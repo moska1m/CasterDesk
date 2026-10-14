@@ -33,6 +33,9 @@ public sealed class StudioShell : Window
         obsSettings = ConfigurationStore.Read<ObsDockSettings>("obs-connection.json");
         obsSettings.ConfigurePlugin(File.Exists(Path.Combine(AppContext.BaseDirectory,"obs-plugin.optin")));
         obsDock = new ObsDockServer(Championship,Texts,()=>!backupOpen&&!studio.Exporting&&!OwnedWindows.Any(w=>w.IsVisible),obsSettings);
+        Championship.UseObsForBans=obsSettings.RouteBansToOBS;
+        Championship.ObsBansModeChanged=value=>{bool old=obsSettings.RouteBansToOBS;try{obsSettings.RouteBansToOBS=value;SaveObsSettings();}catch{obsSettings.RouteBansToOBS=old;throw;}};
+        Championship.Refresh();
         Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){AppLog.Write("OBS connection: "+ex);Notify(ex.Message);} };
         Championship.MapConfirmed += async (match, map) => {
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }

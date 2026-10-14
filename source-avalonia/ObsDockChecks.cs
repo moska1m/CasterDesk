@@ -3,6 +3,8 @@ using System.Net.Http.Json;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using Avalonia.VisualTree;
+using Avalonia.Interactivity;
 
 namespace CasterDesk.Avalonia;
 
@@ -55,11 +57,36 @@ internal static class ObsDockChecks
             if(n==0){previous=revision;using var r=Send("/api/command",key,new{action="ban",matchId=session.Current.Id,mapId,revision,slot,operatorId=op.Id});Need(r.StatusCode==HttpStatusCode.Conflict,"Stale or duplicated ban request rejected");}
         }
         using(var r=Send("/api/command",key,new{action="ban",matchId=session.Current.Id,mapId,revision=previous,slot=4,operatorId="sentry"}))Need(r.StatusCode==HttpStatusCode.Conflict,"Future stage cannot be opened remotely");
+        var obsToggle=view.GetVisualDescendants().OfType<ToggleSwitch>().Single(t=>t.Name=="use-obs-bans");obsToggle.IsChecked=true;Need(view.UseObsForBans,"OBS mode toggle suppresses automatic program ban dialogs");
+        var winners=new[]{0,0,0,1,1,1,0,0,0,1,1,1,0,1,0};
+        for(int n=0;n<winners.Length;n++){
+            while(session.PendingBans().Length>0){using var state=State();var d=state.RootElement;int slot=d.GetProperty("pending").GetInt32();string role=d.GetProperty("role").GetString()!;var op=OperatorOrder.Sort(session.Catalog.Operators,role).First(o=>!session.Map!.Bans.Skip(slot/6*6).Take(6).Contains(o.Id));
+                using var r=Send("/api/command",key,new{action="ban",matchId=session.Current.Id,mapId,revision=d.GetProperty("revision").GetInt64(),slot,operatorId=op.Id});Need(r.IsSuccessStatusCode&&view.ActiveDialog==null,"Later bans remain available in OBS without popup");}
+            if(n==12)session.Side(mapId,true,0);
+            string chosen=session.Catalog.Maps.Single(m=>m.Id==mapId).Sites.First(s=>!session.Map!.SiteBlocked(s,n+1));
+            using var before=State();var d0=before.RootElement;
+            Need(d0.GetProperty("rounds").GetProperty("ready").GetBoolean(),"Round ready after all stage bans and sides");
+            if(n==2){
+                void Click(string name){var b=view.GetVisualDescendants().OfType<Button>().Single(b=>b.Name==name);b.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Dispatcher.UIThread.RunJobs();}
+                int siteIndex=Array.IndexOf(session.Catalog.Maps.Single(m=>m.Id==mapId).Sites,chosen);Click("round-site-"+siteIndex);Click("round-winner-0");Click("round-ending-elimination");Click("confirm-round");
+                Need(session.Map!.Rounds.Count==3&&view.ActiveDialog==null&&session.PendingBans().Length==2,"Program round 3 suppresses popup in OBS mode and exposes both bans");
+            }else{using var r=Send("/api/command",key,new{action="round",matchId=session.Current.Id,mapId,revision=d0.GetProperty("revision").GetInt64(),site=chosen,winner=winners[n],ending="elimination"});Need(r.IsSuccessStatusCode&&session.Map!.Rounds.Count==n+1&&view.ActiveDialog==null,"Remote round saved without desktop popup");}
+            if(n==0){using var duplicate=Send("/api/command",key,new{action="round",matchId=session.Current.Id,mapId,revision=d0.GetProperty("revision").GetInt64(),site=chosen,winner=0,ending="elimination"});Need(duplicate.StatusCode==HttpStatusCode.Conflict,"Duplicate round cannot be appended");}
+        }
+        Need(session.Map!.Score().A==8&&session.Map.Score().B==7&&session.Map.Bans.All(b=>!string.IsNullOrEmpty(b)),"Full MD1 with all 12 bans, halftime and overtime");
+        using(var state=State()){using var r=Send("/api/command",key,new{action="round",matchId=session.Current.Id,mapId,revision=state.RootElement.GetProperty("revision").GetInt64(),roundIndex=0,site=session.Map.Rounds[0].Site,winner=0,ending="elimination"});Need(r.IsSuccessStatusCode&&session.Map.Rounds.Count==15,"Existing round can be reviewed without appending or trimming");}
+        var preference=new ObsDockSettings {RouteBansToOBS=true};Need(JsonSerializer.Deserialize<ObsDockSettings>(JsonSerializer.Serialize(preference))!.RouteBansToOBS,"OBS ban routing preference persists");
         Wait(server.DisposeAsync().AsTask());Need(!server.Running,"Disable stops connection");Wait(server.StartAsync());
         using(var before=State()){
             long revision=before.RootElement.GetProperty("revision").GetInt64();session.New();using var after=State();
             Need(after.RootElement.GetProperty("revision").GetInt64()>revision,"Restart reconnects match revision notifications");
             using var r=Send("/api/command",key,new{action="ban",matchId=before.RootElement.GetProperty("match").GetProperty("id").GetString(),mapId,revision,slot=4,operatorId="sentry"});Need(r.StatusCode==HttpStatusCode.Conflict,"Changed selected match rejects old commands");
+        }
+        foreach(string format in new[]{"MD3","MD5"}){
+            session.New();session.Setup(format,0,0,false);for(int n=0;n<8;n++)session.Veto(n,session.Catalog.Maps[n].Id);
+            using var before=State();Need(before.RootElement.GetProperty("match").GetProperty("maps").GetArrayLength()==(format=="MD3"?3:5),"Series exposes its maps");
+            var id=session.Current.Maps.Last().MapId;using var response=Send("/api/command",key,new{action="selectMap",matchId=session.Current.Id,mapId=session.Map!.MapId,revision=before.RootElement.GetProperty("revision").GetInt64(),targetMapId=id});
+            Need(response.IsSuccessStatusCode&&session.Map!.MapId==id,"OBS map selection follows program selection for "+format);
         }
         Wait(server.DisposeAsync().AsTask());view.Stop();texts.Stop();window.Close();Dispatcher.UIThread.RunJobs();
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"avalonia-obs-check.txt"),$"PASS: {checks} HTTP integration checks: loopback/key/origin/host, shared timer, protected alternating bans, stale requests, restart and selected match changes. Headless only; OBS not opened.");

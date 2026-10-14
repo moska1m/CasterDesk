@@ -1,3 +1,13 @@
+# 0.3.0-beta.0.11
+
+- Plugin com abas Round a round → Bans de operadores → Cronômetro e marca centralizada.
+- Registrar e corrigir rounds com bombsites completos, equipe vencedora e finalização compatível.
+- Bans intermediários e após troca de lados disponíveis no OBS; o painel acompanha as etapas e retorna aos rounds.
+- Botão Plugin OBS no bloco de bans salva a preferência de não abrir seletores automaticamente no programa. Ban manual continua disponível.
+- Seleção de mapas MD3/MD5 sincronizada com o programa; MD1 fica fixo.
+- Proteção contra comandos duplicados, seleção desatualizada e correções que removeriam dados sem confirmação.
+- Ajustes visuais gerais e rolagem do histórico ficaram registrados para a próxima atualização.
+
 # 0.3.0-beta.0.10
 
 - Plugin nativo opcional OBS para timer e bans, com descoberta local e reconexão automática.

@@ -1,5 +1,13 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Décima segunda entrega — rounds e etapas no OBS, 14/10/2026, 0.3.0-beta.0.11
+
+Terceira aba nativa de registro/revisão de rounds; ordem Round a round → Bans → Cronômetro, marca centralizada e seleção de mapas de séries por IDs. Nova API reaproveita MatchSession.Round/SelectMap, revisões e transações. Sem descarte silencioso de rounds: correções que exigem trim permanecem recusadas. Popup automático no programa passa a ser controlado pelo modo Plugin OBS salvo na configuração; cliques manuais continuam disponíveis. Resolvido o bloqueio dos bans intermediários/segunda metade pelo seletor modal automático do programa.
+
+Simulação HTTP de MD1 inteiro até 8–7 com todos os 12 bans e overtime, registro remoto, duplicatas recusadas, correção sem append/trim e registro local do round 3 sem popup no modo OBS. Seleção remota MD3/MD5 conferida; 713 checks do núcleo, 385 de UI/API (74 HTTP) e 40 nativos Qt aprovados. Build nativo e47baf96d1b496ccbfd31258f47c22700a523bb9, https://github.com/moska1m/CasterDesk/actions/runs/38606675002. Instaladores compilados sem execução; 709 arquivos e sete resoluções do ícone conferidos. Setup SHA-256 3fdcb887ba030041425f5a672d9aa514f677938779ee732a79e690b637d36cee. Não foram abertos OBS ou CasterDesk na área de trabalho. Carregamento da beta.0.10 no OBS foi confirmado pelo usuário; as novidades da beta.0.11 ainda exigem teste no OBS real.
+
+Pendências visuais posteriores em docs/PENDENCIAS-VISUAIS.md, incluindo confirmar vencedor, selo ATIVOS, menu ao clicar fora e histórico seguindo o último round. Sem aplicar esses ajustes nesta entrega.
+
 ## Décima primeira entrega — plugin nativo OBS opcional, 14/10/2026, 0.3.0-beta.0.10
 
 Plugin Qt/C++ registra painel pela API oficial obs_frontend_add_dock_by_id. Descobre Documentos pela pasta conhecida do Windows, lê apenas configuração local e conecta a 127.0.0.1 sem URL manual. Timer/bans compartilham a API existente; requisições incluem chave e contexto de partida/mapa/revisão. Reconexão após reabrir CasterDesk; erro não repete mutações. Encerramento aborta pedidos antes de destruir controles. Marca SVG aprovada incorporada; cores das equipes preservadas nos slots.
