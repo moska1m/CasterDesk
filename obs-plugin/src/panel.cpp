@@ -10,6 +10,8 @@
 #include <QPointer>
 #include <QRegularExpression>
 #include <QPixmap>
+#include <QSvgRenderer>
+#include <QPainter>
 #include <QUrl>
 #include <windows.h>
 #include <shlobj.h>
@@ -38,7 +40,9 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     setMinimumWidth(280);
     network.setProxy(QNetworkProxy::NoProxy);
     auto *root = new QVBoxLayout(this);
-    auto *brand = new QLabel("CasterDesk"); brand->setStyleSheet("font-size:22px;font-weight:700"); root->addWidget(brand);
+    auto *brand = new QLabel();QSvgRenderer logo(QStringLiteral(":/casterdesk/brand.svg"));logo.setAspectRatioMode(Qt::KeepAspectRatio);
+    QPixmap mark(400,96);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter paint(&mark);logo.render(&paint,QRectF(0,0,200,48));paint.end();
+    brand->setPixmap(mark);brand->setStyleSheet("background:#0a1118;padding:8px");brand->setAccessibleName("CasterDesk");root->addWidget(brand);
     status = new QLabel("Aguardando CasterDesk…"); status->setObjectName("connection"); status->setWordWrap(true); root->addWidget(status);
     context = new QLabel("—"); context->setWordWrap(true); root->addWidget(context);
     error = new QLabel(); error->setWordWrap(true); error->setStyleSheet("color:#ffb69d"); root->addWidget(error);
