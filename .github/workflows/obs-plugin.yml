@@ -11,13 +11,19 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: deps
         with:
           path: obs-plugin/.deps
           key: obs-native-deps-${{ runner.os }}-${{ hashFiles('obs-plugin/buildspec.json') }}
       - name: Configure native plugin with official OBS dependencies
         working-directory: obs-plugin
         run: cmake --preset windows-ci-x64
+      - uses: actions/cache/save@v4
+        if: steps.deps.outputs.cache-hit != 'true'
+        with:
+          path: obs-plugin/.deps
+          key: obs-native-deps-${{ runner.os }}-${{ hashFiles('obs-plugin/buildspec.json') }}
       - name: Build plugin and offscreen checks
         working-directory: obs-plugin
         run: cmake --build --preset windows-x64 --config RelWithDebInfo --parallel

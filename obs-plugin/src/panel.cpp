@@ -47,7 +47,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     context = new QLabel("—"); context->setWordWrap(true); root->addWidget(context);
     error = new QLabel(); error->setWordWrap(true); error->setStyleSheet("color:#ffb69d"); root->addWidget(error);
     tabs = new QTabWidget(); root->addWidget(tabs);
-    auto *timerPage = new QWidget(); auto *timerLayout = new QVBoxLayout(timerPage);
+    auto *timerPage = new QWidget();timerPage->setObjectName("timer-page"); auto *timerLayout = new QVBoxLayout(timerPage);
     clock = new QLabel("00:00"); clock->setObjectName("time"); clock->setAlignment(Qt::AlignCenter); clock->setStyleSheet("font-size:38px"); timerLayout->addWidget(clock);
     auto *controls = new QGridLayout(); timerLayout->addLayout(controls);
     start = new QPushButton("▶ Iniciar / Retomar"); start->setObjectName("start");
@@ -57,7 +57,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     auto *timeRow = new QHBoxLayout(); duration = new QLineEdit(); duration->setPlaceholderText("10:00"); duration->setObjectName("duration"); duration->setMaxLength(8);
     set = new QPushButton("Definir tempo"); set->setObjectName("set"); timeRow->addWidget(duration,1); timeRow->addWidget(set); timerLayout->addLayout(timeRow); timerLayout->addStretch();
     tabs->addTab(timerPage,"Cronômetro");
-    auto *banPage = new QWidget(); auto *banLayout = new QVBoxLayout(banPage); banSlots = new QGridLayout(); banLayout->addLayout(banSlots);
+    auto *banPage = new QWidget();banPage->setObjectName("ban-page"); auto *banLayout = new QVBoxLayout(banPage); banSlots = new QGridLayout(); banLayout->addLayout(banSlots);
     phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
     search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
     auto *scroll = new QScrollArea(); scroll->setWidgetResizable(true); auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setAlignment(Qt::AlignTop); scroll->setWidget(grid); banLayout->addWidget(scroll,1); tabs->addTab(banPage,"Bans de operadores");
