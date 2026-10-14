@@ -11,6 +11,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: obs-plugin/.deps
+          key: obs-native-deps-${{ runner.os }}-${{ hashFiles('obs-plugin/buildspec.json') }}
       - name: Configure native plugin with official OBS dependencies
         working-directory: obs-plugin
         run: cmake --preset windows-ci-x64
@@ -26,7 +30,7 @@ jobs:
           $depBin = Get-ChildItem .deps -Directory | ForEach-Object { Join-Path $_.FullName 'bin' }
           $env:PATH = $qt.DirectoryName + ';' + ($depBin -join ';') + ';' + $env:PATH
           $env:QT_PLUGIN_PATH = Join-Path $qt.Directory.Parent.FullName 'plugins'
-          $env:QT_QPA_PLATFORM = 'offscreen'
+          $env:QT_QPA_PLATFORM = 'minimal'
           Add-Type -TypeDefinition 'using System.Runtime.InteropServices; public static class HeadlessMode { [DllImport("kernel32.dll")] public static extern uint SetErrorMode(uint mode); }'
           [HeadlessMode]::SetErrorMode(3) | Out-Null
           $test = Start-Process ./build_x64/RelWithDebInfo/casterdesk-panel-checks.exe -WindowStyle Hidden -PassThru -RedirectStandardOutput panel-test.out -RedirectStandardError panel-test.err

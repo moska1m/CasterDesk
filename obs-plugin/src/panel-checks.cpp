@@ -16,7 +16,7 @@
 #include <iostream>
 
 static int checks=0;
-static void check(bool condition,const char *message){if(!condition)throw std::runtime_error(message);++checks;}
+static void check(bool condition,const char *message){if(!condition)throw std::runtime_error(message);++checks;std::cout<<"PASS "<<message<<std::endl;}
 static void waitFor(const std::function<bool()> &condition)
 {
     QElapsedTimer elapsed;elapsed.start();
