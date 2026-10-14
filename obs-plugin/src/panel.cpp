@@ -17,6 +17,7 @@
 #include <QScrollBar>
 #include <QClipboard>
 #include <QApplication>
+#include <QToolButton>
 #include <windows.h>
 #include <shlobj.h>
 #include <cmath>
@@ -46,9 +47,11 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     auto *root = new QVBoxLayout(this);
     auto *brand = new QLabel();QSvgRenderer logo(QStringLiteral(":/casterdesk/brand.svg"));logo.setAspectRatioMode(Qt::KeepAspectRatio);
     QPixmap mark(400,96);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter paint(&mark);logo.render(&paint,QRectF(0,0,200,48));paint.end();
-    brand->setPixmap(mark);brand->setAlignment(Qt::AlignCenter);brand->setStyleSheet("background:#0a1118;padding:8px");brand->setAccessibleName("CasterDesk");root->addWidget(brand);
-    status = new QLabel("Aguardando CasterDesk…"); status->setObjectName("connection"); status->setWordWrap(true); root->addWidget(status);
-    context = new QLabel("—"); context->setWordWrap(true); root->addWidget(context);
+    brand->setPixmap(mark);brand->setAlignment(Qt::AlignCenter);brand->setStyleSheet("background:#0a1118;padding:8px");brand->setAccessibleName("CasterDesk");
+    auto *brandBox=new QWidget();brandBox->setStyleSheet("background:#0a1118");auto *brandLayout=new QVBoxLayout(brandBox);brandLayout->setContentsMargins(0,0,6,4);brandLayout->addWidget(brand);root->addWidget(brandBox);
+    status = new QLabel("DESCONECTADO"); status->setObjectName("connection"); status->setAlignment(Qt::AlignCenter);status->setStyleSheet("background:#7c3038;color:white;padding:3px 8px;border-radius:3px");brandLayout->addWidget(status,0,Qt::AlignRight);
+    context = new QLabel("—"); context->setWordWrap(true);context->setAlignment(Qt::AlignCenter);context->setStyleSheet("font-size:17px;font-weight:700");root->addWidget(context);
+    mapLabel=new QLabel();mapLabel->setAlignment(Qt::AlignCenter);mapLabel->setWordWrap(true);root->addWidget(mapLabel);
     mapChoice=new QComboBox();mapChoice->setObjectName("map-choice");mapChoice->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);mapChoice->setMinimumWidth(60);root->addWidget(mapChoice);
     connect(mapChoice,qOverload<int>(&QComboBox::currentIndexChanged),this,[this]{if(buildingMaps||!connected)return;const auto match=state["match"].toObject();const auto target=mapChoice->currentData().toString();if(!target.isEmpty()&&target!=match["mapId"].toString())command({{"action","selectMap"},{"matchId",match["id"]},{"mapId",match["mapId"]},{"revision",state["revision"]},{"targetMapId",target}});});
     error = new QLabel(); error->setWordWrap(true); error->setStyleSheet("color:#ffb69d"); root->addWidget(error);
@@ -74,21 +77,29 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     roundSave = new QPushButton("Confirmar round"); roundSave->setObjectName("round-save"); roundSave->setMinimumHeight(36); roundLayout->addWidget(roundSave);
     newRound = new QPushButton("Novo round"); newRound->setObjectName("new-round"); roundLayout->addWidget(newRound); newRound->hide();
     connect(newRound,&QPushButton::clicked,this,[this]{roundIndex=-1;renderRounds(true);});
-    auto *historyTitle = new QLabel("Histórico de rounds"); historyTitle->setObjectName("history-title"); partidaLayout->addWidget(historyTitle);
-    roundHistory = new QTableWidget(); roundHistory->setObjectName("round-history"); roundHistory->setColumnCount(7); roundHistory->setMinimumWidth(0); roundHistory->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred); roundHistory->setMinimumHeight(130); roundHistory->setMaximumHeight(220);
-    roundHistory->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); roundHistory->verticalHeader()->hide(); roundHistory->setEditTriggers(QAbstractItemView::NoEditTriggers); roundHistory->setSelectionBehavior(QAbstractItemView::SelectRows); roundHistory->setSelectionMode(QAbstractItemView::SingleSelection); partidaLayout->addWidget(roundHistory);
-    connect(roundHistory,&QTableWidget::cellClicked,this,[this](int row,int){roundIndex=row;renderRounds(true);});
+    auto *remakePage=new QWidget();auto *remakeLayout=new QVBoxLayout(remakePage);
+    remakeChoice=new QComboBox();remakeChoice->setObjectName("remake-map");remakeChoice->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);remakeChoice->setMinimumWidth(60);remakeLayout->addWidget(remakeChoice);
+    remakeInfo=new QLabel();remakeInfo->setObjectName("remake-info");remakeInfo->setAlignment(Qt::AlignCenter);remakeInfo->setWordWrap(true);remakeLayout->addWidget(remakeInfo);
+    remakeBans=new QVBoxLayout();remakeLayout->addLayout(remakeBans);
+    auto *historyTitle=new QLabel("Histórico de rounds");historyTitle->setObjectName("history-title");historyTitle->setAlignment(Qt::AlignCenter);remakeLayout->addWidget(historyTitle);
+    roundHistory=new QTableWidget();roundHistory->setObjectName("round-history");roundHistory->setColumnCount(3);roundHistory->setMinimumWidth(0);roundHistory->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Expanding);roundHistory->setMinimumHeight(130);
+    roundHistory->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);roundHistory->verticalHeader()->hide();roundHistory->setEditTriggers(QAbstractItemView::NoEditTriggers);roundHistory->setSelectionBehavior(QAbstractItemView::SelectRows);roundHistory->setSelectionMode(QAbstractItemView::SingleSelection);remakeLayout->addWidget(roundHistory,1);
+    remakeCheck=new QLabel();remakeCheck->setWordWrap(true);remakeCheck->setAlignment(Qt::AlignCenter);remakeLayout->addWidget(remakeCheck);
+    connect(remakeChoice,qOverload<int>(&QComboBox::currentIndexChanged),this,[this]{if(!buildingRemake)renderRemake();});
+    // Existing corrections remain available only for the active, unconfirmed map.
+    connect(roundHistory,&QTableWidget::cellDoubleClicked,this,[this](int row,int){const auto match=state["match"].toObject();if(remakeChoice->currentData().toString()!=match["mapId"].toString()||!state["rounds"].toObject()["editable"].toBool())return;roundIndex=row;renderRounds(true);tabs->setCurrentIndex(0);});
+    auto *remakeScroll=new QScrollArea();remakeScroll->setWidgetResizable(true);remakeScroll->setWidget(remakePage);tabs->insertTab(0,remakeScroll,"REMAKE");
     auto *banPage = new QWidget(); banPage->setObjectName("ban-page"); auto *banLayout = new QVBoxLayout(banPage); partidaLayout->addWidget(banPage);
     auto *banTitle = new QLabel("Bans de operadores"); banTitle->setObjectName("ban-title"); banLayout->addWidget(banTitle);
     banSlots = new QGridLayout(); banLayout->addLayout(banSlots);
     phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
     search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
     auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setAlignment(Qt::AlignTop); banLayout->addWidget(grid); partidaLayout->addStretch();
-    tabs->insertTab(0,matchScroll,"Partida"); tabs->setCurrentIndex(0);
+    tabs->insertTab(0,matchScroll,"PARTIDA"); tabs->setCurrentIndex(0);
     connect(roundSave,&QPushButton::clicked,this,[this]{const auto match=state["match"].toObject();command({{"action","round"},{"matchId",match["id"]},{"mapId",match["mapId"]},{"revision",state["revision"]},{"site",roundSite},{"winner",roundWinner},{"ending",roundEnding},{"roundIndex",roundIndex}});});
     // All timer configuration operates on the same CasterDesk countdown and TXT.
     reset = new QPushButton("Resetar tempo"); reset->setObjectName("reset"); timerLayout->insertWidget(3,reset);
-    timeFormat = new QComboBox(); timeFormat->addItems({"mm:ss","hh:mm:ss"}); timeFormat->setObjectName("time-format"); timerLayout->insertWidget(4,timeFormat);
+    timeFormat = new QComboBox(); timeFormat->addItems({"mm:ss","hh:mm:ss"}); timeFormat->setObjectName("time-format");timeFormat->setEditable(true);timeFormat->lineEdit()->setReadOnly(true);timeFormat->lineEdit()->setAlignment(Qt::AlignCenter); timerLayout->insertWidget(4,timeFormat);
     finalMessage = new QLineEdit(); finalMessage->setObjectName("final-message"); finalMessage->setMaxLength(500); finalMessage->setPlaceholderText("Mensagem final"); timerLayout->insertWidget(5,finalMessage);
     auto *presets = new QGridLayout(); timerLayout->insertLayout(6,presets);
     for(int i=0;i<3;++i){presetValues[i]=new QDoubleSpinBox();presetValues[i]->setRange(0.01,1440);presetValues[i]->setValue(i+2);presetValues[i]->setSuffix(" min");presetValues[i]->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);presetValues[i]->setMinimumWidth(44);presetButtons[i]=new QPushButton("+");presetButtons[i]->setObjectName(QString("preset-%1").arg(i));presets->addWidget(presetValues[i],i,0);presets->addWidget(presetButtons[i],i,1);connect(presetButtons[i],&QPushButton::clicked,this,[this,i]{command({{"action","adjust"},{"seconds",presetValues[i]->value()*60}});});}
@@ -106,19 +117,20 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     connect(set,&QPushButton::clicked,this,[this]{const int seconds=parseDuration(duration->text());if(seconds<0){error->setText(label("invalidTime","Use mm:ss ou hh:mm:ss."));return;}command({{"action","set"},{"seconds",seconds}});});
     connect(search,&QLineEdit::textChanged,this,[this]{renderOperators();});
     timer.setInterval(1000); connect(&timer,&QTimer::timeout,this,[this]{poll();});
-    for(auto *page:{timerPage,banPage,roundPage,partida})page->ensurePolished();
+    for(auto *page:{timerPage,banPage,roundPage,partida,remakePage})page->ensurePolished();
     for(auto *text:findChildren<QLabel *>())text->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);
     duration->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);duration->setMinimumWidth(60);
     search->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);search->setMinimumWidth(60);
     for(auto *button:{start,pause,add,subtract,set}){button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setMinimumWidth(44);}
-    for(auto *page:{timerPage,banPage,roundPage,partida}){page->layout()->invalidate();page->layout()->activate();}
-    updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
+    for(auto *page:{timerPage,banPage,roundPage,partida,remakePage}){page->layout()->invalidate();page->layout()->activate();}
+    duration->setAlignment(Qt::AlignCenter);finalMessage->setAlignment(Qt::AlignCenter);outputFolder->setAlignment(Qt::AlignCenter);for(auto *preset:presetValues)preset->setAlignment(Qt::AlignCenter);timerStatus->setAlignment(Qt::AlignCenter);
+    renderRemake();updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
 }
 void CasterDeskPanel::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     // Narrow docks retain result/site/ending; full-width docks also show both sides.
-    if(roundHistory){roundHistory->setColumnHidden(1,width()<520);roundHistory->setColumnHidden(2,width()<520);}
+
 }
 CasterDeskPanel::~CasterDeskPanel()
 {
@@ -135,7 +147,7 @@ int CasterDeskPanel::parseDuration(const QString &text)
     return seconds<=86400?seconds:-1;
 }
 QString CasterDeskPanel::label(const char *name,const char *fallback) const { return state["labels"].toObject()[name].toString(QString::fromUtf8(fallback)); }
-void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(message);context->setText("—");updateEnabled();}
+void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(label("disconnected","Desconectado").toUpper());status->setToolTip(message);status->setStyleSheet("background:#7c3038;color:white;padding:3px 8px;border-radius:3px");context->setText("—");mapLabel->clear();remakeChoice->setEnabled(false);remakeInfo->hide();remakeCheck->hide();roundHistory->hide();clearLayout(remakeBans);updateEnabled();}
 bool CasterDeskPanel::discover()
 {
     QFile file(configPath); if(!file.open(QIODevice::ReadOnly)){disconnectPanel("Abra o CasterDesk com a integração OBS instalada.");return false;}
@@ -169,19 +181,21 @@ void CasterDeskPanel::command(QJsonObject data)
 void CasterDeskPanel::receive(const QJsonObject &data)
 {
     const auto previousPending=state["pending"];
-    state=data;connected=true;status->setText(label("connected","Conectado"));
-    const auto match=data["match"].toObject();context->setText(match["teamA"].toString()+" × "+match["teamB"].toString()+" · "+match["map"].toString());
+    state=data;connected=true;status->setText(label("connected","Conectado").toUpper());status->setToolTip(QString());status->setStyleSheet("background:#247348;color:white;padding:3px 8px;border-radius:3px");
+    const auto match=data["match"].toObject();context->setText((match["teamA"].toString()+" × "+match["teamB"].toString()).toUpper());mapLabel->setText(match["map"].toString().toUpper());
     const auto mapsToken=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::fromUtf8(QJsonDocument(match["maps"].toArray()).toJson(QJsonDocument::Compact));
     if(mapsToken!=mapsRendered){mapsRendered=mapsToken;buildingMaps=true;mapChoice->clear();for(const auto &value:match["maps"].toArray()){const auto map=value.toObject();mapChoice->addItem(map["label"].toString(),map["id"].toString());}mapChoice->setCurrentIndex(mapChoice->findData(match["mapId"].toString()));mapChoice->setVisible(mapChoice->count()>1);buildingMaps=false;}
     const auto time=data["timer"].toObject();int seconds=static_cast<int>(std::ceil(time["seconds"].toDouble()));seconds=qBound(0,seconds,86400);const int hours=seconds/3600;
     clock->setText((hours>0?QString("%1:").arg(hours,2,10,QChar('0')):QString())+QString("%1:%2").arg((seconds/60)%60,2,10,QChar('0')).arg(seconds%60,2,10,QChar('0')));
-    start->setText(label("start","Iniciar / Retomar"));start->setToolTip(start->text());start->setAccessibleName(start->toolTip());pause->setText(label("pause","Pausar"));pause->setToolTip(pause->text());pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(1,label("timer","Cronômetro"));tabs->setTabText(0,label("partida","Partida"));findChild<QLabel *>("ban-title")->setText(label("bans","Bans de operadores"));findChild<QLabel *>("history-title")->setText(label("history","Histórico de rounds"));search->setPlaceholderText(label("search","Filtrar operadores"));
+    start->setText(label("start","Iniciar / Retomar"));start->setToolTip(start->text());start->setAccessibleName(start->toolTip());pause->setText(label("pause","Pausar"));pause->setToolTip(pause->text());pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(2,label("timer","Cronômetro").toUpper());tabs->setTabText(1,"REMAKE");tabs->setTabText(0,label("partida","Partida").toUpper());findChild<QLabel *>("ban-title")->setText(label("bans","Bans de operadores"));findChild<QLabel *>("history-title")->setText(label("history","Histórico de rounds"));search->setPlaceholderText(label("search","Filtrar operadores"));
     if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
     const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
-    if(next!=rendered){rendered=next;clearLayout(banSlots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");
-        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);slot->setStyleSheet(QString("padding:5px;background:%1;border-bottom:3px solid %2;").arg(ban["team"].toInt()==0?"#305975":"#895333",ban["team"].toInt()==0?"#408fb3":"#ff7737"));banSlots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
+    if(next!=rendered){rendered=next;clearLayout(banSlots);QString nextPhase=label("wait","Nenhum ban pendente.");
+        int columns[2]={0,0};
+        for(int team=0;team<2;++team){auto *teamTitle=new QLabel(match[team==0?"teamA":"teamB"].toString());teamTitle->setAlignment(Qt::AlignCenter);teamTitle->setStyleSheet(QString("color:%1;font-weight:700").arg(team==0?"#6ec6eb":"#ffa375"));banSlots->addWidget(teamTitle,team*2,0,1,6);}
+        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();int team=ban["team"].toInt();auto *card=new QToolButton();card->setObjectName(QString("ban-card-%1").arg(ban["slot"].toInt()));card->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);card->setIconSize(QSize(28,28));card->setText(ban["name"].toString().isEmpty()?ban["role"].toString():ban["name"].toString());card->setToolTip(match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString()+" · "+QString::number(ban["slot"].toInt()/6+1)+" · "+card->text());card->setMinimumWidth(0);card->setFixedHeight(70);card->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);card->setStyleSheet(QString("background:%1;color:white;font-size:10px;border:%2px solid %3;").arg(team==0?"#305975":"#895333").arg(ban["slot"]==data["pending"]?2:0).arg("white"));card->setProperty("team",team);banSlots->addWidget(card,team*2+1,columns[team]++);loadIcon(ban["id"].toString().isEmpty()?(ban["role"]=="DEF"?"__def":"__atq"):ban["id"].toString(),card);if(!ban["unlocked"].toBool())card->setEnabled(false);if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString();}
         phase->setText(nextPhase);renderOperators();}
-    renderRounds();updateEnabled();
+    renderRounds();renderRemake();updateEnabled();
     Q_UNUSED(previousPending);
     const auto options=time["options"].toObject();
     // Polling must not overwrite text or preset values while the caster is typing.
@@ -199,7 +213,7 @@ void CasterDeskPanel::updateEnabled()
     mapChoice->setEnabled(ready&&mapChoice->count()>1);
     for(int n=0;n<operators->count();++n){auto *button=qobject_cast<QPushButton *>(operators->itemAt(n)->widget());if(button)button->setEnabled(ready&&button->property("available").toBool());}
     const auto rounds=state["rounds"].toObject();const bool roundReady=ready&&rounds["editable"].toBool()&&(roundIndex>=0||rounds["ready"].toBool());
-    roundHistory->setEnabled(ready&&rounds["editable"].toBool());newRound->setEnabled(ready);
+    roundHistory->setEnabled(connected);remakeChoice->setEnabled(connected&&!busy);newRound->setEnabled(ready);
     for(int n=0;n<roundSites->count();++n){auto *button=qobject_cast<QPushButton *>(roundSites->itemAt(n)->widget());if(button)button->setEnabled(roundReady&&button->property("available").toBool());}
     for(int n=0;n<roundEndings->count();++n){auto *button=qobject_cast<QPushButton *>(roundEndings->itemAt(n)->widget());if(button)button->setEnabled(roundReady&&roundWinner>=0&&button->property("available").toBool());}
     for(auto *team:roundTeams)team->setEnabled(roundReady);
@@ -218,13 +232,10 @@ void CasterDeskPanel::renderRounds(bool force)
     const auto data=state["rounds"].toObject();const auto match=state["match"].toObject();const QString prefix=match["id"].toString()+":"+match["mapId"].toString()+":";const QString token=prefix+QString::number(state["revision"].toInteger())+":"+state["language"].toString();
     if(token==roundsRendered&&!force)return;const bool sameMatch=roundsRendered.startsWith(prefix);if(!sameMatch)roundIndex=-1;
     const auto history=data["history"].toArray();if(roundIndex>=history.size())roundIndex=-1;
-    const bool follow=!sameMatch||history.size()>roundHistory->rowCount();roundsRendered=token;roundWinner=-1;roundSite.clear();roundEnding.clear();
+    roundsRendered=token;roundWinner=-1;roundSite.clear();roundEnding.clear();
     if(roundIndex>=0){const auto row=history[roundIndex].toObject();roundWinner=row["winner"].toInt();roundSite=row["site"].toString();roundEnding=row["ending"].toString();}
     clearLayout(roundSites);int n=0;
     for(const auto &value:data["sites"].toArray()){const auto site=value.toObject();auto *button=choiceButton(site["label"].toString(),QString("round-site-%1").arg(n));button->setProperty("site",site["id"]);button->setProperty("available",roundIndex>=0||!site["blocked"].toBool());roundSites->addWidget(button,n/2,n%2);++n;connect(button,&QPushButton::clicked,this,[this,button]{roundSite=button->property("site").toString();updateRoundChoices();});}
-    roundHistory->setHorizontalHeaderLabels({label("round","Round"),label("atq","ATQ"),label("def","DEF"),label("site","Bomb site"),label("winner","Vencedor"),label("score","Placar"),label("ending","Finalização")});roundHistory->setRowCount(history.size());int a=0,b=0;
-    for(int row=0;row<history.size();++row){const auto r=history[row].toObject();const int team=r["winner"].toInt();team==0?++a:++b;QString siteText=r["site"].toString(),endText=r["ending"].toString();for(const auto &value:data["sites"].toArray())if(value.toObject()["id"]==r["site"])siteText=value.toObject()["label"].toString();for(const auto &value:data["endings"].toArray())if(value.toObject()["id"]==r["ending"])endText=value.toObject()["label"].toString();const int attacker=r["attacker"].toInt();QStringList values{QString::number(row+1),match[attacker==0?"teamA":"teamB"].toString(),match[attacker==0?"teamB":"teamA"].toString(),siteText,match[team==0?"teamA":"teamB"].toString(),QString("%1–%2").arg(a).arg(b),endText};for(int col=0;col<7;++col){auto *item=new QTableWidgetItem(values[col]);item->setToolTip(values[col]);item->setTextAlignment(Qt::AlignCenter);item->setBackground(QColor(team==0?"#305975":"#895333"));item->setForeground(Qt::white);roundHistory->setItem(row,col,item);}roundHistory->setRowHeight(row,30);}
-    if(follow)roundHistory->scrollToBottom();
     roundSave->setText(label(roundIndex<0?"confirmRound":"editRound",roundIndex<0?"Confirmar round":"Corrigir round"));newRound->setVisible(roundIndex>=0);newRound->setText(label("newRound","Novo round"));
     int attacker=data["attacker"].toInt(-1);if(roundIndex>=0)attacker=history[roundIndex].toObject()["attacker"].toInt();
     roundHeading->setText(label("rounds","Round a round")+" · "+QString("%1 · %2 %3 / %4 %5 · %6").arg(roundIndex<0?data["number"].toInt():roundIndex+1).arg(match[attacker==0?"teamA":"teamB"].toString(),label("atq","ATQ"),match[attacker==0?"teamB":"teamA"].toString(),label("def","DEF"),data["score"].toString()));
@@ -249,10 +260,28 @@ void CasterDeskPanel::renderOperators()
         connect(button,&QPushButton::clicked,this,[this,payload]{command(payload);});loadIcon(op["id"].toString(),button);}
     updateEnabled();
 }
-void CasterDeskPanel::loadIcon(const QString &id,QPushButton *button)
+void CasterDeskPanel::loadIcon(const QString &id,QAbstractButton *button)
 {
     if(icons.contains(id)){button->setIcon(icons[id]);return;}
     QNetworkRequest req{QUrl(baseUrl+"/icons/"+QString::fromLatin1(QUrl::toPercentEncoding(id)))};req.setRawHeader("X-CasterDesk-Key",key.toUtf8());req.setTransferTimeout(2500);req.setAttribute(QNetworkRequest::RedirectPolicyAttribute,QNetworkRequest::ManualRedirectPolicy);
-    auto *reply=network.get(req);QPointer<QPushButton> target=button;const auto connectionKey=key;
+    auto *reply=network.get(req);QPointer<QAbstractButton> target=button;const auto connectionKey=key;
     connect(reply,&QNetworkReply::finished,this,[this,reply,target,id,connectionKey]{if(reply->error()==QNetworkReply::NoError&&key==connectionKey){QPixmap image;if(image.loadFromData(reply->readAll())){icons.insert(id,QIcon(image));if(target)target->setIcon(icons[id]);}}reply->deleteLater();});
+}
+
+void CasterDeskPanel::renderRemake()
+{
+    const auto match=state["match"].toObject();const auto maps=state["remakes"].toArray();
+    const QString selected=match["id"].toString()==remakeMatch?remakeChoice->currentData().toString():QString();
+    remakeMatch=match["id"].toString();const QString optionsToken=remakeMatch+":"+state["language"].toString()+":"+QString::fromUtf8(QJsonDocument(maps).toJson(QJsonDocument::Compact));
+    if(optionsToken!=remakeOptionsRendered){remakeOptionsRendered=optionsToken;buildingRemake=true;remakeChoice->clear();remakeChoice->addItem(label("chooseRemake","Escolha o mapa para o remake"),"");for(const auto &value:maps){const auto map=value.toObject();remakeChoice->addItem(map["label"].toString(),map["id"].toString());}remakeChoice->setCurrentIndex(qMax(0,remakeChoice->findData(selected)));buildingRemake=false;}
+    QJsonObject chosen;for(const auto &value:maps){const auto map=value.toObject();if(!selected.isEmpty()&&map["id"].toString()==selected)chosen=map;}clearLayout(remakeBans);
+    bool visible=connected&&!chosen.isEmpty();remakeInfo->setVisible(visible);remakeCheck->setVisible(visible);roundHistory->setVisible(visible);findChild<QLabel *>("history-title")->setVisible(visible);
+    if(!visible){roundHistory->setRowCount(0);remakeInfo->clear();remakeCheck->clear();return;}
+    auto attackTeam=[&](int side){return side<0?label("undefined","Não definido"):match[side==0?"teamA":"teamB"].toString();};
+    const int initial=chosen["initialAttack"].toInt(-1),ot=chosen["otAttack"].toInt(-1);
+    remakeInfo->setText(chosen["label"].toString().toUpper()+"\n"+match["teamA"].toString()+" × "+match["teamB"].toString()+"\n"+label("initialAttack","Ataque inicial")+": "+attackTeam(initial)+"\n"+label("initialDefense","Defesa inicial")+": "+attackTeam(initial<0?-1:1-initial)+"\n"+label("otAttack","Ataque na prorrogação")+": "+attackTeam(ot));
+    for(int half=0;half<2;++half){QStringList entries;for(const auto &value:chosen["bans"].toArray()){const auto ban=value.toObject();if(ban["half"].toInt()!=half)continue;entries<<match[ban["team"].toInt()==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString()+" · "+ban["name"].toString();}if(entries.isEmpty())continue;auto *heading=new QLabel(QString("%1 %2–%3").arg(label("round","Round")).arg(half*6+1).arg(half*6+6));heading->setAlignment(Qt::AlignCenter);remakeBans->addWidget(heading);for(const auto &entry:entries){auto *text=new QLabel(entry);text->setWordWrap(true);text->setAlignment(Qt::AlignCenter);text->setMinimumWidth(0);text->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);remakeBans->addWidget(text);}}
+    roundHistory->setHorizontalHeaderLabels({label("round","Round"),label("site","Bomb site"),label("winner","Vencedor")});const auto history=chosen["rounds"].toArray();int oldCount=roundHistory->rowCount();roundHistory->setRowCount(history.size());
+    for(int row=0;row<history.size();++row){const auto r=history[row].toObject();const int team=r["winner"].toInt();QStringList values{QString::number(r["index"].toInt()+1),r["site"].toString(),match[team==0?"teamA":"teamB"].toString()};for(int col=0;col<3;++col){auto *item=new QTableWidgetItem(values[col]);item->setToolTip(values[col]);item->setTextAlignment(Qt::AlignCenter);item->setBackground(QColor(team==0?"#305975":"#895333"));item->setForeground(Qt::white);roundHistory->setItem(row,col,item);}roundHistory->setRowHeight(row,30);}
+    if(oldCount!=history.size())roundHistory->scrollToTop();remakeCheck->setText(label("checkMap","Após configurar, confira o mapa."));
 }

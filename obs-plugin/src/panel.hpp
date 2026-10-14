@@ -14,6 +14,8 @@
 #include <QComboBox>
 #include <QTableWidget>
 #include <QDoubleSpinBox>
+#include <QAbstractButton>
+#include <QVBoxLayout>
 
 class CasterDeskPanel final : public QWidget {
 public:
@@ -30,7 +32,7 @@ private:
     QTimer timer;
     QJsonObject state;
     QHash<QString, QIcon> icons;
-    QLabel *status, *context, *clock, *error, *phase;
+    QLabel *status, *context, *clock, *error, *phase, *mapLabel;
     QTabWidget *tabs;
     QLineEdit *duration, *search;
     QGridLayout *banSlots, *operators;
@@ -54,6 +56,13 @@ private:
     QDoubleSpinBox *presetValues[3];
     QPushButton *presetButtons[3], *timerSave, *reset, *copyFolder;
     QString timerOptionsRendered;
+    QComboBox *remakeChoice;
+    QLabel *remakeInfo, *remakeCheck;
+    QVBoxLayout *remakeBans;
+    QString remakeMatch;
+    QString remakeOptionsRendered;
+    bool buildingRemake = false;
+    void renderRemake();
     QLabel *timerStatus;
     void renderRounds(bool force = false);
     void updateRoundChoices();
@@ -63,7 +72,7 @@ private:
     void updateEnabled();
     void command(QJsonObject data);
     void request(const QString &path, const QJsonObject *body = nullptr);
-    void loadIcon(const QString &id, QPushButton *button);
+    void loadIcon(const QString &id, QAbstractButton *button);
     QString label(const char *name, const char *fallback) const;
     void disconnectPanel(const QString &message);
 };
