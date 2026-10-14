@@ -24,4 +24,5 @@ try {
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-localization-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-brand-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-corrections-check.txt')
+    Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-obs-check.txt')
 } finally {$env:CASTERDESK_DATA_DIR=$previousData;Pop-Location}

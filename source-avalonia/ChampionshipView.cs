@@ -24,6 +24,7 @@ public sealed partial class ChampionshipView : Grid
         && Session.Current.CoinWinner >= 0 && Session.Current.FirstBan >= 0;
     internal bool VetoComplete => Session.Current.Veto.All(v => !string.IsNullOrEmpty(v));
     internal bool BansReady => VetoComplete && Session.Map?.InitialAttack >= 0;
+    internal bool DockReady => !stopped && !building && !namesDirty && !Processing && ActiveDialog == null && Ui.ActiveQuestion == null;
 
     public ChampionshipView(MatchSession? session = null)
     {

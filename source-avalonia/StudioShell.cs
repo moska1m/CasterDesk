@@ -14,6 +14,8 @@ public sealed class StudioShell : Window
     readonly Border drawerPanel;
     readonly Button gear;
     readonly Button[] tabs = new Button[3];
+    readonly ObsDockSettings obsSettings;
+    readonly ObsDockServer obsDock;
     readonly TextBlock footer = Ui.Text("CasterDesk • Ferramentas para community casters");
     int selected;
     bool menuOpen;
@@ -28,7 +30,9 @@ public sealed class StudioShell : Window
         Championship = new ChampionshipView(session); Championship.SetQuickMode(settings.QuickRounds);
         studio = new StudioView(() => Championship.Session.Matches, Championship.Session.Catalog, Championship.Session.ApplyArtworkVeto);
         Texts = new TextsView(settings, SaveSettings);
-        Opened += (_, _) => Texts.StartLive();
+        obsSettings = ConfigurationStore.Read<ObsDockSettings>("obs-connection.json");
+        obsDock = new ObsDockServer(Championship,Texts,()=>!backupOpen&&!studio.Exporting&&!OwnedWindows.Any(w=>w.IsVisible),obsSettings);
+        Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){Notify(ex.Message);} };
         Championship.MapConfirmed += async (match, map) => {
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }
             catch (Exception ex) { footer.Text = ex.Message; }
@@ -82,7 +86,7 @@ public sealed class StudioShell : Window
             catch (Exception ex) { e.Cancel = true; footer.Text = ex.Message; }
             finally { waitingToClose = false; }
         };
-        Closed += (_, _) => { timer.Stop(); Championship.Stop(); studio.Stop(); Texts.Stop(); };
+        Closed += async (_, _) => { timer.Stop(); Championship.Stop(); studio.Stop(); Texts.Stop(); try{await obsDock.DisposeAsync();}catch(Exception ex){AppLog.Write(ex.ToString());} };
     }
 
     internal void Navigate(int index)
@@ -133,11 +137,28 @@ public sealed class StudioShell : Window
         }
         drawer.Children.Add(new Expander { Header = L.T("Idioma"), Content = languages, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });
         var backups = Ui.Button("Backup e restauração", () => _ = OpenBackup()); backups.Name = "backup-menu"; drawer.Children.Add(backups);
+        var obs=Ui.Button("Painel OBS",()=>_ = OpenObsPanel());obs.Name="obs-menu";drawer.Children.Add(obs);
         drawer.Children.Add(Ui.Button("Sobre", async () => {
             var panel = new StackPanel { Margin = new Thickness(20) }; panel.Children.Add(BrandMark.Create(Ui.Dark)); panel.Children.Add(Ui.Text(BuildInfo.Version));
             panel.Children.Add(Ui.Text("Ferramentas para community casters de Rainbow Six Siege."));
             var dialog = Ui.Dialog(this, "Sobre", panel, 540, 300); panel.Children.Add(Ui.Button("Fechar", () => dialog.Close())); await dialog.ShowDialog(this);
         }));
+    }
+    void SaveObsSettings()=>MatchFiles.AtomicText(AppPaths.ConfigFile("obs-connection.json"),JsonSerializer.Serialize(obsSettings));
+    async Task OpenObsPanel()
+    {
+        var panel=new StackPanel { Margin=new Thickness(20) };
+        panel.Children.Add(Ui.Text("Controle o timer e os bans em um painel do OBS.",true));
+        panel.Children.Add(Ui.Text("Ative a conexão e copie o endereço para um painel de navegador personalizado do OBS. O CasterDesk precisa permanecer aberto."));
+        var state=Ui.Text(obsDock.Running?"Conectado":"Desconectado");panel.Children.Add(state);
+        var connect=Ui.Button("Ativar conexão",async()=>{
+            try{await obsDock.StartAsync();obsSettings.Enabled=true;SaveObsSettings();state.Text=L.T("Conectado");}
+            catch(Exception ex){state.Text=ex.Message;}
+        });panel.Children.Add(connect);
+        panel.Children.Add(Ui.Button("Copiar endereço do painel",()=>{if(obsDock.Running){Ui.CopyText(obsDock.PanelUrl);state.Text=L.T("Endereço copiado.");}}));
+        panel.Children.Add(Ui.Button("Desativar conexão",async()=>{try{await obsDock.DisposeAsync();obsSettings.Enabled=false;SaveObsSettings();state.Text=L.T("Desconectado");}catch(Exception ex){state.Text=ex.Message;}}));
+        var dialog=Ui.Dialog(this,"Painel OBS",panel,620,420);panel.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));
+        await dialog.ShowDialog(this);
     }
     void Appearance(bool dark)
     {

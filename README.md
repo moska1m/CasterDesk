@@ -1,7 +1,7 @@
 ![CasterDesk — organize a partida, cuide da transmissão](docs/media/banner.svg)
 
 <p align="center">
-  <img alt="Versão 0.3.0-beta.0.8" src="https://img.shields.io/badge/vers%C3%A3o-0.3.0--beta.0.8-327FA8" />
+  <img alt="Versão 0.3.0-beta.0.9" src="https://img.shields.io/badge/vers%C3%A3o-0.3.0--beta.0.9-327FA8" />
   <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448" />
   <img alt="Português, inglês e espanhol" src="https://img.shields.io/badge/idiomas-PT%20%C2%B7%20EN%20%C2%B7%20ES-233448" />
   <img alt="Licença MIT para o código próprio" src="https://img.shields.io/badge/c%C3%B3digo-MIT-25834C" />
@@ -32,7 +32,7 @@ Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o fee
 | **Rounds** | Registro rápido de bombsite, vencedor e finalização; histórico com placar, ataque/defesa e cores fixas. |
 | **Estatísticas** | Print por arquivo ou Ctrl+V, leitura de nomes/E/M/A, revisão lado a lado e correção manual; suporte a remake e dados incompletos. |
 | **Central de imagens** | Anúncio, map veto, resultado da série, estatísticas por mapa e da série; logos opcionais, logo neutra e fundo personalizado. |
-| **OBS** | Cronômetro e nomes/perfis do casting em TXT; map veto transparente em caminho fixo. Painel de controle dentro do OBS em desenvolvimento. |
+| **OBS** | Cronômetro e nomes/perfis do casting em TXT; map veto transparente em caminho fixo. Painel local beta para timer e bans dentro do OBS. |
 | **Arquivos e backup** | Pasta por partida com JSON, imagens e recursos; importação/exportação, recuperação de salvamento e backup/restauração. |
 
 Os dados permanecem no computador. O CasterDesk registra as decisões do usuário; não lê partidas ao vivo nem controla o jogo.
@@ -56,8 +56,8 @@ As artes preservam as proporções das bases fornecidas. Mapas não jogados fica
 
 ## Começar a usar
 
-1. Abra [Releases](https://github.com/moska1m/CasterDesk/releases) e escolha a versão desejada. A linha atual é **0.3.0-beta.0.8** para Windows x64.
-2. Baixe o instalador `CasterDesk-0.3.0-beta.0.8-win-x64-Setup.exe` e confira o SHA-256 disponibilizado junto dele.
+1. Abra [Releases](https://github.com/moska1m/CasterDesk/releases) e escolha a versão desejada. A linha atual é **0.3.0-beta.0.9** para Windows x64.
+2. Baixe o instalador `CasterDesk-0.3.0-beta.0.9-win-x64-Setup.exe` e confira o SHA-256 disponibilizado junto dele.
 3. Instale e abra **CasterDesk**. O pacote inclui o runtime .NET; não é necessário instalar o SDK para usar.
 4. Crie uma partida, informe as equipes e registre o coin flip feito fora do programa. Complete o veto, defina os lados e inicie os bans por clique.
 5. Registre os rounds, confirme o resultado de cada mapa e confira os prints antes de exportar estatísticas.
@@ -68,9 +68,18 @@ Na engrenagem, selecione Português (Brasil), English ou Español. O idioma é a
 
 ## Usar com OBS
 
-Na versão 0.3.0-beta.0.8, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
+Na versão 0.3.0-beta.0.9, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
 
-A próxima etapa é um painel encaixável no OBS para controlar o mesmo timer e os bans sem alternar de janela. A implementação e seu estado estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
+O painel beta controla o mesmo timer e os bans sem alternar de janela. Configure a conexão na engrenagem → Painel OBS. As instruções e limites estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
+
+<details>
+<summary><strong>Prévia do painel OBS</strong></summary>
+
+<img src="docs/media/obs-timer.png" width="320" alt="Painel de timer" /> <img src="docs/media/obs-bans.png" width="320" alt="Painel de bans" />
+
+Prévias em navegador sem janela, com dados de demonstração. API real testada separadamente; navegador integrado do OBS ainda não validado.
+
+</details>
 
 ## Seus arquivos
 
@@ -87,6 +96,7 @@ Importar só um JSON não transporta todos os recursos: use pacotes/backup para 
 | **0.3 até beta.0.4** | Estabilização de comandos, persistência, importação, backup e adaptação anterior da interface. |
 | **0.3 beta.0.5–0.6** | Linha Avalonia, publicação autossuficiente e ajustes de partida/lobby. |
 | **0.3 beta.0.7** | Aplicação da marca aprovada. |
+| **0.3 beta.0.9** | Painel local para timer/bans no OBS, ativação explícita e proteção de comandos. |
 | **0.3 beta.0.8** | Timer fixo, layout compacto, ordem de bans corrigida e melhorias no histórico/MVP. |
 
 [Changelog](CHANGELOG.md) · [Histórico dos arquivos recuperados](RELEASE-HISTORY.md) · [Releases](https://github.com/moska1m/CasterDesk/releases)
@@ -110,7 +120,8 @@ Documentação: [formato JSON](MATCH-JSON-FORMAT.md), [validação](AVALONIA-PRO
 
 ## Próximas etapas
 
-- [ ] Painel OBS: timer e bans sincronizados com o CasterDesk.
+- [x] Painel local beta: timer e bans sincronizados com o CasterDesk.
+- [ ] Validar o painel dentro do OBS e seu navegador integrado.
 - [ ] Validação nativa em outros PCs e escalas de tela.
 - [ ] Revisão regional dos termos em espanhol e inglês.
 - [ ] Acabamento de instalação, consentimento e distribuição.

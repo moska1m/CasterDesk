@@ -1,3 +1,11 @@
+# 0.3.0-beta.0.9
+
+- Painel local beta para controlar timer e bans em um dock de navegador do OBS.
+- Ativação explícita, chave local, proteção de origem e de alterações concorrentes.
+- Mesmo cronômetro/TXT e comandos persistidos; ordem de operadores e DEF/ATQ preservadas.
+- Apresentação do GitHub com marca, funcionalidades, prévias e histórico recuperado.
+- 713 checks do núcleo, 311 de interface e 24 HTTP; teste adicional do painel em navegador sem janela. OBS nativo ainda não testado.
+
 # 0.3.0-beta.0.8
 
 - Marca aprovada aplicada, mantendo Segoe UI na interface.

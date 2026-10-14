@@ -8,6 +8,8 @@
     <ApplicationIcon>../assets/casterdesk.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Content Include="../assets/obs/*" Link="assets/obs/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <ProjectReference Include="../source-core/CasterDesk.Core.csproj" />
     <PackageReference Include="Avalonia.Win32" Version="12.0.0" />
     <PackageReference Include="Avalonia.Skia" Version="12.0.0" />

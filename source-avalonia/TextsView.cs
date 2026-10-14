@@ -32,6 +32,10 @@ public sealed class TextsView : Grid
     internal void PauseClock() { clock.Pause(); Update(); }
     internal void StartFromHeader() { try { Start(); } catch(Exception ex) { status.Text = ex.Message; } }
     internal void AdjustClock(double seconds) { clock.Add(Math.Max(-clock.Remaining, seconds)); clock.Tick(); Update(); }
+    internal void SetClock(double seconds) {
+        if(!double.IsFinite(seconds)||seconds<0||seconds>86400)throw new InvalidDataException(L.T("Tempo inválido. Use hh:mm:ss."));
+        initial.Text=DurationText(seconds); clock.Reset(seconds); durationEdited=false; Update();
+    }
 
     public TextsView(Settings settings, System.Action saveSettings, Countdown? clock = null)
     {

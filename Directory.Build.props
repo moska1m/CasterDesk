@@ -1,9 +1,9 @@
 <Project>
  <PropertyGroup>
-  <CasterDeskVersion>0.3.0-beta.0.8</CasterDeskVersion>
+  <CasterDeskVersion>0.3.0-beta.0.9</CasterDeskVersion>
   <Version>$(CasterDeskVersion)</Version>
   <AssemblyVersion>0.3.0.0</AssemblyVersion>
-  <FileVersion>0.3.0.8</FileVersion>
+  <FileVersion>0.3.0.9</FileVersion>
   <InformationalVersion>$(CasterDeskVersion)</InformationalVersion>
  </PropertyGroup>
 </Project>

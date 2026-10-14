@@ -18,6 +18,9 @@ try {
     foreach($required in @('CasterDesk.exe','CasterDesk.dll','CasterDesk.Core.dll','coreclr.dll','hostfxr.dll','SkiaSharp.dll','libSkiaSharp.dll','OcrImage.ps1','assets/siege/catalog.json','assets/promo/background.png','assets/studio/Icon_Defender.png','assets/branding/CasterDesk.ico','assets/branding/casterdesk-horizontal-white.svg','assets/branding/casterdesk-horizontal-black.svg')) {
         if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Arquivo ausente na publicação: $required"}
     }
+    foreach($required in @('assets/obs/dock.html','assets/obs/dock.js','Microsoft.AspNetCore.Server.Kestrel.Core.dll')) {
+        if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Arquivo ausente na publicação: $required"}
+    }
     & "$PSScriptRoot/Test-Avalonia.ps1" -Dotnet $Dotnet -PublishFolder $publish
     & $Iscc "/DAppVersion=$version" "/DAppFileVersion=$fileVersion" "/DPublishFolder=$publish" installer/CasterDesk-Avalonia.iss
     if($LASTEXITCODE -ne 0){throw 'Falha ao compilar instalador Avalonia.'}

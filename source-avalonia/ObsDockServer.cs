@@ -1,0 +1,125 @@
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace CasterDesk.Avalonia;
+
+public sealed class ObsDockSettings
+{
+    public bool Enabled { get; set; }
+    public int Port { get; set; } = 43827;
+    public string Key { get; set; } = "";
+}
+
+internal sealed class ObsDockServer : IAsyncDisposable
+{
+    readonly ChampionshipView championship;
+    readonly TextsView texts;
+    readonly Func<bool> canControl;
+    readonly ObsDockSettings settings;
+    WebApplication? app;
+    long revision;
+    bool stopping;
+    bool subscribed = true;
+    internal bool Running => app != null && !stopping;
+    internal string BaseUrl => $"http://127.0.0.1:{settings.Port}";
+    internal string PanelUrl => BaseUrl + "/#key=" + settings.Key;
+    internal ObsDockServer(ChampionshipView championship, TextsView texts, Func<bool> canControl, ObsDockSettings settings)
+    {
+        this.championship=championship; this.texts=texts; this.canControl=canControl; this.settings=settings;
+        if(settings.Port is <1024 or >65535)settings.Port=43827;
+        if(string.IsNullOrWhiteSpace(settings.Key)||settings.Key.Length!=64||!settings.Key.All(Uri.IsHexDigit))settings.Key=Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        championship.Session.Changed+=Changed;
+    }
+    void Changed() => revision++;
+    internal async Task StartAsync()
+    {
+        if(app!=null)return;
+        stopping=false;
+        if(!subscribed){championship.Session.Changed+=Changed;subscribed=true;}
+        var builder=WebApplication.CreateSlimBuilder(); builder.Logging.ClearProviders();
+        builder.WebHost.ConfigureKestrel(options=>{ options.Listen(IPAddress.Loopback,settings.Port); options.Limits.MaxRequestBodySize=8192; });
+        var server=builder.Build();
+        server.Use(async (context,next)=>{
+            context.Response.Headers.CacheControl="no-store";
+            context.Response.Headers["X-Content-Type-Options"]="nosniff";
+            context.Response.Headers["Referrer-Policy"]="no-referrer";
+            context.Response.Headers["Content-Security-Policy"]="default-src 'self'; img-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'";
+            string origin=context.Request.Headers.Origin.ToString();
+            if(context.Request.Host.Value!=$"127.0.0.1:{settings.Port}" || (origin!="" && origin!=BaseUrl)) { context.Response.StatusCode=403; return; }
+            bool protectedPath=context.Request.Path.StartsWithSegments("/api")||context.Request.Path.StartsWithSegments("/icons");
+            if(protectedPath && !KeyMatches(context.Request.Headers["X-CasterDesk-Key"].ToString())) { context.Response.StatusCode=401; return; }
+            if(stopping){context.Response.StatusCode=503;return;}
+            await next(context);
+        });
+        server.MapGet("/",()=>Results.Content(File.ReadAllText(Asset("dock.html")),"text/html; charset=utf-8"));
+        server.MapGet("/dock.js",()=>Results.Content(File.ReadAllText(Asset("dock.js")),"text/javascript; charset=utf-8"));
+        server.MapGet("/brand.svg",()=>Results.File(Path.Combine(AppContext.BaseDirectory,"assets","branding","casterdesk-horizontal-white.svg"),"image/svg+xml"));
+        server.MapGet("/icons/{id}",(string id)=>{
+            var op=championship.Session.Catalog.Operators.FirstOrDefault(o=>o.Id==id);
+            return op==null?Results.NotFound():Results.File(SiegeCatalog.Asset(op.Icon),"image/png");
+        });
+        server.MapGet("/api/state",async()=>await Dispatcher.UIThread.InvokeAsync(()=>Results.Json(State())));
+        server.MapPost("/api/command",async (HttpContext context)=>{
+            if(!context.Request.HasJsonContentType())return Results.StatusCode(415);
+            DockCommand? command;
+            try { command=await context.Request.ReadFromJsonAsync<DockCommand>(context.RequestAborted); }
+            catch(JsonException){return Results.BadRequest(new{error="Invalid JSON"});}
+            if(command==null)return Results.BadRequest();
+            return await Dispatcher.UIThread.InvokeAsync(()=>Execute(command));
+        });
+        try { await server.StartAsync(); app=server; }
+        catch { await server.DisposeAsync(); throw; }
+    }
+    static string Asset(string name)=>Path.Combine(AppContext.BaseDirectory,"assets","obs",name);
+    bool KeyMatches(string key)=>key.Length==settings.Key.Length && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(key),Encoding.UTF8.GetBytes(settings.Key));
+    object State()
+    {
+        var session=championship.Session; var map=session.Map; var match=session.Current;
+        int half=map?.ActiveBanHalf(Math.Min(15,map.Rounds.Count+1))??0;
+        var pending=championship.BansReady && map?.Confirmed==false ? session.PendingBans() : [];
+        string role=pending.Length>0?map!.BanRole(pending[0]):"";
+        return new {
+            version=BuildInfo.Version,revision,language=L.Current,controllable=canControl()&&championship.DockReady&&!stopping,
+            timer=new{seconds=texts.Remaining,running=texts.Running},
+            match=new{id=match.Id,teamA=match.TeamA,teamB=match.TeamB,mapId=map?.MapId,map=map==null?"":session.Catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName,confirmed=map?.Confirmed??false},
+            pending=pending.Length>0?(int?)pending[0]:null,role,
+            bans=map==null?[]:map.BanOrder(half).Select(slot=>new{slot,team=MapRecord.BanTeam(slot),role=map.BanRole(slot),name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==map.Bans[slot])?.Name??"",unlocked=map.BanStageReached(slot)}).ToArray(),
+            operators=role==""?[]:OperatorOrder.Sort(session.Catalog.Operators,role).Select(op=>new{id=op.Id,name=op.Name,enabled=!map!.Bans.Skip(half*6).Take(6).Contains(op.Id)}).ToArray(),
+            labels=new{timer=L.T("CRONÔMETRO"),bans=L.T("Bans de operadores"),start=L.T("Iniciar / Retomar"),pause=L.T("Pausar"),set=L.T("Definir tempo"),select=L.T("Selecionar…"),blocked=L.T("Bloqueado"),wait=L.T(!championship.BansReady?"Conclua o veto e defina os lados na partida.":"Nenhum ban pendente."),connected=L.T("Conectado"),disconnected=L.T("Desconectado"),duration=L.T("Tempo inicial:"),search=L.T("Filtrar operadores"),invalidTime=L.T("Use mm:ss ou hh:mm:ss."),busy=L.T("Conclua a edição aberta no CasterDesk para usar os controles."),team=L.T("Equipe"),def=L.Role("DEF"),atq=L.Role("ATQ")}
+        };
+    }
+    internal sealed record DockCommand(string Action,double Seconds=0,string MatchId="",string MapId="",long Revision=-1,int Slot=-1,string OperatorId="");
+    IResult Execute(DockCommand command)
+    {
+        if(stopping||!canControl()||!championship.DockReady)return Results.Conflict(new{error=L.T("Bloqueado")});
+        try {
+            if(command.Action=="ban") {
+                var session=championship.Session;
+                if(command.Revision!=revision||command.MatchId!=session.Current.Id||command.MapId!=session.Map?.MapId)return Results.Conflict(new{error="Partida alterada. Atualize o painel."});
+                if(!championship.BansReady||session.Map?.Confirmed!=false||session.Current.Complete||session.PendingBans().FirstOrDefault(-1)!=command.Slot)return Results.Conflict(new{error=L.T("Ban de etapa futura.")});
+                session.Ban(command.Slot,command.OperatorId);
+            } else switch(command.Action) {
+                case "start":texts.Start();break;
+                case "pause":texts.PauseClock();break;
+                case "adjust": if(!double.IsFinite(command.Seconds)||Math.Abs(command.Seconds)>86400)return Results.BadRequest(); texts.AdjustClock(command.Seconds);break;
+                case "set":texts.SetClock(command.Seconds);break;
+                default:return Results.BadRequest();
+            }
+            return Results.Json(State());
+        } catch(InvalidDataException ex){return Results.BadRequest(new{error=ex.Message});}
+          catch(InvalidOperationException ex){return Results.BadRequest(new{error=ex.Message});}
+          catch(IOException ex){AppLog.Write(ex.ToString());return Results.StatusCode(500);}
+    }
+    public async ValueTask DisposeAsync()
+    {
+        stopping=true; if(subscribed){championship.Session.Changed-=Changed;subscribed=false;}
+        var server=app; app=null;
+        if(server!=null){using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(3));try{await server.StopAsync(timeout.Token);}finally{await server.DisposeAsync();}}
+    }
+}

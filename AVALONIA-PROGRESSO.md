@@ -1,5 +1,13 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Décima entrega — painel local OBS, 14/10/2026, 0.3.0-beta.0.9
+
+Servidor HTTP restrito a 127.0.0.1, com chave persistida, ativação explícita, origem/host validados e comandos executados no dispatcher. Painel de navegador para timer e bans usa os mesmos serviços e regras. Não abre seletor nativo ao banir pelo painel. Confirmações, edição aberta e requisições desatualizadas bloqueiam alterações; não há repetição automática de comandos.
+
+24 checks HTTP reais aprovados, além dos 311 checks anteriores de interface e marca. Edge sem janela validou controles, duração, contexto de ban, bloqueio de edição e larguras 320/400/700px com API de demonstração. Relatório HTTP inicial: test-results/avalonia-ui-4620b0762ef54fbe9d350504f7ebff09. Empacotamento final aprovado: 713 checks do núcleo e 335 de interface/HTTP, além de marca/prévias. Publicação publish-avalonia-0.3.0-beta.0.9-088fbb2c; UI test-results/avalonia-ui-503aeead29604c1b8416bdb19c6a3459; núcleo test-results/avalonia-core-62ef5cec439841d3b10d56b5838fd492. Instalador dist/CasterDesk-0.3.0-beta.0.9-win-x64-Setup.exe, SHA-256 65d8d23da90892f4d20066075d2ad135ba9844667d797e62ce755a3cb3bf58c3. Conferidos 709 arquivos do manifesto e sete resoluções do ícone nos dois EXEs. Sem assinatura digital. OBS/instalador nativos não foram abertos; compatibilidade do navegador do OBS permanece pendente.
+
+GitHub privado atualizado com apresentação, fontes da beta.0.8 e instaladores históricos recuperados. Histórico anterior preservado sem inventar snapshots exatos para versões intermediárias. Esta seção substitui afirmações antigas de que nenhuma integração ou envio existe; seções anteriores documentam cada entrega à época.
+
 ## Nona entrega — barra fixa e correções de fluxo, 14/10/2026, 0.3.0-beta.0.8
 
 Timer fixo no cabeçalho com ícone, tempo restante, iniciar/retomar, pausar e −1/+1 minuto. Compartilha o mesmo Countdown, saída TXT e pulso da aba Textos; não cria outro timer. Controles compactam em telas menores, com dicas indicando um minuto. Subtração limita em zero, preserva execução/pausa, e erro de tempo inicial é exibido sem exceção não tratada. Nome exibido, executável, instalador e atalhos passam a CasterDesk; identidade e diretório de atualização anteriores permanecem para não conflitar com a instalação legada.
