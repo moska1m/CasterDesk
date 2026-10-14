@@ -50,7 +50,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     brand->setPixmap(mark);brand->setAlignment(Qt::AlignCenter);brand->setStyleSheet("background:#0a1118;padding:8px");brand->setAccessibleName("CasterDesk");
     auto *brandBox=new QWidget();brandBox->setStyleSheet("background:#0a1118");auto *brandLayout=new QHBoxLayout(brandBox);brandLayout->setContentsMargins(4,2,4,2);brandLayout->addWidget(brand,1);root->addWidget(brandBox);
     auto *connectionBox=new QWidget();auto *connectionLayout=new QVBoxLayout(connectionBox);connectionLayout->setContentsMargins(0,0,0,0);connectionLayout->setSpacing(0);
-    connectionIcon=new QLabel();connectionIcon->setObjectName("connection-icon");connectionIcon->setAlignment(Qt::AlignCenter);connectionIcon->setFixedHeight(26);connectionLayout->addWidget(connectionIcon);
+    connectionIcon=new QLabel();connectionIcon->setObjectName("connection-icon");connectionIcon->setAlignment(Qt::AlignCenter);connectionIcon->setFixedHeight(20);connectionLayout->addWidget(connectionIcon);
     status = new QLabel("DESCONECTADO");status->setObjectName("connection");status->setAlignment(Qt::AlignCenter);status->setStyleSheet("color:#ce7278;font-size:10px;padding:0px");connectionLayout->addWidget(status);brandLayout->addWidget(connectionBox);paintConnection();
     context = new QLabel("—"); context->setObjectName("match-context");context->setWordWrap(true);context->setAlignment(Qt::AlignCenter);context->setStyleSheet("font-size:17px;font-weight:700");root->addWidget(context);
     mapLabel=new QLabel();mapLabel->setAlignment(Qt::AlignCenter);mapLabel->setWordWrap(true);root->addWidget(mapLabel);
@@ -92,7 +92,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     connect(roundHistory,&QTableWidget::cellDoubleClicked,this,[this](int row,int){const auto match=state["match"].toObject();if(remakeChoice->currentData().toString()!=match["mapId"].toString()||!state["rounds"].toObject()["editable"].toBool())return;roundIndex=row;renderRounds(true);tabs->setCurrentIndex(0);});
     auto *remakeScroll=new QScrollArea();remakeScroll->setWidgetResizable(true);remakeScroll->setWidget(remakePage);tabs->insertTab(0,remakeScroll,"REMAKE");
     auto *banPage = new QWidget(); banPage->setObjectName("ban-page"); auto *banLayout = new QVBoxLayout(banPage); partidaLayout->addWidget(banPage);
-    auto *banTitle = new QLabel("Bans de operadores"); banTitle->setObjectName("ban-title"); banLayout->addWidget(banTitle);
+    auto *banTitle = new QLabel("Bans de operadores"); banTitle->setObjectName("ban-title");banTitle->setStyleSheet("background:#354c65;color:white;font-weight:700;padding:6px"); banLayout->addWidget(banTitle);
     banSlots = new QGridLayout(); banSlots->setObjectName("ban-slots"); banLayout->addLayout(banSlots);
     phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
     search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
@@ -152,9 +152,9 @@ int CasterDeskPanel::parseDuration(const QString &text)
 QString CasterDeskPanel::label(const char *name,const char *fallback) const { return state["labels"].toObject()[name].toString(QString::fromUtf8(fallback)); }
 void CasterDeskPanel::paintConnection()
 {
-    const QString color=connected?"#247348":"#ce7278";
+    const QString color=connected?"#30d66a":"#ff4335";
     QFile source(":/casterdesk/symbol.svg");source.open(QIODevice::ReadOnly);QByteArray svg=source.readAll();svg.replace("#ffffff",color.toUtf8());QSvgRenderer renderer(svg);
-    QPixmap mark(52,52);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter painter(&mark);renderer.render(&painter,QRectF(0,0,26,26));painter.end();connectionIcon->setPixmap(mark);
+    QPixmap mark(40,40);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter painter(&mark);renderer.render(&painter,QRectF(0,0,20,20));painter.end();connectionIcon->setPixmap(mark);
     status->setStyleSheet(QString("color:%1;font-size:10px;padding:0px").arg(color));
 }
 void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(label("disconnected","Desconectado").toUpper());status->setToolTip(message);paintConnection();context->setText("—");mapLabel->clear();remakeChoice->setEnabled(false);remakeInfo->hide();remakeCheck->hide();roundHistory->hide();clearLayout(remakeBans);updateEnabled();}
@@ -197,7 +197,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(mapsToken!=mapsRendered){mapsRendered=mapsToken;buildingMaps=true;mapChoice->clear();for(const auto &value:match["maps"].toArray()){const auto map=value.toObject();mapChoice->addItem(map["label"].toString(),map["id"].toString());}mapChoice->setCurrentIndex(mapChoice->findData(match["mapId"].toString()));mapChoice->setVisible(mapChoice->count()>1);buildingMaps=false;}
     const auto time=data["timer"].toObject();int seconds=static_cast<int>(std::ceil(time["seconds"].toDouble()));seconds=qBound(0,seconds,86400);const int hours=seconds/3600;
     clock->setText((hours>0?QString("%1:").arg(hours,2,10,QChar('0')):QString())+QString("%1:%2").arg((seconds/60)%60,2,10,QChar('0')).arg(seconds%60,2,10,QChar('0')));
-    start->setText(label("start","Iniciar / Retomar"));start->setToolTip(start->text());start->setAccessibleName(start->toolTip());pause->setText(label("pause","Pausar"));pause->setToolTip(pause->text());pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(2,label("timer","Cronômetro").toUpper());tabs->setTabText(1,"REMAKE");tabs->setTabText(0,label("partida","Partida").toUpper());findChild<QLabel *>("ban-title")->setText(label("bans","Bans de operadores"));findChild<QLabel *>("history-title")->setText(label("history","Histórico de rounds"));search->setPlaceholderText(label("search","Filtrar operadores"));
+    start->setText(label("start","Iniciar / Retomar"));start->setToolTip(start->text());start->setAccessibleName(start->toolTip());pause->setText(label("pause","Pausar"));pause->setToolTip(pause->text());pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(2,label("timer","Cronômetro").toUpper());tabs->setTabText(1,"REMAKE");tabs->setTabText(0,label("partida","Partida").toUpper());findChild<QLabel *>("ban-title")->setText(label("bans","Bans de operadores").toUpper());findChild<QLabel *>("history-title")->setText(label("history","Histórico de rounds"));search->setPlaceholderText(label("search","Filtrar operadores"));
     if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
     const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
     if(next!=rendered){rendered=next;clearLayout(banSlots);QString nextPhase=label("wait","Nenhum ban pendente.");
@@ -227,7 +227,7 @@ void CasterDeskPanel::updateEnabled()
     for(int n=0;n<roundSites->count();++n){auto *button=qobject_cast<QPushButton *>(roundSites->itemAt(n)->widget());if(button)button->setEnabled(roundReady&&button->property("available").toBool());}
     for(int n=0;n<roundEndings->count();++n){auto *button=qobject_cast<QPushButton *>(roundEndings->itemAt(n)->widget());if(button)button->setEnabled(roundReady&&roundWinner>=0&&button->property("available").toBool());}
     for(auto *team:roundTeams)team->setEnabled(roundReady);
-    roundSave->setEnabled(roundReady&&roundWinner>=0&&!roundSite.isEmpty()&&!roundEnding.isEmpty());
+    roundSave->setEnabled(roundReady&&roundWinner>=0&&!roundSite.isEmpty()&&!roundEnding.isEmpty());roundSave->setStyleSheet(roundSave->isEnabled()?"background:#25834c;color:white;font-weight:700":"");
     for(auto *button:{reset,timerSave})button->setEnabled(ready);
     for(int i=0;i<3;++i){presetValues[i]->setEnabled(ready);presetButtons[i]->setEnabled(ready);}
     finalMessage->setEnabled(ready);timeFormat->setEnabled(ready);copyFolder->setEnabled(connected&&!outputFolder->text().isEmpty());
@@ -250,15 +250,16 @@ void CasterDeskPanel::renderRounds(bool force)
     int attacker=data["attacker"].toInt(-1);if(roundIndex>=0)attacker=history[roundIndex].toObject()["attacker"].toInt();
     roundHeading->setText(label("rounds","Round a round")+" · "+QString("%1 · %2 %3 / %4 %5 · %6").arg(roundIndex<0?data["number"].toInt():roundIndex+1).arg(match[attacker==0?"teamA":"teamB"].toString(),label("atq","ATQ"),match[attacker==0?"teamB":"teamA"].toString(),label("def","DEF"),data["score"].toString()));
     if(roundIndex<0&&!data["ready"].toBool())roundHeading->setText(roundHeading->text()+"\n"+label("roundWait","Conclua os bans e os lados para continuar."));
+    roundHeading->setText(roundHeading->text().toUpper());roundHeading->setStyleSheet("background:#354c65;color:white;font-weight:700;padding:6px");
     updateRoundChoices();
 }
 void CasterDeskPanel::updateRoundChoices()
 {
     const auto rounds=state["rounds"].toObject();const auto match=state["match"].toObject();int attacker=rounds["attacker"].toInt(-1);const auto history=rounds["history"].toArray();if(roundIndex>=0&&roundIndex<history.size())attacker=history[roundIndex].toObject()["attacker"].toInt();
     bool allowed=false;for(const auto &value:rounds["endings"].toArray()){const auto end=value.toObject();if(end["id"].toString()==roundEnding&&end[roundWinner==attacker?"attack":"defense"].toBool())allowed=true;}if(roundWinner<0||!allowed)roundEnding.clear();
-    clearLayout(roundEndings);int n=0;for(const auto &value:rounds["endings"].toArray()){const auto end=value.toObject();auto *button=choiceButton(end["label"].toString(),"round-ending-"+end["id"].toString());button->setFixedHeight(38);button->setProperty("available",end[roundWinner==attacker?"attack":"defense"].toBool());button->setStyleSheet(end["id"].toString()==roundEnding?"border:2px solid #72c8ef":"");roundEndings->addWidget(button,n/2,n%2);++n;connect(button,&QPushButton::clicked,this,[this,end]{roundEnding=end["id"].toString();updateRoundChoices();});}
-    for(int i=0;i<roundSites->count();++i){auto *button=qobject_cast<QPushButton *>(roundSites->itemAt(i)->widget());button->setStyleSheet(button->property("site").toString()==roundSite?"border:2px solid #72c8ef":"");}
-    for(int team=0;team<2;++team){roundTeams[team]->setText(match[team==0?"teamA":"teamB"].toString());roundTeams[team]->setToolTip(roundTeams[team]->text()+" · "+label(team==attacker?"atq":"def",team==attacker?"ATQ":"DEF"));roundTeams[team]->setStyleSheet(QString("background:%1;border:%2px solid white;").arg(team==0?"#305975":"#895333").arg(roundWinner==team?2:0));}
+    clearLayout(roundEndings);int n=0;for(const auto &value:rounds["endings"].toArray()){const auto end=value.toObject();auto *button=choiceButton(end["label"].toString(),"round-ending-"+end["id"].toString());button->setFixedHeight(38);button->setProperty("available",end[roundWinner==attacker?"attack":"defense"].toBool());button->setStyleSheet(end["id"].toString()==roundEnding?"border:2px solid #ff4335":"");roundEndings->addWidget(button,n/2,n%2);++n;connect(button,&QPushButton::clicked,this,[this,end]{roundEnding=end["id"].toString();updateRoundChoices();});}
+    for(int i=0;i<roundSites->count();++i){auto *button=qobject_cast<QPushButton *>(roundSites->itemAt(i)->widget());button->setStyleSheet(button->property("site").toString()==roundSite?"border:2px solid #ff4335":"");}
+    for(int team=0;team<2;++team){roundTeams[team]->setText(match[team==0?"teamA":"teamB"].toString());roundTeams[team]->setToolTip(roundTeams[team]->text()+" · "+label(team==attacker?"atq":"def",team==attacker?"ATQ":"DEF"));roundTeams[team]->setStyleSheet(QString("background:%1;border:%2px solid #ff4335;").arg(team==0?"#305975":"#895333").arg(roundWinner==team?2:0));}
     updateEnabled();
 }
 
