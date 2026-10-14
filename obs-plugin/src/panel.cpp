@@ -68,7 +68,14 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     connect(set,&QPushButton::clicked,this,[this]{const int seconds=parseDuration(duration->text());if(seconds<0){error->setText(label("invalidTime","Use mm:ss ou hh:mm:ss."));return;}command({{"action","set"},{"seconds",seconds}});});
     connect(search,&QLineEdit::textChanged,this,[this]{renderOperators();});
     timer.setInterval(1000); connect(&timer,&QTimer::timeout,this,[this]{poll();});
+    for(auto *text:findChildren<QLabel *>())text->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);
+    duration->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);duration->setMinimumWidth(60);
     updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
+}
+CasterDeskPanel::~CasterDeskPanel()
+{
+    timer.stop();
+    for(auto *reply:network.findChildren<QNetworkReply *>()){reply->disconnect(this);reply->abort();}
 }
 
 int CasterDeskPanel::parseDuration(const QString &text)
@@ -121,7 +128,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
     const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
     if(next!=rendered){rendered=next;clearLayout(banSlots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");
-        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setStyleSheet(QString("padding:5px;border-bottom:3px solid %1;").arg(ban["team"].toInt()==0?"#408fb3":"#ff7737"));banSlots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
+        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);slot->setStyleSheet(QString("padding:5px;background:%1;border-bottom:3px solid %2;").arg(ban["team"].toInt()==0?"#305975":"#895333",ban["team"].toInt()==0?"#408fb3":"#ff7737"));banSlots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
         phase->setText(nextPhase);renderOperators();}
     updateEnabled();
 }

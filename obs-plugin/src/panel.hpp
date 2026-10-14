@@ -15,6 +15,7 @@
 class CasterDeskPanel final : public QWidget {
 public:
     explicit CasterDeskPanel(QWidget *parent = nullptr, QString configPath = {}, bool autoPoll = true);
+    ~CasterDeskPanel() override;
     void poll();
     static QString configurationPath();
     static int parseDuration(const QString &text);
