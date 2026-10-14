@@ -4,7 +4,7 @@ using CronoLive;
 namespace CasterDesk.Avalonia;
 internal static class LobbyView
 {
- public static Control Create(int selected = 0, Action<int>? selectedChanged = null)
+ public static Control Create(int selected = 0, Action<int>? selectedChanged = null, string? backgroundMap = null)
  {
   var sections = new List<(string Title, (string Name,string Value)[] Rows)>();
   void Add(string title,(string Name,string Value)[] rows) => sections.Add((title, rows));
@@ -20,7 +20,7 @@ internal static class LobbyView
   Add("MAP POOL",new[]{( "Banco • Fronteira • Chalé", "" ),( "Clube • Fortaleza • Café Dostoyevsky", "" ),( "Laboratórios Nighthaven • Covil • Mansão", "" )});
   var root = new Grid { Name = "lobby-guide", Background = Ui.Canvas, RowDefinitions = new("Auto,*"), Margin = new Thickness(4) };
   var banner = new Grid { Height = 108 };
-  try { var map = SiegeCatalog.Load().Maps.Single(m => m.Id == "clubhouse"); banner.Children.Add(new Image { Source = Ui.FileImage(SiegeCatalog.Asset(map.Image)), Stretch = Stretch.UniformToFill }); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
+  try { var catalog = SiegeCatalog.Load(); var map = catalog.Maps.FirstOrDefault(m => m.Id == backgroundMap) ?? catalog.Maps[Random.Shared.Next(catalog.Maps.Count)]; banner.Children.Add(new Image { Source = Ui.FileImage(SiegeCatalog.Asset(map.Image)), Stretch = Stretch.UniformToFill }); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
   banner.Children.Add(new Border { Background = Brush.Parse("#CE101C29") });
   var titles = new StackPanel { Margin = new Thickness(20, 8) }; titles.Children.Add(Ui.Text("CONFIGURAÇÃO DE LOBBY", true)); titles.Children.Add(Ui.Text("Guia de referência para criar sua partida no Siege.")); banner.Children.Add(titles); root.Children.Add(banner);
   var body = new Grid { ColumnDefinitions = new("280,*"), Margin = new Thickness(0, 8, 0, 0) }; root.Children.Add(body); Grid.SetRow(body, 1);

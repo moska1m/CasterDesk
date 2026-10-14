@@ -51,6 +51,14 @@ public sealed class MapRecord
     }
     public int[] PendingBans(int half) => Enumerable.Range(half*6,6).Where(i=>BanStageReached(i) && string.IsNullOrEmpty(Bans[i])).ToArray();
     public string BanRole(int slot) => BanTeam(slot) == (slot < 6 ? InitialAttack : 1-InitialAttack) ? "DEF" : "ATQ";
+    public int[] BanOrder(int half)
+    {
+        int first = half * 6;
+        var defense = Enumerable.Range(first, 4).Where(i => BanRole(i) == "DEF").ToArray();
+        var attack = Enumerable.Range(first, 4).Where(i => BanRole(i) == "ATQ").ToArray();
+        return defense.Zip(attack, (d, a) => new[] { d, a }).SelectMany(pair => pair)
+            .Concat(Enumerable.Range(first + 4, 2).OrderBy(i => BanRole(i) == "DEF" ? 0 : 1)).ToArray();
+    }
     public int ActiveBanHalf(int round) => Attacker(round) == InitialAttack ? 0 : 1;
     public bool SiteBlocked(string site,int round)
     {

@@ -15,13 +15,13 @@ try {
     if($LASTEXITCODE -ne 0){throw 'Falha ao restaurar os pacotes de publicação Avalonia.'}
     & $Dotnet publish source-avalonia/CasterDesk.Avalonia.csproj -c Release -r win-x64 --self-contained true --no-restore -o $publish -m:1 -p:UseSharedCompilation=false
     if($LASTEXITCODE -ne 0){throw 'Falha ao publicar Avalonia.'}
-    foreach($required in @('CasterDesk.Avalonia.exe','CasterDesk.Avalonia.dll','CasterDesk.Core.dll','coreclr.dll','hostfxr.dll','SkiaSharp.dll','libSkiaSharp.dll','OcrImage.ps1','assets/siege/catalog.json','assets/promo/background.png','assets/studio/Icon_Defender.png')) {
+    foreach($required in @('CasterDesk.exe','CasterDesk.dll','CasterDesk.Core.dll','coreclr.dll','hostfxr.dll','SkiaSharp.dll','libSkiaSharp.dll','OcrImage.ps1','assets/siege/catalog.json','assets/promo/background.png','assets/studio/Icon_Defender.png','assets/branding/CasterDesk.ico','assets/branding/casterdesk-horizontal-white.svg','assets/branding/casterdesk-horizontal-black.svg')) {
         if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Arquivo ausente na publicação: $required"}
     }
     & "$PSScriptRoot/Test-Avalonia.ps1" -Dotnet $Dotnet -PublishFolder $publish
     & $Iscc "/DAppVersion=$version" "/DAppFileVersion=$fileVersion" "/DPublishFolder=$publish" installer/CasterDesk-Avalonia.iss
     if($LASTEXITCODE -ne 0){throw 'Falha ao compilar instalador Avalonia.'}
-    $installer=Get-Item "dist/CasterDesk-Avalonia-$version-win-x64-Setup.exe"
+    $installer=Get-Item "dist/CasterDesk-$version-win-x64-Setup.exe"
     $hash=(Get-FileHash $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     "$hash  $($installer.Name)" | Set-Content ($installer.FullName+'.sha256') -Encoding ascii
     $files=Get-ChildItem $publish -File -Recurse | Where-Object Extension -ne '.pdb' | ForEach-Object {[ordered]@{Path=[IO.Path]::GetRelativePath((Join-Path $root $publish),$_.FullName);Length=$_.Length;Sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}}

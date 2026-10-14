@@ -24,6 +24,7 @@ public sealed class StudioShell : Window
         settings = ConfigurationStore.Read<Settings>("settings.json"); ConfigurationStore.Normalize(settings); Ui.Theme(settings.DarkMode);
         Title = "CasterDesk • " + BuildInfo.Version; Width = 1440; Height = 900; MinWidth = 980; MinHeight = 640;
         FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
+        Icon = new WindowIcon(Path.Combine(AppContext.BaseDirectory, "assets", "branding", "CasterDesk.ico"));
         Championship = new ChampionshipView(session); Championship.SetQuickMode(settings.QuickRounds);
         studio = new StudioView(() => Championship.Session.Matches, Championship.Session.Catalog, Championship.Session.ApplyArtworkVeto);
         Texts = new TextsView(settings, SaveSettings);
@@ -33,23 +34,31 @@ public sealed class StudioShell : Window
             catch (Exception ex) { footer.Text = ex.Message; }
         };
         var layout = new Grid { RowDefinitions = new("Auto,*,Auto") }; Content = layout;
-        var header = new DockPanel { LastChildFill = true, Background = Brush.Parse("#0A1118") };
-        var brand = new TextBlock { Text = "CASTERDESK", Foreground = Brushes.White, FontSize = 23, FontWeight = FontWeight.Bold,
-            Margin = new Thickness(20, 15, 26, 15), VerticalAlignment = VerticalAlignment.Center };
-        DockPanel.SetDock(brand, Dock.Left); header.Children.Add(brand);
+        var header = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto"), Background = Brush.Parse("#0A1118") };
+        var brand = BrandMark.Create(true);
+        brand.Margin = new Thickness(20, 8, 26, 8); brand.VerticalAlignment = VerticalAlignment.Center;
+        header.Children.Add(brand);
         gear = Ui.Button("", ToggleMenu); gear.Name = "settings-menu"; gear.Content = new GearIcon { Width = 34, Height = 34 };
         gear.Width = 50; gear.Padding = new Thickness(6); gear.Margin = new Thickness(12, 5); gear.BorderThickness = new Thickness(1);
         gear.BorderBrush = Brush.Parse("#677078"); gear.Background = Brushes.Transparent;
         global::Avalonia.Automation.AutomationProperties.SetName(gear, L.T("Configurações e sobre"));
         gear.PointerEntered += (_, _) => PaintGear(true); gear.PointerExited += (_, _) => PaintGear(menuOpen);
-        DockPanel.SetDock(gear, Dock.Right); header.Children.Add(gear);
-        var nav = new StackPanel { Orientation = Orientation.Horizontal };
+        header.Children.Add(gear); Grid.SetColumn(gear,3);
+        var timer = new HeaderTimer(Texts); header.Children.Add(timer); Grid.SetColumn(timer,2);
+        var nav = new StackPanel { Name = "main-navigation", Orientation = Orientation.Horizontal };
         string[] labels = ["CAMPEONATO", "Central de imagens", "TEXTOS PARA OBS"];
         for (int n = 0; n < labels.Length; n++) {
             int index = n; var tab = Ui.Button(labels[n], () => Navigate(index)); tab.Margin = new Thickness(0); tab.Padding = new Thickness(20, 17);
             tab.Foreground = Brushes.White; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
         }
-        header.Children.Add(nav); layout.Children.Add(header);
+        header.Children.Add(nav); Grid.SetColumn(nav,1); layout.Children.Add(header);
+        void FitHeader() {
+            bool narrow = Bounds.Width < 1200; timer.Compact(Bounds.Width < 1550);
+            brand.Width = narrow ? 140 : 240; brand.Height = brand.Width * 132 / 558;
+            brand.Margin = new Thickness(narrow ? 8 : 20,8,narrow ? 8 : 26,8);
+            foreach(var tab in tabs) { tab.Padding = new Thickness(narrow ? 8 : 16,17); tab.FontSize = narrow ? 11 : 14; }
+        }
+        SizeChanged += (_, _) => FitHeader(); FitHeader();
         layout.Children.Add(page); Grid.SetRow(page, 1);
         drawerPanel = new Border { Background = Ui.Panel, Padding = new Thickness(14, 8), Child = new ScrollViewer { Content = drawer }, ClipToBounds = true,
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, IsVisible = false, Width = 300 };
@@ -73,7 +82,7 @@ public sealed class StudioShell : Window
             catch (Exception ex) { e.Cancel = true; footer.Text = ex.Message; }
             finally { waitingToClose = false; }
         };
-        Closed += (_, _) => { Championship.Stop(); studio.Stop(); Texts.Stop(); };
+        Closed += (_, _) => { timer.Stop(); Championship.Stop(); studio.Stop(); Texts.Stop(); };
     }
 
     internal void Navigate(int index)
@@ -125,7 +134,7 @@ public sealed class StudioShell : Window
         drawer.Children.Add(new Expander { Header = L.T("Idioma"), Content = languages, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });
         var backups = Ui.Button("Backup e restauração", () => _ = OpenBackup()); backups.Name = "backup-menu"; drawer.Children.Add(backups);
         drawer.Children.Add(Ui.Button("Sobre", async () => {
-            var panel = new StackPanel { Margin = new Thickness(20) }; panel.Children.Add(Ui.Text("CasterDesk", true)); panel.Children.Add(Ui.Text(BuildInfo.Version));
+            var panel = new StackPanel { Margin = new Thickness(20) }; panel.Children.Add(BrandMark.Create(Ui.Dark)); panel.Children.Add(Ui.Text(BuildInfo.Version));
             panel.Children.Add(Ui.Text("Ferramentas para community casters de Rainbow Six Siege."));
             var dialog = Ui.Dialog(this, "Sobre", panel, 540, 300); panel.Children.Add(Ui.Button("Fechar", () => dialog.Close())); await dialog.ShowDialog(this);
         }));

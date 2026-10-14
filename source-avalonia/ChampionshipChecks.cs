@@ -30,12 +30,14 @@ internal static class ChampionshipChecks
         for (int step = 0; step < 8; step++) {
             Click(Find<Button>(view, "veto-" + step)); Pump();
             Need(view.ActiveDialog != null, "Map selection opens");
+            if(step==1){ Need(!Find<Button>(view.ActiveDialog!,"map-choice-"+session.Catalog.Maps[0].Id).IsEnabled,"Used map is unavailable in next chooser"); Snapshot((Control)view.ActiveDialog!.Content!,new Size(1000,540),"map-chooser"); }
             Click(Find<Button>(view.ActiveDialog!, "map-choice-" + session.Catalog.Maps[step].Id)); Pump();
             Need(session.Current.Veto[step] == session.Catalog.Maps[step].Id, "Map choice saved from UI");
         }
         var map = session.Map!; Need(view.VetoComplete && !view.BansReady, "Bans wait for initial side");
         Find<ComboBox>(view, "side-initial-" + map.MapId).SelectedIndex = 1; Pump();
-        Need(view.BansReady && view.ActiveDialog != null, "Initial side opens first ban");
+        Need(view.BansReady && view.ActiveDialog == null, "Initial side waits for manual ban start");
+        TextButton(view, "Banir próximo");
 
         void FinishBans()
         {
@@ -44,6 +46,7 @@ internal static class ChampionshipChecks
                 if (++count > 6) throw new Exception("Ban chain did not end");
                 var pending = session.PendingBans(); Need(pending.Length > 0, "Dialog corresponds to pending ban");
                 string role = session.Map!.BanRole(pending[0]);
+                Need(role == (count % 2 == 1 ? "DEF" : "ATQ"), "Ban chain alternates DEF then ATQ after every actual selection");
                 var ordered = OperatorOrder.Sort(session.Catalog.Operators, role).ToArray();
                 var actual = view.ActiveDialog.GetVisualDescendants().OfType<Button>().Where(b => b.Name?.StartsWith("operator-") == true).ToArray();
                 Need(actual.Select(b => b.Name![9..]).SequenceEqual(ordered.Select(o => o.Id)), "Operator release order");

@@ -53,6 +53,14 @@ public static class StatisticsData
     }
     public static StatisticsSummary ForMap(MapRecord map)=>Sum([map]);
     public static StatisticsSummary ForSeries(SiegeMatch match)=>Sum(match.Maps.Where(m=>m.Rounds.Count>0).ToList());
+    public static SummedPlayer? SuggestMvp(SiegeMatch match, MapRecord? map = null)
+    {
+        int winner = map?.Score().Winner ?? (match.Complete ? (match.Maps.Count(m=>m.Confirmed && m.Score().Winner==0)>=match.WinsRequired?0:1) : -1);
+        if(winner<0)return null;
+        var summary = map == null ? ForSeries(match) : ForMap(map);
+        return summary.Players.Where(p=>p.Team==winner && p.Kills.HasValue)
+            .OrderByDescending(p=>p.Kills).ThenBy(p=>p.Name,StringComparer.OrdinalIgnoreCase).FirstOrDefault();
+    }
     static StatisticsSummary Sum(IReadOnlyList<MapRecord> maps)
     {
         var included=maps.Where(m=>m.Statistics?.ConfirmedAt is not null && m.Statistics.Status!="missing" && m.Statistics.Players.Count>0).ToList();

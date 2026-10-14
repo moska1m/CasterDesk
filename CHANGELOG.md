@@ -1,3 +1,31 @@
+# 0.3.0-beta.0.8
+
+- Marca aprovada aplicada, mantendo Segoe UI na interface.
+- Timer fixo e sincronizado, nova partida/seletor na linha superior e confirmação verde abaixo do histórico.
+- Sequência DEF/ATQ corrigida, início manual dos bans, mapas indisponíveis em cinza e cards sem sobreposição.
+- Histórico compacto; Central mais confortável, Twitch como prefixo inicial e MVP da equipe vencedora.
+- PNGs na ordem eliminação/morte/assistência, com valores do MVP centralizados sob o nome.
+- Nome do programa, instalador e atalhos: CasterDesk. 713 checks do núcleo e 311 de interface/correções.
+
+# 0.3.0-beta.0.7
+
+- Microfone monocromático + CasterDesk unido em Rajdhani; ícone e SVGs aprovados aplicados.
+- Instalador preservado; não há snapshot exato separado dos fontes desta entrega.
+
+# 0.3.0-beta.0.6
+
+- Layout de partida compacto, coin flip somente registrado, cabeçalhos fixos, cores de equipe nos bans e lobby em seções.
+
+# 0.3.0-beta.0.5
+
+- Linha Avalonia: Central, campeonato/lobby, timer/TXTs, backup/restauração e idioma.
+- Publicação autossuficiente Windows x64 e correções de nomes personalizados e associação de equipe nas estatísticas.
+
+# 0.3.0-beta.0.4
+
+- Base estabilizada anterior com salvamento recuperável, JSON estruturado, revisão, pacotes e backup.
+- Referência técnica preservada para os serviços compartilhados da nova interface.
+
 # 0.3.0-beta.0.3
 
 - JSON de partida versão 2 com base em inglês: equipes padrão explícitas, BO1/BO3/BO5, IDs de mapas existentes e 36 IDs fixos de bombsites com nomes-base legíveis.

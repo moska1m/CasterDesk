@@ -23,7 +23,7 @@ public sealed class StudioView : Grid
  int[] formats={1,2,1,1,1};readonly Dictionary<string,int[]> rememberedFormats=new();readonly Dictionary<(string,ArtKind),string> rememberedMaps=new();readonly SemaphoreSlim renderGate=new(1,1);
  readonly StackPanel vetoOptions=new();readonly Func<string,ImageBrand,bool>? applyVeto;
  readonly TextBox eventName=new(){MaxLength=80};
- readonly TextBox channel=new(){MaxLength=120};readonly TextBlock channelTitle=Ui.Text("CANAL DA TRANSMISSÃO",true),channelHint=Ui.Text("Ex.: twitch.tv/seucanal ou youtube.com/@seucanal");
+ readonly TextBox channel=new(){MaxLength=120,PlaceholderText="twitch.tv/seucanal"};readonly TextBlock channelTitle=Ui.Text("CANAL DA TRANSMISSÃO",true),channelHint=Ui.Text("twitch.tv/");
  readonly Image preview=new(){Stretch=Stretch.Uniform};
  readonly StackPanel options=new(),footer=new();
  readonly TextBlock status=Ui.Text(""),background=Ui.Text(""),stats=Ui.Text(""),mapTitle=Ui.Text("MAPA",true),mvpTitle=Ui.Text("MVP",true),modeTitle=Ui.Text("PRÉVIA",true);
@@ -40,7 +40,7 @@ public sealed class StudioView : Grid
  {
   this.list=list;this.catalog=catalog;this.applyVeto=applyVeto;Margin=new Thickness(18);Background=Ui.Canvas;
   RowDefinitions.Add(new(){Height=GridLength.Auto});RowDefinitions.Add(new(){Height=GridLength.Auto});RowDefinitions.Add(new());
-  ColumnDefinitions.Add(new(){Width=new GridLength(300)});ColumnDefinitions.Add(new());
+  ColumnDefinitions.Add(new(){Width=new GridLength(340)});ColumnDefinitions.Add(new());
   var top=new StackPanel{Orientation=Orientation.Horizontal};top.Children.Add(new TextBlock{Text=L.T("Partida:"),VerticalAlignment=VerticalAlignment.Center,Margin=new Thickness(0,0,12,10)});matches.Width=360;top.Children.Add(matches);Children.Add(top);SetColumnSpan(top,2);
   foreach(string label in new[]{"Anúncio","Map veto","Resultado da série","Estatísticas por mapa","Estatísticas da série"})kind.Items.Add(new TabItem{Header=L.T(label)});kind.SelectedIndex=0;Children.Add(kind);SetRow(kind,1);SetColumnSpan(kind,2);
   var sidebar=new Grid{Margin=new Thickness(0,0,18,0)};sidebar.RowDefinitions.Add(new());sidebar.RowDefinitions.Add(new(){Height=GridLength.Auto});SetRow(sidebar,2);Children.Add(sidebar);
@@ -58,8 +58,8 @@ public sealed class StudioView : Grid
   var frame=new Border{Background=new SolidColorBrush(Color.FromRgb(11,16,23)),Padding=new Thickness(14),Child=preview};SetRow(frame,2);SetColumn(frame,1);Children.Add(frame);
   matches.SelectionChanged+=(_,e)=>{if(e.Source!=matches)return;if(!loading)LoadSelection();};kind.SelectionChanged+=(_,e)=>{if(e.Source!=kind)return;if(!loading){Configure();_=Render();}};aspect.SelectionChanged+=(_,e)=>{if(e.Source!=aspect)return;if(!loading){formats[(int)Kind]=aspect.SelectedIndex;_=Render();}};maps.SelectionChanged+=(_,e)=>{if(e.Source!=maps)return;if(!loading){if(Selected!=null&&Map!=null)rememberedMaps[(Selected.Id,Kind)]=Map.MapId;Configure();_=Render();}};mode.SelectionChanged+=(_,_)=>ShowPreview();
   eventName.TextChanged+=(_,_)=>{if(!loading){brand.EventName=eventName.Text??"";Changed();}};mvp.SelectionChanged+=(_,_)=>{if(!loading){var value=(mvp.SelectedItem as Choice)?.Key??"";if(value==brand.Mvp)return;brand.Mvp=value;Changed();}};
-  channel.TextChanged+=(_,_)=>{if(!loading){brand.BroadcastChannel=channel.Text??"";Changed();}};
-  debounce.Tick+=(_,_)=>{debounce.Stop();if(Flush())_=Render();};SizeChanged+=(_,_)=>{matches.Width=Math.Max(220,Math.Min(360,Bounds.Width-95));ColumnDefinitions[0].Width=new GridLength(Bounds.Width<1100?260:300);};Configure();
+  channel.TextChanged+=(_,_)=>{if(!loading){brand.BroadcastChannel=BroadcastChannel.Normalize(channel.Text??"");Changed();}};
+  debounce.Tick+=(_,_)=>{debounce.Stop();if(Flush())_=Render();};SizeChanged+=(_,_)=>{matches.Width=Math.Max(220,Math.Min(360,Bounds.Width-95));ColumnDefinitions[0].Width=new GridLength(Bounds.Width<1100?290:340);};Configure();
  }
  public void Refresh(string? preferred=null)
  {
@@ -69,7 +69,7 @@ public sealed class StudioView : Grid
  void LoadSelection()
  {
   if(!Flush()){loading=true;matches.SelectedItem=owner;loading=false;return;}
-  loading=true;owner=Selected;if(owner!=null){if(!rememberedFormats.TryGetValue(owner.Id,out var stored))rememberedFormats[owner.Id]=stored=new[]{1,2,1,1,1};formats=stored;}brand=owner==null?new():MatchFiles.ReadBrand(owner);brandDirty=false;eventName.Text=brand.EventName;channel.Text=brand.BroadcastChannel;maps.ItemsSource=owner?.Maps.Select(m=>catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName).ToList();maps.SelectedIndex=owner?.Maps.Count>0?0:-1;loading=false;BuildVeto();Configure();_=Render();
+  loading=true;owner=Selected;if(owner!=null){if(!rememberedFormats.TryGetValue(owner.Id,out var stored))rememberedFormats[owner.Id]=stored=new[]{1,2,1,1,1};formats=stored;}brand=owner==null?new():MatchFiles.ReadBrand(owner);brandDirty=false;eventName.Text=brand.EventName;channel.Text=string.IsNullOrWhiteSpace(brand.BroadcastChannel)?"twitch.tv/":brand.BroadcastChannel;maps.ItemsSource=owner?.Maps.Select(m=>catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName).ToList();maps.SelectedIndex=owner?.Maps.Count>0?0:-1;loading=false;BuildVeto();Configure();_=Render();
  }
  void Configure()
  {
@@ -83,9 +83,10 @@ public sealed class StudioView : Grid
    foreach(Control control in new Control[]{mode,modeTitle,copy})control.IsVisible=veto;
    foreach(Control control in new Control[]{mvp,mvpTitle})control.IsVisible=Kind is ArtKind.MapStats or ArtKind.SeriesStats;
    statsEdit.IsEnabled=Map!=null;stats.Text=Map?.Statistics?.ConfirmedAt==null?L.T("Estatísticas ainda não conferidas."):Map.Statistics.Status=="complete"?L.T("Estatísticas completas e conferidas."):L.T("Estatísticas parciais ou indisponíveis.");
-   var choices=new List<Choice>{new("",L.T("Sem destaque MVP"))};
+   var choices=new List<Choice>{new("",L.T("MVP automático")),new("none",L.T("Sem destaque MVP"))};
    if(Selected!=null){var summary=Kind==ArtKind.MapStats&&Map!=null?StatisticsData.ForMap(Map):StatisticsData.ForSeries(Selected);ToolTip.SetTip(stats,L.F($"Cobertura: {summary.MapsIncluded}/{summary.MapsPlayed} mapas conferidos.")+Environment.NewLine+string.Join(Environment.NewLine,summary.Players.Select(p=>$"{p.Name}: E {p.KillMaps}, M {p.DeathMaps}, A {p.AssistMaps}")));choices.AddRange(summary.Players.Select(p=>new Choice(p.Key,Selected.Team(p.Team)+" · "+p.Name)));}
-   mvp.ItemsSource=choices;mvp.SelectedItem=choices.FirstOrDefault(c=>c.Key==brand.Mvp)??choices[0];background.Text=L.T(string.IsNullOrEmpty(brand.Background)?"Fundo padrão":"Fundo personalizado. Ajustado ao formato; confira o recorte na prévia.");
+   string suggested=Selected==null?"":StatisticsData.SuggestMvp(Selected,Kind==ArtKind.MapStats?Map:null)?.Key??"";
+   mvp.ItemsSource=choices;mvp.SelectedItem=choices.FirstOrDefault(c=>c.Key==(string.IsNullOrEmpty(brand.Mvp)?suggested:brand.Mvp))??choices[0];background.Text=L.T(string.IsNullOrEmpty(brand.Background)?"Fundo padrão":"Fundo personalizado. Ajustado ao formato; confira o recorte na prévia.");
   }
   finally{loading=false;}
  }

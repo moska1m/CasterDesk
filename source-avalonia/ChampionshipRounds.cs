@@ -94,9 +94,10 @@ public sealed partial class ChampionshipView
         for (int index = 0; index < map.Rounds.Count; index++) {
             int row = index; var record = map.Rounds[index]; if (record.Winner == 0) a++; else b++;
             var line = HistoryLine([ (index + 1).ToString(), Session.Current.Team(map.Attacker(index + 1)), Session.Current.Team(1 - map.Attacker(index + 1)),
-                BombsiteNames.Display(map.MapId, record.Site), Session.Current.Team(record.Winner), $"{a}–{b}", RoundEnding.Label(record.Ending), "›" ]);
+                ShortSite(map.MapId, record.Site), Session.Current.Team(record.Winner), $"{a}–{b}", RoundEnding.Label(record.Ending), "›" ]);
             var button = Action("", () => EditRound(row)); button.Content = line; button.Name = "history-round-" + index;
             button.HorizontalContentAlignment = HorizontalAlignment.Stretch; button.Background = Ui.Team(record.Winner, false); button.Foreground = Brushes.White; button.Margin = new Thickness(0); button.Padding = new Thickness(2);
+            button.MinHeight = 0; button.Height = 28;
             ToolTip.SetTip(button, L.T("Clique para corrigir um round.")); panel.Children.Add(button);
         }
         if (map.Rounds.Count == 0) panel.Children.Add(Ui.Text("Nenhum round registrado."));
@@ -107,9 +108,18 @@ public sealed partial class ChampionshipView
         var line = Columns(".55*,1.15*,1.15*,1.9*,1.15*,.6*,1.5*,.2*");
         for (int n = 0; n < values.Length; n++) {
             var text = new TextBlock { Text = n < 7 && values[0] == "Round" ? L.T(values[n]) : values[n], FontSize = 11,
-                TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(3, 6) };
+                TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(3, 3) };
+            ToolTip.SetTip(text, text.Text);
             Add(line, text, n);
         }
         return line;
+    }
+
+    internal static string ShortSite(string mapId, string site)
+    {
+        string text = BombsiteNames.Display(mapId, site);
+        foreach (var pair in new[] { ("Escritório Comandante", "Comandante"), ("Escritório do Comandante", "Comandante"), ("Salão de Jogos", "Jogos"), ("Sala de Jogos", "Jogos"), ("Dormitório Principal", "Dormitório"), ("Master Bedroom", "Bedroom"), ("Game Room", "Games"), ("Commander Office", "Commander"), ("Dormitorio principal", "Dormitorio"), ("Sala de juegos", "Juegos") })
+            text = text.Replace(pair.Item1, pair.Item2, StringComparison.OrdinalIgnoreCase);
+        return text.Replace(" - ", " / ");
     }
 }

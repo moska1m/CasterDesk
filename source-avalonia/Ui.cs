@@ -23,13 +23,24 @@ internal static class Ui
     }
 
     static readonly Dictionary<string, WeakReference<Bitmap>> images = new(StringComparer.OrdinalIgnoreCase);
-    public static Bitmap FileImage(string path, bool compactPortrait = false)
+    public static Bitmap FileImage(string path, bool compactPortrait = false, bool grayscale = false, int thumbnail = 0)
     {
-        string key = Path.GetFullPath(path) + File.GetLastWriteTimeUtc(path).Ticks + compactPortrait;
+        string key = Path.GetFullPath(path) + File.GetLastWriteTimeUtc(path).Ticks + compactPortrait + grayscale + thumbnail;
         if (images.TryGetValue(key, out var weak) && weak.TryGetTarget(out var saved)) return saved;
         using var source = System.Drawing.Image.FromFile(path);
         Bitmap result;
-        if (compactPortrait) {
+        if (grayscale || thumbnail > 0) {
+            double scale = thumbnail > 0 ? Math.Min(1, (double)thumbnail / Math.Max(source.Width, source.Height)) : 1;
+            using var converted = new System.Drawing.Bitmap(Math.Max(1, (int)(source.Width * scale)), Math.Max(1, (int)(source.Height * scale)));
+            using var g = System.Drawing.Graphics.FromImage(converted);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            using var attributes = new System.Drawing.Imaging.ImageAttributes();
+            if (grayscale) attributes.SetColorMatrix(new System.Drawing.Imaging.ColorMatrix(new float[][] {
+                [.299f,.299f,.299f,0,0], [.587f,.587f,.587f,0,0], [.114f,.114f,.114f,0,0], [0,0,0,1,0], [0,0,0,0,1] }));
+            g.DrawImage(source, new System.Drawing.Rectangle(0, 0, converted.Width, converted.Height), 0, 0, source.Width, source.Height, System.Drawing.GraphicsUnit.Pixel, attributes);
+            result = Bitmap(converted);
+        } else if (compactPortrait) {
             using var crop = new System.Drawing.Bitmap(source.Width, Math.Max(1, (int)(source.Height * .48)));
             using (var g = System.Drawing.Graphics.FromImage(crop))
                 g.DrawImage(source, new System.Drawing.Rectangle(0, 0, crop.Width, crop.Height), new System.Drawing.Rectangle(0, 0, crop.Width, crop.Height), System.Drawing.GraphicsUnit.Pixel);

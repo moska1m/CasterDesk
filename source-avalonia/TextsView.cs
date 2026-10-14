@@ -28,6 +28,10 @@ public sealed class TextsView : Grid
     public bool Busy => !writing.IsCompleted || !Applying.IsCompleted;
     public bool Running => clock.Running;
     internal double Remaining => clock.Remaining;
+    internal event Action? ClockChanged;
+    internal void PauseClock() { clock.Pause(); Update(); }
+    internal void StartFromHeader() { try { Start(); } catch(Exception ex) { status.Text = ex.Message; } }
+    internal void AdjustClock(double seconds) { clock.Add(Math.Max(-clock.Remaining, seconds)); clock.Tick(); Update(); }
 
     public TextsView(Settings settings, System.Action saveSettings, Countdown? clock = null)
     {
@@ -109,6 +113,7 @@ public sealed class TextsView : Grid
         int seconds = (int)Math.Ceiling(clock.Remaining);
         string text = clock.Finished ? message.Text ?? "" : format.SelectedIndex == 1 ? DurationText(seconds) : $"{seconds / 60:00}:{seconds % 60:00}";
         readout.Text = text; clockState.Text = L.T(clock.Running ? "● Em andamento" : clock.Finished ? "Contagem encerrada" : "Pausado / pronto");
+        ClockChanged?.Invoke();
         string path = output.Text ?? "";
         if (!live || stopped || writesSuspended || (path == lastPath && text == lastText) || Environment.TickCount64 < retry) return;
         pending = (path, text); if (writing.IsCompleted) writing = WritePending();

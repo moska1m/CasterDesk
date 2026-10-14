@@ -29,6 +29,15 @@ internal static class TextsChecks
         Click(view, "timer-pause"); time += 100; view.Tick(); Need(!view.Running && view.Remaining == 48, "Pause retains remaining time");
         Find<TextBox>(view, "timer-preset-0").Text = "1"; Click(view, "timer-add-0"); Flush(view);
         Need(view.Remaining == 108 && !view.Running, "Add while paused");
+        var header = new HeaderTimer(view); var headerWindow = new Window { Content = header, Width = 480, Height = 80 }; headerWindow.Show(); Dispatcher.UIThread.RunJobs();
+        Click(header,"header-timer-start"); time += 1; view.Tick();
+        Need(view.Running && Find<TextBlock>(header,"header-timer-value").Text == "01:47", "Header starts the same countdown and updates while counting");
+        Click(header,"header-timer-subtract"); Flush(view);
+        Need(view.Remaining == 47 && view.Running, "Header subtracts one minute without pausing");
+        Click(header,"header-timer-pause"); Click(header,"header-timer-add");
+        Need(view.Remaining == 107 && !view.Running, "Header pause and addition synchronize main timer");
+        view.AdjustClock(-1000); Need(view.Remaining == 0, "Subtract never produces negative remaining time");
+        view.AdjustClock(108); header.Stop(); headerWindow.Close();
         Click(view, "timer-start"); time += 2; view.Tick();
         Click(view, "timer-add-0"); Flush(view); Need(view.Running && view.Remaining == 166, "Add without pausing");
         string priorOutput = File.ReadAllText(settings.Output); view.WritesSuspended = true; time += 2; view.Tick(); Flush(view);

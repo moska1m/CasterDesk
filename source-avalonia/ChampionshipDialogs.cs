@@ -22,10 +22,11 @@ public sealed partial class ChampionshipView
                     Session.Veto(step, map.Id, replace); dialog.Close(true);
                 } catch (Exception ex) { notice.Text = ex.Message; }
             });
-            button.Name = "map-choice-" + map.Id; button.Content = MapCard(map, map.DisplayName, match.Action(step)); button.Margin = new Thickness(5);
-            button.IsEnabled = !match.Veto.Where((_, i) => i != step).Contains(map.Id); grid.Children.Add(button);
+            bool available = !match.Veto.Where((_, i) => i != step).Contains(map.Id);
+            button.Name = "map-choice-" + map.Id; button.Content = MapCard(map, map.DisplayName, available ? "" : "USED"); button.Margin = new Thickness(5);
+            button.IsEnabled = available; grid.Children.Add(button);
         }
-        await Show<bool>(dialog); await OpenNextBan();
+        await Show<bool>(dialog);
     }
 
     async Task OpenNextBan()

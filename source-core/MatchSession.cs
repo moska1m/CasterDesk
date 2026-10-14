@@ -56,7 +56,7 @@ public sealed class MatchSession
     public int[] PendingBans()
     {
         if(Map==null||Map.InitialAttack<0)return [];
-        int half=Map.ActiveBanHalf(Math.Min(15,Map.Rounds.Count+1));var pending=Map.PendingBans(half);var def=new Queue<int>(pending.Where(i=>Map.BanRole(i)=="DEF"));var atk=new Queue<int>(pending.Where(i=>Map.BanRole(i)=="ATQ"));var ordered=new List<int>();while(def.Count+atk.Count>0){if(def.Count>0)ordered.Add(def.Dequeue());if(atk.Count>0)ordered.Add(atk.Dequeue());}return ordered.ToArray();
+        int half=Map.ActiveBanHalf(Math.Min(15,Map.Rounds.Count+1));var pending=Map.PendingBans(half);return Map.BanOrder(half).Where(pending.Contains).ToArray();
     }
     public void Ban(int slot,string id)
     {

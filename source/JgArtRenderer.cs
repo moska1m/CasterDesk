@@ -69,12 +69,15 @@ internal static class JgArtRenderer
         if(summary.Players.Count>0)
         {
             Statistics(g,match,brand,summary,layout,format);
-            var best=summary.Players.FirstOrDefault(p=>p.Key==brand.Mvp);
+            var best=summary.Players.FirstOrDefault(p=>p.Key==brand.Mvp) ?? (string.IsNullOrEmpty(brand.Mvp)?StatisticsData.SuggestMvp(match,map):null);
             if(best is not null)
             {
                 Layer(g,format,2,layout.R(2));Text(g,"MVP",layout.R(3),true,Red);Text(g,best.Name,Wider(layout.R(4),layout.R(2).Right-layout.R(4).Left-35));
-                foreach(var (icon,index,n) in new[]{(7,9,best.Kills),(8,10,best.Assists),(6,11,best.Deaths)})
-                {Layer(g,format,icon,layout.R(icon));var nr=layout.R(index);Text(g,n?.ToString()??"—",new(nr.X,nr.Y,38,nr.Height),false,null,StringAlignment.Near,true);}
+                var nameArea=Wider(layout.R(4),layout.R(2).Right-layout.R(4).Left-35);
+                var positions=new[]{(7,9),(8,10),(6,11)};
+                float start=layout.R(7).Left,end=layout.R(11).Left+38,shift=nameArea.X+nameArea.Width/2-(start+end)/2;
+                foreach(var (icon,index,n) in new[]{(7,9,best.Kills),(6,10,best.Deaths),(8,11,best.Assists)})
+                {var location=layout.R(positions[index-9].Item1);var ir=layout.R(icon);ir.X=location.X+shift;Layer(g,format,icon,ir);var nr=layout.R(index);Text(g,n?.ToString()??"—",new(nr.X+shift,nr.Y,38,nr.Height),false,null,StringAlignment.Near,true);}
             }
             if(summary.Partial)Text(g,L.T("ESTATÍSTICAS PARCIAIS"),new(layout.R(13).X,layout.R(13).Bottom+3,layout.R(13).Width,15),false,Muted);
         }
@@ -122,11 +125,11 @@ internal static class JgArtRenderer
             {
                 RectangleF At(int index,float width){var r=l.R(index);return new(r.X+r.Width/2-width/2,first+i*step,width,r.Height);}
                 var player=rows[i];var nameRect=l.R(name);Text(g,player.Name,new(nameRect.X,first+i*step,l.R(k).X-nameRect.X-30,nameRect.Height),false,null,StringAlignment.Near,true);
-                Text(g,player.Kills?.ToString()??"—",At(k,40),false,null,StringAlignment.Center,true);Text(g,player.Assists?.ToString()??"—",At(a,40),false,null,StringAlignment.Center,true);Text(g,player.Deaths?.ToString()??"—",At(d,40),false,null,StringAlignment.Center,true);
+                Text(g,player.Kills?.ToString()??"—",At(k,40),false,null,StringAlignment.Center,true);Text(g,player.Deaths?.ToString()??"—",At(a,40),false,null,StringAlignment.Center,true);Text(g,player.Assists?.ToString()??"—",At(d,40),false,null,StringAlignment.Center,true);
             }
         }
         Text(g,L.T("JOGADOR"),l.R(73),true,Color.FromArgb(114,114,119));
-        foreach(int index in new[]{74,75,76})Layer(g,format,index,l.R(index));
+        Layer(g,format,75,l.R(75));Layer(g,format,74,l.R(76));Layer(g,format,76,l.R(74));
     }
 }
 
