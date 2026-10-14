@@ -33,6 +33,8 @@ internal sealed class ObsDockServer : IAsyncDisposable
     long revision;
     bool stopping;
     bool subscribed = true;
+    long lastRead;
+    internal bool HasClient => Running && lastRead > 0 && Environment.TickCount64 - lastRead < 5000;
     internal bool Running => app != null && !stopping;
     internal string BaseUrl => $"http://127.0.0.1:{settings.Port}";
     internal string PanelUrl => BaseUrl + "/#key=" + settings.Key;
@@ -48,6 +50,7 @@ internal sealed class ObsDockServer : IAsyncDisposable
     {
         if(app!=null)return;
         stopping=false;
+        lastRead=0;
         if(!subscribed){championship.Session.Changed+=Changed;subscribed=true;}
         var builder=WebApplication.CreateSlimBuilder(); builder.Logging.ClearProviders();
         builder.WebHost.ConfigureKestrel(options=>{ options.Listen(IPAddress.Loopback,settings.Port); options.Limits.MaxRequestBodySize=8192; });
@@ -68,10 +71,11 @@ internal sealed class ObsDockServer : IAsyncDisposable
         server.MapGet("/dock.js",()=>Results.Content(File.ReadAllText(Asset("dock.js")),"text/javascript; charset=utf-8"));
         server.MapGet("/brand.svg",()=>Results.File(Path.Combine(AppContext.BaseDirectory,"assets","branding","casterdesk-horizontal-white.svg"),"image/svg+xml"));
         server.MapGet("/icons/{id}",(string id)=>{
+            if(id is "__def" or "__atq")return Results.File(Path.Combine(AppContext.BaseDirectory,"assets","studio",id=="__def"?"Icon_Defender.png":"Icon_Attacker.png"),"image/png");
             var op=championship.Session.Catalog.Operators.FirstOrDefault(o=>o.Id==id);
             return op==null?Results.NotFound():Results.File(SiegeCatalog.Asset(op.Icon),"image/png");
         });
-        server.MapGet("/api/state",async()=>await Dispatcher.UIThread.InvokeAsync(()=>Results.Json(State())));
+        server.MapGet("/api/state",async()=>await Dispatcher.UIThread.InvokeAsync(()=>{lastRead=Environment.TickCount64;return Results.Json(State());}));
         server.MapPost("/api/command",async (HttpContext context)=>{
             if(!context.Request.HasJsonContentType())return Results.StatusCode(415);
             DockCommand? command;
@@ -104,14 +108,20 @@ internal sealed class ObsDockServer : IAsyncDisposable
                 sites=map==null?[]:session.Catalog.Maps.Single(m=>m.Id==map.MapId).Sites.Select(s=>new{id=s,label=BombsiteNames.Display(map.MapId,s),blocked=map.SiteBlocked(s,number)}).ToArray(),
                 endings=RoundEnding.Codes.Skip(1).Select(c=>new{id=c,label=RoundEnding.Label(c),attack=RoundEnding.Allowed(c,0,0),defense=RoundEnding.Allowed(c,1,0)}).ToArray(),
                 history=map==null?[]:map.Rounds.Select((r,i)=>new{index=i,site=r.Site,winner=r.Winner,ending=r.Ending,attacker=map.Attacker(i+1)}).ToArray()},
-            bans=map==null?[]:map.BanOrder(half).Select(slot=>new{slot,team=MapRecord.BanTeam(slot),role=map.BanRole(slot),name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==map.Bans[slot])?.Name??"",unlocked=map.BanStageReached(slot)}).ToArray(),
+            bans=map==null?[]:map.BanOrder(0).Concat(map.BanOrder(1)).Select(slot=>new{slot,team=MapRecord.BanTeam(slot),role=map.BanRole(slot),id=map.Bans[slot],name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==map.Bans[slot])?.Name??"",unlocked=map.BanStageReached(slot)}).ToArray(),
+            remakes=match.Maps.Select(m=>new {
+                id=m.MapId,label=session.Catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName,initialAttack=m.InitialAttack,otAttack=m.OtAttack,confirmed=m.Confirmed,
+                rounds=m.Rounds.Select((r,i)=>new{index=i,site=BombsiteNames.Display(m.MapId,r.Site),winner=r.Winner}).ToArray(),
+                bans=m.BanOrder(0).Concat(m.BanOrder(1)).Where(slot=>!string.IsNullOrEmpty(m.Bans[slot])).Select(slot=>new{slot,half=slot/6,team=MapRecord.BanTeam(slot),role=m.BanRole(slot),id=m.Bans[slot],name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==m.Bans[slot])?.Name??m.Bans[slot]}).ToArray()
+            }).ToArray(),
             operators=role==""?[]:OperatorOrder.Sort(session.Catalog.Operators,role).Select(op=>new{id=op.Id,name=op.Name,enabled=!map!.Bans.Skip(half*6).Take(6).Contains(op.Id)}).ToArray(),
-            labels=new{partida=L.T("Partida"),history=L.T("Histórico de rounds"),round=L.T("Round"),site=L.T("Bomb site"),winner=L.T("Vencedor"),ending=L.T("Finalização"),reset=L.T("Resetar tempo"),applyTimer=L.T("Aplicar configurações"),copy=L.T("Copiar caminho"),message=L.T("Mensagem final:"),rounds=L.T("Round a round"),newRound=L.T("Novo round"),confirmRound=L.T("Confirmar round"),editRound=L.T("Corrigir round"),roundWait=L.T(map?.Score().Winner>=0?"Vencedor já definido. Confira os rounds.":map?.Rounds.Count>=12&&map.OtAttack<0?"Overtime sem lado definido.":"Conclua os bans de operadores para registrar o próximo round."),timer=L.T("CRONÔMETRO"),bans=L.T("Bans de operadores"),start=L.T("Iniciar / Retomar"),pause=L.T("Pausar"),set=L.T("Definir tempo"),select=L.T("Selecionar…"),blocked=L.T("Bloqueado"),wait=L.T(!championship.BansReady?"Conclua o veto e defina os lados na partida.":"Nenhum ban pendente."),connected=L.T("Conectado"),disconnected=L.T("Desconectado"),duration=L.T("Tempo inicial:"),search=L.T("Filtrar operadores"),invalidTime=L.T("Use mm:ss ou hh:mm:ss."),busy=L.T("Conclua a edição aberta no CasterDesk para usar os controles."),team=L.T("Equipe"),def=L.Role("DEF"),atq=L.Role("ATQ")}
+            labels=new{chooseRemake=L.T("Escolha o mapa para o remake"),undefined=L.T("Não definido"),initialAttack=L.T("Ataque inicial"),initialDefense=L.T("Defesa inicial"),otAttack=L.T("Ataque na prorrogação"),checkMap=L.T("Após configurar, confira o mapa."),partida=L.T("Partida"),history=L.T("Histórico de rounds"),round=L.T("Round"),site=L.T("Bomb site"),winner=L.T("Vencedor"),ending=L.T("Finalização"),reset=L.T("Resetar tempo"),applyTimer=L.T("Aplicar configurações"),copy=L.T("Copiar caminho"),message=L.T("Mensagem final:"),rounds=L.T("Round a round"),newRound=L.T("Novo round"),confirmRound=L.T("Confirmar round"),editRound=L.T("Corrigir round"),roundWait=L.T(map?.Score().Winner>=0?"Vencedor já definido. Confira os rounds.":map?.Rounds.Count>=12&&map.OtAttack<0?"Overtime sem lado definido.":"Conclua os bans de operadores para registrar o próximo round."),timer=L.T("CRONÔMETRO"),bans=L.T("Bans de operadores"),start=L.T("Iniciar / Retomar"),pause=L.T("Pausar"),set=L.T("Definir tempo"),select=L.T("Selecionar…"),blocked=L.T("Bloqueado"),wait=L.T(!championship.BansReady?"Conclua o veto e defina os lados na partida.":"Nenhum ban pendente."),connected=L.T("Conectado"),disconnected=L.T("Desconectado"),duration=L.T("Tempo inicial:"),search=L.T("Filtrar operadores"),invalidTime=L.T("Use mm:ss ou hh:mm:ss."),busy=L.T("Conclua a edição aberta no CasterDesk para usar os controles."),team=L.T("Equipe"),def=L.Role("DEF"),atq=L.Role("ATQ")}
         };
     }
     internal sealed record DockCommand(string Action,double Seconds=0,string MatchId="",string MapId="",long Revision=-1,int Slot=-1,string OperatorId="",string Site="",int Winner=-1,string Ending="",int RoundIndex=-1,string TargetMapId="",string Format="mm:ss",string Message="",double[]? Presets=null);
     IResult Execute(DockCommand command)
     {
+        lastRead=Environment.TickCount64;
         if(stopping||!canControl()||!championship.DockReady)return Results.Conflict(new{error=L.T("Bloqueado")});
         try {
             if(command.Action=="selectMap") {

@@ -1,0 +1,21 @@
+﻿CASTERDESK 1.0 — TERMS OF USE AND RIGHTS NOTICE
+14 October 2026
+
+CasterDesk is an independent tool for community casters, broadcast teams and spectators (SPEC) of Rainbow Six Siege, intended especially for events and channels with the necessary permissions. It is not an official Ubisoft product and does not imply sponsorship or endorsement by Ubisoft, BLAST or OBS.
+
+OPEN SOURCE AND BRAND
+The project's own code remains under MIT. The OBS plugin and GPL components remain under GPL-2.0-or-later. Acceptance does not restrict copying, modification or redistribution permitted by those licenses. A code license does not grant trademark rights. Do not present a modified version, fork or third-party package as the official CasterDesk distribution or as endorsed by a rights holder. Identify changes, origin and maintainer; retain required license notices. Attribution does not imply endorsement.
+
+THIRD-PARTY RESOURCES
+Rainbow Six Siege, operators, maps and related content belong to Ubisoft and/or their respective holders. Artwork, logos and fonts retain their own rights and are not automatically MIT licensed. Read THIRD-PARTY-NOTICES.md and bundled notices. Installing or accepting these terms does not grant tournament, broadcast, trademark, font or asset-redistribution rights. Permission for one event or channel is not general permission for others or for distributing assets separately.
+
+RESPONSIBLE USE
+Before publishing generated images, verify that the event, channel, territory, purpose and resources are covered by applicable permissions and rights-holder conditions. Unauthorized use may be challenged or subject to removal. Do not imply authorization, official affiliation or authorship that does not exist. Community activity is not automatically licensed.
+
+DATA AND REVIEW
+Review results, names, statistics and artwork before publication. Screenshot recognition requires human verification. Keep match backups. Data is stored locally; the optional OBS connection is local. Acceptance does not send your data to third parties.
+
+LICENSES AND WARRANTIES
+Read LICENSE, obs-plugin/LICENSE and component notices. Their terms and warranty exclusions apply, subject to mandatory legal rights. These terms are not legal approval of any specific event.
+
+BY SELECTING “I AGREE”, I ACKNOWLEDGE THESE CONDITIONS, RIGHTS-HOLDER OWNERSHIP AND THE NEED TO OBTAIN APPLICABLE PERMISSIONS.

@@ -17,6 +17,7 @@ public sealed class StudioShell : Window
     readonly Button[] tabs = new Button[3];
     readonly ObsDockSettings obsSettings;
     readonly ObsDockServer obsDock;
+    readonly DispatcherTimer obsPresence = new() { Interval = TimeSpan.FromSeconds(1) };
     readonly TextBlock footer = Ui.Text("CasterDesk • Ferramentas para community casters");
     int selected;
     bool menuOpen;
@@ -29,6 +30,7 @@ public sealed class StudioShell : Window
         FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
         Icon = new WindowIcon(Path.Combine(AppContext.BaseDirectory, "assets", "branding", "CasterDesk.ico"));
         Championship = new ChampionshipView(session); Championship.SetQuickMode(settings.QuickRounds);
+        Championship.SetSpecMode(settings.SpecMode);
         studio = new StudioView(() => Championship.Session.Matches, Championship.Session.Catalog, Championship.Session.ApplyArtworkVeto);
         Texts = new TextsView(settings, SaveSettings);
         obsSettings = ConfigurationStore.Read<ObsDockSettings>("obs-connection.json");
@@ -37,6 +39,8 @@ public sealed class StudioShell : Window
         Championship.UseObsForBans=obsSettings.RouteBansToOBS;
         Championship.ObsBansModeChanged=value=>{bool old=obsSettings.RouteBansToOBS;try{obsSettings.RouteBansToOBS=value;SaveObsSettings();}catch{obsSettings.RouteBansToOBS=old;throw;}};
         Championship.Refresh();
+        obsPresence.Tick+=(_,_)=>Championship.SetObsConnected(obsDock.HasClient);
+        Opened+=(_,_)=>obsPresence.Start();
         Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){AppLog.Write("OBS connection: "+ex);Notify(ex.Message);} };
         Championship.MapConfirmed += async (match, map) => {
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }
@@ -53,7 +57,7 @@ public sealed class StudioShell : Window
         global::Avalonia.Automation.AutomationProperties.SetName(gear, L.T("Configurações e sobre"));
         gear.PointerEntered += (_, _) => PaintGear(true); gear.PointerExited += (_, _) => PaintGear(menuOpen);
         header.Children.Add(gear); Grid.SetColumn(gear,3);
-        var timer = new HeaderTimer(Texts); header.Children.Add(timer); Grid.SetColumn(timer,2);
+        var timer = new HeaderTimer(Texts);timer.Name="header-timer";timer.IsVisible=!Championship.SpecMode;Championship.SpecModeChanged+=value=>timer.IsVisible=!value; header.Children.Add(timer); Grid.SetColumn(timer,2);
         var nav = new StackPanel { Name = "main-navigation", Orientation = Orientation.Horizontal };
         string[] labels = ["CAMPEONATO", "Central de imagens", "TEXTOS PARA OBS"];
         for (int n = 0; n < labels.Length; n++) {
@@ -97,7 +101,7 @@ public sealed class StudioShell : Window
             catch (Exception ex) { e.Cancel = true; footer.Text = ex.Message; }
             finally { waitingToClose = false; }
         };
-        Closed += async (_, _) => { timer.Stop(); Championship.Stop(); studio.Stop(); Texts.Stop(); try{await obsDock.DisposeAsync();}catch(Exception ex){AppLog.Write(ex.ToString());} };
+        Closed += async (_, _) => { obsPresence.Stop();timer.Stop(); Championship.Stop(); studio.Stop(); Texts.Stop(); try{await obsDock.DisposeAsync();}catch(Exception ex){AppLog.Write(ex.ToString());} };
     }
 
     internal void Navigate(int index)
@@ -130,14 +134,17 @@ public sealed class StudioShell : Window
         void Option(StackPanel parent, string label, bool active, System.Action change)
         {
             var button = Ui.Button(label, () => {
-                bool oldDark = settings.DarkMode, oldQuick = settings.QuickRounds; string oldLanguage = settings.Language;
+                bool oldDark = settings.DarkMode, oldQuick = settings.QuickRounds, oldSpec = settings.SpecMode; string oldLanguage = settings.Language;
                 try { Championship.FlushNames(); if (!studio.Flush()) return; Texts.Save(); change(); SaveSettings(); Menu(); }
-                catch (Exception ex) { settings.Language = oldLanguage; settings.QuickRounds = oldQuick; Appearance(oldDark); Championship.SetQuickMode(oldQuick); Menu(); footer.Text = ex.Message; }
+                catch (Exception ex) { settings.Language = oldLanguage; settings.QuickRounds = oldQuick; settings.SpecMode = oldSpec; Appearance(oldDark); Championship.SetQuickMode(oldQuick); Championship.SetSpecMode(oldSpec); Menu(); footer.Text = ex.Message; }
             }, active);
             button.BorderThickness = new Thickness(0, 0, 0, active ? 3 : 0); button.BorderBrush = Brush.Parse("#FF4335"); parent.Children.Add(button);
         }
         Option(drawer, "Modo rápido", settings.QuickRounds, () => { settings.QuickRounds = true; Championship.SetQuickMode(true); });
         Option(drawer, "Modo clássico", !settings.QuickRounds, () => { settings.QuickRounds = false; Championship.SetQuickMode(false); });
+        drawer.Children.Add(Ui.Text("Tela da partida", true));
+        Option(drawer, "Modo Caster", !settings.SpecMode, () => { settings.SpecMode = false; Championship.SetSpecMode(false); });
+        Option(drawer, "Modo SPEC", settings.SpecMode, () => { settings.SpecMode = true; Championship.SetSpecMode(true); });
         var appearance = new StackPanel();
         Option(appearance, "Escuro", settings.DarkMode, () => Appearance(true)); Option(appearance, "Claro", !settings.DarkMode, () => Appearance(false));
         drawer.Children.Add(new Expander { Header = L.T("Aparência") + " · Siege", Content = appearance, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });

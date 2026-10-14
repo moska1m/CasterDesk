@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.Json;
 using Avalonia.VisualTree;
 using Avalonia.Interactivity;
+using Avalonia.Headless;
+using Avalonia.Input;
 
 namespace CasterDesk.Avalonia;
 
@@ -51,6 +53,11 @@ internal static class ObsDockChecks
         session.Setup("MD1",0,0,false);for(int n=0;n<8;n++)session.Veto(n,session.Catalog.Maps[n].Id);session.Side(session.Map!.MapId,false,0);
         JsonDocument State(){using var r=Send("/api/state",key);return JsonDocument.Parse(Wait(r.Content.ReadAsStringAsync()));}
         long previous=-1;string mapId=session.Map!.MapId;
+        using(var state=State()) {
+            var remake=state.RootElement.GetProperty("remakes")[0];
+            Need(remake.GetProperty("initialAttack").GetInt32()==0&&remake.GetProperty("rounds").GetArrayLength()==0,"Remake exposes starting side without inventing rounds");
+            Need(remake.GetProperty("bans").GetArrayLength()==0&&state.RootElement.GetProperty("bans").GetArrayLength()==12,"Remake omits unrecorded bans while panel exposes all slots");
+        }
         for(int n=0;n<4;n++){
             using var state=State();var data=state.RootElement;string role=data.GetProperty("role").GetString()!;
             Need(role==(n%2==0?"DEF":"ATQ"),"Dock follows alternating next ban");
@@ -60,7 +67,13 @@ internal static class ObsDockChecks
             if(n==0){previous=revision;using var r=Send("/api/command",key,new{action="ban",matchId=session.Current.Id,mapId,revision,slot,operatorId=op.Id});Need(r.StatusCode==HttpStatusCode.Conflict,"Stale or duplicated ban request rejected");}
         }
         using(var r=Send("/api/command",key,new{action="ban",matchId=session.Current.Id,mapId,revision=previous,slot=4,operatorId="sentry"}))Need(r.StatusCode==HttpStatusCode.Conflict,"Future stage cannot be opened remotely");
-        var obsToggle=view.GetVisualDescendants().OfType<ToggleSwitch>().Single(t=>t.Name=="use-obs-bans");obsToggle.IsChecked=true;Need(view.UseObsForBans,"OBS mode toggle suppresses automatic program ban dialogs");
+        var obsToggle=view.GetVisualDescendants().OfType<ToggleButton>().Single(t=>t.Name=="use-obs-bans");obsToggle.IsChecked=true;Need(view.UseObsForBans,"OBS mode toggle suppresses automatic program ban dialogs");
+        view.SetObsConnected(server.HasClient);Need(server.HasClient&&((Border)obsToggle.Content!).Background!.ToString()=="#ff25834c","Authenticated client makes enabled OBS mode green");
+        var switchPoint=obsToggle.TranslatePoint(new Point(21,11),window)!.Value;
+        window.MouseDown(switchPoint,MouseButton.Left);window.MouseUp(switchPoint,MouseButton.Left);Dispatcher.UIThread.RunJobs();
+        Need(!view.UseObsForBans&&((Border)obsToggle.Content!).Background!.ToString()=="#ff82363c","Compact switch click disables mode and turns red");
+        window.MouseDown(switchPoint,MouseButton.Left);window.MouseUp(switchPoint,MouseButton.Left);Dispatcher.UIThread.RunJobs();
+        Need(view.UseObsForBans,"Compact switch click reenables popup preference");
         var winners=new[]{0,0,0,1,1,1,0,0,0,1,1,1,0,1,0};
         for(int n=0;n<winners.Length;n++){
             while(session.PendingBans().Length>0){using var state=State();var d=state.RootElement;int slot=d.GetProperty("pending").GetInt32();string role=d.GetProperty("role").GetString()!;var op=OperatorOrder.Sort(session.Catalog.Operators,role).First(o=>!session.Map!.Bans.Skip(slot/6*6).Take(6).Contains(o.Id));
@@ -73,6 +86,7 @@ internal static class ObsDockChecks
                 void Click(string name){var b=view.GetVisualDescendants().OfType<Button>().Single(b=>b.Name==name);b.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Dispatcher.UIThread.RunJobs();}
                 int siteIndex=Array.IndexOf(session.Catalog.Maps.Single(m=>m.Id==mapId).Sites,chosen);Click("round-site-"+siteIndex);Click("round-winner-0");Click("round-ending-elimination");Click("confirm-round");
                 Need(session.Map!.Rounds.Count==3&&view.ActiveDialog==null&&session.PendingBans().Length==2,"Program round 3 suppresses popup in OBS mode and exposes both bans");
+                using var remakeState=State();var remake=remakeState.RootElement.GetProperty("remakes")[0];Need(remake.GetProperty("rounds").GetArrayLength()==3&&remake.GetProperty("bans").GetArrayLength()==4,"Round 3 remake has only played rounds and completed bans");
             }else{using var r=Send("/api/command",key,new{action="round",matchId=session.Current.Id,mapId,revision=d0.GetProperty("revision").GetInt64(),site=chosen,winner=winners[n],ending="elimination"});Need(r.IsSuccessStatusCode&&session.Map!.Rounds.Count==n+1&&view.ActiveDialog==null,"Remote round saved without desktop popup");}
             if(n==0){using var duplicate=Send("/api/command",key,new{action="round",matchId=session.Current.Id,mapId,revision=d0.GetProperty("revision").GetInt64(),site=chosen,winner=0,ending="elimination"});Need(duplicate.StatusCode==HttpStatusCode.Conflict,"Duplicate round cannot be appended");}
         }

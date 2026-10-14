@@ -1,27 +1,120 @@
 {
-  "Aplicar configurações": ["Apply settings", "Aplicar configuración"],
-  "Plugin OBS": ["OBS plugin", "Plugin OBS"],
-  "Usar plugin do OBS": ["Use OBS plugin", "Usar plugin de OBS"],
-  "Novo round": ["New round", "Nueva ronda"],
-  "Partida alterada. Atualize o painel.": ["Match changed. Refresh the panel.", "La partida cambió. Actualiza el panel."],
-  "O plugin do OBS encontra a conexão automaticamente. Abra o CasterDesk e selecione Painéis → CasterDesk no OBS.": ["The OBS plugin discovers the connection automatically. Open CasterDesk and select Docks → CasterDesk in OBS.", "El plugin de OBS detecta la conexión automáticamente. Abre CasterDesk y selecciona Paneles → CasterDesk en OBS."],
-  "Conclua a edição aberta no CasterDesk para usar os controles.": ["Finish the open edit in CasterDesk to use the controls.", "Finaliza la edición abierta en CasterDesk para usar los controles."],
-  "Painel OBS": ["OBS panel", "Panel OBS"],
-  "Ativar conexão": ["Enable connection", "Activar conexión"],
-  "Desativar conexão": ["Disable connection", "Desactivar conexión"],
-  "Copiar endereço do painel": ["Copy panel address", "Copiar dirección del panel"],
-  "Endereço copiado.": ["Address copied.", "Dirección copiada."],
-  "Conectado": ["Connected", "Conectado"],
-  "Desconectado": ["Disconnected", "Desconectado"],
-  "Definir tempo": ["Set time", "Definir tiempo"],
-  "Filtrar operadores": ["Filter operators", "Filtrar agentes"],
-  "Use mm:ss ou hh:mm:ss.": ["Use mm:ss or hh:mm:ss.", "Usa mm:ss o hh:mm:ss."],
-  "Nenhum ban pendente.": ["No pending bans.", "No hay vetos pendientes."],
-  "Conclua o veto e defina os lados na partida.": ["Complete the map veto and set the sides in the match.", "Completa el veto de mapas y define los lados de la partida."],
-  "Controle o timer e os bans em um painel do OBS.": ["Control the timer and bans in an OBS panel.", "Controla el cronómetro y los vetos en un panel de OBS."],
-  "Ative a conexão e copie o endereço para um painel de navegador personalizado do OBS. O CasterDesk precisa permanecer aberto.": ["Enable the connection and copy its address into an OBS Custom Browser Dock. CasterDesk must stay open.", "Activa la conexión y copia su dirección a un panel de navegador personalizado de OBS. CasterDesk debe permanecer abierto."],
-  "MVP automático": ["Automatic MVP", "MVP automático"],
-  "− 1 min": ["− 1 min", "− 1 min"],
+  "Escolha o mapa para o remake": [
+    "Choose the map to remake",
+    "Elige el mapa para el remake"
+  ],
+  "Não definido": [
+    "Not set",
+    "Sin definir"
+  ],
+  "Ataque inicial": [
+    "Starting attack",
+    "Ataque inicial"
+  ],
+  "Defesa inicial": [
+    "Starting defense",
+    "Defensa inicial"
+  ],
+  "Ataque na prorrogação": [
+    "Overtime attack",
+    "Ataque en prórroga"
+  ],
+  "Após configurar, confira o mapa.": [
+    "After setup, check the map.",
+    "Tras configurar, revisa el mapa."
+  ],
+  "Aplicar configurações": [
+    "Apply settings",
+    "Aplicar configuración"
+  ],
+  "Plugin OBS": [
+    "OBS plugin",
+    "Plugin OBS"
+  ],
+  "Usar plugin do OBS": [
+    "Use OBS plugin",
+    "Usar plugin de OBS"
+  ],
+  "Novo round": [
+    "New round",
+    "Nueva ronda"
+  ],
+  "Partida alterada. Atualize o painel.": [
+    "Match changed. Refresh the panel.",
+    "La partida cambió. Actualiza el panel."
+  ],
+  "O plugin do OBS encontra a conexão automaticamente. Abra o CasterDesk e selecione Painéis → CasterDesk no OBS.": [
+    "The OBS plugin discovers the connection automatically. Open CasterDesk and select Docks → CasterDesk in OBS.",
+    "El plugin de OBS detecta la conexión automáticamente. Abre CasterDesk y selecciona Paneles → CasterDesk en OBS."
+  ],
+  "Conclua a edição aberta no CasterDesk para usar os controles.": [
+    "Finish the open edit in CasterDesk to use the controls.",
+    "Finaliza la edición abierta en CasterDesk para usar los controles."
+  ],
+  "Painel OBS": [
+    "OBS panel",
+    "Panel OBS"
+  ],
+  "Ativar conexão": [
+    "Enable connection",
+    "Activar conexión"
+  ],
+  "Desativar conexão": [
+    "Disable connection",
+    "Desactivar conexión"
+  ],
+  "Copiar endereço do painel": [
+    "Copy panel address",
+    "Copiar dirección del panel"
+  ],
+  "Endereço copiado.": [
+    "Address copied.",
+    "Dirección copiada."
+  ],
+  "Conectado": [
+    "Connected",
+    "Conectado"
+  ],
+  "Desconectado": [
+    "Disconnected",
+    "Desconectado"
+  ],
+  "Definir tempo": [
+    "Set time",
+    "Definir tiempo"
+  ],
+  "Filtrar operadores": [
+    "Filter operators",
+    "Filtrar agentes"
+  ],
+  "Use mm:ss ou hh:mm:ss.": [
+    "Use mm:ss or hh:mm:ss.",
+    "Usa mm:ss o hh:mm:ss."
+  ],
+  "Nenhum ban pendente.": [
+    "No pending bans.",
+    "No hay vetos pendientes."
+  ],
+  "Conclua o veto e defina os lados na partida.": [
+    "Complete the map veto and set the sides in the match.",
+    "Completa el veto de mapas y define los lados de la partida."
+  ],
+  "Controle o timer e os bans em um painel do OBS.": [
+    "Control the timer and bans in an OBS panel.",
+    "Controla el cronómetro y los vetos en un panel de OBS."
+  ],
+  "Ative a conexão e copie o endereço para um painel de navegador personalizado do OBS. O CasterDesk precisa permanecer aberto.": [
+    "Enable the connection and copy its address into an OBS Custom Browser Dock. CasterDesk must stay open.",
+    "Activa la conexión y copia su dirección a un panel de navegador personalizado de OBS. CasterDesk debe permanecer abierto."
+  ],
+  "MVP automático": [
+    "Automatic MVP",
+    "MVP automático"
+  ],
+  "− 1 min": [
+    "− 1 min",
+    "− 1 min"
+  ],
   "Anúncio": [
     "Announcement",
     "Anuncio"
@@ -66,10 +159,6 @@
     "Complete the match veto before correcting the artwork.",
     "Completa el veto de la partida antes de corregir la imagen."
   ],
-  "Ataque inicial": [
-    "Starting attack",
-    "Ataque inicial"
-  ],
   "Aplicar correções e gerar": [
     "Apply corrections and generate",
     "Aplicar correcciones y generar"
@@ -83,8 +172,8 @@
     "Correcciones del veto"
   ],
   "Atualizar também o veto da partida selecionada?\n\nSim: salvar na partida e na arte.\nNão: corrigir somente a arte.\nCancelar: continuar editando.": [
-    "Also update the selected match's veto?\n\nYes: save to the match and artwork.\nNo: correct only the artwork.\nCancel: keep editing.",
-    "¿Actualizar también el veto de la partida seleccionada?\n\nSí: guardar en la partida y la imagen.\nNo: corregir solo la imagen.\nCancelar: seguir editando."
+    "Also update the selected match's veto?\n\nYes: save to the match and artwork.\nNo: correct only the artwork.\nCancel: continue editing.",
+    "¿Actualizar también el veto de la partida seleccionada?\n\nSí: guardar en la partida y en la imagen.\nNo: corregir solo la imagen.\nCancelar: continuar editando."
   ],
   "A partida já tem bans ou rounds registrados. Mantenha esta correção somente na arte.": [
     "This match already has bans or rounds recorded. Keep this correction in the artwork only.",
@@ -3402,17 +3491,120 @@
     "The language will be applied the next time CasterDesk opens.",
     "El idioma se aplicará la próxima vez que abras CasterDesk."
   ],
-  "Vencedor do coin flip": ["Coin flip winner", "Ganador del coin flip"],
-  "Histórico de rounds": ["Round history", "Historial de rondas"],
-  "Cancelar": ["Cancel", "Cancelar"],
-  "Bomb site": ["Bomb site", "Zona de bombas"],
-  "Esta partida já existe no programa.": ["This match already exists in the application.", "Esta partida ya existe en el programa."],
-  "Clique para corrigir um round.": ["Click to correct a round.", "Haz clic para corregir una ronda."],
-  "Imagem PNG ou JPEG": ["PNG or JPEG image", "Imagen PNG o JPEG"],
-  "Descartar as alterações não salvas?": ["Discard unsaved changes?", "¿Descartar los cambios sin guardar?"],
-  "Atualizar também o veto da partida selecionada?\n\nSim: salvar na partida e na arte.\nNão: corrigir somente a arte.\nCancelar: continuar editando.": ["Also update the selected match's veto?\n\nYes: save to the match and artwork.\nNo: correct only the artwork.\nCancel: continue editing.", "¿Actualizar también el veto de la partida seleccionada?\n\nSí: guardar en la partida y en la imagen.\nNo: corregir solo la imagen.\nCancelar: continuar editando."],
+  "Vencedor do coin flip": [
+    "Coin flip winner",
+    "Ganador del coin flip"
+  ],
+  "Histórico de rounds": [
+    "Round history",
+    "Historial de rondas"
+  ],
+  "Cancelar": [
+    "Cancel",
+    "Cancelar"
+  ],
+  "Bomb site": [
+    "Bomb site",
+    "Zona de bombas"
+  ],
+  "Esta partida já existe no programa.": [
+    "This match already exists in the application.",
+    "Esta partida ya existe en el programa."
+  ],
+  "Clique para corrigir um round.": [
+    "Click to correct a round.",
+    "Haz clic para corregir una ronda."
+  ],
+  "Imagem PNG ou JPEG": [
+    "PNG or JPEG image",
+    "Imagen PNG o JPEG"
+  ],
+  "Descartar as alterações não salvas?": [
+    "Discard unsaved changes?",
+    "¿Descartar los cambios sin guardar?"
+  ],
   "Preparando os dados do CasterDesk…": [
     "Preparing CasterDesk data…",
     "Preparando los datos de CasterDesk…"
+  ],
+  "Equipe Azul": [
+    "Blue Team",
+    "Equipo Azul"
+  ],
+  "Equipe Laranja": [
+    "Orange Team",
+    "Equipo Naranja"
+  ],
+  "Clique no nome para editar.": [
+    "Click the name to edit.",
+    "Haz clic en el nombre para editar."
+  ],
+  "Tela da partida": [
+    "Match screen",
+    "Pantalla de partida"
+  ],
+  "Modo Caster": [
+    "Caster mode",
+    "Modo Caster"
+  ],
+  "Modo SPEC": [
+    "SPEC mode",
+    "Modo SPEC"
+  ],
+  "Registrar round": [
+    "Register round",
+    "Registrar ronda"
+  ],
+  "Mapa ativo": [
+    "Active map",
+    "Mapa activo"
+  ],
+  "Desfazer": [
+    "Undo",
+    "Deshacer"
+  ],
+  "Refazer": [
+    "Redo",
+    "Rehacer"
+  ],
+  "Salvar": [
+    "Save",
+    "Guardar"
+  ],
+  "Excluir round": [
+    "Delete round",
+    "Eliminar ronda"
+  ],
+  "Excluir este round? Os seguintes serão renumerados e os placares recalculados.": [
+    "Delete this round? Following rounds will be renumbered and scores recalculated.",
+    "¿Eliminar esta ronda? Las siguientes se renumerarán y se recalcularán los marcadores."
+  ],
+  "A partida mudou fora deste histórico. Confira os dados antes de corrigir.": [
+    "The match changed outside this history. Check the data before correcting.",
+    "La partida cambió fuera de este historial. Revisa los datos antes de corregir."
+  ],
+  "Mapas da série": [
+    "Series maps",
+    "Mapas de la serie"
+  ],
+  "Importar": [
+    "Import",
+    "Importar"
+  ],
+  "Exportar": [
+    "Export",
+    "Exportar"
+  ],
+  "Partida · SPEC": [
+    "Match · SPEC",
+    "Partida · SPEC"
+  ],
+  "Selecionar mapas": [
+    "Select maps",
+    "Seleccionar mapas"
+  ],
+  "Finalização · opcional": [
+    "Ending · optional",
+    "Finalización · opcional"
   ]
 }

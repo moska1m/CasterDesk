@@ -36,8 +36,8 @@ try {
     $hash=(Get-FileHash $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     "$hash  $($installer.Name)" | Set-Content ($installer.FullName+'.sha256') -Encoding ascii
     $files=Get-ChildItem $publish -File -Recurse | Where-Object Extension -ne '.pdb' | ForEach-Object {[ordered]@{Path=[IO.Path]::GetRelativePath((Join-Path $root $publish),$_.FullName);Length=$_.Length;Sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}}
-    $pluginSetup=Get-Item 'dist/CasterDesk-OBS-0.1.0-win-x64-Setup.exe'
-    $plugin=[ordered]@{Version='0.1.0';DllSha256=(Get-FileHash (Join-Path $pluginFull 'bin/64bit/casterdesk-obs.dll')).Hash.ToLowerInvariant();Installer=$pluginSetup.Name;InstallerSha256=(Get-FileHash $pluginSetup.FullName).Hash.ToLowerInvariant();SourcesSha256=(Get-FileHash (Join-Path $pluginFull 'source.zip')).Hash.ToLowerInvariant();NativeOBSLoadingTested=$false}
+    $pluginSetup=Get-Item 'dist/CasterDesk-OBS-1.0.0-win-x64-Setup.exe'
+    $plugin=[ordered]@{Version='1.0.0';DllSha256=(Get-FileHash (Join-Path $pluginFull 'bin/64bit/casterdesk-obs.dll')).Hash.ToLowerInvariant();Installer=$pluginSetup.Name;InstallerSha256=(Get-FileHash $pluginSetup.FullName).Hash.ToLowerInvariant();SourcesSha256=(Get-FileHash (Join-Path $pluginFull 'source.zip')).Hash.ToLowerInvariant();NativeOBSLoadingTested=$false}
     [ordered]@{Version=$version;Published=$publish;Built=Get-Date -Format o;Installer=$installer.Name;Sha256=$hash;Signed=$false;NativeInstallationTested=$false;ObsPlugin=$plugin;Files=@($files)} | ConvertTo-Json -Depth 5 | Set-Content ($installer.FullName+'.manifest.json') -Encoding utf8
     Write-Output $installer.FullName
 } finally {Pop-Location}

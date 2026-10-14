@@ -9,6 +9,7 @@ internal static class Ui
     public static bool Dark { get; private set; } = true;
     public static IBrush Canvas => Brush.Parse(Dark ? "#182637" : "#E7EDF3");
     public static IBrush Panel => Brush.Parse(Dark ? "#233448" : "#F6F8FA");
+    public static IBrush Header => Brush.Parse(Dark ? "#354C65" : "#CFDDEA");
     public static IBrush Team(int team, bool selected = true) => new SolidColorBrush(
         Color.FromArgb(selected ? (byte)255 : (byte)150, team == 0 ? (byte)64 : (byte)255,
             team == 0 ? (byte)143 : (byte)119, team == 0 ? (byte)179 : (byte)55));
@@ -18,6 +19,8 @@ internal static class Ui
     {
         var body = new Grid { RowDefinitions = new("Auto,*") };
         var label = Text(title, true); label.FontSize = 14; label.Margin = new Thickness(0, 0, 0, 8);
+        label.Text = label.Text?.ToUpperInvariant(); label.FontWeight = FontWeight.Bold; label.Background = Header;
+        label.Padding = new Thickness(10, 4); label.Margin = new Thickness(-10, -10, -10, 8);
         body.Children.Add(label); body.Children.Add(child); Grid.SetRow(child, 1);
         return new Border { Background = Panel, Padding = new Thickness(10), Margin = new Thickness(4), Child = body, ClipToBounds = true };
     }

@@ -1,6 +1,6 @@
 # CasterDesk dentro do OBS
 
-## Plugin opcional — beta.0.12
+## Plugin opcional — beta.0.13
 
 1. Feche OBS e execute o instalador do CasterDesk.
 2. Marque **Instalar o painel CasterDesk no OBS**. O componente OBS pede permissão de administrador; o aplicativo permanece instalado por usuário.
@@ -14,13 +14,21 @@ A conexão é ativada automaticamente uma vez quando a instalação opcional foi
 
 ## Rounds, bans e mapas
 
-Abas **Partida → Cronômetro**. Partida reúne registro rápido por botões de bombsite, vencedor e finalização, histórico abaixo e bans de operadores em seguida. Os bombsites têm altura uniforme e seleções destacadas. Clique em uma linha do histórico para corrigir; Novo round volta ao registro. A confirmação de uma correção não acrescenta outro round nem autoriza remover rounds posteriores. Mapas confirmados exigem abrir revisão no programa. Docks largos exibem também ataque/defesa no histórico; em docks estreitos essas duas colunas ficam ocultas para preservar a leitura do resultado.
+Abas **PARTIDA → REMAKE → CRONÔMETRO**. PARTIDA reúne registro por botões e bans, com seis cards por equipe em linhas separadas. Ícones, nomes e cores identificam operadores e responsáveis; posições permanecem estáveis nas duas metades. Cliques continuam seguindo DEF → ATQ. O confronto fica centralizado em caixa alta e negrito; mapa abaixo. A conexão aparece no cabeçalho preto, em verde/vermelho.
 
 Bans de cada etapa são liberados no próprio painel, na mesma aba dos rounds. Os lados e a prorrogação precisam estar configurados no programa.
 
 No bloco Bans de operadores do CasterDesk, ligue **Plugin OBS** para impedir seletores automáticos depois dos rounds. Essa preferência fica salva e não desativa o cronômetro ou a conexão. Desligado, mantém o fluxo automático no programa. Clicar manualmente em um ban ou em Banir próximo continua funcionando em ambos os modos.
 
 Em MD3/MD5, o seletor de mapa do plugin usa os mapas da partida e atualiza a seleção do programa. Em MD1 não há seletor editável. A seleção não apaga registros.
+
+## Guia de remake
+
+REMAKE fica vazio até escolher explicitamente o mapa, inclusive em MD1. Essa escolha é independente do mapa ativo em PARTIDA e nunca altera o registro ou os dados do jogo. Ao mudar de partida, a escolha do guia é limpa.
+
+Após selecionar, confira equipes, ataque/defesa iniciais e atacante da prorrogação. Valores não preenchidos aparecem como Não definido. Bans mostram somente escolhas já registradas, separados por metade e com equipe responsável. Histórico em ordem crescente mostra somente número do round, bombsite e vencedor. O lembrete final pede conferir o mapa após configurar. O guia é para consulta; não configura o jogo automaticamente.
+
+Duplo clique em um round do mapa ativo não confirmado abre sua correção em PARTIDA. Para corrigir outro mapa, primeiro selecione-o em PARTIDA. Novo round volta ao registro. Correções que removeriam dados posteriores permanecem recusadas; mapas confirmados exigem revisão no programa.
 
 ## Cronômetro e TXT
 
@@ -37,3 +45,7 @@ O dock antigo não é apagado automaticamente. Se instalar o plugin, pode remove
 ## Validação
 
 Testes da API, opt-in do instalador e controles Qt são automatizados em dados isolados. OBS nativo e instalação não foram abertos nesta entrega; carregamento real, encaixe e UAC precisam de validação. Não há controle de cenas, acesso entre computadores ou suporte Stream Deck nesta etapa.
+
+### Ajustes locais beta.0.14
+
+O seletor do REMAKE permanece no topo do painel alto. O indicador de conexão usa o microfone aprovado verde/vermelho, com o estado abaixo, ao lado da marca em um cabeçalho compacto. Cards de operadores têm ícones e símbolos centralizados. A tela SPEC é uma alternativa no aplicativo, sem toggle do plugin; o painel OBS mantém suas três abas.

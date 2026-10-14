@@ -35,7 +35,7 @@ public static class MatchInterchangeTests
                     foreach(string reader in L.Languages)
                     {
                         L.Set(reader);var imported=MatchStore.Read(path,catalog);
-                        Check(imported.TeamA==L.T("Equipe A")&&imported.TeamB==L.T("Equipe B"),"localized default teams");
+                        Check(imported.TeamA==L.T("Equipe Azul")&&imported.TeamB==L.T("Equipe Laranja"),"localized default teams");
                         Check(imported.Maps[0].MapId==map.Id&&imported.Maps[0].Rounds.Select(r=>r.Site).SequenceEqual(map.Sites),"map and sites preserved");
                         Check(imported.Maps[0].SiteBlocked(map.Sites[0],3),"site cooldown survives migration");
                         Check(JsonSerializer.Serialize(imported,MatchStore.Options)==json,"same file vocabulary in every language");

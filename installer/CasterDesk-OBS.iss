@@ -5,7 +5,7 @@
 SetupArchitecture=x64
 AppId={{09AA78A4-8DC8-4D9E-A266-8CFE1B89F088}
 AppName=CasterDesk — Plugin OBS
-AppVersion=0.1.0
+AppVersion=1.0.0
 AppPublisher=CasterDesk
 DefaultDirName={commonappdata}\obs-studio\plugins\casterdesk-obs
 PrivilegesRequired=admin
@@ -15,7 +15,7 @@ MinVersion=10.0
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=..\dist
-OutputBaseFilename=CasterDesk-OBS-0.1.0-win-x64-Setup
+OutputBaseFilename=CasterDesk-OBS-1.0.0-win-x64-Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern

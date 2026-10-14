@@ -27,7 +27,7 @@ internal static class LocalizationChecks
                 L.Set(language);
                 var imported = MatchStore.Read(file, session.Catalog);
                 Need(imported.TeamA == "Banco" && imported.TeamB == "Clube", "Custom names retained after import in " + language);
-                var defaultMatch = new SiegeMatch(); Need(defaultMatch.TeamA == L.T("Equipe A") && defaultMatch.TeamB == L.T("Equipe B"), "Default names follow recipient language");
+                var defaultMatch = new SiegeMatch(); Need(defaultMatch.TeamA == L.T("Equipe Azul") && defaultMatch.TeamB == L.T("Equipe Laranja"), "Default names follow recipient language");
                 var view = new ChampionshipView(session); var owner = new Window { Width = 1280, Height = 800, Content = view, Background = Ui.Canvas };
                 owner.Show(); Dispatcher.UIThread.RunJobs();
                 var coin = view.GetVisualDescendants().OfType<ComboBox>().Single(b => b.Name == "setup-coin");

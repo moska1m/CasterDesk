@@ -1,3 +1,16 @@
+# 0.3.0-beta.0.13
+
+- OBS: abas PARTIDA → REMAKE → CRONÔMETRO, com histórico removido de PARTIDA.
+- REMAKE exige escolher o mapa e mostra lados, bans já realizados por metade e rounds/bombsite/vencedor, sem alterar a partida ativa.
+- Seis cards de ícones por equipe em duas linhas; ordem dos cliques e responsáveis preservados.
+- Indicador verde/vermelho no cabeçalho, confronto centralizado em negrito e caixa alta e mapa abaixo.
+- Campos do cronômetro centralizados; serviços e controles preservados.
+- Seletor do programa mostra cada nome de mapa uma única vez, maior, completo e sem abreviação.
+- Faixas de cabeçalho em caixa alta/negrito, botão Plugin OBS em uma linha sem On/Off e indicador de cliente conectado sem alterar a preferência de popups.
+- Nova partida/seletor alinhados; cards mostram mais corpo em espaço amplo, símbolos menores e legenda sem margem lateral interna. Prévias redimensionadas com suavização; recursos originais preservados.
+- Apresentação centrada em CasterDesk e relatório PROGRESSO.md; entregas locais prioritárias, sem publicação GitHub a cada ajuste.
+- Central de imagens preservada para uma etapa posterior.
+
 # 0.3.0-beta.0.12
 
 - OBS: Partida reúne registro por botões, histórico clicável e bans; Cronômetro em aba separada.
@@ -146,6 +159,21 @@
 
 # Histórico
 
+## 1.0.0 — 14/10/2026
+
+- Layout SPEC aprovado: nomes compactos com VS, formato/seleção da série/mapa ativo/lados em uma linha, sem timer no cabeçalho; finalização opcional, confirmação verde e bans maiores junto ao registro.
+- Equipe Azul/Equipe Laranja como defaults em PT/EN/ES nos dois modos, preservando IDs e nomes personalizados/arquivos antigos.
+- OBS: seleção em vermelho, confirmação habilitada em verde, títulos em caixa alta nas faixas e microfone de conexão menor com cores vivas.
+- Instalador com logo, condições de uso e ciência de direitos em três idiomas, aceite obrigatório na interface, progresso identificado e abertura opcional ao finalizar. MIT e GPL preservadas; não concede licença de terceiros.
+
+## 0.3.0-beta.0.14 — 14/10/2026
+
+- Tela SPEC selecionável pelo menu, compartilhando a partida: nomes editáveis no topo, formato MD1/MD3/MD5, mapas escolhidos diretamente, lados inicial/OT e importação/exportação.
+- Registro rápido por botões, histórico lateral, edição inline de vencedor/bombsite, exclusão confirmada e desfazer/refazer durante a sessão (Ctrl+Z/Ctrl+Y). Correções incompatíveis são recusadas com dados preservados; mapas confirmados continuam protegidos.
+- Resumo para remake abre consulta com mapa, lados, bans e rounds nos dois modos, com cópia do texto.
+- Menor espaço acima dos bans iniciais e separação da segunda metade; no OBS, seletor de remake no topo, cabeçalho compacto com microfone verde/vermelho e ícones centralizados nos cards.
+- Entrega local; branch de compilação nativa usada apenas para gerar a DLL necessária, sem nova publicação na principal ou release.
+
 ## 0.1.0-beta.3
 
 - Português, inglês e espanhol na engrenagem, aplicados na próxima abertura.
@@ -168,6 +196,3 @@
 Primeira beta privada: campeonato MD1/MD3, bans, round a round, histórico e JSON, resumo para remake, guia do lobby, cronômetro e casting TXT, exportação PNG e temas.
 
 Inclui instalador por usuário, atalho opcional, desinstalador e runtime .NET. Os dados passam a ficar separados do executável. Esta beta precisa de validação em outro computador antes de ser considerada estável.
-
-
-

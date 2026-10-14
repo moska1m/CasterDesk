@@ -13,7 +13,7 @@ internal static class ChampionshipChecks
     static T Find<T>(Control root, string name) where T : Control => root.GetVisualDescendants().OfType<T>().Single(c => c.Name == name);
     static void Click(Button button) { Need(button.IsEnabled, "Action disabled: " + button.Name); button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs(); }
     static void Pump() => Dispatcher.UIThread.RunJobs();
-    static void TextButton(Control root, string text) => Click(root.GetVisualDescendants().OfType<Button>().First(b => Equals(b.Content, L.T(text))));
+    static void TextButton(Control root, string text) => Click(text == "Banir próximo" ? Find<Button>(root,"next-ban") : root.GetVisualDescendants().OfType<Button>().First(b => Equals(b.Content, L.T(text))));
 
     public static void Run()
     {
@@ -32,6 +32,7 @@ internal static class ChampionshipChecks
         for (int step = 0; step < 8; step++) {
             Click(Find<Button>(view, "veto-" + step)); Pump();
             Need(view.ActiveDialog != null, "Map selection opens");
+            Need(Find<Button>(view.ActiveDialog!, "map-choice-"+session.Catalog.Maps[step].Id).GetVisualDescendants().OfType<TextBlock>().Count(t=>t.Text==session.Catalog.Maps[step].DisplayName)==1,"Map chooser displays full map name once");
             if(step==1){ Need(!Find<Button>(view.ActiveDialog!,"map-choice-"+session.Catalog.Maps[0].Id).IsEnabled,"Used map is unavailable in next chooser"); Snapshot((Control)view.ActiveDialog!.Content!,new Size(1000,540),"map-chooser"); }
             Click(Find<Button>(view.ActiveDialog!, "map-choice-" + session.Catalog.Maps[step].Id)); Pump();
             Need(session.Current.Veto[step] == session.Catalog.Maps[step].Id, "Map choice saved from UI");
@@ -72,10 +73,13 @@ internal static class ChampionshipChecks
             Need(frame.TranslatePoint(default, view)!.Value.X >= Find<Border>(view, "bans-panel").TranslatePoint(default, view)!.Value.X + Find<Border>(view, "bans-panel").Bounds.Width, "Bans stay left; both round controls and history stay in the right block");
             var cards = Enumerable.Range(0, 12).Select(n => Find<Button>(view, "ban-slot-" + n)).ToArray();
             Need(cards.Select(c => c.Bounds.Height).Distinct().Count() == 1, "All ban cards share the same height");
-            Need(Enumerable.Range(0, 12).Select(n => Find<Image>(view, "ban-image-" + n).Height).Distinct().Count() == 1, "Role symbols and operators share the same image frame");
+            Need(Enumerable.Range(0, 12).Select(n => Find<Grid>(view, "ban-portrait-" + n).Height).Distinct().Count() == 1, "Role symbols and operators share the same card frame");
+            Need(Enumerable.Range(0,12).Where(n=>string.IsNullOrEmpty(map.Bans[n])).All(n=>Find<Image>(view,"ban-image-"+n).Height<Find<Grid>(view,"ban-portrait-"+n).Height),"Empty role symbols are smaller and centered within frame");
+            Need(cards.All(c=>c.Padding==new Thickness(0)),"Ban caption extends to card edges");
+            Need(Find<StackPanel>(view,"obs-mode-line").Bounds.Height<=24,"OBS switch and label fit a single line without on/off text");
             var banArea = Find<Grid>(view, "ban-groups");
             Need(cards.All(c => c.TranslatePoint(default, banArea)!.Value.Y + c.Bounds.Height <= banArea.Bounds.Height + 1), "All twelve bans fit without scrolling at " + size + "; available " + banArea.Bounds.Height + "; bottom " + cards.Max(c => c.TranslatePoint(default, banArea)!.Value.Y + c.Bounds.Height));
-            var title = view.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == L.T("Confronto"));
+            var title = view.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == L.T("Confronto").ToUpperInvariant());
             var prior = title.TranslatePoint(default, view)!.Value; Find<ScrollViewer>(view, "setup-scroll").Offset = new Vector(0, 50); Pump();
             Need(title.TranslatePoint(default, view)!.Value == prior, "Confronto title remains fixed when fields scroll");
             Find<ScrollViewer>(view, "setup-scroll").Offset = default; Pump();

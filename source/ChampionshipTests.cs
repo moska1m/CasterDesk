@@ -42,7 +42,7 @@ public static class ChampionshipTests
         Check(MapRecord.BanThreshold(4)==3 && MapRecord.BanThreshold(6)==6 && MapRecord.BanThreshold(10)==9,"ban gates");
         var temp=Path.Combine(AppPaths.DataDirectory,"CronoLive-match-test-"+Guid.NewGuid().ToString("N"),"match.json");MatchStore.Atomic(temp,m);var loaded=MatchStore.Read(temp,catalog);Check(loaded.Maps[0].OtAttack==1,"json roundtrip");
         Check(loaded.Id==m.Id,"stable match identity");
-        m.TeamA="Fnatic";MatchStore.Atomic(temp,m);Check(File.Exists(temp+".bak") && MatchStore.Read(temp+".bak",catalog).TeamA=="Equipe A","backup");
+        m.TeamA="Fnatic";MatchStore.Atomic(temp,m);Check(File.Exists(temp+".bak") && MatchStore.Read(temp+".bak",catalog).TeamA==L.T("Equipe Azul"),"backup");
         var duplicate=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(m))!;duplicate.Veto[1]=duplicate.Veto[0];bool rejected=false;try{MatchStore.Validate(duplicate,catalog);}catch(InvalidDataException){rejected=true;}Check(rejected,"duplicate rejected");
         var confirmation=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(m))!;
         confirmation.Maps[0].ConfirmedAt=DateTimeOffset.Now;rejected=false;try{MatchStore.Validate(confirmation,catalog);}catch(InvalidDataException){rejected=true;}Check(rejected,"cannot confirm without winner");

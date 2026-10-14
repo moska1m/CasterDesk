@@ -3,6 +3,25 @@ namespace CasterDesk.Avalonia;
 public sealed partial class ChampionshipView
 {
     internal Window? ActiveDialog { get; private set; }
+    internal Window RemakeDialog()
+    {
+        var layout = new Grid { Margin = new Thickness(16), RowDefinitions = new("Auto,*,Auto") };
+        var choice = Ui.Combo(); choice.Name = "remake-map";
+        choice.ItemsSource = Session.Current.Maps.Select(m => new Choice(m.MapId, Session.Catalog.Maps.Single(c => c.Id == m.MapId).DisplayName)).ToArray();
+        choice.SelectedIndex = Session.Map == null ? -1 : Session.Current.Maps.IndexOf(Session.Map);
+        layout.Children.Add(choice);
+        var text = new TextBox { Name = "remake-text", IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, FontSize = 15, Margin = new Thickness(0, 10), TextAlignment = TextAlignment.Center };
+        Add(layout, text, 0, 1);
+        void Update() { text.Text = choice.SelectedItem is Choice c ? Session.Summary(c.Id, SpecMode) : L.T("Escolha um mapa primeiro."); }
+        choice.SelectionChanged += (_, _) => Update(); Update();
+        var dialog = Ui.Dialog(this, "Resumo para remake", layout, 700, 560);
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+        buttons.Children.Add(Ui.Button("Copiar resumo", () => Ui.CopyText(text.Text ?? ""), true));
+        buttons.Children.Add(Ui.Button("Fechar", () => dialog.Close())); Add(layout, buttons, 0, 2);
+        Session.Changed += Update; dialog.Closed += (_, _) => Session.Changed -= Update;
+        return dialog;
+    }
+    async Task ShowRemake() => await Show<bool>(RemakeDialog());
     async Task<T> Show<T>(Window dialog)
     {
         ActiveDialog = dialog;
@@ -23,7 +42,7 @@ public sealed partial class ChampionshipView
                 } catch (Exception ex) { notice.Text = ex.Message; }
             });
             bool available = !match.Veto.Where((_, i) => i != step).Contains(map.Id);
-            button.Name = "map-choice-" + map.Id; button.Content = MapCard(map, map.DisplayName, available ? "" : "USED"); button.Margin = new Thickness(5);
+            button.Name = "map-choice-" + map.Id; button.Content = MapCard(map, "", available ? "" : "USED"); button.Margin = new Thickness(5);
             button.IsEnabled = available; grid.Children.Add(button);
         }
         await Show<bool>(dialog);
@@ -42,7 +61,7 @@ public sealed partial class ChampionshipView
         var search = new TextBox { PlaceholderText = L.T("Selecionar…"), Margin = new Thickness(0, 0, 0, 10) };
         body.Children.Add(search);
         var grid = new UniformGrid { Columns = 11 }; Add(body, grid, 0, 1);
-        var dialog = Ui.Dialog(this, Session.Current.Team(MapRecord.BanTeam(slot)) + " · " + L.Role(map.BanRole(slot)), body, 1120, 470);
+        var dialog = Ui.Dialog(this, (SpecMode ? SpecTeam(MapRecord.BanTeam(slot)) : Session.Current.Team(MapRecord.BanTeam(slot))) + " · " + L.Role(map.BanRole(slot)), body, 1120, 470);
         void Fill()
         {
             grid.Children.Clear();

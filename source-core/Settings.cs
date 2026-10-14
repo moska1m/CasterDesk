@@ -21,6 +21,7 @@ public sealed class Settings
     public string Language { get; set; } = "pt-BR";
     public bool DarkMode { get; set; } = true;
     public bool SiegeTheme { get; set; } = true;
+    public bool SpecMode { get; set; }
     public bool QuickRounds { get; set; } = true;
     public decimal Initial { get; set; } = 10;
     public decimal[] Presets { get; set; } = [2, 3, 4];

@@ -10,12 +10,13 @@ try {
     if($PublishFolder){
         $publication=[IO.Path]::GetFullPath((Join-Path $root $PublishFolder))
         # Execute only the self-contained publication's explicit headless test mode.
-        $testProcess=Start-Process -FilePath (Join-Path $publication 'CasterDesk.exe') -ArgumentList '--avalonia-check' -WorkingDirectory $publication -WindowStyle Hidden -Wait -PassThru
+        $testProcess=Start-Process -FilePath (Join-Path $publication 'CasterDesk.exe') -ArgumentList '--avalonia-check' -WorkingDirectory $publication -WindowStyle Hidden -Wait -PassThru -RedirectStandardOutput ($env:CASTERDESK_DATA_DIR+".stdout.txt") -RedirectStandardError ($env:CASTERDESK_DATA_DIR+".stderr.txt")
         $testExit=$testProcess.ExitCode
     } else {
         & $Dotnet source-avalonia/bin/Release/net10.0-windows/CasterDesk.dll --avalonia-check
         $testExit=$LASTEXITCODE
     }
+    if($PublishFolder -and $testExit -ne 0){Get-Content ($env:CASTERDESK_DATA_DIR+".stderr.txt") -Tail 30}
     if($testExit -ne 0 -or !(Test-Path (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-check.txt'))){throw "Validação Avalonia falhou (saída $testExit): $env:CASTERDESK_DATA_DIR"}
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-championship-check.txt')
@@ -25,4 +26,5 @@ try {
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-brand-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-corrections-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-obs-check.txt')
+    Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'avalonia-spec-check.txt')
 } finally {$env:CASTERDESK_DATA_DIR=$previousData;Pop-Location}

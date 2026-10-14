@@ -85,8 +85,8 @@ public sealed class SiegeMatch
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public DateTime Created { get; set; } = DateTime.Now;
     string nameA="",nameB="";
-    public string TeamA { get=>TeamAIsDefault?L.T("Equipe A"):nameA; set{nameA=value;TeamAIsDefault=string.IsNullOrWhiteSpace(value);} }
-    public string TeamB { get=>TeamBIsDefault?L.T("Equipe B"):nameB; set{nameB=value;TeamBIsDefault=string.IsNullOrWhiteSpace(value);} }
+    public string TeamA { get=>TeamAIsDefault?L.T("Equipe Azul"):nameA; set{nameA=value;TeamAIsDefault=string.IsNullOrWhiteSpace(value);} }
+    public string TeamB { get=>TeamBIsDefault?L.T("Equipe Laranja"):nameB; set{nameB=value;TeamBIsDefault=string.IsNullOrWhiteSpace(value);} }
     public bool TeamAIsDefault {get;set;}=true;
     public bool TeamBIsDefault {get;set;}=true;
     [JsonIgnore] public string StoredTeamA=>TeamAIsDefault?"Team A":nameA;
@@ -94,12 +94,14 @@ public sealed class SiegeMatch
     public string Format { get; set; } = "MD1";
     public int CoinWinner { get; set; } = -1; public int FirstBan { get; set; } = -1;
     public string[] Veto { get; set; } = new string[8];
+    public bool DirectMaps { get; set; }
     public List<MapRecord> Maps { get; set; } = [];
     public string Team(int index) => index == 0 ? TeamA : TeamB;
     public string Action(int step) => (Format == "MD3" && step is 4 or 5) || (Format == "MD5" && step is >=2 and <=5) ? "PICK" : "BAN";
     public int Actor(int step) => (FirstBan + step) % 2;
     public void SyncMaps(SiegeCatalog catalog)
     {
+        if (DirectMaps) return;
         var choices = new List<(string Id,int Picker)>();
         foreach (int step in Enumerable.Range(0,8).Where(i=>Action(i)=="PICK")) if (!string.IsNullOrEmpty(Veto[step])) choices.Add((Veto[step],Actor(step)));
         if (Veto.All(x=>!string.IsNullOrEmpty(x))) choices.Add((catalog.Maps.Single(x=>!Veto.Contains(x.Id)).Id,Actor(7)));
@@ -160,9 +162,10 @@ public static class MatchStore
         Need(used.Distinct().Count()==used.Count && used.All(x=>c.Maps.Any(y=>y.Id==x)),L.T("Mapas repetidos ou desconhecidos."));
         Need(used.Count==0 || m.FirstBan>=0 && m.CoinWinner>=0,L.T("Falta definir coin flip."));
         Need(m.Veto.Take(used.Count).All(x=>!string.IsNullOrEmpty(x)),L.T("Veto fora de sequência."));
-        var expected=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(m,Options),Options)!; expected.SyncMaps(c);
-        Need(m.Maps!.Count==expected.Maps.Count && m.Maps.Select(x=>(x.MapId,x.Picker)).SequenceEqual(expected.Maps.Select(x=>(x.MapId,x.Picker))),L.T("Mapas não correspondem ao veto."));
-        foreach(var map in m.Maps)
+        if(m.DirectMaps) { Need(used.Count==0 && m.Maps!.Count==(m.Format=="MD5"?5:m.Format=="MD3"?3:1) && m.Maps.Select(x=>x.MapId).Distinct().Count()==m.Maps.Count && m.Maps.All(x=>c.Maps.Any(y=>y.Id==x.MapId)&&x.Picker is 0 or 1),L.T("Mapas repetidos ou desconhecidos.")); }
+        else { var expected=JsonSerializer.Deserialize<SiegeMatch>(JsonSerializer.Serialize(m,Options),Options)!; expected.SyncMaps(c);
+        Need(m.Maps!.Count==expected.Maps.Count && m.Maps.Select(x=>(x.MapId,x.Picker)).SequenceEqual(expected.Maps.Select(x=>(x.MapId,x.Picker))),L.T("Mapas não correspondem ao veto.")); }
+        foreach(var map in m.Maps!)
         {
             if(map.Statistics is not null)StatisticsData.Validate(map.Statistics);
             Need(map.InitialAttack is >=-1 and <=1 && map.OtAttack is >=-1 and <=1,L.T("Lados inválidos."));

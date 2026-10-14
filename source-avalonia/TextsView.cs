@@ -116,7 +116,7 @@ public sealed class TextsView : Grid
     static TextBox Input(string name, string value) => new() { Name = name, Text = value, Margin = new Thickness(0, 0, 6, 8) };
     internal static string OutputFolder(string path) => string.IsNullOrWhiteSpace(path) ? "" : Path.GetDirectoryName(Path.GetFullPath(path)) ?? "";
     Border Card(string title, Control content) { var card = Ui.Card(title, content); cards.Add(card); return card; }
-    public void RefreshColors() { Background = Ui.Canvas; foreach (var card in cards) card.Background = Ui.Panel; }
+    public void RefreshColors() { Background = Ui.Canvas; foreach (var card in cards) { card.Background = Ui.Panel; if(card.Child is Grid body)foreach(var title in body.Children.OfType<TextBlock>())title.Background=Ui.Header; } }
     Button Command(string label, string name, System.Action action, bool primary = false) {
         var button = Ui.Button(label, () => { try { action(); } catch (Exception ex) { status.Text = ex.Message; } }, primary); button.Name = name; return button;
     }

@@ -48,7 +48,7 @@ public sealed class MatchJsonConverter : JsonConverter<SiegeMatch>
         return found??throw new JsonException(L.T("Round inválido."));
     }
     static bool DefaultName(string value,int team)=>string.IsNullOrWhiteSpace(value)||
-        Aliases(team==0?"Equipe A":"Equipe B").Concat(new[]{team==0?"Equipa A":"Equipa B"}).Any(a=>Same(a,value));
+        Aliases(team==0?"Equipe A":"Equipe B").Concat(Aliases(team==0?"Equipe Azul":"Equipe Laranja")).Concat(new[]{team==0?"Equipa A":"Equipa B"}).Any(a=>Same(a,value));
 
     public override SiegeMatch Read(ref Utf8JsonReader reader,Type typeToConvert,JsonSerializerOptions options)
     {
@@ -71,13 +71,13 @@ public sealed class MatchJsonConverter : JsonConverter<SiegeMatch>
         var data=node.Deserialize<Payload>(options)??throw new JsonException(L.T("Partida vazia."));
         return new SiegeMatch{Version=2,Id=data.Id,Created=data.Created,TeamA=data.TeamA,TeamB=data.TeamB,
             TeamAIsDefault=data.TeamAIsDefault??DefaultName(data.TeamA,0),TeamBIsDefault=data.TeamBIsDefault??DefaultName(data.TeamB,1),
-            Format=data.Format,CoinWinner=data.CoinWinner,FirstBan=data.FirstBan,Veto=data.Veto,Maps=data.Maps};
+            DirectMaps=data.DirectMaps,Format=data.Format,CoinWinner=data.CoinWinner,FirstBan=data.FirstBan,Veto=data.Veto,Maps=data.Maps};
     }
     public override void Write(Utf8JsonWriter writer,SiegeMatch value,JsonSerializerOptions options)
     {
         var data=new Payload{Version=value.Version==1?2:value.Version,Id=value.Id,Created=value.Created,
             TeamA=value.StoredTeamA,TeamB=value.StoredTeamB,TeamAIsDefault=value.TeamAIsDefault,TeamBIsDefault=value.TeamBIsDefault,
-            Format=value.Format.Replace("MD","BO"),CoinWinner=value.CoinWinner,FirstBan=value.FirstBan,Veto=value.Veto,Maps=value.Maps};
+            DirectMaps=value.DirectMaps,Format=value.Format.Replace("MD","BO"),CoinWinner=value.CoinWinner,FirstBan=value.FirstBan,Veto=value.Veto,Maps=value.Maps};
         var node=JsonSerializer.SerializeToNode(data,options)!.AsObject();
         if(node["Maps"] is JsonArray maps)foreach(var valueMap in maps)
         {
@@ -93,6 +93,7 @@ public sealed class MatchJsonConverter : JsonConverter<SiegeMatch>
     }
     sealed class Payload
     {
+        public bool DirectMaps {get;set;}
         public int Version{get;set;}=1;
         public string Id{get;set;}=Guid.NewGuid().ToString("N");
         public DateTime Created{get;set;}=DateTime.Now;

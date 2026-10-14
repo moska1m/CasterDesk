@@ -10,17 +10,18 @@ public sealed partial class ChampionshipView
     {
         RoundConfirm = null; var map = Session.Map;
         if (map == null) return Ui.Text("Escolha um mapa primeiro.");
-        var panel = new Grid { Name = "round-entry-panel", RowDefinitions = new("*,Auto") };
+        var panel = new Grid { Name = "round-entry-panel", RowDefinitions = new(SpecMode?"Auto,Auto":"*,Auto") };
         bool editable = !map.Confirmed && !Session.Current.Complete && map.Score().Winner < 0;
-        bool ready = BansReady && Session.PendingBans().Length == 0 && (map.Rounds.Count < 12 || map.OtAttack >= 0);
+        bool ready = (!SpecMode || SpecConfigurationReady) && BansReady && (SpecMode || Session.PendingBans().Length == 0) && (map.Rounds.Count < 12 || map.OtAttack >= 0);
         if (editable && ready) {
-            var form = QuickMode ? QuickRound(map) : CompactRound(map);
-            Add(panel, new ScrollViewer { Name = "round-entry-scroll", Content = form, MaxHeight = compact ? 190 : 285 }, 0);
+            var form = (SpecMode || QuickMode) ? QuickRound(map) : CompactRound(map);
+            Add(panel, new ScrollViewer { Name = "round-entry-scroll", Content = form, MaxHeight = SpecMode ? 310 : compact ? 190 : 285 }, 0);
             RoundConfirm = Action("Confirmar round", async () => {
-                Session.Round(site, winner, ending); site = ending = ""; winner = -1; Refresh(); if(!UseObsForBans)await OpenNextBan();
+                Session.Round(site, winner, ending); site = ending = ""; winner = -1; Refresh(); if(!SpecMode && !UseObsForBans)await OpenNextBan();
             }, true);
             RoundConfirm.Name = "confirm-round";
-            RoundConfirm.IsEnabled = !string.IsNullOrEmpty(site) && winner >= 0 && !string.IsNullOrEmpty(ending);
+            RoundConfirm.IsEnabled = !string.IsNullOrEmpty(site) && winner >= 0 && (SpecMode || !string.IsNullOrEmpty(ending));
+            if(SpecMode){RoundConfirm.Margin=new Thickness(0,8,0,0);RoundConfirm.Background=RoundConfirm.IsEnabled?Brush.Parse("#25834C"):Brush.Parse("#485869");}
             Add(panel, RoundConfirm, 0, 1);
         } else if (editable) {
             panel.RowDefinitions[0].Height = GridLength.Auto;
@@ -36,15 +37,15 @@ public sealed partial class ChampionshipView
     Control QuickRound(MapRecord map)
     {
         int round = map.Rounds.Count + 1, attacker = map.Attacker(round);
-        var form = new Grid { RowDefinitions = new("Auto"), ColumnDefinitions = new("*,*"), VerticalAlignment = VerticalAlignment.Top };
+        var form = new Grid { RowDefinitions = new("Auto"), ColumnDefinitions = new(SpecMode ? "*" : "*,*"), VerticalAlignment = VerticalAlignment.Top };
         var sites = new UniformGrid { Columns = 2, VerticalAlignment = VerticalAlignment.Top };
         foreach (string bombsite in Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites) {
             var button = Ui.Button(BombsiteNames.Display(map.MapId, bombsite), () => { site = bombsite; Refresh(); }, site == bombsite);
             button.Content = new TextBlock { Text = BombsiteNames.Display(map.MapId, bombsite), TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, FontSize = 12 };
             button.Name = "round-site-" + Array.IndexOf(Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites, bombsite);
             button.IsEnabled = !map.SiteBlocked(bombsite, round); button.Margin = new Thickness(3); button.FontSize = 12;
-            button.Height = 54; button.Padding = new Thickness(4);
-            if (site == bombsite) button.BorderBrush = Brushes.White;
+            button.VerticalContentAlignment=VerticalAlignment.Center;button.HorizontalContentAlignment=HorizontalAlignment.Center;button.Height = SpecMode ? 46 : 54; button.Padding = new Thickness(4);
+            if (site == bombsite) {button.BorderBrush=Brush.Parse("#FF4335");button.BorderThickness=new Thickness(2);}
             sites.Children.Add(button);
         }
         Add(form, sites, 0);
@@ -56,21 +57,23 @@ public sealed partial class ChampionshipView
                 winner = selected; if (!RoundEnding.Allowed(ending, winner, attacker)) ending = ""; Refresh();
             });
             button.Name = "round-winner-" + team; button.Margin = new Thickness(3);
-            button.Content = new TextBlock { Text = Session.Current.Team(team), FontSize = 12, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            button.Content = new TextBlock { Text = SpecMode ? SpecTeam(team) : Session.Current.Team(team), FontSize = 12, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             button.Height = 34; button.Padding = new Thickness(4); ToolTip.SetTip(button, Session.Current.Team(team) + " · " + L.Role(team == attacker ? "ATQ" : "DEF"));
             button.Background = Ui.Team(team, winner == team); button.Foreground = Brushes.White;
-            button.BorderThickness = new Thickness(winner == team ? 2 : 0); button.BorderBrush = Brushes.White; teams.Children.Add(button);
+            button.BorderThickness = new Thickness(winner == team ? 2 : 0); button.BorderBrush = Brush.Parse("#FF4335");button.VerticalContentAlignment=VerticalAlignment.Center; teams.Children.Add(button);
         }
         decisions.Children.Add(teams);
-        var ends = new UniformGrid { Columns = 2 };
+        var ends = new UniformGrid { Columns = SpecMode ? 4 : 2 };
         foreach (string code in RoundEnding.Codes.Skip(1)) {
             var button = Ui.Button(RoundEnding.Label(code), () => { ending = code; Refresh(); }, ending == code);
             button.Content = new TextBlock { Text = RoundEnding.Label(code), TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, FontSize = 11 }; button.Padding = new Thickness(4);
-            button.Name = "round-ending-" + code; button.Margin = new Thickness(3); button.FontSize = 12;
+            if(ending==code){button.BorderBrush=Brush.Parse("#FF4335");button.BorderThickness=new Thickness(2);}
+            button.VerticalContentAlignment=VerticalAlignment.Center;button.Name = "round-ending-" + code; button.Margin = new Thickness(3); button.FontSize = 12;
             button.Height = 34;
             button.IsEnabled = winner >= 0 && RoundEnding.Allowed(code, winner, attacker); ends.Children.Add(button);
         }
-        decisions.Children.Add(ends); Add(form, decisions, 1); return form;
+        if(SpecMode){var label=Ui.Text("Finalização · opcional");label.FontSize=11;label.Margin=new Thickness(3,3);decisions.Children.Add(label);}
+        decisions.Children.Add(ends); if(SpecMode){form.RowDefinitions=new("Auto,Auto");Add(form,decisions,0,1);}else Add(form, decisions, 1); return form;
     }
 
     Control CompactRound(MapRecord map)

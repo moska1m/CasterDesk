@@ -1,7 +1,7 @@
 ![CasterDesk — organize a partida, cuide da transmissão](docs/media/banner.svg)
 
 <p align="center">
-  <img alt="Versão 0.3.0-beta.0.12" src="https://img.shields.io/badge/vers%C3%A3o-0.3.0--beta.0.12-327FA8" />
+  <img alt="Versão 1.0.0" src="https://img.shields.io/badge/vers%C3%A3o-1.0.0-327FA8" />
   <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448" />
   <img alt="Português, inglês e espanhol" src="https://img.shields.io/badge/idiomas-PT%20%C2%B7%20EN%20%C2%B7%20ES-233448" />
   <img alt="Licença MIT para o código próprio" src="https://img.shields.io/badge/c%C3%B3digo-MIT-25834C" />
@@ -28,6 +28,7 @@ Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o fee
 | Área | O que oferece |
 |---|---|
 | **Partidas** | MD1, MD3 e MD5; registro do vencedor externo do coin flip, veto de nove mapas, lados e prorrogação. |
+| **SPEC** | Tela alternativa no menu, mesmos dados, escolha direta de mapas, edição inline de rounds, exclusão confirmada e desfazer/refazer. |
 | **Bans** | Ícones na ordem do jogo, etapas DEF → ATQ, equipe responsável e revisão protegida. |
 | **Rounds** | Registro rápido de bombsite, vencedor e finalização; histórico com placar, ataque/defesa e cores fixas. |
 | **Estatísticas** | Print por arquivo ou Ctrl+V, leitura de nomes/E/M/A, revisão lado a lado e correção manual; suporte a remake e dados incompletos. |
@@ -56,21 +57,27 @@ As artes preservam as proporções das bases fornecidas. Mapas não jogados fica
 
 ## Começar a usar
 
-1. Abra [Releases](https://github.com/moska1m/CasterDesk/releases) e escolha a versão desejada. A linha atual é **0.3.0-beta.0.12** para Windows x64.
-2. Baixe o instalador `CasterDesk-0.3.0-beta.0.12-win-x64-Setup.exe` e confira o SHA-256 disponibilizado junto dele.
+1. Use o instalador entregue com a atualização local ou escolha uma versão registrada em [Releases](https://github.com/moska1m/CasterDesk/releases). A versão **1.0.0** está preparada para Windows x64.
+2. Confira o nome/versão do instalador e o SHA-256 disponibilizado junto dele.
 3. Instale e abra **CasterDesk**. O pacote inclui o runtime .NET; não é necessário instalar o SDK para usar.
 4. Crie uma partida, informe as equipes e registre o coin flip feito fora do programa. Complete o veto, defina os lados e inicie os bans por clique.
 5. Registre os rounds, confirme o resultado de cada mapa e confira os prints antes de exportar estatísticas.
 
 Na engrenagem, selecione Português (Brasil), English ou Español. O idioma é aplicado na próxima abertura. Nomes personalizados e IDs internos são preservados ao importar partidas entre idiomas.
 
-**Estado da beta:** os testes automatizados e prévias em memória foram executados; o instalador não tem assinatura digital. Instalação em outros PCs, escalas/monitores e OCR real ainda precisam de validação. Evidências e limites: [AVALONIA-PROGRESSO.md](AVALONIA-PROGRESSO.md).
+**Validação:** os testes automatizados e prévias em memória foram executados; o instalador não tem assinatura digital. Instalação em outros PCs, escalas/monitores e OCR real ainda precisam de validação. Evidências e limites: [PROGRESSO.md](PROGRESSO.md).
+
+## Modo SPEC
+
+![Tela SPEC com registro e histórico lateral](docs/media/spec.png)
+
+Ative pela engrenagem. Mesma partida, apresentação compacta, mapas e lados no topo. Finalização opcional; confirme com bombsite e vencedor. O timer do cabeçalho fica oculto nesse modo.
 
 ## Usar com OBS
 
-Na versão 0.3.0-beta.0.12, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
+Na versão 1.0.0, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
 
-O painel beta registra/corrige rounds, seleciona mapas de séries e controla o mesmo timer e os bans sem alternar de janela. Marque a instalação opcional do plugin OBS no instalador para conexão automática. As instruções e limites estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
+O painel registra/corrige rounds, seleciona mapas de séries e controla o mesmo timer e os bans sem alternar de janela. Marque a instalação opcional do plugin OBS no instalador para conexão automática. As instruções e limites estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
 
 <details>
 <summary><strong>Painel de navegador anterior (beta.0.9)</strong></summary>
@@ -94,8 +101,9 @@ Importar só um JSON não transporta todos os recursos: use pacotes/backup para 
 | **0.1** | Cronômetro, casting e primeiras ferramentas para a transmissão. |
 | **0.2** | Fluxo de campeonato, registro rápido, bans e exportação de imagens. |
 | **0.3 até beta.0.4** | Estabilização de comandos, persistência, importação, backup e adaptação anterior da interface. |
-| **0.3 beta.0.5–0.6** | Linha Avalonia, publicação autossuficiente e ajustes de partida/lobby. |
+| **0.3 beta.0.5–0.6** | Interface renovada, publicação autossuficiente e ajustes de partida/lobby. |
 | **0.3 beta.0.7** | Aplicação da marca aprovada. |
+| **0.3 beta.0.13** | Guia REMAKE por mapa, cards de ícones por equipe e cabeçalho/status ajustados no OBS. |
 | **0.3 beta.0.12** | OBS com rounds por botões, histórico e bans juntos; timer completo e ajustes de layout/menu. |
 | **0.3 beta.0.11** | Rounds e mapas da série no OBS, bans durante toda a partida e modo explícito sem popups. |
 | **0.3 beta.0.10** | Plugin opcional OBS com descoberta automática. |
@@ -108,7 +116,7 @@ Algumas betas antigas têm instaladores preservados, mas não um snapshot exato 
 
 ## Desenvolvimento
 
-Interface atual em **Avalonia**, C# e .NET 10, com comandos e serviços compartilhados. A solução legada permanece preservada; a linha atual não migra para WPF. Renderização/OCR continuam usando serviços Windows.
+Aplicativo Windows em C# e .NET 10, com comandos e serviços compartilhados. Renderização e OCR usam serviços Windows. As entregas priorizam o instalador local para teste; atualizações no GitHub são feitas quando necessárias ao processo ou solicitadas.
 
 ```powershell
 dotnet restore source-avalonia/CasterDesk.Avalonia.csproj
@@ -119,7 +127,7 @@ dotnet build source-avalonia/CasterDesk.Avalonia.csproj -c Release
 
 Os testes usam uma pasta isolada e o backend Headless; não abrem o programa na área de trabalho. Para empacotar, use `scripts/Package-Avalonia.ps1 -Iscc <ISCC-x64.exe> -Dotnet <dotnet.exe> -PluginPackage <pasta-do-plugin-compilado>`. Os scripts aceitam configuração explícita de restore offline.
 
-Documentação: [formato JSON](MATCH-JSON-FORMAT.md), [validação](AVALONIA-PROGRESSO.md), [contribuição](CONTRIBUTING.md).
+Documentação: [formato JSON](MATCH-JSON-FORMAT.md), [validação](PROGRESSO.md), [contribuição](CONTRIBUTING.md).
 
 ## Próximas etapas
 
@@ -127,11 +135,15 @@ Documentação: [formato JSON](MATCH-JSON-FORMAT.md), [validação](AVALONIA-PRO
 - [ ] Validar o carregamento do plugin, encaixe no OBS e instalação/UAC.
 - [ ] Validação nativa em outros PCs e escalas de tela.
 - [ ] Revisão regional dos termos em espanhol e inglês.
-- [ ] Acabamento de instalação, consentimento e distribuição.
+- [x] Instalador com identidade visual, aceite PT/EN/ES e abertura opcional ao terminar.
 - [ ] Controle por Stream Deck.
+
+## Condições de uso e marca
+
+O instalador pede ciência dos [termos de uso](docs/TERMOS-PT.txt). Código próprio MIT e plugin GPL mantêm suas permissões; nome, marca, pacote apresentado como oficial e recursos de terceiros são distintos. Use as artes nos limites das autorizações do evento/canal e dos titulares. O aceite não concede autorização da Ubisoft.
 
 ## Créditos e licenças
 
 Projeto conduzido por **moska1m**, com feedback de community casters e colaboração visual de **JG**. Código próprio sob [MIT](LICENSE). A tipografia Rajdhani da marca usa SIL OFL; fontes e componentes mantêm seus avisos.
 
-Imagens, operadores, marcas de Rainbow Six Siege e outros recursos de terceiros **não estão cobertos pela licença MIT do código**. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) para origens e situação dos recursos antes de distribuição ampla. O CasterDesk é independente e não é um produto oficial, patrocinado ou aprovado pela Ubisoft.
+Imagens, operadores, marcas de Rainbow Six Siege e outros recursos de terceiros **não estão cobertos pela licença MIT do código**. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) para origens e situação dos recursos antes de distribuição ampla. O CasterDesk é independente e não representa produto oficial ou endosso da Ubisoft.

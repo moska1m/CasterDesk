@@ -1,0 +1,21 @@
+﻿CASTERDESK 1.0 — CONDICIONES DE USO Y AVISO DE DERECHOS
+14 de octubre de 2026
+
+CasterDesk es una herramienta independiente para community casters, equipos de transmisión y espectadores (SPEC) de Rainbow Six Siege, destinada especialmente a eventos y canales con los permisos necesarios. No es un producto oficial de Ubisoft ni implica patrocinio o respaldo de Ubisoft, BLAST u OBS.
+
+CÓDIGO ABIERTO Y MARCA
+El código propio permanece bajo MIT. El plugin OBS y los componentes GPL mantienen GPL-2.0-or-later. Este consentimiento no limita la copia, modificación ni redistribución permitidas por esas licencias. La licencia del código no concede derechos de marca. No presente una versión modificada, fork o paquete de terceros como distribución oficial de CasterDesk o como aprobado por los titulares. Identifique cambios, origen y mantenedor; conserve los avisos de licencia. La atribución no implica respaldo.
+
+RECURSOS DE TERCEROS
+Rainbow Six Siege, operadores, mapas y otros elementos pertenecen a Ubisoft y/o sus titulares. Las artes, logos y fuentes conservan sus propios derechos y no quedan automáticamente bajo MIT. Consulte THIRD-PARTY-NOTICES.md y los avisos incluidos. Instalar o aceptar estas condiciones no concede licencias de torneo, transmisión, marca, fuente ni redistribución de assets. Un permiso para un evento o canal no se extiende automáticamente a otros ni a la distribución separada de esos recursos.
+
+USO RESPONSABLE
+Antes de publicar imágenes generadas, compruebe que evento, canal, territorio, finalidad y materiales estén cubiertos por los permisos y condiciones aplicables. El uso no autorizado puede ser impugnado o estar sujeto a retirada. No sugiera autorización, vínculo oficial o autoría inexistentes. La actividad comunitaria no obtiene licencia automáticamente.
+
+DATOS Y REVISIÓN
+Revise resultados, nombres, estadísticas y artes antes de publicar. La lectura de capturas exige revisión humana. Mantenga copias de las partidas. Los datos se guardan localmente y la conexión opcional con OBS es local. Aceptar no envía sus datos a terceros.
+
+LICENCIAS Y GARANTÍAS
+Consulte LICENSE, obs-plugin/LICENSE y los avisos de componentes. Se aplican sus condiciones y exclusiones de garantía, respetando los derechos legales imperativos. Estas condiciones no aprueban jurídicamente un evento concreto.
+
+AL SELECCIONAR “ESTOY DE ACUERDO”, RECONOZCO ESTAS CONDICIONES, LOS DERECHOS DE LOS TITULARES Y LA NECESIDAD DE OBTENER LOS PERMISOS APLICABLES.

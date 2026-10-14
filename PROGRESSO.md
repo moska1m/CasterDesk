@@ -1,4 +1,40 @@
-# Avalonia — primeira etapa, 13/10/2026
+# CasterDesk — progresso e validação
+
+Diretriz de 14/10/2026: priorizar entregas locais; não atualizar/publicar o GitHub a cada ajuste. Usar o remoto quando solicitado ou necessário ao processo, como compilação nativa do plugin. Apresentação centrada no CasterDesk, sem destacar a base de interface; nomes técnicos permanecem somente onde necessários à compilação e compatibilidade. Referências às bases nas entregas antigas registram o contexto histórico.
+
+## Versão 1.0.0 — 14/10/2026
+
+Correções finais aprovadas por esboço: topo SPEC compacto, seleção dos mapas da série por controle lateral ao formato, mapa ativo separado, lados na mesma linha, nomes editáveis com VS, registro sem finalização obrigatória, confirmação verde e bans ligeiramente maiores. Timer do topo oculto no SPEC e restaurado no Caster. Defaults azul/laranja nos três idiomas e reconhecimento das antigas denominações A/B. A coluna esquerda oferece rolagem em espaços menores, preservando o acesso às ações sem achatar os controles.
+
+Plugin 1.0.0 compilado em 3a9d220643a18419b180bcea0630994b1906527b, https://github.com/moska1m/CasterDesk/actions/runs/38640800614: 71 verificações nativas aprovadas, incluindo seleção vermelha e confirmação verde. Títulos/faixas em caixa alta e indicador de conexão compacto com cores vivas. O usuário confirmou o funcionamento real da beta anterior; as alterações finais ainda precisam de conferência interativa.
+
+Instalador mantém Inno Setup, com marca aprovada, progresso, aceite PT/EN/ES e opção desmarcada para abrir o aplicativo ao terminar. Instalação silenciosa exige /ACCEPTTERMS. MIT/GPL preservadas após decisão expressa do usuário; termos não restringem direitos das licenças e não concedem autorização da Ubisoft ou de terceiros. User autorizou tornar o repositório público e publicar a versão após as verificações. Não houve abertura de instalador, aplicativo ou OBS na área de trabalho pelo agente.
+
+Empacotamento 1.0 aprovado: 713 checks do núcleo, 459 UI/API/SPEC e 71 nativos Qt. Publicação publish-avalonia-1.0.0-78828064, 709 arquivos conferidos por SHA-256 e sete resoluções do ícone nos três executáveis. Setup SHA-256 6dba2b4eacca033d372f3297f41e4490f0c02c09a50555b6190bc0c64a649451. Instaladores compilados sem execução; aceite, layout do assistente e abertura opcional preparados no script e conferidos pelo compilador, sem teste interativo na área de trabalho.
+
+## Décima quinta entrega — Modo SPEC e ajustes de operação, 14/10/2026, 0.3.0-beta.0.14
+
+Modo SPEC escolhido no menu, substituindo a apresentação da Partida e preservando a sessão compartilhada. Nomes editáveis no topo, defaults visuais Equipe Azul/Equipe Laranja, MD1/MD3/MD5, mapa ativo, escolha direta dos mapas da série, lado inicial/OT, registro por botões e histórico lateral. Não há toggle OBS, coin flip ou primeiro ban nessa tela. Importação/exportação JSON e pacotes reaproveitam os serviços existentes. DirectMaps diferencia mapas escolhidos diretamente de partidas com veto; não gera um veto fictício. Arquivos antigos seguem reconhecidos; arquivos de mapas diretos exigem esta versão ou posterior.
+
+Editor inline de vencedor/bombsite, placares acumulados derivados dos RoundRecord existentes, exclusão confirmada e numeração cronológica implícita. Desfazer/refazer por sessão e partida, Ctrl+Z/Ctrl+Y preservados nos campos de texto. Histórico verifica alterações externas antes de restaurar e mantém mapas confirmados protegidos, permitindo desfazer no mapa atual de uma série. As operações usam MatchSession/MatchStore, validação e salvamento recuperável existentes. Se renumerar afetar bans futuros, finalizações ou encerramento, a correção é recusada com reversão integral; não apaga dados dependentes automaticamente.
+
+Resumo para remake abre uma caixa de consulta nos dois modos: mapa selecionável, lados, bans registrados por metade/responsável, rounds com bombsite/vencedor e copiar texto. Microajustes de espaçamento das metades no aplicativo. Plugin nativo com seletor REMAKE alinhado ao topo de dock alto, cabeçalho compacto, microfone aprovado colorido conforme conexão e cards com padding vertical centralizado.
+
+Build nativo 83a0950792e99f32efcedbf5dfd596f23ea160cd, workflow https://github.com/moska1m/CasterDesk/actions/runs/38634634662, 69 verificações Qt minimal aprovadas. Somente a branch de compilação nativa foi enviada para gerar a DLL necessária; sem atualização da principal, tag ou release. Testes locais Headless/HTTP e dados isolados; nenhuma execução de OBS, programa ou instaladores na área de trabalho. Conferência interativa de instalação, DPI e utilização real permanece com o usuário.
+
+Empacotamento aprovado: 713 verificações do núcleo, 454 UI/API/SPEC (35 específicas de SPEC) e 69 nativas Qt. Publicação publish-avalonia-0.3.0-beta.0.14-7d5dcf68: 709 arquivos conferidos por hash e sete resoluções do ícone byte a byte nos três EXEs. SHA-256 Setup d846c2adeeb79cddd19cc1a00367c0ef1b2250719d1a01909c5d41a50f8564f4. Sem executar instaladores, programa ou OBS na área de trabalho.
+
+## Décima quarta entrega — guia de remake e cards por equipe, 14/10/2026, 0.3.0-beta.0.13
+
+Referência do usuário esclarecida: duas linhas, uma por equipe, mantendo cliques DEF → ATQ e responsáveis. Plugin apresenta seis cards com ícone/nome para cada equipe, abrangendo ambas as metades, com próximo ban destacado. Cabeçalho centraliza confronto em negrito/caixa alta e mapa abaixo; indicador verde/vermelho fica no canto inferior direito da marca. Controles de cronômetro preservados, com campos centralizados.
+
+Abas PARTIDA → REMAKE → CRONÔMETRO. Histórico sai de PARTIDA; REMAKE exige escolha explícita do mapa, inclusive MD1, e limpa a escolha ao mudar de partida. Consulta não altera o mapa ativo. Mostra ataque/defesa inicial, atacante da prorrogação, somente bans registrados por metade/responsável e rounds em ordem numérica com bombsite/vencedor. Valores ausentes ficam Não definido; sem placar ou finalização no guia. Lembrete para conferir mapa após configurar. Correção existente preservada por duplo clique nos rounds do mapa ativo não confirmado, voltando a PARTIDA. Outros mapas continuam consulta até selecioná-los na partida; nenhuma alteração silenciosa.
+
+No aplicativo, seletor mostra uma única ocorrência do nome completo do mapa, em tamanho maior. Dados de veto, imagens competitivas e indisponibilidade cinza preservados. Central de imagens permanece sem alterações. Cabeçalhos e faixas de metade em azul mais claro (#354C65 no tema escuro), caixa alta e negrito; Plugin OBS e chave em uma linha, sem On/Off, com verde somente quando ativo e conectado. Cards sem franjas no rodapé, mais corpo do operador em telas amplas e símbolos menores centralizados. Alinhamento da nova partida ajustado. Cliques reais na chave foram verificados no backend em memória.
+
+419 checks UI/API aprovados (225 campeonato, 35 textos, 27 backup, 33 idiomas, 16 regras, 83 HTTP), além de marca e prévias. Testes específicos verificam nomes únicos, dados de remake no round 3 sem registros inventados, escolha independente, três colunas, duas linhas de seis cards, nomes longos em dock compacto, status verde e campos centralizados. Build nativo 63a25dad5966d4746d582e01357920e03956ad16: https://github.com/moska1m/CasterDesk/actions/runs/38621022527. Qt minimal no runner; testes locais Headless/HTTP em dados isolados. Não foram abertos OBS/programa/instaladores na área de trabalho. Encaixe, clique nativo real e instalação permanecem para conferência do usuário.
+
+Empacotamento aprovado: 713 checks do núcleo, 419 UI/API e 67 checks nativos Qt. Publicação publish-avalonia-0.3.0-beta.0.13-23b6aafd: 709 arquivos conferidos por hash e sete resoluções do ícone byte a byte nos três EXEs. SHA-256 Setup 9bdec132c587c82e181bec6567f567c1180b86a08a975d858e08e838c7ba40a7. Sem execução dos instaladores ou nova publicação no GitHub.
 
 ## Décima terceira entrega — painel Partida e ajustes visuais, 14/10/2026, 0.3.0-beta.0.12
 

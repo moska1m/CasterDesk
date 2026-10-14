@@ -46,3 +46,9 @@ O símbolo neutro foi fornecido pelo usuário como fallback para equipes sem log
 ## Plugin nativo OBS
 
 O componente obs-plugin e o suporte de build baseado em obsproject/obs-plugintemplate (3e7d7ac3b5342cd7d9b88890b9c70b472d1520fc) usam GPL-2.0-or-later, separadamente do aplicativo. Licença em obs-plugin/LICENSE; fontes correspondentes em data/source.zip do plugin instalado. Usa libobs, obs-frontend-api e Qt fornecidos pelo OBS; não substitui esses runtimes.
+
+## Uso previsto e condições da versão 1.0
+
+O mantenedor informou que o uso previsto ocorre em ambientes de community casting e SPEC autorizados pelos organizadores/titulares. Essa informação descreve o contexto de uso, não uma licença aberta dos assets ou uma autorização geral para todo campeonato, canal, fonte ou redistribuição separada. O aceite do instalador não concede direitos de terceiros. Código MIT e plugin GPL preservam suas permissões; a marca e a identificação de distribuição oficial permanecem distintas. Termos: docs/TERMOS-PT.txt, TERMOS-EN.txt e TERMOS-ES.txt.
+
+Diretrizes oficiais consultadas em 14/10/2026: https://www.ubisoft.com/en-us/esports/rainbow-six/siege/news-updates/6fKNUaTIgh6rmOlBHPRslf e https://www.ubisoft.com/en-us/esports/rainbow-six/siege/page/5aVBFvcqShI128b0gRvc5L. A autorização de um torneio e a redistribuição dos arquivos de arte/fontes são questões distintas; nenhuma autorização documental específica adicional foi anexada ao repositório nesta entrega.

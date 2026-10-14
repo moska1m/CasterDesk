@@ -1,0 +1,24 @@
+﻿CASTERDESK 1.0 — TERMOS DE USO E CIÊNCIA DE DIREITOS
+14 de outubro de 2026
+
+1. FINALIDADE
+CasterDesk é uma ferramenta independente de apoio a community casters, equipes de transmissão e spectators (SPEC) de Rainbow Six Siege, especialmente em eventos e canais com as autorizações necessárias. Não é um produto oficial da Ubisoft e não implica patrocínio ou endosso da Ubisoft, BLAST ou OBS.
+
+2. CÓDIGO ABERTO E MARCA
+O código próprio permanece sob a licença MIT. O plugin OBS e seus componentes GPL continuam sujeitos à GPL-2.0-or-later. Este aceite não limita permissões concedidas por essas licenças, incluindo cópia, modificação e redistribuição do código coberto.
+A licença do código não concede direitos de marca. Não apresente uma versão modificada, um fork ou um pacote de terceiros como distribuição oficial do CasterDesk ou como produto aprovado pelos titulares. Identifique alterações, origem e mantenedor, e preserve os avisos exigidos pelas licenças. A indicação de origem do projeto não significa endosso de um pacote por seu mantenedor.
+
+3. IMAGENS, FONTES E RECURSOS DE TERCEIROS
+Rainbow Six Siege, operadores, mapas e outros elementos pertencem à Ubisoft e/ou aos respectivos titulares. Artes, logos e fontes de outros autores mantêm seus próprios direitos. Não são automaticamente abrangidos pela MIT do código. Consulte THIRD-PARTY-NOTICES.md e os avisos que acompanham o programa.
+Instalar o CasterDesk ou aceitar estes termos não concede licença de torneio, transmissão, marca, fonte ou redistribuição de assets. Uma autorização para um evento ou canal não deve ser presumida como autorização geral para outros eventos, canais ou distribuição separada desses recursos.
+
+4. CONDUTA E PUBLICAÇÃO DE ARTES
+Ao usar imagens e artes geradas, confira se o evento, canal, território, finalidade e materiais usados estão cobertos pelas permissões aplicáveis e pelas condições dos titulares. Em ambientes não autorizados, o uso pode ser contestado ou estar sujeito à remoção pelo titular. Não use o programa para sugerir autorização, vínculo oficial ou autoria que não existam. Não há liberação automática apenas por se tratar de atividade comunitária.
+
+5. DADOS E REVISÃO
+Confira resultados, nomes, estatísticas e artes antes de publicar. A leitura automática de prints exige revisão humana. Mantenha cópias dos arquivos da partida. O programa salva dados localmente e usa uma conexão local opcional com o OBS; este aceite não envia seus dados a terceiros.
+
+6. LICENÇAS E GARANTIAS
+Consulte LICENSE, obs-plugin/LICENSE e os avisos dos componentes. Aplicam-se as condições e exclusões de garantia dessas licenças, respeitados os direitos legais que não possam ser afastados. Estes termos não representam análise ou aprovação jurídica de um evento específico.
+
+AO SELECIONAR “ESTOU EM ACORDO”, DECLARO QUE LI E ESTOU CIENTE DESTAS CONDIÇÕES, DOS DIREITOS DOS TITULARES E DA NECESSIDADE DE OBTER AS PERMISSÕES APLICÁVEIS.
