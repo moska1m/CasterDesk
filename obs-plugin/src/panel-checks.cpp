@@ -68,6 +68,7 @@ int main(int argc,char **argv)
         panel.resize(320,700);panel.show();QApplication::processEvents();std::cout<<"Minimum dock width: "<<panel.minimumSizeHint().width()<<std::endl;
         for(auto *widget:panel.findChildren<QWidget *>())std::cout<<widget->metaObject()->className()<<" "<<widget->objectName().toStdString()<<" hint="<<widget->minimumSizeHint().width()<<" minimum="<<widget->minimumWidth()<<" policy="<<widget->sizePolicy().horizontalPolicy()<<std::endl;
         check(panel.minimumSizeHint().width()<=320,"compact width");
+        check(status->width()>40,"connection badge remains readable in compact header");
         panel.findChild<QLineEdit *>("duration")->setText("04:00");panel.findChild<QLineEdit *>("final-message")->setText("MATCH STARTS NOW");panel.findChild<QComboBox *>("time-format")->setCurrentText("hh:mm:ss");panel.findChild<QPushButton *>("timer-config")->click();
         waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});check(lastCommand["seconds"]==240&&lastCommand["format"]=="hh:mm:ss"&&lastCommand["message"]=="MATCH STARTS NOW"&&lastCommand["presets"].toArray().size()==3,"complete timer configuration sends initial time format message and presets");
         panel.findChild<QPushButton *>("reset")->click();waitFor([&]{return lastCommand["action"]=="reset"&&start->isEnabled();});check(lastCommand["action"]=="reset","reset targets shared countdown");

@@ -119,6 +119,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     timer.setInterval(1000); connect(&timer,&QTimer::timeout,this,[this]{poll();});
     for(auto *page:{timerPage,banPage,roundPage,partida,remakePage})page->ensurePolished();
     for(auto *text:findChildren<QLabel *>())text->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);
+    status->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed);
     duration->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);duration->setMinimumWidth(60);
     search->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);search->setMinimumWidth(60);
     for(auto *button:{start,pause,add,subtract,set}){button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setMinimumWidth(44);}
