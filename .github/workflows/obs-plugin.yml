@@ -8,6 +8,7 @@ permissions:
 jobs:
   windows:
     runs-on: windows-2022
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Configure native plugin with official OBS dependencies
@@ -22,11 +23,16 @@ jobs:
         run: |
           $qt = Get-ChildItem .deps -Recurse -Filter Qt6Core.dll | Select-Object -First 1
           if (!$qt) { throw 'Qt runtime missing' }
-          $env:PATH = $qt.DirectoryName + ';' + $env:PATH
+          $depBin = Get-ChildItem .deps -Directory | ForEach-Object { Join-Path $_.FullName 'bin' }
+          $env:PATH = $qt.DirectoryName + ';' + ($depBin -join ';') + ';' + $env:PATH
           $env:QT_PLUGIN_PATH = Join-Path $qt.Directory.Parent.FullName 'plugins'
           $env:QT_QPA_PLATFORM = 'offscreen'
-          & ./build_x64/RelWithDebInfo/casterdesk-panel-checks.exe
-          if ($LASTEXITCODE -ne 0) { throw 'Native panel checks failed' }
+          Add-Type -TypeDefinition 'using System.Runtime.InteropServices; public static class HeadlessMode { [DllImport("kernel32.dll")] public static extern uint SetErrorMode(uint mode); }'
+          [HeadlessMode]::SetErrorMode(3) | Out-Null
+          $test = Start-Process ./build_x64/RelWithDebInfo/casterdesk-panel-checks.exe -WindowStyle Hidden -PassThru -RedirectStandardOutput panel-test.out -RedirectStandardError panel-test.err
+          if (!$test.WaitForExit(45000)) { Stop-Process -Id $test.Id -Force; Get-Content panel-test.out,panel-test.err; throw 'Native checks timed out' }
+          Get-Content panel-test.out,panel-test.err
+          if ($test.ExitCode -ne 0) { throw "Native panel checks failed: $($test.ExitCode)" }
       - name: Stage plugin
         working-directory: obs-plugin
         run: cmake --install build_x64 --prefix release --config RelWithDebInfo
