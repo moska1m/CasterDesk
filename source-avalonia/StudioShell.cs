@@ -31,8 +31,9 @@ public sealed class StudioShell : Window
         studio = new StudioView(() => Championship.Session.Matches, Championship.Session.Catalog, Championship.Session.ApplyArtworkVeto);
         Texts = new TextsView(settings, SaveSettings);
         obsSettings = ConfigurationStore.Read<ObsDockSettings>("obs-connection.json");
+        obsSettings.ConfigurePlugin(File.Exists(Path.Combine(AppContext.BaseDirectory,"obs-plugin.optin")));
         obsDock = new ObsDockServer(Championship,Texts,()=>!backupOpen&&!studio.Exporting&&!OwnedWindows.Any(w=>w.IsVisible),obsSettings);
-        Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){Notify(ex.Message);} };
+        Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){AppLog.Write("OBS connection: "+ex);Notify(ex.Message);} };
         Championship.MapConfirmed += async (match, map) => {
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }
             catch (Exception ex) { footer.Text = ex.Message; }
@@ -149,7 +150,7 @@ public sealed class StudioShell : Window
     {
         var panel=new StackPanel { Margin=new Thickness(20) };
         panel.Children.Add(Ui.Text("Controle o timer e os bans em um painel do OBS.",true));
-        panel.Children.Add(Ui.Text("Ative a conexão e copie o endereço para um painel de navegador personalizado do OBS. O CasterDesk precisa permanecer aberto."));
+        panel.Children.Add(Ui.Text(obsSettings.PluginConfigured?"O plugin do OBS encontra a conexão automaticamente. Abra o CasterDesk e selecione Painéis → CasterDesk no OBS.":"Ative a conexão e copie o endereço para um painel de navegador personalizado do OBS. O CasterDesk precisa permanecer aberto."));
         var state=Ui.Text(obsDock.Running?"Conectado":"Desconectado");panel.Children.Add(state);
         var connect=Ui.Button("Ativar conexão",async()=>{
             try{await obsDock.StartAsync();obsSettings.Enabled=true;SaveObsSettings();state.Text=L.T("Conectado");}

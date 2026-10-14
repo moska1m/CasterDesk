@@ -15,6 +15,6 @@ O build usa o template oficial obsproject/obs-plugintemplate no commit 3e7d7ac3b
 cmake --preset windows-ci-x64
 cmake --build --preset windows-x64 --config RelWithDebInfo
 
-A workflow .github/workflows/obs-plugin.yml compila e executa verificações Qt com QT_QPA_PLATFORM=offscreen, HTTP local, autenticação, timer, contexto de ban, bloqueio e reconexão. Isso não substitui conferir o carregamento e encaixe dentro de OBS real.
+A workflow .github/workflows/obs-plugin.yml compila e executa verificações Qt sem janela com QT_QPA_PLATFORM=minimal, HTTP local, autenticação, timer, contexto de ban, bloqueio e reconexão. Isso não substitui conferir o carregamento e encaixe dentro de OBS real.
 
 Plugin e suporte de build sob GPL-2.0-or-later; LICENSE contém GPL v2. O aplicativo CasterDesk mantém sua licença própria. Fontes correspondentes acompanham o instalador do plugin em data/source.zip.

@@ -33,12 +33,20 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "Languages\Spanish.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
+Name: "obsplugin"; Description: "{cm:InstallOBSPlugin}"; Flags: unchecked
+[CustomMessages]
+brazilianportuguese.InstallOBSPlugin=Instalar o painel CasterDesk no OBS (OBS 31.1 ou mais recente; feche o OBS; exige permissão de administrador)
+english.InstallOBSPlugin=Install the CasterDesk dock in OBS (OBS 31.1 or newer; close OBS; administrator permission required)
+spanish.InstallOBSPlugin=Instalar el panel CasterDesk en OBS (OBS 31.1 o posterior; cierra OBS; requiere permisos de administrador)
 [Files]
 Source: "..\{#PublishFolder}\*"; DestDir: "{app}"; Excludes: "*.pdb"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\assets\licenses\*"; DestDir: "{app}\licenses"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD-PARTY-NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AVALONIA-PROGRESSO.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\CasterDesk-OBS-0.1.0-win-x64-Setup.exe"; DestDir: "{app}"; Flags: ignoreversion
+[Run]
+Filename: "{app}\CasterDesk-OBS-0.1.0-win-x64-Setup.exe"; Parameters: "/SILENT /NORESTART /LANG={language}"; Tasks: obsplugin; Flags: shellexec waituntilterminated
 [InstallDelete]
 Type: files; Name: "{autoprograms}\CasterDesk Avalonia Preview.lnk"
 Type: files; Name: "{autodesktop}\CasterDesk Avalonia Preview.lnk"
@@ -55,4 +63,10 @@ begin
   if ActiveLanguage = 'spanish' then Result := 'es'
   else if ActiveLanguage = 'english' then Result := 'en'
   else Result := 'pt-BR';
+end;
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if (CurStep = ssDone) and WizardIsTaskSelected('obsplugin') and
+    FileExists(ExpandConstant('{commonappdata}\obs-studio\plugins\casterdesk-obs\bin\64bit\casterdesk-obs.dll')) then
+    SaveStringToFile(ExpandConstant('{app}\obs-plugin.optin'), 'CasterDesk OBS plugin selected', False);
 end;

@@ -1,27 +1,23 @@
-# Painel CasterDesk no OBS
+# CasterDesk dentro do OBS
 
-Disponível como beta em 0.3.0-beta.0.9: cronômetro e bans de operadores usam o estado e o salvamento do CasterDesk no mesmo PC. Não exige plugin nativo separado. Usa os [Custom Browser Docks do obs-browser](https://github.com/obsproject/obs-browser).
+## Plugin opcional — beta.0.10
 
-## Configurar
+1. Feche OBS e execute o instalador do CasterDesk.
+2. Marque **Instalar o painel CasterDesk no OBS**. O componente OBS pede permissão de administrador; o aplicativo permanece instalado por usuário.
+3. Abra CasterDesk e OBS. O plugin registra o painel CasterDesk e descobre a conexão automaticamente. Se estiver oculto, selecione **Painéis → CasterDesk**.
 
-1. Abra CasterDesk e vá à engrenagem → **Painel OBS**.
-2. Clique **Ativar conexão**, depois **Copiar endereço do painel**.
-3. Feche esse diálogo para liberar os controles.
-4. No OBS, em Docks/Painéis → Custom Browser Docks/Painéis de navegador personalizados, adicione CasterDesk e cole o endereço completo.
-5. Encaixe o painel onde preferir. Ele é um controle do operador, não uma fonte para a cena.
+Não é necessário colar endereço. Escolher partida/mapa no CasterDesk atualiza o painel. Fechar CasterDesk desabilita controles; abrir novamente reconecta. Timer e bans continuam usando os mesmos serviços e arquivos do aplicativo. Veto, lados, confirmação e revisão continuam no CasterDesk.
 
-O endereço contém uma chave: mantenha-o privado. A conexão aceita somente o próprio computador. A preferência de ativação fica salva; Desativar conexão interrompe o acesso. Fechar CasterDesk desconecta o painel.
+Suporte inicial: OBS Windows x64 31.1+, instalação convencional. O componente fica em ProgramData/obs-studio/plugins/casterdesk-obs. OBS portátil precisa da instalação do plugin no seu próprio diretório. A instalação não altera cenas, perfis ou outros plugins e não encerra OBS/transmissões. Plugin possui entrada própria de desinstalação **CasterDesk — Plugin OBS**.
 
-## Controles
+A conexão é ativada automaticamente uma vez quando a instalação opcional foi concluída. Desativar em engrenagem → Painel OBS prevalece nas aberturas seguintes. Chave privada fica na configuração local; o plugin só acessa 127.0.0.1 e não a registra em logs. Documentos redirecionados ao OneDrive são descobertos pela pasta conhecida do Windows.
 
-Timer: iniciar/retomar, pausar, adicionar/remover um minuto e definir mm:ss ou hh:mm:ss. Usa o mesmo cronômetro e TXT da aba Textos; fechar/recarregar o painel não reinicia a contagem.
+## Painel de navegador anterior
 
-Bans: segue partida/mapa selecionados, equipe responsável, ordem DEF/ATQ e etapas liberadas. Faça veto e lados no programa; escolha os operadores no painel. Partidas confirmadas, etapas futuras, comandos duplicados e seleção desatualizada são protegidos. Edições/diálogos abertos no programa bloqueiam temporariamente os comandos remotos. Alterações do programa reaparecem no painel.
+A opção manual da beta.0.9 permanece compatível: ativar a conexão, copiar endereço completo, fechar o diálogo e colar em Painéis de navegador personalizados. O endereço contém a chave; não o publique. Fonte de navegador na cena não é o painel de controle.
 
-TXT e PNG continuam configurados nas fontes do OBS como antes. Controle de cenas, Stream Deck e conexão entre computadores ficam fora desta primeira entrega.
+O dock antigo não é apagado automaticamente. Se instalar o plugin, pode remover manualmente o dock de navegador anterior para evitar duplicação.
 
-## Validação e limites
+## Validação
 
-24 verificações HTTP reais cobrem autenticação, origem/host, timer compartilhado, sequência/salvamento de bans, conflitos, bloqueios e reinício. Teste em Edge sem janela cobre controles, validação, requisições e larguras 320/400/700px com API de demonstração. A interface CasterDesk foi testada em Avalonia.Headless.
-
-**OBS e instalação nativa não foram abertos/testados.** O navegador integrado do OBS ainda precisa ser conferido, incluindo encaixe e recarga do painel. Não equivale a compatibilidade nativa já comprovada.
+Testes da API, opt-in do instalador e controles Qt são automatizados em dados isolados. OBS nativo e instalação não foram abertos nesta entrega; carregamento real, encaixe e UAC precisam de validação. Não há controle de cenas, acesso entre computadores ou suporte Stream Deck nesta etapa.

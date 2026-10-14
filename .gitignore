@@ -21,3 +21,7 @@ timer.txt
 *.pfx
 *.p12
 *.key
+obs-plugin/.deps/
+obs-plugin/build_*/
+obs-plugin/release/
+obs-plugin-package/

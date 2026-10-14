@@ -12,8 +12,14 @@ namespace CasterDesk.Avalonia;
 public sealed class ObsDockSettings
 {
     public bool Enabled { get; set; }
+    public bool PluginConfigured { get; set; }
     public int Port { get; set; } = 43827;
     public string Key { get; set; } = "";
+    internal bool ConfigurePlugin(bool installed)
+    {
+        if(!installed||PluginConfigured)return false;
+        Enabled=true;PluginConfigured=true;return true;
+    }
 }
 
 internal sealed class ObsDockServer : IAsyncDisposable

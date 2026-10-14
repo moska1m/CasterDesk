@@ -42,3 +42,7 @@ As bases GameResult nos formatos horizontal/feed/stories, Mapveto_CommunityCaste
 GT America Compressed Bold e Simplon Mono Bold são usados nas imagens exportadas; a interface do programa mantém suas fontes anteriores. Os arquivos foram fornecidos pelo usuário. O projeto não declara licença aberta para essas fontes.
 
 O símbolo neutro foi fornecido pelo usuário como fallback para equipes sem logo. Logos e BGs personalizados permanecem na pasta de dados do usuário e não são incluídos no instalador.
+
+## Plugin nativo OBS
+
+O componente obs-plugin e o suporte de build baseado em obsproject/obs-plugintemplate (3e7d7ac3b5342cd7d9b88890b9c70b472d1520fc) usam GPL-2.0-or-later, separadamente do aplicativo. Licença em obs-plugin/LICENSE; fontes correspondentes em data/source.zip do plugin instalado. Usa libobs, obs-frontend-api e Qt fornecidos pelo OBS; não substitui esses runtimes.

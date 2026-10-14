@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Iscc,[string]$Dotnet='dotnet',[string]$RestoreConfig)
+param([Parameter(Mandatory=$true)][string]$Iscc,[string]$Dotnet='dotnet',[string]$RestoreConfig,[Parameter(Mandatory=$true)][string]$PluginPackage)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 Push-Location $root
@@ -7,6 +7,14 @@ try {
     $version=[string]$properties.Project.PropertyGroup.CasterDeskVersion
     $fileVersion=[string]$properties.Project.PropertyGroup.FileVersion
     if($version -notmatch '^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$'){throw 'Versão inválida.'}
+    $pluginFull=[IO.Path]::GetFullPath($PluginPackage)
+    $rootFull=[IO.Path]::GetFullPath($root)
+    if(!$pluginFull.StartsWith($rootFull+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'O pacote do plugin precisa estar dentro da pasta do projeto.'}
+    if(!(Test-Path -LiteralPath (Join-Path $pluginFull 'bin/64bit/casterdesk-obs.dll'))){throw 'DLL do plugin compilado ausente.'}
+    $pluginRelative=[IO.Path]::GetRelativePath($rootFull,$pluginFull)
+    Compress-Archive -LiteralPath (Join-Path $root 'obs-plugin') -DestinationPath (Join-Path $pluginFull 'source.zip') -Force
+    & $Iscc "/DPluginPackage=$pluginRelative" installer/CasterDesk-OBS.iss
+    if($LASTEXITCODE -ne 0){throw 'Falha ao compilar instalador do plugin OBS.'}
     & "$PSScriptRoot/Test-Core.ps1" -Dotnet $Dotnet -RestoreConfig $RestoreConfig
     $publish="publish-avalonia-$version-"+[Guid]::NewGuid().ToString('N').Substring(0,8)
     $restore=@('restore','source-avalonia/CasterDesk.Avalonia.csproj','-r','win-x64')
@@ -28,6 +36,8 @@ try {
     $hash=(Get-FileHash $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     "$hash  $($installer.Name)" | Set-Content ($installer.FullName+'.sha256') -Encoding ascii
     $files=Get-ChildItem $publish -File -Recurse | Where-Object Extension -ne '.pdb' | ForEach-Object {[ordered]@{Path=[IO.Path]::GetRelativePath((Join-Path $root $publish),$_.FullName);Length=$_.Length;Sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}}
-    [ordered]@{Version=$version;Published=$publish;Built=Get-Date -Format o;Installer=$installer.Name;Sha256=$hash;Signed=$false;NativeInstallationTested=$false;Files=@($files)} | ConvertTo-Json -Depth 5 | Set-Content ($installer.FullName+'.manifest.json') -Encoding utf8
+    $pluginSetup=Get-Item 'dist/CasterDesk-OBS-0.1.0-win-x64-Setup.exe'
+    $plugin=[ordered]@{Version='0.1.0';DllSha256=(Get-FileHash (Join-Path $pluginFull 'bin/64bit/casterdesk-obs.dll')).Hash.ToLowerInvariant();Installer=$pluginSetup.Name;InstallerSha256=(Get-FileHash $pluginSetup.FullName).Hash.ToLowerInvariant();SourcesSha256=(Get-FileHash (Join-Path $pluginFull 'source.zip')).Hash.ToLowerInvariant();NativeOBSLoadingTested=$false}
+    [ordered]@{Version=$version;Published=$publish;Built=Get-Date -Format o;Installer=$installer.Name;Sha256=$hash;Signed=$false;NativeInstallationTested=$false;ObsPlugin=$plugin;Files=@($files)} | ConvertTo-Json -Depth 5 | Set-Content ($installer.FullName+'.manifest.json') -Encoding utf8
     Write-Output $installer.FullName
 } finally {Pop-Location}

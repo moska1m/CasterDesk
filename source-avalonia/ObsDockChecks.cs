@@ -15,6 +15,9 @@ internal static class ObsDockChecks
     static async Task<bool> Finish(Task task){await task;return true;}
     public static void Run()
     {
+        var pluginSettings=new ObsDockSettings();Need(!pluginSettings.ConfigurePlugin(false)&&!pluginSettings.Enabled,"No installer opt-in leaves connection disabled");
+        Need(pluginSettings.ConfigurePlugin(true)&&pluginSettings.Enabled&&pluginSettings.PluginConfigured,"Plugin installation enables connection once");
+        pluginSettings.Enabled=false;Need(!pluginSettings.ConfigurePlugin(true)&&!pluginSettings.Enabled,"Manual disable survives restart and upgrades");
         var probe=new TcpListener(IPAddress.Loopback,0);probe.Start();int port=((IPEndPoint)probe.LocalEndpoint).Port;probe.Stop();
         var session=new MatchSession();session.New();var view=new ChampionshipView(session);
         var texts=new TextsView(new Settings {Initial=1,Output=Path.Combine(AppPaths.TextDirectory,"obs-check.txt")},()=>{});

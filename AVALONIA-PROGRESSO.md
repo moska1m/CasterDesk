@@ -1,5 +1,13 @@
 # Avalonia — primeira etapa, 13/10/2026
 
+## Décima primeira entrega — plugin nativo OBS opcional, 14/10/2026, 0.3.0-beta.0.10
+
+Plugin Qt/C++ registra painel pela API oficial obs_frontend_add_dock_by_id. Descobre Documentos pela pasta conhecida do Windows, lê apenas configuração local e conecta a 127.0.0.1 sem URL manual. Timer/bans compartilham a API existente; requisições incluem chave e contexto de partida/mapa/revisão. Reconexão após reabrir CasterDesk; erro não repete mutações. Encerramento aborta pedidos antes de destruir controles. Marca SVG aprovada incorporada; cores das equipes preservadas nos slots.
+
+Instalador do aplicativo oferece plugin opcional. Componente separado usa pasta exclusiva ProgramData/obs-studio/plugins/casterdesk-obs, requer administrador e exige OBS fechado; não encerra OBS, altera cenas/perfis ou substitui outros plugins. Opt-in ativa conexão uma vez; desativação manual prevalece depois. Fontes GPL correspondentes acompanham o componente. Suporte inicial OBS convencional Windows x64 31.1+; portátil precisa de instalação no próprio diretório.
+
+Build do aplicativo sem erros/avisos: 713 checks do núcleo e 338 de UI/API, incluindo três novas verificações de opt-in/persistência. Plugin compilado e aprovado no GitHub Actions: https://github.com/moska1m/CasterDesk/actions/runs/38600383085, commit 7039eac7fa74203f1d709f910d1480fe1f5c0601. 30 checks Qt/HTTP aprovados, incluindo reconexão e layout em 320px, com backend Qt minimal sem janela. DLL x64 104960 bytes, usando o Qt do OBS. OBS nativo/instalação/UAC não foram executados. Os dois instaladores compilados sem executá-los. Publicação publish-avalonia-0.3.0-beta.0.10-c3bf661c, UI test-results/avalonia-ui-8c9e7a0e892f48639466ba945b4305aa, núcleo test-results/avalonia-core-d48a03697efe44cdb7673aed4bbe250a. Conferidos 709 arquivos e os sete ícones dos três EXEs. Setup aplicativo SHA-256 a8d05502229a06fb2f8b3d027453f1e72da9692d89b82e0ead7cd5268f0f41ac; Setup plugin 60fa4ac08bb93c869648e530965c17eb3d5b6953f1755579c755bf9278e05028; DLL 458c9e4855e32533658b16fc24642395405f25c67534cae5e63f35d014dee752. Instaladores sem assinatura. A opção de plugin exige consentimento/UAC ao instalar e OBS fechado; não foi instalada no PC nesta entrega.
+
 ## Décima entrega — painel local OBS, 14/10/2026, 0.3.0-beta.0.9
 
 Servidor HTTP restrito a 127.0.0.1, com chave persistida, ativação explícita, origem/host validados e comandos executados no dispatcher. Painel de navegador para timer e bans usa os mesmos serviços e regras. Não abre seletor nativo ao banir pelo painel. Confirmações, edição aberta e requisições desatualizadas bloqueiam alterações; não há repetição automática de comandos.

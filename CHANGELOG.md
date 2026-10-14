@@ -1,3 +1,11 @@
+# 0.3.0-beta.0.10
+
+- Plugin nativo opcional OBS para timer e bans, com descoberta local e reconexão automática.
+- Instalação opcional integrada; sem colar URL. O componente OBS pede administrador e exige OBS fechado.
+- Ativação inicial automática ao optar pelo plugin, preservando desativação manual posterior.
+- Sem alterações de cenas, perfis ou outros plugins. Painel de navegador anterior permanece compatível.
+- Verificações nativas Qt sem janela e API isolada; carregamento/instalação no OBS real permanecem pendentes.
+
 # 0.3.0-beta.0.9
 
 - Painel local beta para controlar timer e bans em um dock de navegador do OBS.
