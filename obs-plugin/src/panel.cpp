@@ -1,0 +1,143 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+#include "panel.hpp"
+#include <QVBoxLayout>
+#include <QScrollArea>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QNetworkReply>
+#include <QNetworkProxy>
+#include <QPointer>
+#include <QRegularExpression>
+#include <QPixmap>
+#include <QUrl>
+#include <windows.h>
+#include <shlobj.h>
+#include <cmath>
+
+static void clearLayout(QLayout *layout)
+{
+    while (auto *item = layout->takeAt(0)) {
+        if (item->widget()) item->widget()->deleteLater();
+        if (item->layout()) clearLayout(item->layout());
+        delete item;
+    }
+}
+
+QString CasterDeskPanel::configurationPath()
+{
+    PWSTR documents = nullptr;
+    if (FAILED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &documents))) return {};
+    const QString path = QString::fromWCharArray(documents) + "/CasterDesk/Configuracoes/obs-connection.json";
+    CoTaskMemFree(documents);
+    return path;
+}
+
+CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) : QWidget(parent), configPath(path.isEmpty() ? configurationPath() : path)
+{
+    setMinimumWidth(280);
+    network.setProxy(QNetworkProxy::NoProxy);
+    auto *root = new QVBoxLayout(this);
+    auto *brand = new QLabel("CasterDesk"); brand->setStyleSheet("font-size:22px;font-weight:700"); root->addWidget(brand);
+    status = new QLabel("Aguardando CasterDesk…"); status->setObjectName("connection"); status->setWordWrap(true); root->addWidget(status);
+    context = new QLabel("—"); context->setWordWrap(true); root->addWidget(context);
+    error = new QLabel(); error->setWordWrap(true); error->setStyleSheet("color:#ffb69d"); root->addWidget(error);
+    tabs = new QTabWidget(); root->addWidget(tabs);
+    auto *timerPage = new QWidget(); auto *timerLayout = new QVBoxLayout(timerPage);
+    clock = new QLabel("00:00"); clock->setObjectName("time"); clock->setAlignment(Qt::AlignCenter); clock->setStyleSheet("font-size:38px"); timerLayout->addWidget(clock);
+    auto *controls = new QGridLayout(); timerLayout->addLayout(controls);
+    start = new QPushButton("▶ Iniciar / Retomar"); start->setObjectName("start");
+    pause = new QPushButton("Ⅱ Pausar"); pause->setObjectName("pause");
+    subtract = new QPushButton("− 1 min"); add = new QPushButton("+ 1 min");
+    controls->addWidget(start,0,0); controls->addWidget(pause,0,1); controls->addWidget(subtract,1,0); controls->addWidget(add,1,1);
+    auto *timeRow = new QHBoxLayout(); duration = new QLineEdit(); duration->setPlaceholderText("10:00"); duration->setObjectName("duration"); duration->setMaxLength(8);
+    set = new QPushButton("Definir tempo"); set->setObjectName("set"); timeRow->addWidget(duration,1); timeRow->addWidget(set); timerLayout->addLayout(timeRow); timerLayout->addStretch();
+    tabs->addTab(timerPage,"Cronômetro");
+    auto *banPage = new QWidget(); auto *banLayout = new QVBoxLayout(banPage); slots = new QGridLayout(); banLayout->addLayout(slots);
+    phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
+    search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
+    auto *scroll = new QScrollArea(); scroll->setWidgetResizable(true); auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setAlignment(Qt::AlignTop); scroll->setWidget(grid); banLayout->addWidget(scroll,1); tabs->addTab(banPage,"Bans de operadores");
+    connect(start,&QPushButton::clicked,this,[this]{command({{"action","start"}});});
+    connect(pause,&QPushButton::clicked,this,[this]{command({{"action","pause"}});});
+    connect(add,&QPushButton::clicked,this,[this]{command({{"action","adjust"},{"seconds",60}});});
+    connect(subtract,&QPushButton::clicked,this,[this]{command({{"action","adjust"},{"seconds",-60}});});
+    connect(set,&QPushButton::clicked,this,[this]{const int seconds=parseDuration(duration->text());if(seconds<0){error->setText(label("invalidTime","Use mm:ss ou hh:mm:ss."));return;}command({{"action","set"},{"seconds",seconds}});});
+    connect(search,&QLineEdit::textChanged,this,[this]{renderOperators();});
+    timer.setInterval(1000); connect(&timer,&QTimer::timeout,this,[this]{poll();});
+    updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
+}
+
+int CasterDeskPanel::parseDuration(const QString &text)
+{
+    if (!QRegularExpression("^\\d{1,2}:\\d{2}(:\\d{2})?$").match(text.trimmed()).hasMatch()) return -1;
+    const auto parts=text.trimmed().split(':');const int last=parts.last().toInt();if(last>59)return -1;
+    const int middle=parts[1].toInt();if(parts.size()==3&&middle>59)return -1;
+    const int seconds=parts.size()==3?parts[0].toInt()*3600+middle*60+last:parts[0].toInt()*60+last;
+    return seconds<=86400?seconds:-1;
+}
+QString CasterDeskPanel::label(const char *name,const char *fallback) const { return state["labels"].toObject()[name].toString(QString::fromUtf8(fallback)); }
+void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(message);context->setText("—");updateEnabled();}
+bool CasterDeskPanel::discover()
+{
+    QFile file(configPath); if(!file.open(QIODevice::ReadOnly)){disconnectPanel("Abra o CasterDesk com a integração OBS instalada.");return false;}
+    if(file.size()>8192){disconnectPanel("Configuração OBS inválida.");return false;}
+    const auto config=QJsonDocument::fromJson(file.readAll()).object();const auto nextKey=config["Key"].toString();const int port=config["Port"].toInt();
+    if(!config["Enabled"].toBool()){disconnectPanel("Ative a conexão OBS no CasterDesk.");return false;}
+    if(port<1024||port>65535||!QRegularExpression("^[0-9a-fA-F]{64}$").match(nextKey).hasMatch()){disconnectPanel("Configuração OBS inválida.");return false;}
+    const auto nextUrl=QString("http://127.0.0.1:%1").arg(port);
+    if(nextKey!=key||nextUrl!=baseUrl){key=nextKey;baseUrl=nextUrl;icons.clear();rendered.clear();connected=false;}
+    return true;
+}
+void CasterDeskPanel::poll() { if(!busy&&discover())request("/api/state"); }
+void CasterDeskPanel::request(const QString &path,const QJsonObject *body)
+{
+    busy=true;if(body)updateEnabled();QNetworkRequest req{QUrl(baseUrl+path)};req.setRawHeader("X-CasterDesk-Key",key.toUtf8());req.setTransferTimeout(2500);req.setAttribute(QNetworkRequest::RedirectPolicyAttribute,QNetworkRequest::ManualRedirectPolicy);
+    QNetworkReply *reply;
+    if(body){req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");reply=network.post(req,QJsonDocument(*body).toJson(QJsonDocument::Compact));}
+    else reply=network.get(req);
+    const bool mutation=body!=nullptr;
+    connect(reply,&QNetworkReply::finished,this,[this,reply,mutation]{busy=false;const int code=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();const auto data=QJsonDocument::fromJson(reply->readAll()).object();
+        if(code==200&&data.contains("timer")&&data.contains("match"))receive(data);
+        else if(mutation&&code>=400){error->setText(data["error"].toString("Comando recusado. Atualize o painel."));updateEnabled();}
+        else disconnectPanel(code==401?"Conexão não autorizada. Aguardando nova configuração…":"Aguardando CasterDesk…");
+        reply->deleteLater();});
+}
+void CasterDeskPanel::command(QJsonObject data)
+{
+    if(!connected||busy||!state["controllable"].toBool())return;
+    error->clear();request("/api/command",&data);
+}
+void CasterDeskPanel::receive(const QJsonObject &data)
+{
+    state=data;connected=true;status->setText(label("connected","Conectado"));
+    const auto match=data["match"].toObject();context->setText(match["teamA"].toString()+" × "+match["teamB"].toString()+" · "+match["map"].toString());
+    const auto time=data["timer"].toObject();int seconds=static_cast<int>(std::ceil(time["seconds"].toDouble()));seconds=qBound(0,seconds,86400);const int hours=seconds/3600;
+    clock->setText((hours>0?QString("%1:").arg(hours,2,10,QChar('0')):QString())+QString("%1:%2").arg((seconds/60)%60,2,10,QChar('0')).arg(seconds%60,2,10,QChar('0')));
+    start->setText("▶ "+label("start","Iniciar / Retomar"));pause->setText("Ⅱ "+label("pause","Pausar"));set->setText(label("set","Definir tempo"));tabs->setTabText(0,label("timer","Cronômetro"));tabs->setTabText(1,label("bans","Bans de operadores"));search->setPlaceholderText(label("search","Filtrar operadores"));
+    if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
+    const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
+    if(next!=rendered){rendered=next;clearLayout(slots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");
+        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setStyleSheet(QString("padding:5px;border-bottom:3px solid %1;").arg(ban["team"].toInt()==0?"#408fb3":"#ff7737"));slots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
+        phase->setText(nextPhase);renderOperators();}
+    updateEnabled();
+}
+void CasterDeskPanel::updateEnabled()
+{
+    const bool ready=connected&&!busy&&state["controllable"].toBool();const auto time=state["timer"].toObject();start->setEnabled(ready&&!time["running"].toBool()&&time["seconds"].toDouble()>0);pause->setEnabled(ready&&time["running"].toBool());add->setEnabled(ready);subtract->setEnabled(ready&&time["seconds"].toDouble()>0);set->setEnabled(ready);
+    for(int n=0;n<operators->count();++n){auto *button=qobject_cast<QPushButton *>(operators->itemAt(n)->widget());if(button)button->setEnabled(ready&&button->property("available").toBool());}
+}
+void CasterDeskPanel::renderOperators()
+{
+    clearLayout(operators);int n=0;
+    for(const auto &value:state["operators"].toArray()){const auto op=value.toObject();if(!op["name"].toString().contains(search->text().trimmed(),Qt::CaseInsensitive))continue;auto *button=new QPushButton(op["name"].toString());button->setObjectName("operator");button->setProperty("available",op["enabled"].toBool());button->setIconSize(QSize(32,32));button->setMinimumHeight(56);button->setMinimumWidth(0);button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setToolTip(op["name"].toString());operators->addWidget(button,n/3,n%3);++n;
+        const auto match=state["match"].toObject();const QJsonObject payload{{"action","ban"},{"matchId",match["id"]},{"mapId",match["mapId"]},{"revision",state["revision"]},{"slot",state["pending"]},{"operatorId",op["id"]}};
+        connect(button,&QPushButton::clicked,this,[this,payload]{command(payload);});loadIcon(op["id"].toString(),button);}
+    updateEnabled();
+}
+void CasterDeskPanel::loadIcon(const QString &id,QPushButton *button)
+{
+    if(icons.contains(id)){button->setIcon(icons[id]);return;}
+    QNetworkRequest req{QUrl(baseUrl+"/icons/"+QString::fromLatin1(QUrl::toPercentEncoding(id)))};req.setRawHeader("X-CasterDesk-Key",key.toUtf8());req.setTransferTimeout(2500);req.setAttribute(QNetworkRequest::RedirectPolicyAttribute,QNetworkRequest::ManualRedirectPolicy);
+    auto *reply=network.get(req);QPointer<QPushButton> target=button;const auto connectionKey=key;
+    connect(reply,&QNetworkReply::finished,this,[this,reply,target,id,connectionKey]{if(reply->error()==QNetworkReply::NoError&&key==connectionKey){QPixmap image;if(image.loadFromData(reply->readAll())){icons.insert(id,QIcon(image));if(target)target->setIcon(icons[id]);}}reply->deleteLater();});
+}

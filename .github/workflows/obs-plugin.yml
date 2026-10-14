@@ -1,0 +1,37 @@
+name: Build CasterDesk OBS plugin
+on:
+  push:
+    paths: ['obs-plugin/**', '.github/workflows/obs-plugin.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure native plugin with official OBS dependencies
+        working-directory: obs-plugin
+        run: cmake --preset windows-ci-x64
+      - name: Build plugin and offscreen checks
+        working-directory: obs-plugin
+        run: cmake --build --preset windows-x64 --config RelWithDebInfo --parallel
+      - name: Test native controls without OBS or desktop windows
+        working-directory: obs-plugin
+        shell: pwsh
+        run: |
+          $qt = Get-ChildItem .deps -Recurse -Filter Qt6Core.dll | Select-Object -First 1
+          if (!$qt) { throw 'Qt runtime missing' }
+          $env:PATH = $qt.DirectoryName + ';' + $env:PATH
+          $env:QT_PLUGIN_PATH = Join-Path $qt.Directory.Parent.FullName 'plugins'
+          $env:QT_QPA_PLATFORM = 'offscreen'
+          & ./build_x64/RelWithDebInfo/casterdesk-panel-checks.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Native panel checks failed' }
+      - name: Stage plugin
+        working-directory: obs-plugin
+        run: cmake --install build_x64 --prefix release --config RelWithDebInfo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: casterdesk-obs-windows-x64
+          path: obs-plugin/release/casterdesk-obs/**
+          if-no-files-found: error
