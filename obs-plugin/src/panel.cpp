@@ -70,6 +70,8 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     timer.setInterval(1000); connect(&timer,&QTimer::timeout,this,[this]{poll();});
     for(auto *text:findChildren<QLabel *>())text->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);
     duration->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);duration->setMinimumWidth(60);
+    search->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);search->setMinimumWidth(60);
+    for(auto *button:{start,pause,add,subtract,set}){button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setMinimumWidth(44);}
     updateEnabled(); if(autoPoll){timer.start();QTimer::singleShot(0,this,[this]{poll();});}
 }
 CasterDeskPanel::~CasterDeskPanel()
@@ -124,7 +126,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     const auto match=data["match"].toObject();context->setText(match["teamA"].toString()+" × "+match["teamB"].toString()+" · "+match["map"].toString());
     const auto time=data["timer"].toObject();int seconds=static_cast<int>(std::ceil(time["seconds"].toDouble()));seconds=qBound(0,seconds,86400);const int hours=seconds/3600;
     clock->setText((hours>0?QString("%1:").arg(hours,2,10,QChar('0')):QString())+QString("%1:%2").arg((seconds/60)%60,2,10,QChar('0')).arg(seconds%60,2,10,QChar('0')));
-    start->setText("▶ "+label("start","Iniciar / Retomar"));pause->setText("Ⅱ "+label("pause","Pausar"));set->setText(label("set","Definir tempo"));tabs->setTabText(0,label("timer","Cronômetro"));tabs->setTabText(1,label("bans","Bans de operadores"));search->setPlaceholderText(label("search","Filtrar operadores"));
+    start->setText("▶");start->setToolTip(label("start","Iniciar / Retomar"));start->setAccessibleName(start->toolTip());pause->setText("Ⅱ");pause->setToolTip(label("pause","Pausar"));pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(0,label("timer","Cronômetro"));tabs->setTabText(1,label("bans","Bans de operadores"));search->setPlaceholderText(label("search","Filtrar operadores"));
     if(!data["controllable"].toBool())error->setText(label("busy","Conclua a edição aberta no CasterDesk."));else if(error->text()==label("busy","Conclua a edição aberta no CasterDesk."))error->clear();
     const QString next=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(data["revision"].toInteger())+":"+QString::number(data["pending"].toInt(-1))+":"+data["role"].toString()+":"+data["language"].toString();
     if(next!=rendered){rendered=next;clearLayout(banSlots);int n=0;QString nextPhase=label("wait","Nenhum ban pendente.");

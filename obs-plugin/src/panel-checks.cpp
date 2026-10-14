@@ -21,7 +21,7 @@ static void waitFor(const std::function<bool()> &condition)
 {
     QElapsedTimer elapsed;elapsed.start();
     while(!condition()&&elapsed.elapsed()<6000){QApplication::processEvents();QThread::msleep(5);}
-    check(condition(),"condition timed out");
+    check(condition(),"condition completed within timeout");
 }
 int main(int argc,char **argv)
 {
@@ -51,7 +51,9 @@ int main(int argc,char **argv)
         state["controllable"]=false;panel.poll();waitFor([&]{return !start->isEnabled()&&status->text()=="Connected";});check(!panel.findChild<QPushButton *>("set")->isEnabled(),"modal guard");
         server.close();panel.poll();waitFor([&]{return status->text().contains("Aguardando");});check(!start->isEnabled(),"disconnected disabled");
         check(server.listen(QHostAddress::LocalHost,port),"restart server");state["controllable"]=true;state["match"]=QJsonObject{{"id","other"},{"teamA","Next"},{"teamB","Match"},{"map","Border"}};panel.poll();waitFor([&]{return status->text()=="Connected";});check(start->isEnabled(),"automatic reconnect");
-        panel.resize(320,700);panel.ensurePolished();std::cout<<"Minimum dock width: "<<panel.minimumSizeHint().width()<<std::endl;check(panel.minimumSizeHint().width()<=320,"compact width");
+        panel.resize(320,700);panel.ensurePolished();std::cout<<"Minimum dock width: "<<panel.minimumSizeHint().width()<<std::endl;
+        for(auto *widget:panel.findChildren<QWidget *>())if(widget->minimumSizeHint().width()>300)std::cout<<widget->metaObject()->className()<<" "<<widget->objectName().toStdString()<<" min="<<widget->minimumSizeHint().width()<<std::endl;
+        check(panel.minimumSizeHint().width()<=320,"compact width");
         std::cout<<"PASS: "<<checks<<" native Qt offscreen checks, authenticated HTTP, timer, ban context, modal guard and reconnect; OBS not opened.\n";return 0;
     }catch(const std::exception &error){std::cerr<<error.what()<<"\n";return 1;}
 }
