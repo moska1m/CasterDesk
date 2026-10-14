@@ -11,6 +11,7 @@
 #include <QTabWidget>
 #include <QHash>
 #include <QIcon>
+#include <QComboBox>
 
 class CasterDeskPanel final : public QWidget {
 public:
@@ -31,6 +32,14 @@ private:
     QGridLayout *banSlots, *operators;
     QPushButton *start, *pause, *add, *subtract, *set;
     bool connected = false, busy = false;
+    QComboBox *roundHistory, *roundSite, *roundEnding;
+    QPushButton *roundTeams[2], *roundSave;
+    QLabel *roundHeading;
+    int roundWinner = -1;
+    bool buildingRounds = false;
+    QString roundsRendered;
+    void renderRounds(bool force = false);
+    void updateRoundChoices();
     bool discover();
     void receive(const QJsonObject &data);
     void renderOperators();
