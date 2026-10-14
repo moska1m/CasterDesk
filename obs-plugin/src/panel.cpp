@@ -48,8 +48,10 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     auto *brand = new QLabel();QSvgRenderer logo(QStringLiteral(":/casterdesk/brand.svg"));logo.setAspectRatioMode(Qt::KeepAspectRatio);
     QPixmap mark(400,96);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter paint(&mark);logo.render(&paint,QRectF(0,0,200,48));paint.end();
     brand->setPixmap(mark);brand->setAlignment(Qt::AlignCenter);brand->setStyleSheet("background:#0a1118;padding:8px");brand->setAccessibleName("CasterDesk");
-    auto *brandBox=new QWidget();brandBox->setStyleSheet("background:#0a1118");auto *brandLayout=new QVBoxLayout(brandBox);brandLayout->setContentsMargins(0,0,6,4);brandLayout->addWidget(brand);root->addWidget(brandBox);
-    status = new QLabel("DESCONECTADO"); status->setObjectName("connection"); status->setAlignment(Qt::AlignCenter);status->setStyleSheet("background:#7c3038;color:white;padding:3px 8px;border-radius:3px");brandLayout->addWidget(status,0,Qt::AlignRight);
+    auto *brandBox=new QWidget();brandBox->setStyleSheet("background:#0a1118");auto *brandLayout=new QHBoxLayout(brandBox);brandLayout->setContentsMargins(4,2,4,2);brandLayout->addWidget(brand,1);root->addWidget(brandBox);
+    auto *connectionBox=new QWidget();auto *connectionLayout=new QVBoxLayout(connectionBox);connectionLayout->setContentsMargins(0,0,0,0);connectionLayout->setSpacing(0);
+    connectionIcon=new QLabel();connectionIcon->setObjectName("connection-icon");connectionIcon->setAlignment(Qt::AlignCenter);connectionIcon->setFixedHeight(26);connectionLayout->addWidget(connectionIcon);
+    status = new QLabel("DESCONECTADO");status->setObjectName("connection");status->setAlignment(Qt::AlignCenter);status->setStyleSheet("color:#ce7278;font-size:10px;padding:0px");connectionLayout->addWidget(status);brandLayout->addWidget(connectionBox);paintConnection();
     context = new QLabel("—"); context->setObjectName("match-context");context->setWordWrap(true);context->setAlignment(Qt::AlignCenter);context->setStyleSheet("font-size:17px;font-weight:700");root->addWidget(context);
     mapLabel=new QLabel();mapLabel->setAlignment(Qt::AlignCenter);mapLabel->setWordWrap(true);root->addWidget(mapLabel);
     mapChoice=new QComboBox();mapChoice->setObjectName("map-choice");mapChoice->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);mapChoice->setMinimumWidth(60);root->addWidget(mapChoice);
@@ -77,7 +79,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     roundSave = new QPushButton("Confirmar round"); roundSave->setObjectName("round-save"); roundSave->setMinimumHeight(36); roundLayout->addWidget(roundSave);
     newRound = new QPushButton("Novo round"); newRound->setObjectName("new-round"); roundLayout->addWidget(newRound); newRound->hide();
     connect(newRound,&QPushButton::clicked,this,[this]{roundIndex=-1;renderRounds(true);});
-    auto *remakePage=new QWidget();auto *remakeLayout=new QVBoxLayout(remakePage);
+    auto *remakePage=new QWidget();auto *remakeLayout=new QVBoxLayout(remakePage);remakeLayout->setAlignment(Qt::AlignTop);
     remakeChoice=new QComboBox();remakeChoice->setObjectName("remake-map");remakeChoice->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);remakeChoice->setMinimumWidth(60);remakeLayout->addWidget(remakeChoice);
     remakeInfo=new QLabel();remakeInfo->setObjectName("remake-info");remakeInfo->setAlignment(Qt::AlignCenter);remakeInfo->setWordWrap(true);remakeLayout->addWidget(remakeInfo);
     remakeBans=new QVBoxLayout();remakeLayout->addLayout(remakeBans);
@@ -148,7 +150,14 @@ int CasterDeskPanel::parseDuration(const QString &text)
     return seconds<=86400?seconds:-1;
 }
 QString CasterDeskPanel::label(const char *name,const char *fallback) const { return state["labels"].toObject()[name].toString(QString::fromUtf8(fallback)); }
-void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(label("disconnected","Desconectado").toUpper());status->setToolTip(message);status->setStyleSheet("background:#7c3038;color:white;padding:3px 8px;border-radius:3px");context->setText("—");mapLabel->clear();remakeChoice->setEnabled(false);remakeInfo->hide();remakeCheck->hide();roundHistory->hide();clearLayout(remakeBans);updateEnabled();}
+void CasterDeskPanel::paintConnection()
+{
+    const QString color=connected?"#247348":"#ce7278";
+    QFile source(":/casterdesk/symbol.svg");source.open(QIODevice::ReadOnly);QByteArray svg=source.readAll();svg.replace("#ffffff",color.toUtf8());QSvgRenderer renderer(svg);
+    QPixmap mark(52,52);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter painter(&mark);renderer.render(&painter,QRectF(0,0,26,26));painter.end();connectionIcon->setPixmap(mark);
+    status->setStyleSheet(QString("color:%1;font-size:10px;padding:0px").arg(color));
+}
+void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(label("disconnected","Desconectado").toUpper());status->setToolTip(message);paintConnection();context->setText("—");mapLabel->clear();remakeChoice->setEnabled(false);remakeInfo->hide();remakeCheck->hide();roundHistory->hide();clearLayout(remakeBans);updateEnabled();}
 bool CasterDeskPanel::discover()
 {
     QFile file(configPath); if(!file.open(QIODevice::ReadOnly)){disconnectPanel("Abra o CasterDesk com a integração OBS instalada.");return false;}
@@ -182,7 +191,7 @@ void CasterDeskPanel::command(QJsonObject data)
 void CasterDeskPanel::receive(const QJsonObject &data)
 {
     const auto previousPending=state["pending"];
-    state=data;connected=true;status->setText(label("connected","Conectado").toUpper());status->setToolTip(QString());status->setStyleSheet("background:#247348;color:white;padding:3px 8px;border-radius:3px");
+    state=data;connected=true;status->setText(label("connected","Conectado").toUpper());status->setToolTip(QString());paintConnection();
     const auto match=data["match"].toObject();context->setText((match["teamA"].toString()+" × "+match["teamB"].toString()).toUpper());mapLabel->setText(match["map"].toString().toUpper());
     const auto mapsToken=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::fromUtf8(QJsonDocument(match["maps"].toArray()).toJson(QJsonDocument::Compact));
     if(mapsToken!=mapsRendered){mapsRendered=mapsToken;buildingMaps=true;mapChoice->clear();for(const auto &value:match["maps"].toArray()){const auto map=value.toObject();mapChoice->addItem(map["label"].toString(),map["id"].toString());}mapChoice->setCurrentIndex(mapChoice->findData(match["mapId"].toString()));mapChoice->setVisible(mapChoice->count()>1);buildingMaps=false;}
@@ -194,7 +203,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(next!=rendered){rendered=next;clearLayout(banSlots);QString nextPhase=label("wait","Nenhum ban pendente.");
         int columns[2]={0,0};
         for(int team=0;team<2;++team){auto *teamTitle=new QLabel(match[team==0?"teamA":"teamB"].toString());teamTitle->setAlignment(Qt::AlignCenter);teamTitle->setWordWrap(true);teamTitle->setMinimumWidth(0);teamTitle->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);teamTitle->setStyleSheet(QString("color:%1;font-weight:700").arg(team==0?"#6ec6eb":"#ffa375"));banSlots->addWidget(teamTitle,team*2,0,1,6);}
-        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();int team=ban["team"].toInt();auto *card=new QToolButton();card->setObjectName(QString("ban-card-%1").arg(ban["slot"].toInt()));card->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);card->setIconSize(QSize(28,28));card->setText(ban["name"].toString().isEmpty()?ban["role"].toString():ban["name"].toString());card->setToolTip(match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString()+" · "+QString::number(ban["slot"].toInt()/6+1)+" · "+card->text());card->setMinimumWidth(0);card->setFixedHeight(70);card->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);card->setStyleSheet(QString("background:%1;color:white;font-size:10px;border:%2px solid %3;").arg(team==0?"#305975":"#895333").arg(ban["slot"]==data["pending"]?2:0).arg("white"));card->setProperty("team",team);banSlots->addWidget(card,team*2+1,columns[team]++);loadIcon(ban["id"].toString().isEmpty()?(ban["role"]=="DEF"?"__def":"__atq"):ban["id"].toString(),card);if(!ban["unlocked"].toBool())card->setEnabled(false);if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString();}
+        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();int team=ban["team"].toInt();auto *card=new QToolButton();card->setObjectName(QString("ban-card-%1").arg(ban["slot"].toInt()));card->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);card->setIconSize(QSize(28,28));card->setText(ban["name"].toString().isEmpty()?ban["role"].toString():ban["name"].toString());card->setToolTip(match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString()+" · "+QString::number(ban["slot"].toInt()/6+1)+" · "+card->text());card->setMinimumWidth(0);card->setFixedHeight(70);card->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);card->setStyleSheet(QString("background:%1;color:white;font-size:10px;padding-top:5px;padding-bottom:5px;text-align:center;border:%2px solid %3;").arg(team==0?"#305975":"#895333").arg(ban["slot"]==data["pending"]?2:0).arg("white"));card->setProperty("team",team);banSlots->addWidget(card,team*2+1,columns[team]++);loadIcon(ban["id"].toString().isEmpty()?(ban["role"]=="DEF"?"__def":"__atq"):ban["id"].toString(),card);if(!ban["unlocked"].toBool())card->setEnabled(false);if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString();}
         phase->setText(nextPhase);renderOperators();}
     renderRounds();renderRemake();updateEnabled();
     Q_UNUSED(previousPending);

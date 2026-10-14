@@ -32,6 +32,8 @@ private:
     QTimer timer;
     QJsonObject state;
     QHash<QString, QIcon> icons;
+    QLabel *connectionIcon;
+    void paintConnection();
     QLabel *status, *context, *clock, *error, *phase, *mapLabel;
     QTabWidget *tabs;
     QLineEdit *duration, *search;

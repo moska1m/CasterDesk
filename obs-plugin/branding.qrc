@@ -1,1 +1,1 @@
-<RCC><qresource prefix="/casterdesk"><file alias="brand.svg">data/brand.svg</file></qresource></RCC>
+<RCC><qresource prefix="/casterdesk"><file alias="brand.svg">data/brand.svg</file><file alias="symbol.svg">data/symbol.svg</file></qresource></RCC>
