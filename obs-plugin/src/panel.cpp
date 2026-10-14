@@ -91,7 +91,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     auto *remakeScroll=new QScrollArea();remakeScroll->setWidgetResizable(true);remakeScroll->setWidget(remakePage);tabs->insertTab(0,remakeScroll,"REMAKE");
     auto *banPage = new QWidget(); banPage->setObjectName("ban-page"); auto *banLayout = new QVBoxLayout(banPage); partidaLayout->addWidget(banPage);
     auto *banTitle = new QLabel("Bans de operadores"); banTitle->setObjectName("ban-title"); banLayout->addWidget(banTitle);
-    banSlots = new QGridLayout(); banLayout->addLayout(banSlots);
+    banSlots = new QGridLayout(); banSlots->setObjectName("ban-slots"); banLayout->addLayout(banSlots);
     phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
     search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
     auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setAlignment(Qt::AlignTop); banLayout->addWidget(grid); partidaLayout->addStretch();
