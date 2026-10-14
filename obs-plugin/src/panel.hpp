@@ -38,6 +38,9 @@ private:
     int roundWinner = -1;
     bool buildingRounds = false;
     QString roundsRendered;
+    QComboBox *mapChoice;
+    bool buildingMaps = false;
+    QString mapsRendered;
     void renderRounds(bool force = false);
     void updateRoundChoices();
     bool discover();

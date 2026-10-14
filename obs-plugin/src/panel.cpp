@@ -45,6 +45,8 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     brand->setPixmap(mark);brand->setAlignment(Qt::AlignCenter);brand->setStyleSheet("background:#0a1118;padding:8px");brand->setAccessibleName("CasterDesk");root->addWidget(brand);
     status = new QLabel("Aguardando CasterDesk…"); status->setObjectName("connection"); status->setWordWrap(true); root->addWidget(status);
     context = new QLabel("—"); context->setWordWrap(true); root->addWidget(context);
+    mapChoice=new QComboBox();mapChoice->setObjectName("map-choice");mapChoice->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);mapChoice->setMinimumWidth(60);root->addWidget(mapChoice);
+    connect(mapChoice,qOverload<int>(&QComboBox::currentIndexChanged),this,[this]{if(buildingMaps||!connected)return;const auto match=state["match"].toObject();const auto target=mapChoice->currentData().toString();if(!target.isEmpty()&&target!=match["mapId"].toString())command({{"action","selectMap"},{"matchId",match["id"]},{"mapId",match["mapId"]},{"revision",state["revision"]},{"targetMapId",target}});});
     error = new QLabel(); error->setWordWrap(true); error->setStyleSheet("color:#ffb69d"); root->addWidget(error);
     tabs = new QTabWidget(); root->addWidget(tabs);
     auto *timerPage = new QWidget();timerPage->setObjectName("timer-page"); auto *timerLayout = new QVBoxLayout(timerPage);
@@ -137,8 +139,11 @@ void CasterDeskPanel::command(QJsonObject data)
 }
 void CasterDeskPanel::receive(const QJsonObject &data)
 {
+    const auto previousPending=state["pending"];
     state=data;connected=true;status->setText(label("connected","Conectado"));
     const auto match=data["match"].toObject();context->setText(match["teamA"].toString()+" × "+match["teamB"].toString()+" · "+match["map"].toString());
+    const auto mapsToken=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::fromUtf8(QJsonDocument(match["maps"].toArray()).toJson(QJsonDocument::Compact));
+    if(mapsToken!=mapsRendered){mapsRendered=mapsToken;buildingMaps=true;mapChoice->clear();for(const auto &value:match["maps"].toArray()){const auto map=value.toObject();mapChoice->addItem(map["label"].toString(),map["id"].toString());}mapChoice->setCurrentIndex(mapChoice->findData(match["mapId"].toString()));mapChoice->setVisible(mapChoice->count()>1);buildingMaps=false;}
     const auto time=data["timer"].toObject();int seconds=static_cast<int>(std::ceil(time["seconds"].toDouble()));seconds=qBound(0,seconds,86400);const int hours=seconds/3600;
     clock->setText((hours>0?QString("%1:").arg(hours,2,10,QChar('0')):QString())+QString("%1:%2").arg((seconds/60)%60,2,10,QChar('0')).arg(seconds%60,2,10,QChar('0')));
     start->setText("▶");start->setToolTip(label("start","Iniciar / Retomar"));start->setAccessibleName(start->toolTip());pause->setText("Ⅱ");pause->setToolTip(label("pause","Pausar"));pause->setAccessibleName(pause->toolTip());set->setText(label("set","Definir tempo"));set->setToolTip(set->text());tabs->setTabText(2,label("timer","Cronômetro"));tabs->setTabText(1,label("bans","Bans de operadores"));search->setPlaceholderText(label("search","Filtrar operadores"));
@@ -148,10 +153,12 @@ void CasterDeskPanel::receive(const QJsonObject &data)
         for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();const auto team=ban["team"].toInt()==0?match["teamA"].toString():match["teamB"].toString();auto *slot=new QLabel((ban["name"].toString().isEmpty()?label(ban["unlocked"].toBool()?"select":"blocked", "—"):ban["name"].toString())+"\n"+team+" · "+ban["role"].toString());slot->setAlignment(Qt::AlignCenter);slot->setWordWrap(true);slot->setMinimumWidth(0);slot->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);slot->setStyleSheet(QString("padding:5px;background:%1;border-bottom:3px solid %2;").arg(ban["team"].toInt()==0?"#305975":"#895333",ban["team"].toInt()==0?"#408fb3":"#ff7737"));banSlots->addWidget(slot,n/3,n%3);++n;if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=team+" · "+ban["role"].toString();}
         phase->setText(nextPhase);renderOperators();}
     renderRounds();updateEnabled();
+    if(data["pending"]!=previousPending&&tabs->currentIndex()!=2){if(!data["pending"].isNull())tabs->setCurrentIndex(1);else if(data["rounds"].toObject()["ready"].toBool())tabs->setCurrentIndex(0);}
 }
 void CasterDeskPanel::updateEnabled()
 {
     const bool ready=connected&&!busy&&state["controllable"].toBool();const auto time=state["timer"].toObject();start->setEnabled(ready&&!time["running"].toBool()&&time["seconds"].toDouble()>0);pause->setEnabled(ready&&time["running"].toBool());add->setEnabled(ready);subtract->setEnabled(ready&&time["seconds"].toDouble()>0);set->setEnabled(ready);
+    mapChoice->setEnabled(ready&&mapChoice->count()>1);
     for(int n=0;n<operators->count();++n){auto *button=qobject_cast<QPushButton *>(operators->itemAt(n)->widget());if(button)button->setEnabled(ready&&button->property("available").toBool());}
     const auto rounds=state["rounds"].toObject();const bool roundReady=ready&&rounds["editable"].toBool()&&(roundHistory->currentData().toInt()>=0||rounds["ready"].toBool());
     roundHistory->setEnabled(ready&&rounds["editable"].toBool());roundSite->setEnabled(roundReady);roundEnding->setEnabled(roundReady&&roundWinner>=0);for(auto *team:roundTeams)team->setEnabled(roundReady);
@@ -159,7 +166,7 @@ void CasterDeskPanel::updateEnabled()
 }
 void CasterDeskPanel::renderRounds(bool force)
 {
-    const auto data=state["rounds"].toObject();const auto match=state["match"].toObject();const QString token=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(state["revision"].toInteger());
+    const auto data=state["rounds"].toObject();const auto match=state["match"].toObject();const QString token=match["id"].toString()+":"+match["mapId"].toString()+":"+QString::number(state["revision"].toInteger())+":"+state["language"].toString();
     if(token==roundsRendered&&!force)return;const bool sameMatch=roundsRendered.startsWith(match["id"].toString()+":"+match["mapId"].toString()+":");int edit=sameMatch?roundHistory->currentData().toInt():-1;
     roundsRendered=token;buildingRounds=true;roundHistory->clear();roundHistory->addItem(label("newRound","Novo round"),-1);
     const auto history=data["history"].toArray();for(const auto &value:history){const auto row=value.toObject();roundHistory->addItem(QString("%1 · %2").arg(row["index"].toInt()+1).arg(row["winner"].toInt()==0?match["teamA"].toString():match["teamB"].toString()),row["index"].toInt());}
