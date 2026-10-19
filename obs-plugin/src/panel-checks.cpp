@@ -77,6 +77,7 @@ int main(int argc,char **argv)
         waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});check(lastCommand["seconds"]==240&&lastCommand["format"]=="hh:mm:ss"&&lastCommand["message"]=="MATCH STARTS NOW"&&lastCommand["presets"].toArray().size()==3,"complete timer configuration sends initial time format message and presets");
         for(int count:{0,1,8,3}) {
             auto clock=state["timer"].toObject();auto options=clock["options"].toObject();QJsonArray values;for(int i=0;i<count;++i)values.append(i+2);options["presets"]=values;clock["options"]=options;state["timer"]=clock;
+            panel.poll();
             waitFor([&]{return panel.findChildren<QDoubleSpinBox *>().size()==count&&start->isEnabled();});
             lastCommand=QJsonObject();panel.findChild<QPushButton *>("timer-config")->click();
             waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});
