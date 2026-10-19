@@ -224,7 +224,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(!options["readout"].toString().isEmpty())clock->setText(options["readout"].toString());
     reset->setText(label("reset","Resetar tempo"));timerSave->setText(label("applyTimer","Aplicar configurações"));copyFolder->setText(label("copy","Copiar caminho"));finalMessage->setPlaceholderText(label("message","Mensagem final:"));
     for(int i=0;i<presetValues.size();++i)presetButtons[i]->setText(QString("+ %1 min").arg(presetValues[i]->value()));
-
+    updateEnabled();
 }
 void CasterDeskPanel::updateEnabled()
 {
