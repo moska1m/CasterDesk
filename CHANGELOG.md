@@ -159,7 +159,7 @@
 - JSON de partida versão 2 com base em inglês: equipes padrão explícitas, BO1/BO3/BO5, IDs de mapas existentes e 36 IDs fixos de bombsites com nomes-base legíveis.
 - Equipes padrão acompanham o idioma de quem importa; nomes personalizados são preservados, inclusive quando iguais ao texto de um padrão.
 - Importação compatível com JSON versão 1 e nomes conhecidos de mapas/bombsites em PT/EN/ES. Novos arquivos exigem um leitor com suporte ao formato 2.
-- 599 verificações de portabilidade entre idiomas integradas ao teste WPF. Detalhes em MATCH-JSON-FORMAT.md.
+- 599 verificações de portabilidade entre idiomas integradas aos testes da versão. Detalhes em MATCH-JSON-FORMAT.md.
 
 # 0.3.0-beta.0.2
 
@@ -169,14 +169,14 @@
 - Veto da arte separado do veto registrado. Ao aplicar ou gerar uma correção, opção de atualizar também a partida; atualização real bloqueada quando já existem bans/rounds.
 - Falhas de salvamento revertem mudanças em veto, lados, bans e histórico. Nomes pendentes impedem sair/trocar de partida se a gravação falhar; nova partida só entra na lista após ser salva.
 - Cronômetro aplica o tempo editado ao iniciar, invalida o cache ao trocar caminho e preserva a exibição de 24 horas. Casting pode ser aplicado independentemente de um tempo inválido.
-- Normalização de configurações antigas, preservação de JSON inválido, logs WPF e bloqueio de segunda instância por pasta de dados.
-- Validação WPF e regressão de PNG exigidas pelo script de empacotamento. Migração completa do campeonato e demais pontos da revisão continuam planejados.
+- Normalização de configurações antigas, preservação de JSON inválido, logs do aplicativo e bloqueio de segunda instância por pasta de dados.
+- Validação da interface e regressão de PNG exigidas pelo script de empacotamento. Migração completa do campeonato e demais pontos da revisão continuam planejados.
 
 # 0.3.0-beta.0.1
 
-- Primeira etapa WPF: janela, navegação, menu, Central de imagens, conferência de estatísticas e textos/cronômetro nativos.
+- Renovação da interface: janela, navegação, menu, Central de imagens, conferência de estatísticas e textos/cronômetro nativos.
 - Menu contido na janela; ações de geração fixas; prévias em segundo plano e controles com tamanho consistente.
-- Campeonato e seus diálogos ainda integrados em WinForms. Dados, regras e renderizadores das artes preservados. Detalhes em WPF-MIGRATION.md.
+- Dados, regras e renderizadores das artes preservados durante a renovação da interface.
 
 # 0.2.0-beta.0.3
 
@@ -221,7 +221,7 @@
 - Cards de mapas indisponíveis em preto e branco, carregados de arquivos locais pré-gerados. Histórico mantém picks coloridos e bans em preto e branco.
 - Correção explícita de bans após confirmar mapa/série; resultados e lados continuam protegidos e etapas futuras não são liberadas.
 - Lembretes junto aos campos de bans, nas etapas antes dos rounds 1, 4, 7 e 10; avisos desaparecem ao completar o registro.
-- Base C#/WinForms mantida. Modo rápido, trava de bombsite e estatísticas permanecem no backlog.
+- Modo rápido, trava de bombsite e estatísticas permanecem no backlog.
 
 # 0.1.0-beta.5
 

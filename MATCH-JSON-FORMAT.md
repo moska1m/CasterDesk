@@ -46,4 +46,4 @@ A importação não reescreve o arquivo recebido. Quando a partida é salva/expo
 
 ## Verificação
 
-MatchInterchangeTests integra o teste WPF e verifica 599 condições: três idiomas de criação × três de leitura × nove mapas/36 bombsites, JSON idêntico entre idiomas, nomes personalizados, migração de arquivos antigos e regras de bloqueio de bombsite. IDs desconhecidos são rejeitados. Os testes usam exclusivamente pastas isoladas.
+As verificações do núcleo cobrem intercâmbio entre idiomas, IDs de mapas e bombsites, nomes personalizados, importação de arquivos antigos e regras de bloqueio de bombsite. IDs desconhecidos são rejeitados. Execute o script de testes descrito em [PROGRESSO.md](PROGRESSO.md), sempre com dados isolados.
