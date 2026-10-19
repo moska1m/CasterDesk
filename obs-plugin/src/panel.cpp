@@ -212,7 +212,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(receivedPresets.size()!=presetValues.size()) {
         clearLayout(presetGrid);presetValues.clear();presetButtons.clear();timerOptionsRendered.clear();
         for(int i=0;i<receivedPresets.size();++i) {
-            auto *value=new QDoubleSpinBox();value->setRange(0.01,1440);value->setValue(receivedPresets[i].toDouble());value->setSuffix(" min");value->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);value->setMinimumWidth(44);value->setAlignment(Qt::AlignCenter);
+            auto *value=new QDoubleSpinBox();value->setObjectName(QString("timer-preset-value-%1").arg(i));value->setRange(0.01,1440);value->setValue(receivedPresets[i].toDouble());value->setSuffix(" min");value->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);value->setMinimumWidth(44);value->setAlignment(Qt::AlignCenter);
             auto *button=new QPushButton("+");button->setObjectName(QString("preset-%1").arg(i));
             presetValues.append(value);presetButtons.append(button);presetGrid->addWidget(value,i,0);presetGrid->addWidget(button,i,1);
             connect(button,&QPushButton::clicked,this,[this,value]{command({{"action","adjust"},{"seconds",value->value()*60}});});

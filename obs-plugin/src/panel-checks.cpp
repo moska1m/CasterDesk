@@ -12,6 +12,7 @@
 #include <QThread>
 #include <QToolButton>
 #include <QDoubleSpinBox>
+#include <QRegularExpression>
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -78,7 +79,7 @@ int main(int argc,char **argv)
         for(int count:{0,1,8,3}) {
             auto clock=state["timer"].toObject();auto options=clock["options"].toObject();QJsonArray values;for(int i=0;i<count;++i)values.append(i+2);options["presets"]=values;clock["options"]=options;state["timer"]=clock;
             panel.poll();
-            waitFor([&]{return panel.findChildren<QDoubleSpinBox *>().size()==count&&start->isEnabled();});
+            waitFor([&]{return panel.findChildren<QDoubleSpinBox *>(QRegularExpression("^timer-preset-value-")).size()==count&&start->isEnabled();});
             lastCommand=QJsonObject();panel.findChild<QPushButton *>("timer-config")->click();
             waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});
             check(lastCommand["presets"].toArray()==values,"legacy preset count and values survive polling and configuration");
