@@ -1,5 +1,5 @@
 using System.Drawing.Drawing2D;
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 internal sealed class BanHalfHeading : Label
 {

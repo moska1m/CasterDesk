@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public sealed class SiegeOperator { public string Id { get; set; } = ""; public string Name { get; set; } = ""; public string Role { get; set; } = ""; public string Icon { get; set; } = ""; public override string ToString() => Name; }
 public sealed class SiegeMap { [JsonIgnore] public string DisplayName => L.T(Name); public string Id { get; set; } = ""; public string Name { get; set; } = ""; public string[] Sites { get; set; } = []; public string Image { get; set; } = ""; [JsonIgnore] public string UnavailableImage => Path.GetFileNameWithoutExtension(Image)+"-unavailable.png"; public override string ToString() => Name; }

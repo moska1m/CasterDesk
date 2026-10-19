@@ -1,5 +1,5 @@
 using System.Text.Json;
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Shared commands do not depend on a window, control or dispatcher.
 public sealed class MatchSession

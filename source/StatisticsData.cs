@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public sealed class PlayerStatistic
 {
     public string PlayerId{get;set;}="";

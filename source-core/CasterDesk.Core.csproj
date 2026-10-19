@@ -3,15 +3,20 @@
   <!-- Drawing/OCR remain Windows services. The shared engine has no WPF UI dependency. -->
   <ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" /></ItemGroup>
   <ItemGroup>
-    <Compile Include="../source/AppPaths.cs;../source/AppLog.cs;../source/Localization.cs;../source/MatchModel.cs;../source/MatchJsonConverter.cs;../source/StatisticsData.cs;../source/MatchFiles.cs;../source/FileBatch.cs;../source/DataBackup.cs;../source/ResultRenderer.cs;../source/StudioRenderer.cs;../source/JgArtRenderer.cs;../source/OptimizedPng.cs;../source/OperatorOrder.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../source/AppPaths.cs;../source/AppLog.cs;../source/Localization.cs;../source/MatchModel.cs;../source/MatchJsonConverter.cs;../source/StatisticsData.cs;../source/MatchFiles.cs;../source/FileBatch.cs;../source/DataBackup.cs;../source/ResultRenderer.cs;../source/StudioRenderer.cs;../source/ArtworkRenderer.cs;../source/OptimizedPng.cs;../source/OperatorOrder.cs" Link="%(Filename)%(Extension)" />
     <EmbeddedResource Include="../source/translations.json" LogicalName="CasterDesk.translations.json"/><EmbeddedResource Include="../source/match-sites.json" LogicalName="CasterDesk.match-sites.json"/>
   </ItemGroup>
-<ItemGroup><Content Include="../assets/siege/icons/*;../assets/siege/maps/*;../assets/siege/catalog.json" Link="assets/siege/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+<ItemGroup><Content Include="../assets/match-table-template.xlsx" Link="assets/match-table-template.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+<Content Include="../assets/siege/icons/*;../assets/siege/maps/*;../assets/siege/catalog.json" Link="assets/siege/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   <Content Include="../assets/branding/*" Link="assets/branding/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   <Content Include="../assets/siege/portraits/*.png" Link="assets/siege/%(Filename)-portrait.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../assets/promo/background.png" Link="assets/promo/background.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../assets/promo/*.otf;../assets/promo/neutral-white.png;../assets/promo/team-frame.png" Link="assets/promo/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../assets/studio/*" Link="assets/studio/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../source/OcrImage.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Link="OcrImage.ps1" />
+  </ItemGroup>
+  <ItemGroup><Content Include="../assets/update-public-key.pem" Link="assets/update-public-key.pem" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup Condition="'$(GoogleDesktopClient)' != ''">
+    <Content Include="$(GoogleDesktopClient)" Link="assets/google-desktop-client.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

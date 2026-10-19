@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public sealed class ImageStudioPanel : UserControl
 {
     readonly Func<IReadOnlyList<SiegeMatch>> list;readonly SiegeCatalog catalog;

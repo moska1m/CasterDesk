@@ -6,7 +6,7 @@ using System.IO.Compression;
 
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public static class BackupTests
 
@@ -20,7 +20,7 @@ public static class BackupTests
 
         string root=Path.Combine(AppPaths.DataDirectory,"fixture"),target=Path.Combine(AppPaths.DataDirectory,"restored");Directory.CreateDirectory(root);Directory.CreateDirectory(target);
 
-        Directory.CreateDirectory(Path.Combine(root,"Textos"));File.WriteAllText(Path.Combine(root,"Textos","narração.txt"),"Moska — transmissão");Directory.CreateDirectory(Path.Combine(root,"Partidas"));
+        Directory.CreateDirectory(Path.Combine(root,"Textos"));File.WriteAllText(Path.Combine(root,"Textos","narração.txt"),"CasterDesk — transmissão");Directory.CreateDirectory(Path.Combine(root,"Partidas"));
 
         var match=new SiegeMatch{TeamA="Liquid",TeamB="FaZe"};File.WriteAllText(Path.Combine(root,"Partidas",match.Id+".json"),JsonSerializer.Serialize(match));
 
@@ -30,13 +30,13 @@ public static class BackupTests
 
         string stage=Path.Combine(AppPaths.DataDirectory,"stage");var manifest=DataBackup.Extract(zip,stage);Need(manifest.Files.Count==2);
 
-        DataBackup.Apply(target,stage,manifest,false);Need(File.ReadAllText(Path.Combine(target,"Textos","narração.txt"))=="Moska — transmissão");Need(DataBackup.Conflicts(target,manifest)==0);
+        DataBackup.Apply(target,stage,manifest,false);Need(File.ReadAllText(Path.Combine(target,"Textos","narração.txt"))=="CasterDesk — transmissão");Need(DataBackup.Conflicts(target,manifest)==0);
 
         File.WriteAllText(Path.Combine(target,"Textos","narração.txt"),"current");Need(DataBackup.Conflicts(target,manifest)==1);
 
         DataBackup.Apply(target,stage,manifest,false);Need(File.ReadAllText(Path.Combine(target,"Textos","narração.txt"))=="current");
 
-        DataBackup.Apply(target,stage,manifest,true);Need(File.ReadAllText(Path.Combine(target,"Textos","narração.txt"))=="Moska — transmissão");Need(Directory.GetFiles(Path.Combine(target,"Backups"),"*.zip").Length==3);
+        DataBackup.Apply(target,stage,manifest,true);Need(File.ReadAllText(Path.Combine(target,"Textos","narração.txt"))=="CasterDesk — transmissão");Need(Directory.GetFiles(Path.Combine(target,"Backups"),"*.zip").Length==3);
 
         Need(Directory.GetFiles(Path.Combine(target,"Partidas")).Length==1);
 
@@ -57,7 +57,9 @@ public static class BackupTests
         Need(new Settings().QuickRounds);Need(!JsonSerializer.Deserialize<Settings>("{\"QuickRounds\":false}")!.QuickRounds);
         string legacy=Path.Combine(AppPaths.DataDirectory,"legacy"),migrated=Path.Combine(AppPaths.DataDirectory,"migrated");Directory.CreateDirectory(legacy);
         string preferences=JsonSerializer.Serialize(new Settings{Output=Path.Combine(legacy,"timer.txt"),QuickRounds=false});File.WriteAllText(Path.Combine(legacy,"settings.json"),preferences);
+        foreach(string folder in new[]{"Auth","ReleaseKeys","Updates"}){Directory.CreateDirectory(Path.Combine(legacy,folder));File.WriteAllText(Path.Combine(legacy,folder,"private.bin"),"must stay local");}
         AppPaths.CopyMissing(legacy,migrated);AppPaths.ArrangeConfigs(migrated);
+        Need(new[]{"Auth","ReleaseKeys","Updates"}.All(folder=>!Directory.Exists(Path.Combine(migrated,folder))));
         Need(File.ReadAllText(Path.Combine(migrated,"Configuracoes","settings.json"))==preferences);Need(File.Exists(Path.Combine(legacy,"settings.json")));
         File.WriteAllText(Path.Combine(migrated,"Configuracoes","settings.json"),"{}");AppPaths.CopyMissing(legacy,migrated);AppPaths.ArrangeConfigs(migrated);Need(File.ReadAllText(Path.Combine(migrated,"Configuracoes","settings.json"))=="{}");
 

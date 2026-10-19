@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 static class Program
 {
@@ -38,13 +38,13 @@ static class Program
             Check(DurationInput.TrySeconds("24:00:00", out duration) && duration == 86400, "24 hour duration");
             c.Reset(600); c.Start(); t += 12; c.Reset(600);
             Check(!c.Running && !c.Finished && c.Remaining == 600, "reset to initial paused");
-            string testFolder = Path.Combine(Path.GetTempPath(), "CronoLive-test-" + Guid.NewGuid().ToString("N"));
-            Talent[] people = [new() { Name = "João", Handle = "moska1m" }, new(), new(), new()];
+            string testFolder = Path.Combine(Path.GetTempPath(), "CasterDesk-test-" + Guid.NewGuid().ToString("N"));
+            Talent[] people = [new() { Name = "Narrador exemplo", Handle = "casterdesk_demo" }, new(), new(), new()];
             CastingFiles.Write(testFolder, people);
             Check(Directory.GetFiles(testFolder).Length == 8, "eight casting files");
             Check(File.ReadAllText(Path.Combine(testFolder, "narrador.txt")) == "João", "accented name");
-            Check(File.ReadAllText(Path.Combine(testFolder, "@narrador.txt")) == "@moska1m", "handle prefix");
-            Check(CastingFiles.Handle(" @moska1m ") == "@moska1m", "no duplicate prefix");
+            Check(File.ReadAllText(Path.Combine(testFolder, "@narrador.txt")) == "@casterdesk_demo", "handle prefix");
+            Check(CastingFiles.Handle(" @casterdesk_demo ") == "@casterdesk_demo", "no duplicate prefix");
             people[0] = new(); CastingFiles.Write(testFolder, people);
             Check(new FileInfo(Path.Combine(testFolder, "narrador.txt")).Length == 0 && new FileInfo(Path.Combine(testFolder, "@narrador.txt")).Length == 0, "clear unused participant");
             File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "test-result.txt"), "15 verificações aprovadas.");
@@ -65,7 +65,7 @@ static class Program
         if(args.Contains("--championship-test")) { try { ChampionshipTests.Run(); } catch(Exception ex) { File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"test-error.txt"),ex.ToString()); Environment.ExitCode=1; } return; }
         if(args.Contains("--preview-championship"))
         {
-            using var form=new Form {Text="CronoLive",ClientSize=new Size(1240,900)};
+            using var form=new Form {Text="CasterDesk",ClientSize=new Size(1240,900)};
             form.Controls.Add(new ChampionshipPanel(true));form.Show();Application.DoEvents();
             using var bitmap=new Bitmap(form.Width,form.Height);form.DrawToBitmap(bitmap,new Rectangle(0,0,form.Width,form.Height));
             bitmap.Save(Path.Combine(AppPaths.DataDirectory,"championship-preview.png"));return;

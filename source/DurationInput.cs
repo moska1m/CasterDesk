@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // A duration, rather than a time of day: supports 24:00:00.
 public sealed class DurationInput : NumericUpDown

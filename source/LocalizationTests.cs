@@ -1,6 +1,6 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
-namespace CronoLive;
+namespace CasterDesk.Core;
 public static class LocalizationTests
 {
     public static void Run()

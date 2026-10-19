@@ -1,5 +1,5 @@
 using System.Text.Json;
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Commits a group as one recoverable operation. Prepared files and rollback copies
 // are retained after an interrupted process; startup recovers before loading matches.

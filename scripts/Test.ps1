@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 if(!$Legacy -and !$Executable){& "$PSScriptRoot/Test-Wpf.ps1" -PublishFolder $PublishFolder;return}
 if (!$Executable) {
-    dotnet build (Join-Path $root 'source/CronoLive.csproj') -c Release
+    dotnet build (Join-Path $root 'source/CasterDesk.Legacy.csproj') -c Release
     if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar os testes.' }
     $Executable = Join-Path $root 'source/bin/Release/net10.0-windows/CasterDesk.exe'
 }

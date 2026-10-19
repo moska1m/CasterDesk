@@ -1,6 +1,6 @@
 using System.Drawing.Drawing2D;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Images are owned by the championship cache, never by an individual card.
 internal sealed class OperatorBanCard : Button

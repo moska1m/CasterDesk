@@ -2,7 +2,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public enum ArtKind { Announcement,MapVeto,Results,MapStats,SeriesStats }
 public static class StudioRenderer
 {
@@ -41,8 +41,8 @@ public static class StudioRenderer
             try
             {
                 using var g=Graphics.FromImage(image);Setup(g);
-                if(kind==ArtKind.Announcement)JgArtRenderer.Announcement(g,match,brand,size);
-                else JgArtRenderer.Result(g,match,catalog,brand,kind,format,size,kind==ArtKind.MapStats?map:null);
+                if(kind==ArtKind.Announcement)ArtworkRenderer.Announcement(g,match,brand,size);
+                else ArtworkRenderer.Result(g,match,catalog,brand,kind,format,size,kind==ArtKind.MapStats?map:null);
                 string name=kind switch{ArtKind.Announcement=>"anuncio",ArtKind.Results=>"resultado-serie",ArtKind.MapStats=>"estatisticas-mapa-"+(match.Maps.IndexOf(map!)+1).ToString("00"),_=>"estatisticas-serie"};
                 return [new(name+"-"+format,image)];
             }

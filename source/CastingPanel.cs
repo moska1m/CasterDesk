@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public sealed class CastingPanel : UserControl
 {

@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Microsoft.Win32;
-using CronoLive;
+using CasterDesk.Core;
 
 namespace CasterDesk.Wpf;
 public sealed class TextsView : Grid

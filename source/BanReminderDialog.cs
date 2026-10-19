@@ -1,4 +1,4 @@
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // A short, themed prompt. Dismissing it never changes match data or clears pending bans.
 internal sealed class BanReminderDialog : Form

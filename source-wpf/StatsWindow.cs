@@ -11,7 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
-using CronoLive;
+using CasterDesk.Core;
 
 namespace CasterDesk.Wpf;
 public sealed class StatsWindow : Window

@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Drawing.Drawing2D;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public static class AppTheme
 {

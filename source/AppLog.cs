@@ -1,4 +1,4 @@
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public static class AppLog
 {

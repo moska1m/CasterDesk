@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
-namespace CronoLive;
+namespace CasterDesk.Core;
 // Only developer-authored labels/templates are translated, never interpolated user data.
 // Language changes apply on restart, keeping UI and background exports consistent.
 public static class L

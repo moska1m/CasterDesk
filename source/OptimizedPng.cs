@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Lossless PNG: omit unused channels and select a scanline predictor before DEFLATE.
 // No palette quantization, resampling, or changes to transparent pixels.

@@ -1,4 +1,4 @@
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 internal static class AppFonts
 {

@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 internal static class ImageOptimizationTests
 {
     internal static void Run()

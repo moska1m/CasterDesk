@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // The file vocabulary is independent of the reader's language. The domain keeps
 // catalogue values so existing round rules and translated selectors remain compatible.

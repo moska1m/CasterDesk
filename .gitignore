@@ -3,6 +3,7 @@
 publish/
 publish-wpf*/
 publish-avalonia*/
+publish-casterdesk*/
 dist/
 test-results/
 .vs/
@@ -25,3 +26,6 @@ obs-plugin/.deps/
 obs-plugin/build_*/
 obs-plugin/release/
 obs-plugin-package/
+build-config/
+**/google-desktop-client.json
+**/update-signing.bin

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>CasterDesk.Core</RootNamespace><AssemblyName>CasterDesk</AssemblyName><Version>0.2.0-beta.0.8</Version><AssemblyVersion>0.2.0.0</AssemblyVersion><FileVersion>0.2.0.8</FileVersion><Product>CasterDesk</Product><Description>Ferramentas para community casters</Description>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms><ApplicationIcon>../assets/casterdesk.ico</ApplicationIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="AppPaths.cs;AppLog.cs;Localization.cs;MatchModel.cs;MatchJsonConverter.cs;StatisticsData.cs;MatchFiles.cs;FileBatch.cs;DataBackup.cs;ResultRenderer.cs;StudioRenderer.cs;ArtworkRenderer.cs;OptimizedPng.cs;OperatorOrder.cs"/>
+    <ProjectReference Include="../source-core/CasterDesk.Core.csproj" AdditionalProperties="AssemblyName=CasterDesk.Core"/>
+    <Content Include="../assets/siege/icons/*;../assets/siege/maps/*;../assets/siege/catalog.json" Link="assets/siege/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  <Content Include="../assets/branding/*" Link="assets/branding/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  <Content Include="../assets/siege/portraits/*.png" Link="assets/siege/%(Filename)-portrait.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../assets/promo/background.png" Link="assets/promo/background.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../assets/promo/*.otf;../assets/promo/neutral-white.png;../assets/promo/team-frame.png" Link="assets/promo/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../assets/studio/*" Link="assets/studio/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="OcrImage.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
+

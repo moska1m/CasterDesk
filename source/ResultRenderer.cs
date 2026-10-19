@@ -1,12 +1,12 @@
-﻿using System.Drawing.Drawing2D;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public enum ExportAspect { Stories, Feed, Horizontal }
-public sealed class ExportBrand { public string BackgroundStyle {get;set;}="Classic"; public string EventName {get;set;}=""; public string LogoFile {get;set;}=""; public string CasterName {get;set;}=""; public string Channel {get;set;}=""; public string Platform {get;set;}="Twitch"; public List<string>? Platforms {get;set;} public Dictionary<string,string> PlatformChannels {get;set;}=new(); public string[] SelectedPlatforms()=> (Platforms??new List<string>{Platform}).Where(p=>p is "Twitch" or "YouTube" or "Kick").Distinct().ToArray(); public string ChannelFor(string p)=>PlatformChannels.TryGetValue(p,out var value)&&!string.IsNullOrWhiteSpace(value)?value.Trim():Channel.Trim(); }
+public sealed class ExportBrand { string backgroundStyle="Classic"; public string BackgroundStyle {get=>backgroundStyle;set=>backgroundStyle=value=="JG"?"Community":value;} public string EventName {get;set;}=""; public string LogoFile {get;set;}=""; public string CasterName {get;set;}=""; public string Channel {get;set;}=""; public string Platform {get;set;}="Twitch"; public List<string>? Platforms {get;set;} public Dictionary<string,string> PlatformChannels {get;set;}=new(); public string[] SelectedPlatforms()=> (Platforms??new List<string>{Platform}).Where(p=>p is "Twitch" or "YouTube" or "Kick").Distinct().ToArray(); public string ChannelFor(string p)=>PlatformChannels.TryGetValue(p,out var value)&&!string.IsNullOrWhiteSpace(value)?value.Trim():Channel.Trim(); }
 public sealed record ResultPage(string Name, Bitmap Image) : IDisposable {public void Dispose()=>Image.Dispose();}
 public static class ResultRenderer
 {
@@ -54,7 +54,7 @@ public static class ResultRenderer
     {
         int w=aspect==ExportAspect.Horizontal?1920:1080,h=aspect==ExportAspect.Horizontal?1080:aspect==ExportAspect.Feed?1350:1920;
         var image=Base(new(w,h));
-        if(brand.BackgroundStyle=="JG")
+        if(brand.BackgroundStyle=="Community")
         {
             using var background=Image.FromFile(Path.Combine(AppContext.BaseDirectory,"assets","promo","background.png"));
             using var canvas=Graphics.FromImage(image);

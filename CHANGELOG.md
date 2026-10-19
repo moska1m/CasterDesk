@@ -1,3 +1,22 @@
+# 1.0.8
+
+- Verificador gratuito pelo GitHub Releases, com consulta automática e manual, avisos de prioridade e notas de publicação.
+- Lista com versão, data e tipo RELEASE/BETA; Mostrar betas desligado por padrão, sem seleção de canais ou alfas.
+- Download com progresso e verificação de assinatura, tamanho e SHA-256. Instalação por ação do usuário após salvar a sessão.
+- Publicador com catálogo assinado, preparado antes da publicação e atualizado somente após o instalador estar disponível.
+- Tokens de login, chaves de publicação e cache de downloads excluídos da migração dos dados portáveis.
+
+## Tabela da partida (experimental)
+
+- Excel local opcional com arquivo fixo atualizado e cópias separadas por partida e mapa.
+- Google Sheets com o mesmo mapeamento, atualização automática e recuperação após falhas de conexão.
+- Login Google integrado ao instalador; cada usuário autoriza a própria conta, sem importar JSON.
+- Tabela compatível com MD1 e MD3, preservando as células de preenchimento manual.
+- Interface, mensagens, modelos, artes, projetos e scripts padronizados com a identidade CasterDesk.
+- Namespace do núcleo padronizado; formatos de dados e configurações existentes preservados.
+- Histórico interno de desenvolvimento retirado do pacote instalado; changelog passa a acompanhar a distribuição.
+- Dependências, créditos legais e licenças dos recursos de terceiros preservados.
+
 # 1.0.7
 
 - Painel OBS com Sem banimento no final da seleção, mantendo a ordem dos operadores do jogo.
@@ -127,7 +146,7 @@
 
 # 0.3.0-beta.0.5
 
-- Linha Avalonia: Central, campeonato/lobby, timer/TXTs, backup/restauração e idioma.
+- Aplicativo CasterDesk: Central, campeonato/lobby, timer/TXTs, backup/restauração e idioma.
 - Publicação autossuficiente Windows x64 e correções de nomes personalizados e associação de equipe nas estatísticas.
 
 # 0.3.0-beta.0.4
@@ -145,7 +164,7 @@
 # 0.3.0-beta.0.2
 
 - Central de imagens organizada em cinco abas, com partida compartilhada e formato lembrado por categoria; anúncio em feed e story.
-- Canal da transmissão editável no anúncio, nas posições e fontes originais do PSD do JG. Data e horário permanecem ausentes.
+- Canal da transmissão editável no anúncio, nas posições e fontes originais do modelo de arte. Data e horário permanecem ausentes.
 - Seleção de logos junto dos nomes das equipes; artes reutilizam os recursos da partida.
 - Veto da arte separado do veto registrado. Ao aplicar ou gerar uma correção, opção de atualizar também a partida; atualização real bloqueada quando já existem bans/rounds.
 - Falhas de salvamento revertem mudanças em veto, lados, bans e histórico. Nomes pendentes impedem sair/trocar de partida se a gravação falhar; nova partida só entra na lista após ser salva.
@@ -163,7 +182,7 @@
 
 - Alinhamento dos campos de lados e do placar sobre o histórico; conteúdo da tabela centralizado e seletores com chevrons.
 - Cabeçalhos dos bans centralizados, Round por extenso, selo ATIVOS verde; Nova partida em azul.
-- Imagens dos mapas aguardam referências do usuário/JG.
+- Imagens dos mapas aguardam referências do usuário.
 
 # 0.2.0-beta.0.2
 

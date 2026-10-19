@@ -1,5 +1,5 @@
 #ifndef PluginPackage
-#error Build using scripts/Package-Avalonia.ps1.
+#error Build using scripts/Package-Desktop.ps1.
 #endif
 [Setup]
 SetupArchitecture=x64

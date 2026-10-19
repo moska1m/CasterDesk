@@ -1,5 +1,5 @@
 using System.Drawing.Drawing2D;
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Read-only reference, independent of match settings.
 public sealed class LobbyGuidePanel : UserControl

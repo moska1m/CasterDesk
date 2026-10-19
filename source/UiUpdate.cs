@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-namespace CronoLive;
+namespace CasterDesk.Core;
 public sealed class BufferedGrid : DataGridView
 {
     public BufferedGrid(){DoubleBuffered=true;}

@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using CronoLive;
+using CasterDesk.Core;
 
 namespace CasterDesk.Wpf;
 internal static class Checks
@@ -21,7 +21,7 @@ internal static class Checks
   for(int n=0;n<7;n++)map.Rounds.Add(new(){Winner=1,Site=catalog.Maps.Single(m=>m.Id==map.MapId).Sites[n%4],Ending="elimination"});map.ConfirmedAt=DateTimeOffset.Now;
   var players=new List<PlayerStatistic>();for(int team=0;team<2;team++)for(int n=0;n<5;n++)players.Add(new(){Team=team,Name=$"Player{team}{n}",Kills=5+n,Deaths=7-n,Assists=n});map.Statistics=new(){Status="complete",Players=players,ConfirmedAt=DateTimeOffset.Now};
   MatchStore.Validate(match,catalog);MatchStore.Save(match);var saved=MatchStore.Read(Path.Combine(MatchStore.Folder,match.Id+".json"),catalog);if(saved.Maps[0].Statistics?.Players.Count!=10)throw new Exception("Statistics round trip");
-  var promoBrand=new ImageBrand{EventName="CHALLENGER SERIES",BroadcastChannel="twitch.tv/moska1m"};MatchFiles.SaveBrand(match,promoBrand);if(MatchFiles.ReadBrand(match).BroadcastChannel!=promoBrand.BroadcastChannel)throw new Exception("Broadcast channel not persisted");
+  var promoBrand=new ImageBrand{EventName="CHALLENGER SERIES",BroadcastChannel="twitch.tv/casterdesk_demo"};MatchFiles.SaveBrand(match,promoBrand);if(MatchFiles.ReadBrand(match).BroadcastChannel!=promoBrand.BroadcastChannel)throw new Exception("Broadcast channel not persisted");
   var studio=new StudioView(()=>new[]{match},catalog);
   studio.Refresh(match.Id);Wait(studio.Render());if(!studio.PreviewReady)throw new Exception("Native preview failed");
   if(studio.FormatCount!=2)throw new Exception("Announcement must offer only feed and story");
@@ -56,7 +56,7 @@ internal static class Checks
   bool rejected=false;try{TextsView.Parse("00:60:00");}catch(InvalidDataException){rejected=true;}if(!rejected)throw new Exception("Invalid duration accepted");
   using var original=StudioRenderer.Render(match,catalog,new(),ArtKind.Announcement,ExportAspect.Feed)[0];if(original.Image.Width!=1080||original.Image.Height!=1350)throw new Exception("Announcement aspect changed");
   MatchFiles.AtomicImage(Path.Combine(AppPaths.DataDirectory,"announcement-without-channel.png"),original.Image);
-  using var channel=StudioRenderer.Render(match,catalog,new(){BroadcastChannel="twitch.tv/moska1m"},ArtKind.Announcement,ExportAspect.Feed)[0];MatchFiles.AtomicImage(Path.Combine(AppPaths.DataDirectory,"announcement-channel.png"),channel.Image);
+  using var channel=StudioRenderer.Render(match,catalog,new(){BroadcastChannel="twitch.tv/casterdesk_demo"},ArtKind.Announcement,ExportAspect.Feed)[0];MatchFiles.AtomicImage(Path.Combine(AppPaths.DataDirectory,"announcement-channel.png"),channel.Image);
   string archive=MatchFiles.Export(match,catalog,new(),ArtKind.MapVeto,ExportAspect.Horizontal,null);if(!File.Exists(MatchFiles.ObsVeto)||!File.Exists(Path.Combine(archive,"Imagens","map-veto.png")))throw new Exception("Veto archive missing");
   File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"wpf-check.txt"),"PASS: five artwork tabs; native layouts 1050/1280/1920; announcement feed/story and channel persistence; artwork veto isolation, persistence, duplicate rejection and export; explicit match correction, recorded-match protection and rollback after locked-file failure; statistics; edited and invalid timer duration; 24 hours; configuration normalization and recovery; native announcement geometry; veto archive and OBS fixed path. No window shown.");
  }

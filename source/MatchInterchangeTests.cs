@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public static class MatchInterchangeTests
 {
@@ -15,6 +15,10 @@ public static class MatchInterchangeTests
         void Check(bool value,string message){if(!value)throw new Exception("Match interchange: "+message);checks++;}
         try
         {
+            // Historical preference values remain readable after product naming cleanup.
+            var legacyBrand=JsonSerializer.Deserialize<ExportBrand>("{\"BackgroundStyle\":\"JG\"}")!;
+            Check(legacyBrand.BackgroundStyle=="Community","legacy artwork preference migrates to neutral name");
+            Check(!JsonSerializer.Serialize(legacyBrand).Contains("\"JG\""),"updated preference writes neutral name");
             var catalog=SiegeCatalog.Load();
             foreach(string creator in L.Languages)
             {

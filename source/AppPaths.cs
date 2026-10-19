@@ -1,4 +1,4 @@
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Installed binaries are read-only; Documents contains portable user data.
 public static class AppPaths
@@ -46,6 +46,8 @@ public static class AppPaths
         Directory.CreateDirectory(destination);
         foreach(string file in Directory.GetFiles(source))
             if((File.GetAttributes(file)&FileAttributes.ReparsePoint)==0 && !File.Exists(Path.Combine(destination,Path.GetFileName(file))))File.Copy(file,Path.Combine(destination,Path.GetFileName(file)));
-        foreach(string folder in Directory.GetDirectories(source))CopyMissing(folder,Path.Combine(destination,Path.GetFileName(folder)));
+        foreach(string folder in Directory.GetDirectories(source))
+            if(!new[]{"Auth","ReleaseKeys","Updates"}.Contains(Path.GetFileName(folder),StringComparer.OrdinalIgnoreCase))
+                CopyMissing(folder,Path.Combine(destination,Path.GetFileName(folder)));
     }
 }

@@ -1,6 +1,6 @@
 using System.Drawing.Imaging;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public sealed class StatisticsDialog : Form
 {
     readonly SiegeMatch match;readonly MapRecord map;

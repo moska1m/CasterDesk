@@ -1,4 +1,4 @@
-namespace CronoLive;
+namespace CasterDesk.Core;
 // Stable grid order from the user's Siege menu references (30 September 2026).
 internal static class OperatorOrder
 {

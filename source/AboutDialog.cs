@@ -1,5 +1,5 @@
 using System.Reflection;
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public sealed class AboutDialog : Form
 {
@@ -12,7 +12,7 @@ public sealed class AboutDialog : Form
         var version=displayedVersion ?? typeof(AboutDialog).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "beta";
         var text=new TextBox {Multiline=true,ReadOnly=true,ScrollBars=ScrollBars.Vertical,Dock=DockStyle.Fill,BorderStyle=BorderStyle.None,TabStop=true,AccessibleName=L.T("Créditos e avisos"),Text=
             $"CASTERDESK • {version}\r\n\r\n"+
-            L.T("Criado por Jeferson “Moska” Sampaio.\r\nFerramentas para community casters • uso interno.\r\n\r\n")+
+            L.T("CasterDesk\r\nFerramentas para community casters.\r\n\r\n")+
             L.T("RECURSOS VISUAIS E MARCAS\r\n")+
             L.T("Os ícones de operadores, imagens de mapas e logos de Rainbow Six Siege utilizados neste aplicativo pertencem à Ubisoft e/ou aos respectivos titulares. Rainbow Six, Ubisoft e suas marcas relacionadas pertencem aos respectivos titulares. Logos de campeonatos, equipes e plataformas pertencem aos seus proprietários.\r\n\r\n")+
             L.T("O CasterDesk é uma ferramenta independente. Não representa aprovação, patrocínio ou certificação pela Ubisoft ou pela Microsoft. A autorização de transmissão dos usuários não equivale, por si só, à autorização de redistribuição dos recursos do aplicativo.\r\n\r\n")+

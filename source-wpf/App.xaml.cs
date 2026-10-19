@@ -6,7 +6,7 @@ using System.Windows;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Text;
-using CronoLive;
+using CasterDesk.Core;
 
 namespace CasterDesk.Wpf;
 public partial class App : Application

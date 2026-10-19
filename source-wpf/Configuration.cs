@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using CronoLive;
+using CasterDesk.Core;
 
 namespace CasterDesk.Wpf;
 internal static class Configuration

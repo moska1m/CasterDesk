@@ -1,5 +1,5 @@
 using System.Text.Json;
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // A portable match package is distinct from a full application backup.
 public static class MatchPackage

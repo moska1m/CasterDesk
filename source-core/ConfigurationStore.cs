@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using CronoLive;
+using CasterDesk.Core;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public static class ConfigurationStore
 {
  public static string RecoveryNotice{get;private set;}="";

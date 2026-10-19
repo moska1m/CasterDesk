@@ -1,4 +1,4 @@
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // Submenus replace the contents of this panel, never create another window.
 public sealed class SettingsMenu : Panel

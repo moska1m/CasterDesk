@@ -1,7 +1,7 @@
 ![CasterDesk — organize a partida, cuide da transmissão](docs/media/banner.svg)
 
 <p align="center">
-  <img alt="Versão 1.0.7" src="https://img.shields.io/badge/vers%C3%A3o-1.0.7-327FA8" />
+  <img alt="Versão 1.0.8" src="https://img.shields.io/badge/vers%C3%A3o-1.0.8-327FA8" />
   <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448" />
   <img alt="Português, inglês e espanhol" src="https://img.shields.io/badge/idiomas-PT%20%C2%B7%20EN%20%C2%B7%20ES-233448" />
   <img alt="Licença MIT para o código próprio" src="https://img.shields.io/badge/c%C3%B3digo-MIT-25834C" />
@@ -21,7 +21,7 @@
 
 O projeto nasceu da rotina de transmitir campeonatos da comunidade: controlar o tempo, atualizar nomes, acompanhar bans e placares e preparar imagens enquanto a partida acontece. A intenção é reunir essas tarefas em um programa que ajude o caster a dedicar mais atenção à transmissão.
 
-Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o feedback de casters: partidas completas, registro rápido de rounds, bans de operadores, histórico, estatísticas por print e uma Central de imagens. As composições de divulgação e resultados foram desenvolvidas com a colaboração de JG. A identidade aprovada combina um microfone monocromático com o nome **CasterDesk**, unido, em Rajdhani Bold; a interface mantém Segoe UI para leitura.
+Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o feedback de casters: partidas completas, registro rápido de rounds, bans de operadores, histórico, estatísticas por print e uma Central de imagens. A identidade aprovada combina um microfone monocromático com o nome **CasterDesk**, unido, em Rajdhani Bold; a interface mantém Segoe UI para leitura.
 
 ## O que você pode fazer
 
@@ -35,8 +35,10 @@ Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o fee
 | **Central de imagens** | Anúncio, map veto e estatísticas por mapa/série; logos opcionais, logo neutra, fundos e cores por categoria. |
 | **OBS** | Cronômetro e nomes/perfis do casting em TXT; map veto transparente em caminho fixo. Plugin opcional beta com painel nativo de rounds/bans/timer e conexão automática. |
 | **Arquivos e backup** | Pasta por partida com JSON, imagens e recursos; importação/exportação, recuperação de salvamento e backup/restauração. |
+| **Tabela da partida (experimental)** | [Excel local](docs/TABELA-LOCAL.md) atualizado automaticamente e [Google Sheets](docs/GOOGLE-SHEETS.md) opcional para MD1/MD3; cópias preservadas por partida/mapa. |
+| **Atualizações** | [Lista de versões](docs/ATUALIZACOES.md), releases por padrão, betas opcionais, avisos importantes e download conferido antes de instalar. |
 
-Os dados permanecem no computador. O CasterDesk registra as decisões do usuário; não lê partidas ao vivo nem controla o jogo.
+Os dados são salvos no computador. Se você ativar Google Sheets, os campos da tabela também são enviados à planilha escolhida. O CasterDesk registra as decisões do usuário; não lê partidas ao vivo nem controla o jogo.
 
 ## Conheça a interface
 
@@ -57,9 +59,9 @@ As artes preservam as proporções das bases fornecidas. Mapas não jogados fica
 
 ## Começar a usar
 
-**Atualizando de uma versão anterior?** Feche CasterDesk e OBS. No instalador 1.0.7, marque **Instalar o painel CasterDesk no OBS** para atualizar também o plugin; atualizar somente o app mantém a DLL anterior. Veja o [resumo das novidades desde a 1.0.1](RELEASE-NOTES.md).
+**Atualizando de uma versão anterior?** Feche CasterDesk e OBS. No instalador 1.0.8, marque **Instalar o painel CasterDesk no OBS** para atualizar também o plugin; atualizar somente o app mantém a DLL anterior. Veja as [novidades da 1.0.8](docs/releases/1.0.8.md). A partir desta versão, use **Configurações → Verificar atualizações**: lista de releases, betas opcionais, avisos importantes e download pelo programa. [Como funciona](docs/ATUALIZACOES.md).
 
-1. Use o instalador entregue com a atualização local ou escolha uma versão registrada em [Releases](https://github.com/moska1m/CasterDesk/releases). A versão **1.0.7** está preparada para Windows x64.
+1. Use o instalador entregue com a atualização local ou escolha uma versão registrada em [Releases](https://github.com/moska1m/CasterDesk/releases). A versão **1.0.8** está preparada para Windows x64.
 2. Confira o nome/versão do instalador e o SHA-256 disponibilizado junto dele.
 3. Instale e abra **CasterDesk**. O pacote inclui o runtime .NET; não é necessário instalar o SDK para usar.
 4. Crie uma partida, informe as equipes e registre o coin flip feito fora do programa. Complete o veto, defina os lados e inicie os bans por clique.
@@ -94,7 +96,7 @@ Prévias em navegador sem janela, com dados de demonstração. API real testada 
 
 Os dados ficam em **Documentos/CasterDesk**, respeitando a localização de Documentos no Windows: uma pasta por partida com JSON, artes, prints e recursos, além de pastas separadas para textos, configurações e backups. Os caminhos TXT podem ser personalizados.
 
-Importar só um JSON não transporta todos os recursos: use pacotes/backup para levar imagens e configurações. A desinstalação da beta atual preserva os dados. Detalhes de compatibilidade: [formato JSON](MATCH-JSON-FORMAT.md).
+Importar só um JSON não transporta todos os recursos: use pacotes/backup para levar imagens e configurações. A desinstalação preserva os dados. Detalhes de compatibilidade: [formato JSON](MATCH-JSON-FORMAT.md).
 
 ## Evolução do projeto
 
@@ -121,13 +123,13 @@ Algumas betas antigas têm instaladores preservados, mas não um snapshot exato 
 Aplicativo Windows em C# e .NET 10, com comandos e serviços compartilhados. Renderização e OCR usam serviços Windows. As entregas priorizam o instalador local para teste; atualizações no GitHub são feitas quando necessárias ao processo ou solicitadas.
 
 ```powershell
-dotnet restore source-avalonia/CasterDesk.Avalonia.csproj
-dotnet build source-avalonia/CasterDesk.Avalonia.csproj -c Release
+dotnet restore source-desktop/CasterDesk.Desktop.csproj
+dotnet build source-desktop/CasterDesk.Desktop.csproj -c Release
 ./scripts/Test-Core.ps1
-./scripts/Test-Avalonia.ps1
+./scripts/Test-Desktop.ps1
 ```
 
-Os testes usam uma pasta isolada e o backend Headless; não abrem o programa na área de trabalho. Para empacotar, use `scripts/Package-Avalonia.ps1 -Iscc <ISCC-x64.exe> -Dotnet <dotnet.exe> -PluginPackage <pasta-do-plugin-compilado>`. Os scripts aceitam configuração explícita de restore offline.
+Os testes usam uma pasta isolada e o backend Headless; não abrem o programa na área de trabalho. Para empacotar, use `scripts/Package-Desktop.ps1 -Iscc <ISCC-x64.exe> -Dotnet <dotnet.exe> -PluginPackage <pasta-do-plugin-compilado>`. Os scripts aceitam configuração explícita de restore offline.
 
 Documentação: [formato JSON](MATCH-JSON-FORMAT.md), [validação](PROGRESSO.md), [contribuição](CONTRIBUTING.md).
 
@@ -146,6 +148,6 @@ O instalador pede ciência dos [termos de uso](docs/TERMOS-PT.txt). Código pró
 
 ## Créditos e licenças
 
-Projeto conduzido por **moska1m**, com feedback de community casters e colaboração visual de **JG**. Código próprio sob [MIT](LICENSE). A tipografia Rajdhani da marca usa SIL OFL; fontes e componentes mantêm seus avisos.
+Desenvolvido para community casters. Código próprio sob [MIT](LICENSE). A tipografia Rajdhani da marca usa SIL OFL; fontes e componentes mantêm seus avisos.
 
 Imagens, operadores, marcas de Rainbow Six Siege e outros recursos de terceiros **não estão cobertos pela licença MIT do código**. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) para origens e situação dos recursos antes de distribuição ampla. O CasterDesk é independente e não representa produto oficial ou endosso da Ubisoft.

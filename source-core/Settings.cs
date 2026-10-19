@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Text;
-namespace CronoLive;
+namespace CasterDesk.Core;
 public sealed class Countdown
 {
     private readonly Func<double> now;

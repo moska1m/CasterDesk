@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Win32;
-using CronoLive;
+using CasterDesk.Core;
 
 namespace CasterDesk.Wpf;
 // The view owns only presentation. Native art rendering and match storage remain shared.

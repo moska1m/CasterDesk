@@ -1,7 +1,7 @@
 using System.Drawing.Imaging;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 // One immutable directory identity keeps OBS paths and screenshot references stable after renaming teams.
 public static class MatchFiles

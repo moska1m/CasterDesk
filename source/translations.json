@@ -239,9 +239,9 @@
     "Classic",
     "Clásico"
   ],
-  "Comunidade · arte JG": [
-    "Community · artwork by JG",
-    "Comunidad · arte de JG"
+  "Comunidade": [
+    "Community",
+    "Comunidad"
   ],
   "ROUND {0:00} • registro rápido": [
     "ROUND {0:00} • quick entry",
@@ -1483,10 +1483,6 @@
     "USE AND RESPONSIBILITY\r\n",
     "USO Y RESPONSABILIDAD\r\n"
   ],
-  "Criado por Jeferson “Moska” Sampaio.\r\nFerramentas para community casters • uso interno.\r\n\r\n": [
-    "Created by Jeferson “Moska” Sampaio.\r\nTools for community casters • internal use.\r\n\r\n",
-    "Creado por Jeferson “Moska” Sampaio.\r\nHerramientas para community casters • uso interno.\r\n\r\n"
-  ],
   "Os ícones de operadores, imagens de mapas e logos de Rainbow Six Siege utilizados neste aplicativo pertencem à Ubisoft e/ou aos respectivos titulares. Rainbow Six, Ubisoft e suas marcas relacionadas pertencem aos respectivos titulares. Logos de campeonatos, equipes e plataformas pertencem aos seus proprietários.\r\n\r\n": [
     "Operator icons, map images and Rainbow Six Siege logos used in this application belong to Ubisoft and/or their respective owners. Rainbow Six, Ubisoft and related trademarks belong to their respective owners. Tournament, team and platform logos belong to their owners.\r\n\r\n",
     "Los iconos de operadores, imágenes de mapas y logotipos de Rainbow Six Siege utilizados en esta aplicación pertenecen a Ubisoft y/o a sus respectivos titulares. Rainbow Six, Ubisoft y sus marcas relacionadas pertenecen a sus respectivos titulares. Los logotipos de torneos, equipos y plataformas pertenecen a sus propietarios.\r\n\r\n"
@@ -2443,10 +2439,6 @@
     "CREDITS AND NOTICES",
     "CRÉDITOS Y AVISOS"
   ],
-  "CRIADO POR JEFERSON “MOSKA” SAMPAIO.\r\nFERRAMENTAS PARA COMMUNITY CASTERS • USO INTERNO.\r\n\r\n": [
-    "CREATED BY JEFERSON “MOSKA” SAMPAIO.\r\nTOOLS FOR COMMUNITY CASTERS • INTERNAL USE.\r\n\r\n",
-    "CREADO POR JEFERSON “MOSKA” SAMPAIO.\r\nHERRAMIENTAS PARA COMMUNITY CASTERS • USO INTERNO.\r\n\r\n"
-  ],
   "OS ÍCONES DE OPERADORES, IMAGENS DE MAPAS E LOGOS DE RAINBOW SIX SIEGE UTILIZADOS NESTE APLICATIVO PERTENCEM À UBISOFT E/OU AOS RESPECTIVOS TITULARES. RAINBOW SIX, UBISOFT E SUAS MARCAS RELACIONADAS PERTENCEM AOS RESPECTIVOS TITULARES. LOGOS DE CAMPEONATOS, EQUIPES E PLATAFORMAS PERTENCEM AOS SEUS PROPRIETÁRIOS.\r\n\r\n": [
     "THE OPERATOR ICONS, MAP IMAGES AND RAINBOW SIX SIEGE LOGOS USED IN THIS APPLICATION BELONG TO UBISOFT AND/OR THEIR RESPECTIVE OWNERS. RAINBOW SIX, UBISOFT AND RELATED TRADEMARKS BELONG TO THEIR RESPECTIVE OWNERS. CHAMPIONSHIP, TEAM AND PLATFORM LOGOS BELONG TO THEIR OWNERS.\r\n\r\n",
     "LOS ICONOS DE AGENTES, IMÁGENES DE MAPAS Y LOGOS DE RAINBOW SIX SIEGE USADOS EN ESTA APLICACIÓN PERTENECEN A UBISOFT Y/O A SUS RESPECTIVOS TITULARES. RAINBOW SIX, UBISOFT Y SUS MARCAS RELACIONADAS PERTENECEN A SUS RESPECTIVOS TITULARES. LOS LOGOS DE CAMPEONATOS, EQUIPOS Y PLATAFORMAS PERTENECEN A SUS PROPIETARIOS.\r\n\r\n"
@@ -2891,13 +2883,13 @@
     "Load tournament background",
     "Cargar fondo del campeonato"
   ],
-  "Restaurar fundo do JG": [
-    "Restore JG background",
-    "Restaurar fondo de JG"
+  "Restaurar fundo padrão": [
+    "Restore default background",
+    "Restaurar fondo predeterminado"
   ],
-  "Fundo JG. Você pode substituir por um fundo do campeonato.": [
-    "JG background. You can replace it with a tournament background.",
-    "Fondo de JG. Puedes reemplazarlo por un fondo del campeonato."
+  "Fundo padrão. Você pode substituir por um fundo do campeonato.": [
+    "Default background. You can replace it with a tournament background.",
+    "Fondo predeterminado. Puedes reemplazarlo por un fondo del campeonato."
   ],
   "Fundo personalizado. Ajustado ao formato; confira o recorte na prévia.": [
     "Custom background. Fitted to the format; check the crop in the preview.",
@@ -3158,10 +3150,6 @@
   "Fundo padrão": [
     "Default background",
     "Fondo predeterminado"
-  ],
-  "Restaurar fundo padrão": [
-    "Restore default background",
-    "Restaurar fondo predeterminado"
   ],
   "Carregar fundo": [
     "Load background",
@@ -3619,17 +3607,56 @@
     "Ending · optional",
     "Finalización · opcional"
   ],
-  "Há nomes incompatíveis entre os mapas. Concilie os jogadores antes de gerar as estatísticas da série.": ["Player names differ between maps. Reconcile the players before generating series statistics.", "Los nombres difieren entre mapas. Concilia los jugadores antes de generar las estadísticas de la serie."],
-  "Há nomes incompatíveis entre os mapas. Selecione o mesmo jogador para as variações de nome. Nada será mesclado automaticamente.": ["Player names differ between maps. Select the same player for name variants. Nothing is merged automatically.", "Los nombres difieren entre mapas. Selecciona el mismo jugador para las variantes. Nada se combina automáticamente."],
-  "Conciliar jogadores da série": ["Reconcile series players", "Conciliar jugadores de la serie"],
-  "Salvar conciliação": ["Save reconciliation", "Guardar conciliación"],
-  "COR DE DESTAQUE": ["ACCENT COLOR", "COLOR DE RESALTE"],
-  "Aplicar cor": ["Apply color", "Aplicar color"],
-  "Use uma cor no formato #RRGGBB.": ["Use a color in #RRGGBB format.", "Usa un color con el formato #RRGGBB."],
-  "Vermelho": ["Red", "Rojo"],
-  "Azul": ["Blue", "Azul"],
-  "Branco": ["White", "Blanco"],
-  "Sem banimento": ["No ban", "Sin bloqueo"],
-  "Aplicar tempo": ["Apply time", "Aplicar tiempo"],
-  "GERADOR DE IMAGENS": ["IMAGE GENERATOR", "GENERADOR DE IMÁGENES"]
+  "Há nomes incompatíveis entre os mapas. Concilie os jogadores antes de gerar as estatísticas da série.": [
+    "Player names differ between maps. Reconcile the players before generating series statistics.",
+    "Los nombres difieren entre mapas. Concilia los jugadores antes de generar las estadísticas de la serie."
+  ],
+  "Há nomes incompatíveis entre os mapas. Selecione o mesmo jogador para as variações de nome. Nada será mesclado automaticamente.": [
+    "Player names differ between maps. Select the same player for name variants. Nothing is merged automatically.",
+    "Los nombres difieren entre mapas. Selecciona el mismo jugador para las variantes. Nada se combina automáticamente."
+  ],
+  "Conciliar jogadores da série": [
+    "Reconcile series players",
+    "Conciliar jugadores de la serie"
+  ],
+  "Salvar conciliação": [
+    "Save reconciliation",
+    "Guardar conciliación"
+  ],
+  "COR DE DESTAQUE": [
+    "ACCENT COLOR",
+    "COLOR DE RESALTE"
+  ],
+  "Aplicar cor": [
+    "Apply color",
+    "Aplicar color"
+  ],
+  "Use uma cor no formato #RRGGBB.": [
+    "Use a color in #RRGGBB format.",
+    "Usa un color con el formato #RRGGBB."
+  ],
+  "Vermelho": [
+    "Red",
+    "Rojo"
+  ],
+  "Azul": [
+    "Blue",
+    "Azul"
+  ],
+  "Branco": [
+    "White",
+    "Blanco"
+  ],
+  "Sem banimento": [
+    "No ban",
+    "Sin bloqueo"
+  ],
+  "Aplicar tempo": [
+    "Apply time",
+    "Aplicar tiempo"
+  ],
+  "GERADOR DE IMAGENS": [
+    "IMAGE GENERATOR",
+    "GENERADOR DE IMÁGENES"
+  ]
 }

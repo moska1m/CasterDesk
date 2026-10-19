@@ -1,7 +1,7 @@
 using System.Drawing.Imaging;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public sealed class ImageExportPanel : UserControl
 {
     readonly Func<IReadOnlyList<SiegeMatch>> list;readonly SiegeCatalog catalog;
@@ -33,7 +33,7 @@ public sealed class ImageExportPanel : UserControl
         var options=new FlowLayoutPanel(){Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoScroll=true};layout.Controls.Add(options,0,1);
         void Label(string s)=>options.Controls.Add(new Label(){Text=s,AutoSize=true,Font=AppTheme.HeadingFont,Margin=new Padding(3,12,3,5)});
         Label(L.T("FORMATO DA IMAGEM"));aspect.Items.AddRange(["Stories · 9:16 · 1080 × 1920","Feed · 4:5 · 1080 × 1350",L.T("Horizontal · 16:9 · 1920 × 1080")]);aspect.SelectedIndex=0;options.Controls.Add(aspect);options.Controls.Add(description);
-        Label(L.T("ESTILO DO FUNDO"));backgroundStyle.Items.AddRange([L.T("Clássico"),L.T("Comunidade · arte JG")]);backgroundStyle.SelectedIndex=0;options.Controls.Add(backgroundStyle);
+        Label(L.T("ESTILO DO FUNDO"));backgroundStyle.Items.AddRange([L.T("Clássico"),L.T("Comunidade")]);backgroundStyle.SelectedIndex=0;options.Controls.Add(backgroundStyle);
         Label(L.T("CONTEÚDO"));options.Controls.Add(scope);
         Label(L.T("CAMPEONATO (OPCIONAL)"));options.Controls.Add(eventName);options.Controls.Add(logo);
         var logos=new FlowLayoutPanel(){Width=335,Height=36};var choose=new ThemeButton(){Text=L.T("Selecionar logo"),Width=160};var remove=new ThemeButton(){Text=L.T("Remover logo"),Width=150};logos.Controls.AddRange([choose,remove]);options.Controls.Add(logos);
@@ -44,7 +44,7 @@ public sealed class ImageExportPanel : UserControl
         var actions=new FlowLayoutPanel(){Width=335,Height=40};actions.Controls.AddRange([save,copy]);options.Controls.Add(actions);options.Controls.Add(status);
         layout.Controls.Add(preview,1,1);
         matches.SelectedIndexChanged+=(_,_)=>{if(!loading)LoadSelection();};aspect.SelectedIndexChanged+=(_,_)=>Generate();scope.SelectedIndexChanged+=(_,_)=>{if(!loading)Generate();};pages.SelectedIndexChanged+=(_,_)=>{preview.Image=rendered.ElementAtOrDefault(pages.SelectedIndex)?.Image;};
-        backgroundStyle.SelectedIndexChanged+=(_,_)=>{if(loading||Selected is null)return;Brand.BackgroundStyle=backgroundStyle.SelectedIndex==1?"JG":"Classic";SaveBrands();Generate();};
+        backgroundStyle.SelectedIndexChanged+=(_,_)=>{if(loading||Selected is null)return;Brand.BackgroundStyle=backgroundStyle.SelectedIndex==1?"Community":"Classic";SaveBrands();Generate();};
         void CasterChanged(){if(loading||Selected is null)return;Brand.CasterName=casterName.Text;Brand.Channel=channel.Text;Brand.Platforms=platforms.Where(p=>p.Checked).Select(p=>p.Text).ToList();for(int i=0;i<3;i++)Brand.PlatformChannels[platforms[i].Text]=platformChannels[i].Text;ClearPreview();delay.Stop();delay.Start();}
         casterName.TextChanged+=(_,_)=>CasterChanged();channel.TextChanged+=(_,_)=>CasterChanged();foreach(var check in platforms)check.CheckedChanged+=(_,_)=>CasterChanged();foreach(var field in platformChannels)field.TextChanged+=(_,_)=>CasterChanged();
         eventName.TextChanged+=(_,_)=>{if(loading||Selected is null)return;Brand.EventName=eventName.Text;ClearPreview();delay.Stop();delay.Start();};delay.Tick+=(_,_)=>{delay.Stop();SaveBrands();Generate();};
@@ -63,7 +63,7 @@ public sealed class ImageExportPanel : UserControl
     }
     void LoadSelection()
     {
-        delay.Stop();loading=true;backgroundStyle.SelectedIndex=Brand.BackgroundStyle=="JG"?1:0;eventName.Text=Brand.EventName;casterName.Text=Brand.CasterName;channel.Text=Brand.Channel;for(int i=0;i<3;i++){platforms[i].Checked=Brand.SelectedPlatforms().Contains(platforms[i].Text);platformChannels[i].Text=Brand.PlatformChannels.GetValueOrDefault(platforms[i].Text,"");}scope.Items.Clear();scope.Items.Add(L.T("Série · mapas com rounds registrados"));if(Selected is not null)foreach(var map in Selected.Maps)scope.Items.Add(L.F($"Mapa {Selected.Maps.IndexOf(map)+1:00} · {catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName}"));scope.SelectedIndex=0;ShowLogo();loading=false;Generate();
+        delay.Stop();loading=true;backgroundStyle.SelectedIndex=Brand.BackgroundStyle=="Community"?1:0;eventName.Text=Brand.EventName;casterName.Text=Brand.CasterName;channel.Text=Brand.Channel;for(int i=0;i<3;i++){platforms[i].Checked=Brand.SelectedPlatforms().Contains(platforms[i].Text);platformChannels[i].Text=Brand.PlatformChannels.GetValueOrDefault(platforms[i].Text,"");}scope.Items.Clear();scope.Items.Add(L.T("Série · mapas com rounds registrados"));if(Selected is not null)foreach(var map in Selected.Maps)scope.Items.Add(L.F($"Mapa {Selected.Maps.IndexOf(map)+1:00} · {catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName}"));scope.SelectedIndex=0;ShowLogo();loading=false;Generate();
     }
     void ShowLogo(){var old=logo.Image;logo.Image=null;old?.Dispose();try{if(File.Exists(Brand.LogoFile)){using var img=Image.FromFile(Brand.LogoFile);logo.Image=new Bitmap(img);}}catch{status.Text=L.T("Logo indisponível. Selecione a imagem novamente.");}}
     void ChooseLogo()

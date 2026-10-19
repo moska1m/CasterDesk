@@ -1,4 +1,4 @@
-﻿namespace CronoLive;
+namespace CasterDesk.Core;
 public static class ExportTests
 {
     public static void Run()
@@ -12,7 +12,7 @@ public static class ExportTests
             var info=catalog.Maps.Single(m=>m.Id==ids[i]);var map=new MapRecord{MapId=ids[i],InitialAttack=0,OtAttack=0,ConfirmedAt=DateTimeOffset.Now,Bans=["mira","azami","ace","thatcher","valkyrie","hibana","ace","thatcher","mira","azami","hibana","valkyrie"]};
             foreach(int winner in winners[i])map.Rounds.Add(new(){Winner=winner,Site=info.Sites[map.Rounds.Count%info.Sites.Length]});match.Maps.Add(map);
         }
-        var brand=new ExportBrand{EventName="CAMPEONATO DA COMUNIDADE · PRÉVIA",CasterName="MOSKA",Channel="@MOSKA1M",Platform="Twitch"};
+        var brand=new ExportBrand{EventName="CAMPEONATO DA COMUNIDADE · PRÉVIA",CasterName="NARRADOR EXEMPLO",Channel="@CASTERDESK_DEMO",Platform="Twitch"};
         int checks=0;
         void Need(bool value){if(!value)throw new Exception("PNG export test failed");checks++;}
         foreach(var aspect in Enum.GetValues<ExportAspect>())
@@ -40,7 +40,7 @@ public static class ExportTests
             foreach(var page in pages){Need(page.Image.Width==(aspect==ExportAspect.Horizontal?1920:1080));Need(page.Image.Height==(aspect==ExportAspect.Stories?1920:aspect==ExportAspect.Feed?1350:1080));page.Image.Save(Path.Combine(folder,$"{aspect}_{page.Name}.png"),System.Drawing.Imaging.ImageFormat.Png);page.Dispose();}
             Need(before==System.Text.Json.JsonSerializer.Serialize(match));
         }
-        brand.BackgroundStyle="JG";
+        brand.BackgroundStyle="Community";
         foreach(var aspect in Enum.GetValues<ExportAspect>())
         {
             var themed=ResultRenderer.Render(match,catalog,brand,aspect);
@@ -87,10 +87,10 @@ public static class ExportTests
         brand.Platforms=["Twitch","YouTube","Kick"];brand.PlatformChannels=new();
         Need(brand.SelectedPlatforms().Length==3 && brand.ChannelFor("Kick")==brand.Channel);
         using(var page=ResultRenderer.Render(match,catalog,brand,ExportAspect.Feed)[0])page.Image.Save(Path.Combine(folder,"multi-shared.png"),System.Drawing.Imaging.ImageFormat.Png);
-        brand.PlatformChannels["YouTube"]="@MOSKA-CAST";brand.PlatformChannels["Kick"]="kick.com/moska";
-        Need(brand.ChannelFor("YouTube")=="@MOSKA-CAST");
+        brand.PlatformChannels["YouTube"]="@CASTERDESK-DEMO";brand.PlatformChannels["Kick"]="kick.com/casterdesk_demo";
+        Need(brand.ChannelFor("YouTube")=="@CASTERDESK-DEMO");
         var multi=ResultRenderer.Render(match,catalog,brand,ExportAspect.Feed);for(int i=0;i<multi.Count;i++){multi[i].Image.Save(Path.Combine(folder,$"multi-different-{i}.png"),System.Drawing.Imaging.ImageFormat.Png);multi[i].Dispose();}
-        var restored=System.Text.Json.JsonSerializer.Deserialize<ExportBrand>(System.Text.Json.JsonSerializer.Serialize(brand))!;Need(restored.SelectedPlatforms().Length==3 && restored.ChannelFor("Kick")=="kick.com/moska");
+        var restored=System.Text.Json.JsonSerializer.Deserialize<ExportBrand>(System.Text.Json.JsonSerializer.Serialize(brand))!;Need(restored.SelectedPlatforms().Length==3 && restored.ChannelFor("Kick")=="kick.com/casterdesk_demo");
         AppTheme.Dark=true;
         using(var form=new Form(){ClientSize=new Size(1240,850)})
         {

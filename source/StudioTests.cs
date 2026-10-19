@@ -1,7 +1,7 @@
 using System.Drawing.Imaging;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 public static class StudioTests
 {
     public static void Run()

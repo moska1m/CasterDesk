@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
-using CronoLive;
+using CasterDesk.Core;
 namespace CasterDesk.Wpf;
 internal static class LobbyView
 {

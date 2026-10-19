@@ -1,5 +1,5 @@
 using System.Text.Json;
-namespace CronoLive;
+namespace CasterDesk.Core;
 public static class StatisticsOcrTests
 {
     public static void Run(string[] files)

@@ -2,7 +2,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace CronoLive;
+namespace CasterDesk.Core;
 
 public sealed record BackupEntry(string Path,long Length,string Hash);
 public sealed record BackupManifest(int Version,string Root,List<BackupEntry> Files);
