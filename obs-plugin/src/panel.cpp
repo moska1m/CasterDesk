@@ -103,8 +103,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     reset = new QPushButton("Resetar tempo"); reset->setObjectName("reset"); timerLayout->insertWidget(3,reset);
     timeFormat = new QComboBox(); timeFormat->addItems({"mm:ss","hh:mm:ss"}); timeFormat->setObjectName("time-format");timeFormat->setEditable(true);timeFormat->lineEdit()->setReadOnly(true);timeFormat->lineEdit()->setAlignment(Qt::AlignCenter); timerLayout->insertWidget(4,timeFormat);
     finalMessage = new QLineEdit(); finalMessage->setObjectName("final-message"); finalMessage->setMaxLength(500); finalMessage->setPlaceholderText("Mensagem final"); timerLayout->insertWidget(5,finalMessage);
-    auto *presets = new QGridLayout(); timerLayout->insertLayout(6,presets);
-    for(int i=0;i<3;++i){presetValues[i]=new QDoubleSpinBox();presetValues[i]->setRange(0.01,1440);presetValues[i]->setValue(i+2);presetValues[i]->setSuffix(" min");presetValues[i]->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);presetValues[i]->setMinimumWidth(44);presetButtons[i]=new QPushButton("+");presetButtons[i]->setObjectName(QString("preset-%1").arg(i));presets->addWidget(presetValues[i],i,0);presets->addWidget(presetButtons[i],i,1);connect(presetButtons[i],&QPushButton::clicked,this,[this,i]{command({{"action","adjust"},{"seconds",presetValues[i]->value()*60}});});}
+    presetGrid = new QGridLayout(); timerLayout->insertLayout(6,presetGrid);
     timerSave = new QPushButton("Aplicar configurações"); timerSave->setObjectName("timer-config"); timerLayout->insertWidget(7,timerSave);
     timerStatus = new QLabel(); timerStatus->setWordWrap(true); timerLayout->insertWidget(8,timerStatus);
     outputFolder = new QLineEdit(); outputFolder->setReadOnly(true); outputFolder->setObjectName("output-folder"); timerLayout->insertWidget(9,outputFolder);
@@ -157,7 +156,7 @@ void CasterDeskPanel::paintConnection()
     QPixmap mark(40,40);mark.setDevicePixelRatio(2);mark.fill(Qt::transparent);QPainter painter(&mark);renderer.render(&painter,QRectF(0,0,20,20));painter.end();connectionIcon->setPixmap(mark);
     status->setStyleSheet(QString("color:%1;font-size:10px;padding:0px").arg(color));
 }
-void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(label("disconnected","Desconectado").toUpper());status->setToolTip(message);paintConnection();context->setText("—");mapLabel->clear();remakeChoice->setEnabled(false);remakeInfo->hide();remakeCheck->hide();roundHistory->hide();clearLayout(remakeBans);updateEnabled();}
+void CasterDeskPanel::disconnectPanel(const QString &message) {connected=false;status->setText(label("disconnected","Desconectado").toUpper());status->setToolTip(message);paintConnection();context->setText("—");mapLabel->clear();remakeChoice->setEnabled(false);remakeInfo->hide();remakeCheck->hide();roundHistory->hide();remakeContentRendered.clear();clearLayout(remakeBans);updateEnabled();}
 bool CasterDeskPanel::discover()
 {
     QFile file(configPath); if(!file.open(QIODevice::ReadOnly)){disconnectPanel("Abra o CasterDesk com a integração OBS instalada.");return false;}
@@ -209,12 +208,22 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     Q_UNUSED(previousPending);
     const auto options=time["options"].toObject();
     // Polling must not overwrite text or preset values while the caster is typing.
+    const auto receivedPresets=options["presets"].toArray();
+    if(receivedPresets.size()!=presetValues.size()) {
+        clearLayout(presetGrid);presetValues.clear();presetButtons.clear();timerOptionsRendered.clear();
+        for(int i=0;i<receivedPresets.size();++i) {
+            auto *value=new QDoubleSpinBox();value->setRange(0.01,1440);value->setValue(receivedPresets[i].toDouble());value->setSuffix(" min");value->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);value->setMinimumWidth(44);value->setAlignment(Qt::AlignCenter);
+            auto *button=new QPushButton("+");button->setObjectName(QString("preset-%1").arg(i));
+            presetValues.append(value);presetButtons.append(button);presetGrid->addWidget(value,i,0);presetGrid->addWidget(button,i,1);
+            connect(button,&QPushButton::clicked,this,[this,value]{command({{"action","adjust"},{"seconds",value->value()*60}});});
+        }
+    }
     const auto settingsToken=QString::number(options["initial"].toDouble())+options["format"].toString()+options["message"].toString()+QString::fromUtf8(QJsonDocument(options["presets"].toArray()).toJson());
-    if(settingsToken!=timerOptionsRendered){timerOptionsRendered=settingsToken;if(!duration->hasFocus()){int initial=options["initial"].toInt(600);duration->setText(QString("%1:%2:%3").arg(initial/3600,2,10,QChar('0')).arg(initial/60%60,2,10,QChar('0')).arg(initial%60,2,10,QChar('0')));}if(!finalMessage->hasFocus())finalMessage->setText(options["message"].toString());if(!timeFormat->hasFocus())timeFormat->setCurrentText(options["format"].toString("mm:ss"));auto presets=options["presets"].toArray();for(int i=0;i<3&&i<presets.size();++i)if(!presetValues[i]->hasFocus())presetValues[i]->setValue(presets[i].toDouble());}
+    if(settingsToken!=timerOptionsRendered){timerOptionsRendered=settingsToken;if(!duration->hasFocus()){int initial=options["initial"].toInt(600);duration->setText(QString("%1:%2:%3").arg(initial/3600,2,10,QChar('0')).arg(initial/60%60,2,10,QChar('0')).arg(initial%60,2,10,QChar('0')));}if(!finalMessage->hasFocus())finalMessage->setText(options["message"].toString());if(!timeFormat->hasFocus())timeFormat->setCurrentText(options["format"].toString("mm:ss"));auto presets=options["presets"].toArray();for(int i=0;i<presetValues.size()&&i<presets.size();++i)if(!presetValues[i]->hasFocus())presetValues[i]->setValue(presets[i].toDouble());}
     timerStatus->setText(options["status"].toString());outputFolder->setText(options["folder"].toString());outputFolder->setToolTip(options["output"].toString());
     if(!options["readout"].toString().isEmpty())clock->setText(options["readout"].toString());
     reset->setText(label("reset","Resetar tempo"));timerSave->setText(label("applyTimer","Aplicar configurações"));copyFolder->setText(label("copy","Copiar caminho"));finalMessage->setPlaceholderText(label("message","Mensagem final:"));
-    for(int i=0;i<3;++i)presetButtons[i]->setText(QString("+ %1 min").arg(presetValues[i]->value()));
+    for(int i=0;i<presetValues.size();++i)presetButtons[i]->setText(QString("+ %1 min").arg(presetValues[i]->value()));
 
 }
 void CasterDeskPanel::updateEnabled()
@@ -229,7 +238,7 @@ void CasterDeskPanel::updateEnabled()
     for(auto *team:roundTeams)team->setEnabled(roundReady);
     roundSave->setEnabled(roundReady&&roundWinner>=0&&!roundSite.isEmpty()&&!roundEnding.isEmpty());roundSave->setStyleSheet(roundSave->isEnabled()?"background:#25834c;color:white;font-weight:700":"");
     for(auto *button:{reset,timerSave})button->setEnabled(ready);
-    for(int i=0;i<3;++i){presetValues[i]->setEnabled(ready);presetButtons[i]->setEnabled(ready);}
+    for(int i=0;i<presetValues.size();++i){presetValues[i]->setEnabled(ready);presetButtons[i]->setEnabled(ready);}
     finalMessage->setEnabled(ready);timeFormat->setEnabled(ready);copyFolder->setEnabled(connected&&!outputFolder->text().isEmpty());
 }
 static QPushButton *choiceButton(const QString &text,const QString &name)
@@ -285,6 +294,8 @@ void CasterDeskPanel::renderRemake()
     const QString selected=match["id"].toString()==remakeMatch?remakeChoice->currentData().toString():QString();
     remakeMatch=match["id"].toString();const QString optionsToken=remakeMatch+":"+state["language"].toString()+":"+QString::fromUtf8(QJsonDocument(maps).toJson(QJsonDocument::Compact));
     if(optionsToken!=remakeOptionsRendered){remakeOptionsRendered=optionsToken;buildingRemake=true;remakeChoice->clear();remakeChoice->addItem(label("chooseRemake","Escolha o mapa para o remake"),"");for(const auto &value:maps){const auto map=value.toObject();remakeChoice->addItem(map["label"].toString(),map["id"].toString());}remakeChoice->setCurrentIndex(qMax(0,remakeChoice->findData(selected)));buildingRemake=false;}
+    const auto contentToken=optionsToken+":"+selected+":"+QString::number(connected)+":"+QString::fromUtf8(QJsonDocument(match).toJson(QJsonDocument::Compact));
+    if(contentToken==remakeContentRendered)return;remakeContentRendered=contentToken;
     QJsonObject chosen;for(const auto &value:maps){const auto map=value.toObject();if(!selected.isEmpty()&&map["id"].toString()==selected)chosen=map;}clearLayout(remakeBans);
     bool visible=connected&&!chosen.isEmpty();remakeInfo->setVisible(visible);remakeCheck->setVisible(visible);roundHistory->setVisible(visible);findChild<QLabel *>("history-title")->setVisible(visible);
     if(!visible){roundHistory->setRowCount(0);remakeInfo->clear();remakeCheck->clear();return;}

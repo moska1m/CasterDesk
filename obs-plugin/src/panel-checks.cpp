@@ -11,6 +11,7 @@
 #include <QElapsedTimer>
 #include <QThread>
 #include <QToolButton>
+#include <QDoubleSpinBox>
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -73,6 +74,13 @@ int main(int argc,char **argv)
         check(status->width()>40,"connection badge remains readable in compact header");
         panel.findChild<QLineEdit *>("duration")->setText("04:00");panel.findChild<QLineEdit *>("final-message")->setText("MATCH STARTS NOW");panel.findChild<QComboBox *>("time-format")->setCurrentText("hh:mm:ss");panel.findChild<QPushButton *>("timer-config")->click();
         waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});check(lastCommand["seconds"]==240&&lastCommand["format"]=="hh:mm:ss"&&lastCommand["message"]=="MATCH STARTS NOW"&&lastCommand["presets"].toArray().size()==3,"complete timer configuration sends initial time format message and presets");
+        for(int count:{0,1,8,3}) {
+            auto clock=state["timer"].toObject();auto options=clock["options"].toObject();QJsonArray values;for(int i=0;i<count;++i)values.append(i+2);options["presets"]=values;clock["options"]=options;state["timer"]=clock;
+            waitFor([&]{return panel.findChildren<QDoubleSpinBox *>().size()==count&&start->isEnabled();});
+            lastCommand=QJsonObject();panel.findChild<QPushButton *>("timer-config")->click();
+            waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});
+            check(lastCommand["presets"].toArray()==values,"legacy preset count and values survive polling and configuration");
+        }
         panel.findChild<QPushButton *>("reset")->click();waitFor([&]{return lastCommand["action"]=="reset"&&start->isEnabled();});check(lastCommand["action"]=="reset","reset targets shared countdown");
         std::cout<<"PASS: "<<checks<<" native Qt offscreen checks, authenticated HTTP, timer, ban context, modal guard and reconnect; OBS not opened.\n";return 0;
     }catch(const std::exception &error){std::cerr<<error.what()<<"\n";return 1;}
