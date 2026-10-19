@@ -18,6 +18,7 @@
 #include <QClipboard>
 #include <QApplication>
 #include <QToolButton>
+#include <QGraphicsOpacityEffect>
 #include <windows.h>
 #include <shlobj.h>
 #include <cmath>
@@ -96,7 +97,7 @@ CasterDeskPanel::CasterDeskPanel(QWidget *parent, QString path, bool autoPoll) :
     banSlots = new QGridLayout(); banSlots->setObjectName("ban-slots"); banLayout->addLayout(banSlots);
     phase = new QLabel(); phase->setWordWrap(true); banLayout->addWidget(phase);
     search = new QLineEdit(); search->setPlaceholderText("Filtrar operadores"); banLayout->addWidget(search);
-    auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setAlignment(Qt::AlignTop); banLayout->addWidget(grid); partidaLayout->addStretch();
+    auto *grid = new QWidget(); operators = new QGridLayout(grid); operators->setObjectName("operator-grid"); operators->setAlignment(Qt::AlignTop); banLayout->addWidget(grid); partidaLayout->addStretch();
     tabs->insertTab(0,matchScroll,"PARTIDA"); tabs->setCurrentIndex(0);
     connect(roundSave,&QPushButton::clicked,this,[this]{const auto match=state["match"].toObject();command({{"action","round"},{"matchId",match["id"]},{"mapId",match["mapId"]},{"revision",state["revision"]},{"site",roundSite},{"winner",roundWinner},{"ending",roundEnding},{"roundIndex",roundIndex}});});
     // All timer configuration operates on the same CasterDesk countdown and TXT.
@@ -202,7 +203,7 @@ void CasterDeskPanel::receive(const QJsonObject &data)
     if(next!=rendered){rendered=next;clearLayout(banSlots);QString nextPhase=label("wait","Nenhum ban pendente.");
         int columns[2]={0,0};
         for(int team=0;team<2;++team){auto *teamTitle=new QLabel(match[team==0?"teamA":"teamB"].toString());teamTitle->setAlignment(Qt::AlignCenter);teamTitle->setWordWrap(true);teamTitle->setMinimumWidth(0);teamTitle->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);teamTitle->setStyleSheet(QString("color:%1;font-weight:700").arg(team==0?"#6ec6eb":"#ffa375"));banSlots->addWidget(teamTitle,team*2,0,1,6);}
-        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();int team=ban["team"].toInt();auto *card=new QToolButton();card->setObjectName(QString("ban-card-%1").arg(ban["slot"].toInt()));card->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);card->setIconSize(QSize(28,28));card->setText(ban["name"].toString().isEmpty()?ban["role"].toString():ban["name"].toString());card->setToolTip(match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString()+" · "+QString::number(ban["slot"].toInt()/6+1)+" · "+card->text());card->setMinimumWidth(0);card->setFixedHeight(70);card->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);card->setStyleSheet(QString("background:%1;color:white;font-size:10px;padding-top:5px;padding-bottom:5px;text-align:center;border:%2px solid %3;").arg(team==0?"#305975":"#895333").arg(ban["slot"]==data["pending"]?2:0).arg("white"));card->setProperty("team",team);banSlots->addWidget(card,team*2+1,columns[team]++);loadIcon(ban["id"].toString().isEmpty()?(ban["role"]=="DEF"?"__def":"__atq"):ban["id"].toString(),card);if(!ban["unlocked"].toBool())card->setEnabled(false);if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString();}
+        for(const auto &value:data["bans"].toArray()){const auto ban=value.toObject();int team=ban["team"].toInt();auto *card=new QToolButton();card->setObjectName(QString("ban-card-%1").arg(ban["slot"].toInt()));card->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);card->setIconSize(QSize(28,28));const bool noBan=ban["id"]=="__def"||ban["id"]=="__atq";card->setText(ban["name"].toString().isEmpty()||noBan?ban["role"].toString():ban["name"].toString());card->setToolTip(match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString()+" · "+QString::number(ban["slot"].toInt()/6+1)+" · "+(noBan?ban["name"].toString():card->text()));card->setAccessibleName(card->toolTip());card->setMinimumWidth(0);card->setFixedHeight(70);card->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);card->setStyleSheet(QString("background:%1;color:white;font-size:10px;padding-top:5px;padding-bottom:5px;text-align:center;border:%2px solid %3;").arg(team==0?"#305975":"#895333").arg(ban["slot"]==data["pending"]?2:0).arg("white"));card->setProperty("team",team);banSlots->addWidget(card,team*2+1,columns[team]++);loadIcon(ban["id"].toString().isEmpty()?(ban["role"]=="DEF"?"__def":"__atq"):ban["id"].toString(),card);auto *opacity=new QGraphicsOpacityEffect(card);opacity->setOpacity(!ban["unlocked"].toBool()&&ban["id"].toString().isEmpty()?0.5:1.0);card->setGraphicsEffect(opacity);if(!ban["unlocked"].toBool())card->setEnabled(false);if(!data["pending"].isNull()&&ban["slot"]==data["pending"])nextPhase=match[team==0?"teamA":"teamB"].toString()+" · "+ban["role"].toString();}
         phase->setText(nextPhase);renderOperators();}
     renderRounds();renderRemake();updateEnabled();
     Q_UNUSED(previousPending);
@@ -230,7 +231,7 @@ void CasterDeskPanel::updateEnabled()
 {
     const bool ready=connected&&!busy&&state["controllable"].toBool();const auto time=state["timer"].toObject();start->setEnabled(ready&&!time["running"].toBool()&&time["seconds"].toDouble()>0);pause->setEnabled(ready&&time["running"].toBool());add->setEnabled(ready);subtract->setEnabled(ready&&time["seconds"].toDouble()>0);set->setEnabled(ready);
     mapChoice->setEnabled(ready&&mapChoice->count()>1);
-    for(int n=0;n<operators->count();++n){auto *button=qobject_cast<QPushButton *>(operators->itemAt(n)->widget());if(button)button->setEnabled(ready&&button->property("available").toBool());}
+    for(int n=0;n<operators->count();++n){auto *button=qobject_cast<QAbstractButton *>(operators->itemAt(n)->widget());if(button)button->setEnabled(ready&&button->property("available").toBool());}
     const auto rounds=state["rounds"].toObject();const bool roundReady=ready&&rounds["editable"].toBool()&&(roundIndex>=0||rounds["ready"].toBool());
     roundHistory->setEnabled(connected);remakeChoice->setEnabled(connected&&!busy);newRound->setEnabled(ready);
     for(int n=0;n<roundSites->count();++n){auto *button=qobject_cast<QPushButton *>(roundSites->itemAt(n)->widget());if(button)button->setEnabled(roundReady&&button->property("available").toBool());}
@@ -275,9 +276,14 @@ void CasterDeskPanel::updateRoundChoices()
 void CasterDeskPanel::renderOperators()
 {
     clearLayout(operators);int n=0;
-    for(const auto &value:state["operators"].toArray()){const auto op=value.toObject();if(!op["name"].toString().contains(search->text().trimmed(),Qt::CaseInsensitive))continue;auto *button=new QPushButton(op["name"].toString());button->setObjectName("operator");button->setProperty("available",op["enabled"].toBool());button->setIconSize(QSize(32,32));button->setMinimumHeight(56);button->setMinimumWidth(0);button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setToolTip(op["name"].toString());operators->addWidget(button,n/3,n%3);++n;
+    // Keep the game's operator order; the repeatable no-ban option is always last,
+    // including when connected to an older app that sends it first.
+    QJsonArray choices;
+    for(const auto &value:state["operators"].toArray())if(value.toObject()["id"]!="__def"&&value.toObject()["id"]!="__atq")choices.append(value);
+    for(const auto &value:state["operators"].toArray())if(value.toObject()["id"]=="__def"||value.toObject()["id"]=="__atq")choices.append(value);
+    for(const auto &value:choices){const auto op=value.toObject();const bool noBan=op["id"]=="__def"||op["id"]=="__atq";if(!noBan&&!op["name"].toString().contains(search->text().trimmed(),Qt::CaseInsensitive))continue;auto *button=new QToolButton();button->setText(op["name"].toString());button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);button->setObjectName("operator");button->setProperty("operatorId",op["id"].toString());button->setProperty("available",op["enabled"].toBool());button->setIconSize(QSize(36,36));button->setFixedHeight(72);button->setMinimumWidth(0);button->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);button->setStyleSheet("font-size:10px;padding:4px;text-align:center;");button->setToolTip(op["name"].toString());button->setAccessibleName(op["name"].toString());operators->addWidget(button,n/3,n%3);++n;
         const auto match=state["match"].toObject();const QJsonObject payload{{"action","ban"},{"matchId",match["id"]},{"mapId",match["mapId"]},{"revision",state["revision"]},{"slot",state["pending"]},{"operatorId",op["id"]}};
-        connect(button,&QPushButton::clicked,this,[this,payload]{command(payload);});loadIcon(op["id"].toString(),button);}
+        connect(button,&QAbstractButton::clicked,this,[this,payload]{command(payload);});loadIcon(op["id"].toString(),button);}
     updateEnabled();
 }
 void CasterDeskPanel::loadIcon(const QString &id,QAbstractButton *button)
