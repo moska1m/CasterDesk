@@ -21,11 +21,15 @@ public static class StudioRenderer
     {
         lock(gate)
         {
+            if(kind is ArtKind.SeriesStats or ArtKind.Results) {
+                string issue=StatisticsData.SeriesIssue(match);
+                if(issue!="")throw new InvalidOperationException(issue);
+            }
             if(kind==ArtKind.MapVeto)
             {
                 if(match.Veto.Any(string.IsNullOrWhiteSpace)||match.Maps.Any(m=>m.InitialAttack<0))throw new InvalidOperationException(L.T("Conclua o veto e defina os lados dos mapas antes de gerar."));
                 using var transparent=Veto(match,catalog,brand);
-                using var full=Background(match,brand,new(1920,1080),"veto");using(var g=Graphics.FromImage(full))g.DrawImageUnscaled(transparent,0,0);
+                using var full=Background(match,brand,new(1920,1080),"veto",kind);using(var g=Graphics.FromImage(full))g.DrawImageUnscaled(transparent,0,0);
                 return [new("map-veto-obs",new Bitmap(transparent)),new("map-veto",new Bitmap(full))];
             }
             if(kind!=ArtKind.Announcement && !match.Maps.Any(m=>m.Rounds.Count>0))throw new InvalidOperationException(L.T("Registre pelo menos um round antes de gerar a imagem."));
@@ -33,7 +37,7 @@ public static class StudioRenderer
             if(kind==ArtKind.SeriesStats && !match.Maps.Any(m=>m.Statistics?.ConfirmedAt is not null && m.Statistics.Players.Count>0))throw new InvalidOperationException(L.T("Confira as estatísticas de pelo menos um mapa antes de gerar."));
             string format=aspect switch{ExportAspect.Horizontal=>"horizontal",ExportAspect.Feed=>"feed",_=>"stories"};
             Size size=aspect==ExportAspect.Horizontal?new(1920,1080):aspect==ExportAspect.Feed?new(1080,1350):new(1080,1920);
-            var image=Background(match,brand,size,kind==ArtKind.Announcement?"promo":format);
+            var image=Background(match,brand,size,kind==ArtKind.Announcement?"promo":format,kind);
             try
             {
                 using var g=Graphics.FromImage(image);Setup(g);
@@ -45,11 +49,11 @@ public static class StudioRenderer
             catch{image.Dispose();throw;}
         }
     }
-    static Bitmap Background(SiegeMatch match,ImageBrand brand,Size size,string format)
+    static Bitmap Background(SiegeMatch match,ImageBrand brand,Size size,string format,ArtKind kind)
     {
         var image=new Bitmap(size.Width,size.Height,PixelFormat.Format32bppArgb);
         using var g=Graphics.FromImage(image);Setup(g);g.Clear(Color.FromArgb(12,18,25));
-        string? custom=MatchFiles.Resolve(match,brand.Background);
+        string? custom=MatchFiles.Resolve(match,brand.BackgroundFor(kind));
         Photo(g,custom??Asset("background-"+format+".jpg"),new(0,0,size.Width,size.Height));
         if(custom is not null){using var shade=new SolidBrush(Color.FromArgb(105,0,0,0));g.FillRectangle(shade,0,0,size.Width,size.Height);}
         return image;
@@ -114,6 +118,14 @@ public static class StudioRenderer
         using var initial=new Font(family,size,FontStyle.Regular,GraphicsUnit.Pixel);
         float measured=g.MeasureString(text,initial).Width;float adjusted=measured>r.Width?Math.Max(12,size*r.Width/measured):size;
         using var font=new Font(family,adjusted,FontStyle.Regular,GraphicsUnit.Pixel);using var brush=new SolidBrush(color);g.DrawString(text,font,brush,r,f);
+    }
+    // One em size for every nickname in this format. Long names trim, never shrink independently.
+    internal static void PlayerText(Graphics g,string text,RectangleF r,float em,bool title=false,StringAlignment align=StringAlignment.Near)
+    {
+        using var font=new Font((title?heading:medium).Families[0],em,FontStyle.Regular,GraphicsUnit.Pixel);
+        using var brush=new SolidBrush(Color.White);
+        using var f=new StringFormat{Alignment=align,LineAlignment=StringAlignment.Center,FormatFlags=StringFormatFlags.NoWrap,Trimming=StringTrimming.EllipsisCharacter};
+        g.DrawString(text,font,brush,r,f);
     }
     internal static float InkWidth(string text,float height,bool title=true)
     {

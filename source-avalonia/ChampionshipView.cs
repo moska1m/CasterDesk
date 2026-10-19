@@ -1,4 +1,4 @@
-﻿namespace CasterDesk.Avalonia;
+namespace CasterDesk.Avalonia;
 
 public sealed partial class ChampionshipView : Grid
 {
@@ -56,7 +56,9 @@ public sealed partial class ChampionshipView : Grid
         navigation.Children.Add(specMatchHeader); SetColumn(specMatchHeader,1);
         navigation.Children.Add(matchToolbar); SetColumn(matchToolbar,2);
         Children.Add(navigation); Children.Add(body); SetRow(body, 1);
-        notice.FontSize = 12; notice.Margin = new Thickness(4); Children.Add(notice); SetRow(notice, 2);
+        notice.Name = "match-notice"; notice.FontSize = 12; notice.Margin = new Thickness(4); notice.IsVisible = false;
+        notice.PropertyChanged += (_, e) => { if (e.Property == TextBlock.TextProperty) notice.IsVisible = !string.IsNullOrWhiteSpace(notice.Text); };
+        Children.Add(notice); SetRow(notice, 2);
         Session.Changed += Refresh; Session.MapConfirmed += Confirmed;
         namesTimer.Tick += (_, _) => { namesTimer.Stop(); try { FlushNames(); } catch (Exception ex) { notice.Text = ex.Message; } };
         SizeChanged += (_, _) => { resizeTimer.Stop(); resizeTimer.Start(); };
@@ -78,7 +80,7 @@ public sealed partial class ChampionshipView : Grid
     async Task Run(Func<Task> action)
     {
         if (Processing) return;
-        try { FlushNames(); await action(); if (!stopped) notice.Text = L.T("Salvo automaticamente • ") + DateTime.Now.ToString("HH:mm:ss"); }
+        try { FlushNames(); await action(); if (!stopped) notice.Text = ""; }
         catch (Exception ex) { if (!stopped) { notice.Text = ex.Message; Refresh(); } }
     }
     Button Action(string label, System.Action action, bool primary = false) => Action(label, () => { action(); return Task.CompletedTask; }, primary);
@@ -108,7 +110,6 @@ public sealed partial class ChampionshipView : Grid
         var match = Session.Current; var map = Session.Map;
         var layout = new Grid { Name = "match-layout", RowDefinitions = new("0,3*,2*,Auto"), ColumnDefinitions = new("40*,60*") };
         layout.RowDefinitions[2].MaxHeight = compact ? 300 : 350;
-        if (Bounds.Height < 650 && BansReady) layout.RowDefinitions[1].Height = new GridLength(88);
         var toolbar = new StackPanel { Name = "match-toolbar", Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         var newMatch = Action("Nova partida", Session.New, true); newMatch.Name = "new-match"; newMatch.VerticalAlignment = VerticalAlignment.Center; newMatch.MinHeight = 0; newMatch.Height = 32; newMatch.Margin = new Thickness(0); toolbar.Children.Add(newMatch);
         var saved = Ui.Combo(); saved.Width = 370; saved.ItemsSource = Session.Matches.ToArray(); saved.SelectedItem = match;
@@ -116,9 +117,12 @@ public sealed partial class ChampionshipView : Grid
         saved.Name = "match-selector"; saved.Width = Math.Min(370, Math.Max(250, Bounds.Width * .25));
         saved.VerticalAlignment = VerticalAlignment.Center; saved.Height = 32; saved.MinHeight = 0; saved.Margin = new Thickness(0);
         toolbar.Children.Add(saved); matchToolbar.Content = toolbar;
-        var left = new Grid { RowDefinitions = new("1.6*,*") };
-        left.Children.Add(Ui.Card("Confronto", new ScrollViewer { Name = "setup-scroll", Content = Setup(match) }));
-        Add(left, Ui.Card("Mapas da partida • lados da equipe indicada", new ScrollViewer { Content = Sides(match) }), 0, 1);
+        var left = new Grid { RowDefinitions = new("Auto,*") };
+        var setup = Ui.Card("Confronto", new ScrollViewer { Name = "setup-scroll", Content = Setup(match) });
+        setup.Name = "match-setup-card"; setup.MaxHeight = compact ? 220 : 240;
+        left.Children.Add(setup);
+        var sides = Ui.Card("Mapas da partida • lados da equipe indicada", new ScrollViewer { Name = "match-sides-scroll", Content = Sides(match) });
+        sides.Name = "match-sides-card"; Add(left, sides, 0, 1);
         Add(layout, left, 0, 1);
         Add(layout, Ui.Card("Mapas • picks e bans", Veto(match)), 1, 1);
         var score = map?.Score();
@@ -132,7 +136,8 @@ public sealed partial class ChampionshipView : Grid
         bansBody.Children.Remove(selectedMap);
         var title=bansBody.Children.OfType<TextBlock>().First();bansBody.Children.Remove(title);
         var banHeader=Columns("*,Auto,Auto");banHeader.Background=Ui.Header;banHeader.Margin=new Thickness(-10,-10,-10,2);banHeader.MinHeight=30;
-        title.Background=Brushes.Transparent;title.Margin=new Thickness(0);Add(banHeader,title,0);selectedMap.Width=compact?140:180;selectedMap.Height=30;selectedMap.MinHeight=0;selectedMap.Margin=new Thickness(0,0,6,0);Add(banHeader,selectedMap,2);
+        title.Background=Brushes.Transparent;title.Margin=new Thickness(0);title.TextWrapping=TextWrapping.NoWrap;title.TextTrimming=TextTrimming.CharacterEllipsis;title.FontSize=compact?11:14;
+        Add(banHeader,title,0);selectedMap.Width=compact?110:180;selectedMap.Height=30;selectedMap.MinHeight=0;selectedMap.Margin=new Thickness(0,0,6,0);Add(banHeader,selectedMap,2);
         obsKnob = new Border { Width = 16, Height = 16, CornerRadius = new CornerRadius(8), Background = Brushes.White, Margin = new Thickness(3), VerticalAlignment = VerticalAlignment.Center };
         obsTrack = new Border { Width = 42, Height = 22, CornerRadius = new CornerRadius(11), Child = obsKnob };
         var obsMode=new ToggleButton {Name="use-obs-bans",Content=obsTrack,IsChecked=UseObsForBans,Width=42,Height=22,Padding=new Thickness(0),Margin=new Thickness(4,0,8,0)};
@@ -145,8 +150,10 @@ public sealed partial class ChampionshipView : Grid
         Add(banHeader,obsLine,1);bansBody.Children.Add(banHeader);
         bansPanel.Name = "bans-panel"; Add(layout, bansPanel, 0, 2);
         var scoreText = Ui.Text($"{match.TeamA}   {score?.A ?? 0} × {score?.B ?? 0}   {match.TeamB}", true);
-        scoreText.Name = "match-score"; scoreText.TextAlignment = TextAlignment.Center; scoreText.HorizontalAlignment = HorizontalAlignment.Center;
-        scoreText.MaxWidth = Math.Max(200, Bounds.Width * .58); scoreText.Margin = new Thickness(4);
+        scoreText.Name = "match-score"; scoreText.TextAlignment = TextAlignment.Center; scoreText.HorizontalAlignment = HorizontalAlignment.Stretch;
+        scoreText.TextWrapping = TextWrapping.NoWrap; scoreText.TextTrimming = TextTrimming.CharacterEllipsis;
+        scoreText.FontSize = compact ? 14 : 18; scoreText.VerticalAlignment = VerticalAlignment.Center; scoreText.Margin = new Thickness(6, 0);
+        ToolTip.SetTip(scoreText, scoreText.Text);
         var roundArea = new Grid { Name = "round-area", ColumnDefinitions = new("44*,56*") };
         var roundCard = Ui.Card("Round a round", Rounds());
         roundCard.Name = "round-entry-card";
@@ -162,8 +169,15 @@ public sealed partial class ChampionshipView : Grid
             info.Margin = new Thickness(8, 4, 6, 4); ToolTip.SetTip(info, info.Text); Add(roundHeader, info, 1);
         }
         roundBody.Children.Add(roundHeader); Add(roundArea, roundCard, 0);
-        var history = new Grid { Name = "round-history-panel", RowDefinitions = new("Auto,*,Auto") }; history.Children.Add(scoreText);
-        Add(history, Ui.Card("Histórico de rounds", map == null ? Ui.Text("Escolha um mapa primeiro.") : History(map)), 0, 1);
+        var history = new Grid { Name = "round-history-panel", RowDefinitions = new("*,Auto") };
+        var historyCard = Ui.Card("Histórico de rounds", map == null ? Ui.Text("Escolha um mapa primeiro.") : History(map));
+        var historyBody = (Grid)historyCard.Child!;
+        var historyTitle = historyBody.Children.OfType<TextBlock>().First(); historyBody.Children.Remove(historyTitle);
+        historyTitle.Margin = new Thickness(0); historyTitle.Background = Brushes.Transparent; historyTitle.FontSize = compact ? 11 : 14;
+        historyTitle.TextWrapping = TextWrapping.NoWrap; historyTitle.VerticalAlignment = VerticalAlignment.Center;
+        var historyHeader = new Grid { Name = "history-score-header", ColumnDefinitions = new("Auto,*"), MinHeight = 30, Background = Ui.Header, Margin = new Thickness(-10, -10, -10, 8) };
+        Add(historyHeader, historyTitle, 0); Add(historyHeader, scoreText, 1); historyBody.Children.Add(historyHeader);
+        Add(history, historyCard, 0);
         Add(roundArea, history, 1); Add(layout, roundArea, 1, 2);
         var actions = new WrapPanel();
         var nextBan = Action("Banir próximo", OpenNextBan);nextBan.Name="next-ban";actions.Children.Add(nextBan);
@@ -173,7 +187,7 @@ public sealed partial class ChampionshipView : Grid
         var confirm = Action("Confirmar vencedor", async () => { if (await Ui.Ask(this, "Confirmar resultado e bloquear os rounds deste mapa?", winnerConfirmation: true) == 1) Session.Confirm(); }, true);
         confirm.Name = "confirm-winner"; confirm.IsEnabled = map != null && !map.Confirmed && map.Score().Winner >= 0;
         confirm.Background = confirm.IsEnabled ? Brush.Parse("#25834C") : Brush.Parse("#334354");
-        confirm.Opacity = confirm.IsEnabled ? 1 : .5; Add(history, confirm, 0, 2);
+        confirm.Opacity = confirm.IsEnabled ? 1 : .5; Add(history, confirm, 0, 1);
         var review = Action("Revisar resultado", Review); review.IsEnabled = map?.Confirmed == true; actions.Children.Add(review);
         Add(layout, actions, 0, 3); SetColumnSpan(actions, 2);
         return layout;
@@ -188,7 +202,9 @@ public sealed partial class ChampionshipView : Grid
             var logo = new Image { Width = 36, Height = 36, Stretch = Stretch.Uniform, Margin = new Thickness(0, 0, 8, 6) };
             try { logo.Source = Ui.FileImage(path ?? Path.Combine(AppContext.BaseDirectory, "assets", "promo", "neutral-white.png"), thumbnail: 144); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
             var input = new TextBox { Name = n == 0 ? "team-a" : "team-b", Text = match.Team(n), PlaceholderText = L.T(n == 0 ? "Equipe A:" : "Equipe B:"), MaxLength = 80, Margin = new Thickness(0, 0, 8, 6), IsEnabled = !match.HasConfirmed };
-            input.TextChanged += (_, _) => { if (!building && TopLevel.GetTopLevel(input) != null && input.Text != match.Team(team)) { namesDirty = true; namesTimer.Stop(); namesTimer.Start(); } };
+            input.TextChanged += (_, _) => { if (!building && TopLevel.GetTopLevel(input) != null && input.Text != match.Team(team)) { namesDirty = true; namesTimer.Stop(); } };
+            input.LostFocus += (_,_) => Dispatcher.UIThread.Post(()=>{if(namesDirty&&!teamA.IsKeyboardFocusWithin&&!teamB.IsKeyboardFocusWithin)_=Run(()=>{FlushNames();return Task.CompletedTask;});});
+            input.KeyDown += (_,e)=>{if(e.Key==global::Avalonia.Input.Key.Enter){_=Run(()=>{FlushNames();return Task.CompletedTask;});e.Handled=true;}};
             if (team == 0) teamA = input; else teamB = input;
             Add(line, logo, 0); Add(line, input, 1); Add(line, Action("Logo", () => Logo(team)), 2); panel.Children.Add(line);
         }
@@ -278,39 +294,64 @@ public sealed partial class ChampionshipView : Grid
         var map = Session.Map;
         if (!VetoComplete) return Ui.Text("Conclua o veto de mapas para escolher os operadores.");
         if (!BansReady || map == null) return Ui.Text("Defina os lados antes de escolher os operadores.");
-        var panel = new Grid { Name = "ban-groups", RowDefinitions = new("*,*") };
+        var panel = new Grid { Name = "ban-groups", ColumnDefinitions = new("*,*") };
+        double cardWidth = Math.Max(34, (Bounds.Width * .4 - 68) / 6);
+        double portraitHeight = Math.Clamp(cardWidth * .72, 24, compact ? 38 : 64);
+        double cardHeight = portraitHeight + (compact ? 29 : 32);
+        var frames = new List<(Grid Portrait, Image Image, Button Button, bool Symbol)>();
         for (int half = 0; half < 2; half++) {
-            var group = new Grid { Margin = new Thickness(2, half == 0 ? 0 : 6, 2, 0), RowDefinitions = new("24,*"), ClipToBounds = true };
+            var group = new Grid { Name = "ban-half-" + half, Margin = new Thickness(half == 0 ? 0 : 5, 0, half == 0 ? 5 : 0, 0), RowDefinitions = new("24,*"), ClipToBounds = true };
             int attacker = half == 0 ? map.InitialAttack : 1 - map.InitialAttack;
             var heading = Columns("Auto,*");
-            var text = Ui.RawText($"{L.T("Round")} {half * 6 + 1}–{half * 6 + 6} · {Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; text.TextWrapping = TextWrapping.NoWrap; text.TextTrimming = TextTrimming.CharacterEllipsis; ToolTip.SetTip(text, text.Text); Add(heading, text, 1); group.Children.Add(heading);
+            var text = Ui.RawText($"{L.T("Round")} {half * 6 + 1}–{half * 6 + 6}"); text.TextAlignment = TextAlignment.Center; text.FontSize = 12; text.TextWrapping = TextWrapping.NoWrap;
+            ToolTip.SetTip(text, $"{Session.Current.Team(attacker)} {L.Role("ATQ")} / {Session.Current.Team(1 - attacker)} {L.Role("DEF")}"); Add(heading, text, 1); group.Children.Add(heading);
             group.Children.Remove(heading);
             var titleBand = new Border { Name = "ban-half-title-" + half, Background = Ui.Header, Padding = new Thickness(4, 2), Child = heading };
             text.Text=text.Text?.ToUpperInvariant();text.FontWeight=FontWeight.Bold;text.Margin=new Thickness(0);text.VerticalAlignment=VerticalAlignment.Center;
             group.Children.Add(titleBand);
-            var grid = new UniformGrid { Columns = 6, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 3, 0, 0) };
+            var grid = new Grid { Name = "ban-half-grid-" + half, ColumnDefinitions = new("*,*,8,*"), RowDefinitions = new("Auto,Auto"), VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 4, 0, 0) };
+            var divider = new Border { Name = "ban-stage-divider-" + half, Width = 1, Background = Brush.Parse("#6C8299"), Margin = new Thickness(0, 3), HorizontalAlignment = HorizontalAlignment.Center };
+            Add(grid, divider, 2); SetRowSpan(divider, 2);
             foreach (int slot in map.BanOrder(half)) {
                 int field = slot; var op = Session.Catalog.Operators.FirstOrDefault(o => o.Id == map.Bans[slot]);
                 var content = new Grid { RowDefinitions = new("*,Auto") };
                 string file = op == null ? StudioRenderer.Asset(map.BanRole(slot) == "DEF" ? "Icon_Defender.png" : "Icon_Attacker.png") : SiegeCatalog.Asset(op.Id + "-portrait.png");
+                Grid? portrait = null; Image? image = null;
                 try {
-                    var portrait = new Grid { Name = "ban-portrait-" + slot, Height = Bounds.Height < 650 ? 24 : compact ? 26 : 72 };
-                    portrait.Children.Add(new Image { Name = "ban-image-" + slot, Source = op != null && !compact ? Ui.FileImage(file, thumbnail: 192) : Ui.FileImage(file, op != null), Height = op == null ? portrait.Height * .55 : portrait.Height, Stretch = op == null || !compact ? Stretch.Uniform : Stretch.UniformToFill, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
-                    if (op != null) portrait.Children.Add(new Image { Source = Ui.FileImage(SiegeCatalog.Asset(op.Icon)), Height = compact ? 16 : 20, Width = compact ? 16 : 20, VerticalAlignment = VerticalAlignment.Bottom, HorizontalAlignment = HorizontalAlignment.Center });
+                    portrait = new Grid { Name = "ban-portrait-" + slot, Height = portraitHeight, ClipToBounds = true };
+                    image = new Image { Name = "ban-image-" + slot, Source = Ui.FileImage(file, thumbnail: compact ? 128 : 192), Height = op == null ? portrait.Height * .55 : portrait.Height, Stretch = Stretch.Uniform, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center };
+                    global::Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(image, global::Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
+                    portrait.Children.Add(image);
                     content.Children.Add(portrait);
                 } catch (Exception ex) { AppLog.Write(ex.ToString()); }
-                var caption = new StackPanel(); caption.Children.Add(new TextBlock { Text = op?.Name ?? L.T(map.BanStageReached(slot) ? "Selecionar…" : "Bloqueado"), FontSize = compact ? 9 : op?.Name.Length > 10 ? 10 : 11, FontWeight = FontWeight.Bold, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
+                var caption = new StackPanel(); caption.Children.Add(new TextBlock { Text = op?.Name ?? L.Role(map.BanRole(slot)), FontSize = compact ? 9 : op?.Name.Length > 10 ? 10 : 11, FontWeight = FontWeight.Bold, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
                 caption.Children.Add(new TextBlock { Text = Session.Current.Team(MapRecord.BanTeam(slot)), FontSize = compact ? 9 : 10, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
                 Add(content,new Border { Background = Brush.Parse("#D00C1521"), Padding = new Thickness(2,1), Child = caption },0,1);
                 var button = Action("", async () => { if (!map.Confirmed || await Ui.Ask(this, "Corrigir o ban de um mapa confirmado?") == 1) await PickBan(field); });
                 button.Name = "ban-slot-" + slot; button.Padding = new Thickness(0); button.Margin = new Thickness(3); button.Content = content;
-                ToolTip.SetTip(button, (op?.Name ?? L.Role(map.BanRole(slot))) + " · " + Session.Current.Team(MapRecord.BanTeam(slot)) + " · " + L.T("Round") + " " + (MapRecord.BanThreshold(slot) + 1));
-                button.Height = Bounds.Height < 650 ? 62 : compact ? 66 : 108; button.MaxWidth = compact ? 52 : 82; button.Background = Ui.Team(MapRecord.BanTeam(slot), false); button.Foreground = Brushes.White;
+                string state = MapRecord.IsNoBan(map.Bans[slot]) ? L.T("Sem banimento") : L.T(map.BanStageReached(slot) ? "Selecionar…" : "Bloqueado");
+                string description = (op?.Name ?? L.Role(map.BanRole(slot)) + " · " + state) + " · " + Session.Current.Team(MapRecord.BanTeam(slot)) + " · " + L.T("Round") + " " + (MapRecord.BanThreshold(slot) + 1);
+                ToolTip.SetTip(button, description); global::Avalonia.Automation.AutomationProperties.SetName(button, description);
+                button.Height = cardHeight; button.HorizontalAlignment = HorizontalAlignment.Stretch; button.Background = Ui.Team(MapRecord.BanTeam(slot), false); button.Foreground = Brushes.White;
                 button.Template = new global::Avalonia.Controls.Templates.FuncControlTemplate<Button>((control, _) => new Border { Background = control.Background, BorderBrush = control.BorderBrush, BorderThickness = control.BorderThickness, Padding = control.Padding, Child = new global::Avalonia.Controls.Presenters.ContentPresenter { Content = control.Content, HorizontalContentAlignment = HorizontalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Center } });
-                button.IsEnabled = map.BanStageReached(slot) && !map.Confirmed; button.BorderThickness = new Thickness(0, 0, 0, 3); button.BorderBrush = Ui.Team(MapRecord.BanTeam(slot)); grid.Children.Add(button);
+                button.IsEnabled = map.BanStageReached(slot) && !map.Confirmed; button.BorderThickness = new Thickness(0, 0, 0, 3); button.BorderBrush = Ui.Team(MapRecord.BanTeam(slot));
+                button.Opacity = map.BanStageReached(slot) || !string.IsNullOrEmpty(map.Bans[slot]) ? 1 : .5;
+                bool defense = map.BanRole(slot) == "DEF";
+                int position = Array.IndexOf(map.BanOrder(half).Where(i => map.BanRole(i) == map.BanRole(slot)).ToArray(), slot);
+                Add(grid, button, position < 2 ? position : 3, defense ? 0 : 1);
+                if (portrait != null && image != null) frames.Add((portrait, image, button, op == null));
             }
-            Add(group, grid, 0, 1); Add(panel, group, 0, half);
+            Add(group, grid, 0, 1); Add(panel, group, half);
         }
+        panel.SizeChanged += (_, _) => {
+            // Use the actual allocated height, including the full shell's compact header.
+            double height = Math.Min(cardHeight, Math.Max(36, (panel.Bounds.Height - 28) / 2 - 6));
+            double picture = Math.Max(8, height - (compact ? 29 : 32));
+            foreach (var frame in frames) {
+                frame.Button.Height = height; frame.Portrait.Height = picture;
+                frame.Image.Height = picture * (frame.Symbol ? .55 : 1);
+            }
+        };
         return panel;
     }
 

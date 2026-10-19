@@ -49,7 +49,7 @@ public sealed class TextsView : Grid
     internal void AdjustClock(double seconds) { clock.Add(Math.Max(-clock.Remaining, seconds)); clock.Tick(); Update(); }
     internal void SetClock(double seconds) {
         if(!double.IsFinite(seconds)||seconds<0||seconds>86400)throw new InvalidDataException(L.T("Tempo inválido. Use hh:mm:ss."));
-        initial.Text=DurationText(seconds); clock.Reset(seconds); durationEdited=false; Update();
+        bool running=clock.Running; initial.Text=DurationText(seconds); clock.Reset(seconds); if(running)clock.Start(); durationEdited=false; Update();
     }
 
     public TextsView(Settings settings, System.Action saveSettings, Countdown? clock = null)
@@ -87,6 +87,7 @@ public sealed class TextsView : Grid
         readout.Name = "timer-readout"; readout.FontSize = 40; readout.TextAlignment = TextAlignment.Center; timer.Children.Add(readout); timer.Children.Add(clockState);
         var actions = new WrapPanel();
         actions.Children.Add(Command("Iniciar / Retomar", "timer-start", Start, true));
+        actions.Children.Add(Command("Aplicar tempo", "timer-apply-time", ()=>SetClock(Parse(initial.Text??"")), true));
         actions.Children.Add(Command("Pausar", "timer-pause", () => { this.clock.Pause(); Update(); }));
         actions.Children.Add(Command("Resetar tempo", "timer-reset", () => { this.clock.Reset(Parse(initial.Text ?? "")); durationEdited = false; Update(); })); timer.Children.Add(actions);
         timer.Children.Add(Ui.Text("Acrescentar tempo sem pausar", true));
@@ -114,7 +115,10 @@ public sealed class TextsView : Grid
     }
 
     static TextBox Input(string name, string value) => new() { Name = name, Text = value, Margin = new Thickness(0, 0, 6, 8) };
-    internal static string OutputFolder(string path) => string.IsNullOrWhiteSpace(path) ? "" : Path.GetDirectoryName(Path.GetFullPath(path)) ?? "";
+    internal static string OutputFolder(string path) {
+        try { return string.IsNullOrWhiteSpace(path) ? "" : Path.GetDirectoryName(Path.GetFullPath(path)) ?? ""; }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException) { return ""; }
+    }
     Border Card(string title, Control content) { var card = Ui.Card(title, content); cards.Add(card); return card; }
     public void RefreshColors() { Background = Ui.Canvas; foreach (var card in cards) { card.Background = Ui.Panel; if(card.Child is Grid body)foreach(var title in body.Children.OfType<TextBlock>())title.Background=Ui.Header; } }
     Button Command(string label, string name, System.Action action, bool primary = false) {
@@ -123,6 +127,8 @@ public sealed class TextsView : Grid
     internal static string DurationText(double seconds) { int total = (int)Math.Round(seconds); return $"{total / 3600:00}:{total / 60 % 60:00}:{total % 60:00}"; }
     internal static double Parse(string value) {
         if (value == "24:00:00") return 86400;
+        var shortTime=System.Text.RegularExpressions.Regex.Match(value,@"^(\d{1,4}):([0-5]\d)$");
+        if(shortTime.Success){double seconds=int.Parse(shortTime.Groups[1].Value)*60+int.Parse(shortTime.Groups[2].Value);if(seconds<=86400)return seconds;}
         if (!TimeSpan.TryParseExact(value, @"hh\:mm\:ss", null, out var duration)) throw new InvalidDataException(L.T("Tempo inválido. Use hh:mm:ss."));
         return duration.TotalSeconds;
     }
@@ -157,7 +163,7 @@ public sealed class TextsView : Grid
         if (!Applying.IsCompleted) return;
         var snapshot = CaptureCasting();
         try {
-            await Task.Run(() => { CastingFiles.Write(snapshot.Folder, snapshot.People); MatchFiles.AtomicText(AppPaths.ConfigFile("casting-settings.json"), JsonSerializer.Serialize(snapshot)); });
+            await Task.Run(() => { CastingFiles.Write(snapshot.Folder, snapshot.People, AppPaths.ConfigFile("casting-settings.json"), JsonSerializer.Serialize(snapshot)); });
             castingStatus.Text = L.T("TXT atualizado • ") + DateTime.Now.ToString("HH:mm:ss");
         } catch (Exception ex) { castingStatus.Text = ex.Message; }
     }

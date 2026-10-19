@@ -16,6 +16,7 @@
 #include <QDoubleSpinBox>
 #include <QAbstractButton>
 #include <QVBoxLayout>
+#include <QVector>
 
 class CasterDeskPanel final : public QWidget {
 public:
@@ -55,14 +56,16 @@ private:
     QString mapsRendered;
     QLineEdit *finalMessage, *outputFolder;
     QComboBox *timeFormat;
-    QDoubleSpinBox *presetValues[3];
-    QPushButton *presetButtons[3], *timerSave, *reset, *copyFolder;
+    QVector<QDoubleSpinBox *> presetValues;
+    QVector<QPushButton *> presetButtons;
+    QGridLayout *presetGrid;
+    QPushButton *timerSave, *reset, *copyFolder;
     QString timerOptionsRendered;
     QComboBox *remakeChoice;
     QLabel *remakeInfo, *remakeCheck;
     QVBoxLayout *remakeBans;
     QString remakeMatch;
-    QString remakeOptionsRendered;
+    QString remakeOptionsRendered, remakeContentRendered;
     bool buildingRemake = false;
     void renderRemake();
     QLabel *timerStatus;

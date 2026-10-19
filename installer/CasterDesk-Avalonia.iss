@@ -58,6 +58,9 @@ spanish.AppStage=Instalando CasterDesk y recursos de la interfaz…
 brazilianportuguese.PluginStage=Instalando o painel opcional do OBS…
 english.PluginStage=Installing the optional OBS dock…
 spanish.PluginStage=Instalando el panel opcional de OBS…
+brazilianportuguese.PluginFailed=O CasterDesk foi instalado, mas o painel opcional do OBS não foi instalado. Feche o OBS e execute novamente o instalador do painel na pasta do CasterDesk.
+english.PluginFailed=CasterDesk was installed, but the optional OBS dock was not installed. Close OBS and run the dock installer again from the CasterDesk folder.
+spanish.PluginFailed=CasterDesk se instaló, pero el panel opcional de OBS no se instaló. Cierra OBS y ejecuta de nuevo el instalador del panel desde la carpeta de CasterDesk.
 brazilianportuguese.LaunchApp=Abrir o CasterDesk
 english.LaunchApp=Open CasterDesk
 spanish.LaunchApp=Abrir CasterDesk
@@ -70,7 +73,6 @@ Source: "..\PROGRESSO.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\dist\CasterDesk-OBS-1.0.0-win-x64-Setup.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\docs\TERMOS-*.txt"; DestDir: "{app}\termos"; Flags: ignoreversion
 [Run]
-Filename: "{app}\CasterDesk-OBS-1.0.0-win-x64-Setup.exe"; Parameters: "/SILENT /NORESTART /LANG={language}"; Tasks: obsplugin; Flags: shellexec waituntilterminated; BeforeInstall: PluginStage
 Filename: "{app}\CasterDesk.exe"; Parameters: "--language {code:AppLanguage}"; Description: "{cm:LaunchApp}"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent unchecked
 [InstallDelete]
 Type: files; Name: "{app}\AVALONIA-PROGRESSO.md"
@@ -104,8 +106,23 @@ begin
   else Result := 'pt-BR';
 end;
 procedure CurStepChanged(CurStep: TSetupStep);
+var PluginExit: Integer;
+    PluginOK: Boolean;
 begin
-  if (CurStep = ssDone) and WizardIsTaskSelected('obsplugin') and
-    FileExists(ExpandConstant('{commonappdata}\obs-studio\plugins\casterdesk-obs\bin\64bit\casterdesk-obs.dll')) then
-    SaveStringToFile(ExpandConstant('{app}\obs-plugin.optin'), 'CasterDesk OBS plugin selected', False);
+  if (CurStep = ssPostInstall) and WizardIsTaskSelected('obsplugin') then begin
+    PluginStage;
+    PluginExit := -1;
+    PluginOK := ShellExec('', ExpandConstant('{app}\CasterDesk-OBS-1.0.0-win-x64-Setup.exe'),
+      '/SILENT /NORESTART /LANG=' + ActiveLanguage, ExpandConstant('{app}'),
+      SW_SHOWNORMAL, ewWaitUntilTerminated, PluginExit);
+    PluginOK := PluginOK and (PluginExit = 0) and
+      FileExists(ExpandConstant('{commonappdata}\obs-studio\plugins\casterdesk-obs\bin\64bit\casterdesk-obs.dll'));
+    if PluginOK then
+      SaveStringToFile(ExpandConstant('{app}\obs-plugin.optin'), 'CasterDesk OBS plugin selected', False)
+    else begin
+      DeleteFile(ExpandConstant('{app}\obs-plugin.optin'));
+      Log(CustomMessage('PluginFailed') + ' Exit: ' + IntToStr(PluginExit));
+      if not WizardSilent then MsgBox(CustomMessage('PluginFailed'), mbError, MB_OK);
+    end;
+  end;
 end;

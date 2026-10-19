@@ -8,6 +8,7 @@ internal static class BrandChecks
     public static void Run()
     {
         var shell = new StudioShell { Width = 1280, Height = 800 };
+        if (shell.WindowState != WindowState.Maximized) throw new Exception("Application must start maximized.");
         shell.Show(); Dispatcher.UIThread.RunJobs();
         Thread.Sleep(150); Dispatcher.UIThread.RunJobs();
         shell.Championship.Refresh(); Dispatcher.UIThread.RunJobs();

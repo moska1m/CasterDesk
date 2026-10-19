@@ -47,7 +47,7 @@ internal static class JgArtRenderer
         if(!string.IsNullOrWhiteSpace(brand.BroadcastChannel))
         {
             Text(g,L.T("ASSISTA EM:"),layout.R(9),false,Muted);
-            Text(g,brand.BroadcastChannel.Trim().ToUpperInvariant(),layout.R(10),true,Red);
+            Text(g,brand.BroadcastChannel.Trim().ToUpperInvariant(),layout.R(10),true,brand.AccentFor(ArtKind.Announcement));
         }
         g.Restore(state);
     }
@@ -56,7 +56,7 @@ internal static class JgArtRenderer
         var layout=Load(format);var state=g.Save();Transform(g,layout,target);
         string title=kind==ArtKind.MapStats?L.T("ESTATÍSTICAS DO MAPA"):L.T("RESULTADO");
         Text(g,title,Wider(layout.R(102),layout.Width*.83f));
-        Text(g,L.FormatName(match.Format)+(string.IsNullOrWhiteSpace(brand.EventName)?"":" - "+brand.EventName.ToUpperInvariant()),Wider(layout.R(103),layout.Width*.8f),false,Red);
+        Text(g,L.FormatName(match.Format)+(string.IsNullOrWhiteSpace(brand.EventName)?"":" - "+brand.EventName.ToUpperInvariant()),Wider(layout.R(103),layout.Width*.8f),false,brand.AccentFor(kind));
         Team(g,layout,format,93,94,match,brand,0);Team(g,layout,format,97,98,match,brand,1);
         var left=layout.R(95);var right=layout.R(99);
         Text(g,match.TeamA.ToUpperInvariant(),new(layout.R(91).Left,left.Y,layout.R(93).Left-layout.R(91).Left-18,left.Height));
@@ -72,12 +72,19 @@ internal static class JgArtRenderer
             var best=summary.Players.FirstOrDefault(p=>p.Key==brand.Mvp) ?? (string.IsNullOrEmpty(brand.Mvp)?StatisticsData.SuggestMvp(match,map):null);
             if(best is not null)
             {
-                Layer(g,format,2,layout.R(2));Text(g,"MVP",layout.R(3),true,Red);Text(g,best.Name,Wider(layout.R(4),layout.R(2).Right-layout.R(4).Left-35));
+                Layer(g,format,2,layout.R(2));Text(g,"MVP",layout.R(3),true,brand.AccentFor(kind));
                 var nameArea=Wider(layout.R(4),layout.R(2).Right-layout.R(4).Left-35);
-                var positions=new[]{(7,9),(8,10),(6,11)};
-                float start=layout.R(7).Left,end=layout.R(11).Left+38,shift=nameArea.X+nameArea.Width/2-(start+end)/2;
-                foreach(var (icon,index,n) in new[]{(7,9,best.Kills),(6,10,best.Deaths),(8,11,best.Assists)})
-                {var location=layout.R(positions[index-9].Item1);var ir=layout.R(icon);ir.X=location.X+shift;Layer(g,format,icon,ir);var nr=layout.R(index);Text(g,n?.ToString()??"—",new(nr.X+shift,nr.Y,38,nr.Height),false,null,StringAlignment.Near,true);}
+                StudioRenderer.PlayerText(g,best.Name,nameArea,layout.R(4).Height*1.25f,true,StringAlignment.Center);
+                var metrics=new[]{(Icon:7,Value:best.Kills),(Icon:6,Value:best.Deaths),(Icon:8,Value:best.Assists)};
+                float textH=layout.R(9).Height,gap=layout.R(7).Width*.25f,between=layout.R(7).Width*.6f;
+                var widths=metrics.Select(m=>StudioRenderer.InkWidth(m.Value?.ToString()??"—",textH,false)).ToArray();
+                float total=metrics.Select((m,i)=>layout.R(m.Icon).Width+gap+widths[i]).Sum()+between*2;
+                float x=nameArea.X+(nameArea.Width-total)/2;
+                for(int i=0;i<metrics.Length;i++) {
+                    var metric=metrics[i];var icon=layout.R(metric.Icon);icon.X=x;Layer(g,format,metric.Icon,icon);
+                    Text(g,metric.Value?.ToString()??"—",new(x+icon.Width+gap,layout.R(9).Y,widths[i],textH),false,null,StringAlignment.Near);
+                    x+=icon.Width+gap+widths[i]+between;
+                }
             }
             if(summary.Partial)Text(g,L.T("ESTATÍSTICAS PARCIAIS"),new(layout.R(13).X,layout.R(13).Bottom+3,layout.R(13).Width,15),false,Muted);
         }
@@ -124,7 +131,7 @@ internal static class JgArtRenderer
             for(int i=0;i<rows.Count;i++)
             {
                 RectangleF At(int index,float width){var r=l.R(index);return new(r.X+r.Width/2-width/2,first+i*step,width,r.Height);}
-                var player=rows[i];var nameRect=l.R(name);Text(g,player.Name,new(nameRect.X,first+i*step,l.R(k).X-nameRect.X-30,nameRect.Height),false,null,StringAlignment.Near,true);
+                var player=rows[i];var nameRect=l.R(name);StudioRenderer.PlayerText(g,player.Name,new(nameRect.X,first+i*step-4,l.R(k).X-nameRect.X-30,nameRect.Height+8),l.R(19).Height*1.4f);
                 Text(g,player.Kills?.ToString()??"—",At(k,40),false,null,StringAlignment.Center,true);Text(g,player.Deaths?.ToString()??"—",At(a,40),false,null,StringAlignment.Center,true);Text(g,player.Assists?.ToString()??"—",At(d,40),false,null,StringAlignment.Center,true);
             }
         }

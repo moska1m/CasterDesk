@@ -17,7 +17,7 @@ public sealed partial class ChampionshipView
             var form = (SpecMode || QuickMode) ? QuickRound(map) : CompactRound(map);
             Add(panel, new ScrollViewer { Name = "round-entry-scroll", Content = form, MaxHeight = SpecMode ? 310 : compact ? 190 : 285 }, 0);
             RoundConfirm = Action("Confirmar round", async () => {
-                Session.Round(site, winner, ending); site = ending = ""; winner = -1; Refresh(); if(!SpecMode && !UseObsForBans)await OpenNextBan();
+                Session.Round(site, winner, ending); if(!SpecMode && !UseObsForBans)await OpenNextBan();
             }, true);
             RoundConfirm.Name = "confirm-round";
             RoundConfirm.IsEnabled = !string.IsNullOrEmpty(site) && winner >= 0 && (SpecMode || !string.IsNullOrEmpty(ending));
@@ -38,15 +38,38 @@ public sealed partial class ChampionshipView
     {
         int round = map.Rounds.Count + 1, attacker = map.Attacker(round);
         var form = new Grid { RowDefinitions = new("Auto"), ColumnDefinitions = new(SpecMode ? "*" : "*,*"), VerticalAlignment = VerticalAlignment.Top };
+        var siteButtons = new List<(Button Button, string Site)>();
+        var teamButtons = new List<(Button Button, int Team)>();
+        var endingButtons = new List<(Button Button, string Code)>();
+        void PaintSelection()
+        {
+            foreach (var item in siteButtons) {
+                bool selected = site == item.Site; item.Button.Classes.Set("primary", selected);
+                item.Button.BorderBrush = Brush.Parse("#FF4335"); item.Button.BorderThickness = new Thickness(selected ? 2 : 0);
+            }
+            foreach (var item in teamButtons) {
+                bool selected = winner == item.Team; item.Button.Background = Ui.Team(item.Team, selected);
+                item.Button.BorderThickness = new Thickness(selected ? 2 : 0);
+            }
+            foreach (var item in endingButtons) {
+                bool selected = ending == item.Code; item.Button.Classes.Set("primary", selected);
+                item.Button.BorderBrush = Brush.Parse("#FF4335"); item.Button.BorderThickness = new Thickness(selected ? 2 : 0);
+                item.Button.IsEnabled = winner >= 0 && RoundEnding.Allowed(item.Code, winner, attacker);
+            }
+            if (RoundConfirm != null) {
+                RoundConfirm.IsEnabled = !string.IsNullOrEmpty(site) && winner >= 0 && (SpecMode || !string.IsNullOrEmpty(ending));
+                if (SpecMode) RoundConfirm.Background = RoundConfirm.IsEnabled ? Brush.Parse("#25834C") : Brush.Parse("#485869");
+            }
+        }
         var sites = new UniformGrid { Columns = 2, VerticalAlignment = VerticalAlignment.Top };
         foreach (string bombsite in Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites) {
-            var button = Ui.Button(BombsiteNames.Display(map.MapId, bombsite), () => { site = bombsite; Refresh(); }, site == bombsite);
+            var button = Ui.Button(BombsiteNames.Display(map.MapId, bombsite), () => { site = bombsite; PaintSelection(); }, site == bombsite);
             button.Content = new TextBlock { Text = BombsiteNames.Display(map.MapId, bombsite), TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, FontSize = 12 };
             button.Name = "round-site-" + Array.IndexOf(Session.Catalog.Maps.Single(m => m.Id == map.MapId).Sites, bombsite);
             button.IsEnabled = !map.SiteBlocked(bombsite, round); button.Margin = new Thickness(3); button.FontSize = 12;
             button.VerticalContentAlignment=VerticalAlignment.Center;button.HorizontalContentAlignment=HorizontalAlignment.Center;button.Height = SpecMode ? 46 : 54; button.Padding = new Thickness(4);
             if (site == bombsite) {button.BorderBrush=Brush.Parse("#FF4335");button.BorderThickness=new Thickness(2);}
-            sites.Children.Add(button);
+            siteButtons.Add((button, bombsite)); sites.Children.Add(button);
         }
         Add(form, sites, 0);
         var decisions = new StackPanel();
@@ -54,23 +77,23 @@ public sealed partial class ChampionshipView
         for (int team = 0; team < 2; team++) {
             int selected = team;
             var button = Ui.Button(Session.Current.Team(team) + " · " + L.T(team == attacker ? "Ataque" : "Defesa"), () => {
-                winner = selected; if (!RoundEnding.Allowed(ending, winner, attacker)) ending = ""; Refresh();
+                winner = selected; if (!RoundEnding.Allowed(ending, winner, attacker)) ending = ""; PaintSelection();
             });
             button.Name = "round-winner-" + team; button.Margin = new Thickness(3);
             button.Content = new TextBlock { Text = SpecMode ? SpecTeam(team) : Session.Current.Team(team), FontSize = 12, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             button.Height = 34; button.Padding = new Thickness(4); ToolTip.SetTip(button, Session.Current.Team(team) + " · " + L.Role(team == attacker ? "ATQ" : "DEF"));
             button.Background = Ui.Team(team, winner == team); button.Foreground = Brushes.White;
-            button.BorderThickness = new Thickness(winner == team ? 2 : 0); button.BorderBrush = Brush.Parse("#FF4335");button.VerticalContentAlignment=VerticalAlignment.Center; teams.Children.Add(button);
+            button.BorderThickness = new Thickness(winner == team ? 2 : 0); button.BorderBrush = Brush.Parse("#FF4335");button.VerticalContentAlignment=VerticalAlignment.Center; teamButtons.Add((button,team)); teams.Children.Add(button);
         }
         decisions.Children.Add(teams);
         var ends = new UniformGrid { Columns = SpecMode ? 4 : 2 };
         foreach (string code in RoundEnding.Codes.Skip(1)) {
-            var button = Ui.Button(RoundEnding.Label(code), () => { ending = code; Refresh(); }, ending == code);
+            var button = Ui.Button(RoundEnding.Label(code), () => { ending = code; PaintSelection(); }, ending == code);
             button.Content = new TextBlock { Text = RoundEnding.Label(code), TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center, FontSize = 11 }; button.Padding = new Thickness(4);
             if(ending==code){button.BorderBrush=Brush.Parse("#FF4335");button.BorderThickness=new Thickness(2);}
             button.VerticalContentAlignment=VerticalAlignment.Center;button.Name = "round-ending-" + code; button.Margin = new Thickness(3); button.FontSize = 12;
             button.Height = 34;
-            button.IsEnabled = winner >= 0 && RoundEnding.Allowed(code, winner, attacker); ends.Children.Add(button);
+            button.IsEnabled = winner >= 0 && RoundEnding.Allowed(code, winner, attacker); endingButtons.Add((button,code)); ends.Children.Add(button);
         }
         if(SpecMode){var label=Ui.Text("Finalização · opcional");label.FontSize=11;label.Margin=new Thickness(3,3);decisions.Children.Add(label);}
         decisions.Children.Add(ends); if(SpecMode){form.RowDefinitions=new("Auto,Auto");Add(form,decisions,0,1);}else Add(form, decisions, 1); return form;

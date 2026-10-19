@@ -179,6 +179,18 @@
     "This match already has bans or rounds recorded. Keep this correction in the artwork only.",
     "Esta partida ya tiene bans o rondas registrados. Mantén esta corrección solo en la imagen."
   ],
+  "A partida já tem bans, rounds ou estatísticas registrados. Mantenha esta correção somente na arte.": [
+    "This match already has bans, rounds or statistics recorded. Keep this correction in the artwork only.",
+    "Esta partida ya tiene bans, rondas o estadísticas registrados. Mantén esta corrección solo en la imagen."
+  ],
+  "Esta troca muda um mapa com bans, rounds ou estatísticas registrados.": [
+    "This change affects a map with recorded bans, rounds or statistics.",
+    "Este cambio afecta a un mapa con bans, rondas o estadísticas registrados."
+  ],
+  "Esta troca muda um mapa com bans, rounds ou estatísticas registrados. Limpar apenas os registros do mapa substituído?": [
+    "This change affects a map with recorded bans, rounds or statistics. Clear only the replaced map's records?",
+    "Este cambio afecta a un mapa con bans, rondas o estadísticas registrados. ¿Borrar solo los registros del mapa sustituido?"
+  ],
   "Confira as correções do veto da arte ou restaure o veto da partida.": [
     "Check the artwork veto corrections or restore the match veto.",
     "Revisa las correcciones del veto de la imagen o restaura el veto de la partida."
@@ -3606,5 +3618,18 @@
   "Finalização · opcional": [
     "Ending · optional",
     "Finalización · opcional"
-  ]
+  ],
+  "Há nomes incompatíveis entre os mapas. Concilie os jogadores antes de gerar as estatísticas da série.": ["Player names differ between maps. Reconcile the players before generating series statistics.", "Los nombres difieren entre mapas. Concilia los jugadores antes de generar las estadísticas de la serie."],
+  "Há nomes incompatíveis entre os mapas. Selecione o mesmo jogador para as variações de nome. Nada será mesclado automaticamente.": ["Player names differ between maps. Select the same player for name variants. Nothing is merged automatically.", "Los nombres difieren entre mapas. Selecciona el mismo jugador para las variantes. Nada se combina automáticamente."],
+  "Conciliar jogadores da série": ["Reconcile series players", "Conciliar jugadores de la serie"],
+  "Salvar conciliação": ["Save reconciliation", "Guardar conciliación"],
+  "COR DE DESTAQUE": ["ACCENT COLOR", "COLOR DE RESALTE"],
+  "Aplicar cor": ["Apply color", "Aplicar color"],
+  "Use uma cor no formato #RRGGBB.": ["Use a color in #RRGGBB format.", "Usa un color con el formato #RRGGBB."],
+  "Vermelho": ["Red", "Rojo"],
+  "Azul": ["Blue", "Azul"],
+  "Branco": ["White", "Blanco"],
+  "Sem banimento": ["No ban", "Sin bloqueo"],
+  "Aplicar tempo": ["Apply time", "Aplicar tiempo"],
+  "GERADOR DE IMAGENS": ["IMAGE GENERATOR", "GENERADOR DE IMÁGENES"]
 }

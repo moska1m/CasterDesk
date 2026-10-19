@@ -18,7 +18,7 @@ public sealed class StudioShell : Window
     readonly ObsDockSettings obsSettings;
     readonly ObsDockServer obsDock;
     readonly DispatcherTimer obsPresence = new() { Interval = TimeSpan.FromSeconds(1) };
-    readonly TextBlock footer = Ui.Text("CasterDesk • Ferramentas para community casters");
+    readonly TextBlock footer = Ui.Text("");
     int selected;
     bool menuOpen;
     bool backupOpen;
@@ -27,6 +27,7 @@ public sealed class StudioShell : Window
     {
         settings = ConfigurationStore.Read<Settings>("settings.json"); ConfigurationStore.Normalize(settings); Ui.Theme(settings.DarkMode);
         Title = "CasterDesk • " + BuildInfo.Version; Width = 1440; Height = 900; MinWidth = 980; MinHeight = 640;
+        WindowState = WindowState.Maximized;
         FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
         Icon = new WindowIcon(Path.Combine(AppContext.BaseDirectory, "assets", "branding", "CasterDesk.ico"));
         Championship = new ChampionshipView(session); Championship.SetQuickMode(settings.QuickRounds);
@@ -59,7 +60,7 @@ public sealed class StudioShell : Window
         header.Children.Add(gear); Grid.SetColumn(gear,3);
         var timer = new HeaderTimer(Texts);timer.Name="header-timer";timer.IsVisible=!Championship.SpecMode;Championship.SpecModeChanged+=value=>timer.IsVisible=!value; header.Children.Add(timer); Grid.SetColumn(timer,2);
         var nav = new StackPanel { Name = "main-navigation", Orientation = Orientation.Horizontal };
-        string[] labels = ["CAMPEONATO", "Central de imagens", "TEXTOS PARA OBS"];
+        string[] labels = ["CAMPEONATO", "GERADOR DE IMAGENS", "TEXTOS PARA OBS"];
         for (int n = 0; n < labels.Length; n++) {
             int index = n; var tab = Ui.Button(labels[n], () => Navigate(index)); tab.Margin = new Thickness(0); tab.Padding = new Thickness(20, 17);
             tab.Foreground = Brushes.White; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
@@ -76,7 +77,9 @@ public sealed class StudioShell : Window
         drawerPanel = new Border { Background = Ui.Panel, Padding = new Thickness(14, 8), Child = new ScrollViewer { Content = drawer }, ClipToBounds = true,
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, IsVisible = false, Width = 300 };
         layout.Children.Add(drawerPanel); Grid.SetRow(drawerPanel, 1);
-        footer.FontSize = 12; footer.Margin = new Thickness(18, 4); layout.Children.Add(footer); Grid.SetRow(footer, 2);
+        footer.FontSize = 12; footer.Margin = new Thickness(18, 4); footer.IsVisible = false;
+        footer.PropertyChanged += (_, e) => { if (e.Property == TextBlock.TextProperty) footer.IsVisible = !string.IsNullOrWhiteSpace(footer.Text); };
+        layout.Children.Add(footer); Grid.SetRow(footer, 2);
         KeyDown += (_, e) => { if (e.Key == Key.Escape && menuOpen) { ToggleMenu(); e.Handled = true; } };
         AddHandler(PointerPressedEvent, (_, e) => {
             if (!menuOpen || e.Source is not global::Avalonia.Visual source) return;

@@ -17,7 +17,7 @@ public sealed class StatsWindow : Window
     CancellationTokenSource? reading;
     System.Drawing.Bitmap? original;
     global::Avalonia.Media.Imaging.Bitmap? thumbnail;
-    bool closed, busy, edited;
+    bool closed, busy, edited, imageChanged;
     bool saving;
     bool allowClose, askingClose;
     int generation;
@@ -36,6 +36,8 @@ public sealed class StatsWindow : Window
         actions.Children.Add(Ui.Button("Conciliar jogadores", () => _ = Reconcile()));
         body.Children.Add(actions);
         top = Ui.RawCombo(match.TeamA, match.TeamB);
+        top.PlaceholderText = L.T("Selecionar…");
+        top.SelectedIndex = map.Statistics?.TopTeam ?? -1;
         top.Name = "stats-top-team";
         var choices = new StackPanel { Margin = new Thickness(12, 0, 0, 8) };
         choices.Children.Add(Ui.Text("Equipe no topo do print:")); choices.Children.Add(top); choices.Children.Add(coverage);
@@ -52,10 +54,15 @@ public sealed class StatsWindow : Window
         Fill(map.Statistics?.Players ?? []);
         int lastTop = top.SelectedIndex, lastCoverage = coverage.SelectedIndex;
         top.SelectionChanged += (_, _) => {
-            if (top.SelectedIndex < 0 || top.SelectedIndex == lastTop) return;
+            if (top.SelectedIndex == lastTop) return;
+            int previousTop = lastTop;
             lastTop = top.SelectedIndex;
-            foreach (var row in rows) { row.Team = 1 - row.Team; row.TeamLabel.Text = match.Team(row.Team); row.PlayerId = ""; }
-            foreach (var group in groups) if (group.Rows.Count > 0) group.Heading.Text = match.Team(group.Rows[0].Team);
+            if (lastTop < 0) return;
+            // Choosing an unknown legacy orientation must not invert already reviewed player teams.
+            if (previousTop >= 0) {
+                foreach (var row in rows) { row.Team = 1 - row.Team; row.TeamLabel.Text = match.Team(row.Team); row.PlayerId = ""; }
+                foreach (var group in groups) if (group.Rows.Count > 0) group.Heading.Text = match.Team(group.Rows[0].Team);
+            }
             edited = true;
         };
         coverage.SelectionChanged += (_, _) => { if (coverage.SelectedIndex != lastCoverage) { lastCoverage = coverage.SelectedIndex; edited = true; } };
@@ -130,13 +137,18 @@ public sealed class StatsWindow : Window
         if ((long)source.Width * source.Height > 50_000_000) throw new InvalidDataException(L.T("A imagem é muito grande."));
         if (edited && await Ui.Ask(this, "Substituir os dados editados pela leitura de um novo print?") != 1) return;
         if (closed) return;
-        reading?.Cancel(); generation++; ReplaceImage(source); edited = false; coverage.SelectedIndex = 0;
-        await Read();
+        reading?.Cancel(); generation++; busy = false; confirm.IsEnabled = true;
+        ReplaceImage(source); imageChanged = true; top.SelectedIndex = -1; coverage.SelectedIndex = 0; edited = true;
+        status.Text = L.T("Equipe no topo do print:") + " " + L.T("Selecionar…") + " · " + L.T("Ler novamente");
     }
 
     async Task Read()
     {
         if (original == null || closed || saving) return;
+        if (top.SelectedIndex < 0) {
+            status.Text = L.T("Equipe no topo do print:") + " " + L.T("Selecionar…");
+            top.Focus(); return;
+        }
         if (edited && await Ui.Ask(this, "Substituir os dados editados por uma nova leitura?") != 1) return;
         reading?.Cancel(); var cancellation = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token); reading = cancellation;
         int request = ++generation, topTeam = top.SelectedIndex; edited = false; busy = true; confirm.IsEnabled = false;
@@ -177,14 +189,14 @@ public sealed class StatsWindow : Window
     {
         if (busy) return;
         try {
-            var data = new MapStatistics { Status = coverage.SelectedIndex switch { 1 => "partial", 2 => "missing", _ => "complete" }, ConfirmedAt = DateTimeOffset.Now };
+            var data = new MapStatistics { Status = coverage.SelectedIndex switch { 1 => "partial", 2 => "missing", _ => "complete" }, ConfirmedAt = DateTimeOffset.Now, TopTeam = top.SelectedIndex >= 0 ? top.SelectedIndex : null };
             int? Number(string? text) => string.IsNullOrWhiteSpace(text) ? null : int.TryParse(text, out int n) ? n : throw new InvalidDataException(L.T("Use números inteiros nos campos E/M/A."));
             if (data.Status != "missing") foreach (var row in rows.Where(r => !string.IsNullOrWhiteSpace(r.Name.Text)))
                 data.Players.Add(new() { PlayerId = row.PlayerId, Team = row.Team, Name = row.Name.Text!.Trim(), Kills = Number(row.Kills.Text), Deaths = Number(row.Deaths.Text), Assists = Number(row.Assists.Text) });
             StatisticsData.Validate(data);
             busy = saving = true; confirm.IsEnabled = false; entries.IsEnabled = top.IsEnabled = coverage.IsEnabled = false;
-            using var snapshot = original == null ? null : new System.Drawing.Bitmap(original);
-            await Task.Run(() => MatchFiles.SaveStatistics(match, map, data, snapshot));
+            using var snapshot = original == null || !imageChanged ? null : new System.Drawing.Bitmap(original);
+            await Task.Run(() => MatchFiles.SaveStatistics(match, map, data, snapshot, imageChanged));
             allowClose = true; Close(true);
         } catch (Exception ex) { status.Text = ex.Message; }
         finally { busy = saving = false; confirm.IsEnabled = true; entries.IsEnabled = top.IsEnabled = coverage.IsEnabled = true; }

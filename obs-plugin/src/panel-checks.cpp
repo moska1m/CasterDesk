@@ -11,6 +11,9 @@
 #include <QElapsedTimer>
 #include <QThread>
 #include <QToolButton>
+#include <QDoubleSpinBox>
+#include <QRegularExpression>
+#include <QGraphicsOpacityEffect>
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -37,8 +40,12 @@ int main(int argc,char **argv)
         QTcpServer server;check(server.listen(QHostAddress::LocalHost,0),"listen");const auto port=server.serverPort();
         QJsonObject labels{{"connected","Connected"},{"disconnected","Disconnected"},{"timer","Timer"},{"bans","Bans"},{"start","Start"},{"pause","Pause"},{"set","Set"},{"busy","Finish editing"}};
         QJsonObject state{{"revision",0},{"language","en"},{"controllable",true},{"timer",QJsonObject{{"seconds",522},{"running",false}}},{"match",QJsonObject{{"id","demo"},{"mapId","clubhouse"},{"teamA","Blue"},{"teamB","Orange"},{"map","Clubhouse"}}},{"pending",0},{"role","DEF"},{"labels",labels},{"bans",QJsonArray{QJsonObject{{"slot",0},{"team",0},{"role","DEF"},{"name",""},{"unlocked",true}}}},{"operators",QJsonArray{QJsonObject{{"id","smoke"},{"name","Smoke"},{"enabled",true}}}}};
+        auto initialTimer=state["timer"].toObject();initialTimer["options"]=QJsonObject{{"initial",600},{"format","mm:ss"},{"message",""},{"presets",QJsonArray{1,5,10}}};state["timer"]=initialTimer;
         state["rounds"]=QJsonObject{{"number",1},{"attacker",0},{"score","0 × 0"},{"editable",true},{"ready",false},{"sites",QJsonArray{QJsonObject{{"id","site-id"},{"label","Full bombsite name"},{"blocked",false}}}},{"endings",QJsonArray{QJsonObject{{"id","elimination"},{"label","Elimination"},{"attack",true},{"defense",true}}}},{"history",QJsonArray()}};
         QJsonArray banFixture;for(int slot=0;slot<12;++slot){int team=slot%6==0||slot%6==1||slot%6==4?0:1;banFixture.append(QJsonObject{{"slot",slot},{"team",team},{"role",team==(slot<6?0:1)?"DEF":"ATQ"},{"id",""},{"name",""},{"unlocked",slot<4}});}state["bans"]=banFixture;
+        auto recordedNoBan=banFixture[1].toObject();recordedNoBan["id"]="__def";recordedNoBan["name"]="Sem banimento";banFixture[1]=recordedNoBan;state["bans"]=banFixture;
+        // Older apps sent no-ban first; the panel still puts it last.
+        state["operators"]=QJsonArray{QJsonObject{{"id","__def"},{"name","Sem banimento"},{"enabled",true}},QJsonObject{{"id","smoke"},{"name","Smoke"},{"enabled",true}}};
         QJsonObject lastCommand;bool headerValid=false;
         QObject::connect(&server,&QTcpServer::newConnection,&app,[&]{while(server.hasPendingConnections()){auto *socket=server.nextPendingConnection();auto buffer=std::make_shared<QByteArray>();QObject::connect(socket,&QTcpSocket::readyRead,&app,[&,socket,buffer]{*buffer+=socket->readAll();const int boundary=buffer->indexOf("\r\n\r\n");if(boundary<0)return;const QByteArray headers=buffer->left(boundary);int length=0;for(const auto &line:headers.split('\n'))if(line.toLower().startsWith("content-length:"))length=line.mid(15).trimmed().toInt();if(buffer->size()<boundary+4+length)return;
             headerValid=headers.toLower().contains("x-casterdesk-key: "+QByteArray(64,'A').toLower());
@@ -54,7 +61,13 @@ int main(int argc,char **argv)
         CasterDeskPanel panel(nullptr,config,false);auto *status=panel.findChild<QLabel *>("connection");auto *clock=panel.findChild<QLabel *>("time");auto *start=panel.findChild<QPushButton *>("start");auto *pause=panel.findChild<QPushButton *>("pause");
         check(!start->isEnabled(),"offline disabled");panel.poll();waitFor([&]{return status->text()=="CONNECTED";});check(headerValid,"auth header");check(clock->text()=="08:42","time read");check(start->isEnabled(),"start ready");start->click();waitFor([&]{return pause->isEnabled();});check(lastCommand["action"]=="start","start command");pause->click();waitFor([&]{return start->isEnabled();});
         panel.findChild<QLineEdit *>("duration")->setText("02:30");panel.findChild<QPushButton *>("set")->click();waitFor([&]{return clock->text()=="02:30";});check(lastCommand["seconds"]==150,"set shared duration");
-        auto *op=panel.findChild<QPushButton *>("operator");check(op&&op->isEnabled(),"operator ready");op->click();waitFor([&]{return lastCommand["action"]=="ban";});check(lastCommand["matchId"]=="demo"&&lastCommand["mapId"]=="clubhouse"&&lastCommand["revision"]==0&&lastCommand["slot"]==0,"ban context");waitFor([&]{return start->isEnabled();});
+        auto *choices=panel.findChild<QGridLayout *>("operator-grid");auto *op=qobject_cast<QToolButton *>(choices->itemAt(0)->widget());auto *none=qobject_cast<QToolButton *>(choices->itemAt(choices->count()-1)->widget());
+        check(op&&none&&op->property("operatorId")=="smoke"&&none->property("operatorId")=="__def","no-ban follows operators even with old server order");
+        check(op->height()==72&&none->height()==op->height()&&op->iconSize()==QSize(36,36)&&none->iconSize()==op->iconSize()&&none->toolButtonStyle()==op->toolButtonStyle(),"no-ban and operators share card and icon dimensions");
+        auto *emptyCard=panel.findChild<QToolButton *>("ban-card-4");auto *usedNone=panel.findChild<QToolButton *>("ban-card-1");
+        check(qobject_cast<QGraphicsOpacityEffect *>(emptyCard->graphicsEffect())->opacity()==0.5,"future bans use half opacity");
+        check(usedNone->text()=="DEF"&&usedNone->toolTip().contains("Sem banimento")&&qobject_cast<QGraphicsOpacityEffect *>(usedNone->graphicsEffect())->opacity()==1.0,"recorded no-ban uses role symbol label with explicit accessible meaning");
+        check(op&&op->isEnabled(),"operator ready");op->click();waitFor([&]{return lastCommand["action"]=="ban";});check(lastCommand["matchId"]=="demo"&&lastCommand["mapId"]=="clubhouse"&&lastCommand["revision"]==0&&lastCommand["slot"]==0&&lastCommand["operatorId"]=="smoke","ban context");waitFor([&]{return start->isEnabled();});
         auto *tabs=panel.findChild<QTabWidget *>();check(tabs->count()==3&&tabs->tabText(0)=="PARTIDA"&&tabs->tabText(1)=="REMAKE"&&tabs->tabText(2)=="TIMER","match remake timer tab order");
         auto *banGrid=panel.findChild<QGridLayout *>("ban-slots");int teams[2]={0,0};for(int n=0;n<banGrid->count();++n){auto *card=qobject_cast<QToolButton *>(banGrid->itemAt(n)->widget());if(!card)continue;int team=card->property("team").toInt(),row,col,rs,cs;banGrid->getItemPosition(n,&row,&col,&rs,&cs);check(row==team*2+1,"ban row preserves responsible team");++teams[team];}check(teams[0]==6&&teams[1]==6,"six icon cards per team including both halves");
         panel.findChild<QPushButton *>("round-site-0")->click();panel.findChild<QPushButton *>("round-team-0")->click();QApplication::processEvents();panel.findChild<QPushButton *>("round-ending-elimination")->click();QApplication::processEvents();
@@ -73,6 +86,14 @@ int main(int argc,char **argv)
         check(status->width()>40,"connection badge remains readable in compact header");
         panel.findChild<QLineEdit *>("duration")->setText("04:00");panel.findChild<QLineEdit *>("final-message")->setText("MATCH STARTS NOW");panel.findChild<QComboBox *>("time-format")->setCurrentText("hh:mm:ss");panel.findChild<QPushButton *>("timer-config")->click();
         waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});check(lastCommand["seconds"]==240&&lastCommand["format"]=="hh:mm:ss"&&lastCommand["message"]=="MATCH STARTS NOW"&&lastCommand["presets"].toArray().size()==3,"complete timer configuration sends initial time format message and presets");
+        for(int count:{0,1,8,3}) {
+            auto clock=state["timer"].toObject();auto options=clock["options"].toObject();QJsonArray values;for(int i=0;i<count;++i)values.append(i+2);options["presets"]=values;clock["options"]=options;state["timer"]=clock;
+            panel.poll();
+            waitFor([&]{return panel.findChildren<QDoubleSpinBox *>(QRegularExpression("^timer-preset-value-")).size()==count&&start->isEnabled();});
+            lastCommand=QJsonObject();panel.findChild<QPushButton *>("timer-config")->click();
+            waitFor([&]{return lastCommand["action"]=="timerConfig"&&start->isEnabled();});
+            check(lastCommand["presets"].toArray()==values,"legacy preset count and values survive polling and configuration");
+        }
         panel.findChild<QPushButton *>("reset")->click();waitFor([&]{return lastCommand["action"]=="reset"&&start->isEnabled();});check(lastCommand["action"]=="reset","reset targets shared countdown");
         std::cout<<"PASS: "<<checks<<" native Qt offscreen checks, authenticated HTTP, timer, ban context, modal guard and reconnect; OBS not opened.\n";return 0;
     }catch(const std::exception &error){std::cerr<<error.what()<<"\n";return 1;}

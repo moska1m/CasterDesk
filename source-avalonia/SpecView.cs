@@ -1,4 +1,4 @@
-﻿using Avalonia.Input;
+using Avalonia.Input;
 using Avalonia.VisualTree;
 
 namespace CasterDesk.Avalonia;
@@ -38,7 +38,7 @@ public sealed partial class ChampionshipView
         var score=map?.Score(); var versus=Ui.RawText($"{score?.A ?? 0} VS {score?.B ?? 0}");versus.Name="spec-score";versus.FontSize=22;versus.FontWeight=FontWeight.Bold;versus.TextAlignment=TextAlignment.Center;versus.VerticalAlignment=VerticalAlignment.Center;versus.Margin=new Thickness(0);Add(top,versus,1); specMatchHeader.Content=top;
         var setup = new Grid { ColumnDefinitions = new("90,1.1*,1.1*,1.3*,1.3*"), Margin = new Thickness(4, 0, 4, 8) };
         var format = Ui.RawCombo(L.FormatName("MD1"), L.FormatName("MD3"), L.FormatName("MD5")); format.Name = "spec-format"; format.Width = 90; format.SelectedIndex = specFormat == "MD5" ? 2 : specFormat == "MD3" ? 1 : 0;
-        format.SelectionChanged += (_, _) => { if (building) return; string f = format.SelectedIndex == 2 ? "MD5" : format.SelectedIndex == 1 ? "MD3" : "MD1"; if (match.Maps.Any(m => m.HasData || m.Confirmed)) { notice.Text = L.T("Esta troca muda um mapa com bans ou rounds registrados."); Refresh(); return; } specFormat = f; specMaps = new string[f == "MD5" ? 5 : f == "MD3" ? 3 : 1]; Refresh(); };
+        format.SelectionChanged += (_, _) => { if (building) return; string f = format.SelectedIndex == 2 ? "MD5" : format.SelectedIndex == 1 ? "MD3" : "MD1"; if (match.Maps.Any(m => m.HasPreservedData || m.Confirmed)) { notice.Text = L.T("Esta troca muda um mapa com bans, rounds ou estatísticas registrados."); Refresh(); return; } specFormat = f; specMaps = new string[f == "MD5" ? 5 : f == "MD3" ? 3 : 1]; Refresh(); };
         Add(setup, SpecField("Formato:", format), 0);
         var mapFields = new UniformGrid { Columns = specMaps.Length };
         for (int i = 0; i < specMaps.Length; i++) {
@@ -87,8 +87,11 @@ public sealed partial class ChampionshipView
             foreach (int slot in Enumerable.Range(0, 12).Where(i => MapRecord.BanTeam(i) == t)) {
                 int field = slot; var op = Session.Catalog.Operators.FirstOrDefault(o => o.Id == map.Bans[slot]);
                 var content = new StackPanel(); var file = op == null ? StudioRenderer.Asset(map.BanRole(slot) == "DEF" ? "Icon_Defender.png" : "Icon_Attacker.png") : SiegeCatalog.Asset(op.Icon);
-                content.Children.Add(new Image { Source = Ui.FileImage(file), Height = 26, Stretch = Stretch.Uniform }); content.Children.Add(new TextBlock { Text = op?.Name ?? L.Role(map.BanRole(slot)), FontSize = 10, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
-                var card = Action("", () => PickBan(field)); card.Content = content; card.Height = 64; card.Margin = new Thickness(2); card.Background = Ui.Team(t); card.IsEnabled = map.BanStageReached(slot) && !map.Confirmed; cards.Children.Add(card);
+                var image = new Image { Source = Ui.FileImage(file, thumbnail: 96), Height = 26, Stretch = Stretch.Uniform };
+                global::Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(image, global::Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
+                content.Children.Add(image); content.Children.Add(new TextBlock { Text = op?.Name ?? (MapRecord.IsNoBan(map.Bans[slot])?L.T("Sem banimento"):L.Role(map.BanRole(slot))), FontSize = 10, TextAlignment = TextAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis });
+                var card = Action("", () => PickBan(field)); card.Content = content; card.Height = 64; card.Margin = new Thickness(2); card.Background = Ui.Team(t); card.IsEnabled = map.BanStageReached(slot) && !map.Confirmed;
+                card.Opacity = map.BanStageReached(slot) || !string.IsNullOrEmpty(map.Bans[slot]) ? 1 : .5; cards.Children.Add(card);
             }
             Add(row, cards, 1); rows.Children.Add(row);
         }

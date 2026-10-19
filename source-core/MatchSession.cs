@@ -50,7 +50,7 @@ public sealed class MatchSession
     public void Setup(string format,int coin,int first,bool reset)
     {
         if(Current.HasConfirmed)throw new InvalidOperationException(L.T("Mapa confirmado. Abra uma revisão para corrigir os dados."));
-        if(Current.DirectMaps && Current.Maps.Any(m=>m.HasData) && (format!=Current.Format||first!=Current.FirstBan) && !reset)throw new InvalidOperationException(L.T("Esta troca muda um mapa com bans ou rounds registrados."));
+        if(Current.DirectMaps && Current.Maps.Any(m=>m.HasPreservedData) && (format!=Current.Format||first!=Current.FirstBan) && !reset)throw new InvalidOperationException(L.T("Esta troca muda um mapa com bans, rounds ou estatísticas registrados."));
         if((format!=Current.Format||first!=Current.FirstBan)&&Current.Veto.Any(v=>!string.IsNullOrEmpty(v))&&!reset)throw new InvalidOperationException(L.T("Esta mudança exige reiniciar o veto."));
         Change(()=>{if(format!=Current.Format||first!=Current.FirstBan){Current.DirectMaps=false;Current.Veto=new string[8];Current.Maps=[];}Current.Format=format;Current.CoinWinner=coin;Current.FirstBan=first;});
     }
@@ -58,13 +58,15 @@ public sealed class MatchSession
     {
         if(Current.Complete||Current.CoinWinner<0||Current.FirstBan<0)throw new InvalidOperationException(L.T("Defina coin flip e primeiro ban antes do veto."));
         int next=Array.FindIndex(Current.Veto,string.IsNullOrEmpty);if(step<0||step>=8||(next>=0&&step>next)||Current.Veto.Where((_,i)=>i!=step).Contains(id))throw new InvalidOperationException(L.T("Seleção inválida. Confira o campo."));
-        Change(()=>{var old=Current.Maps.ToList();Current.Veto[step]=id;Current.SyncMaps(Catalog);if(old.Any(m=>!Current.Maps.Contains(m)&&(m.Confirmed||m.HasData&&!replace)))throw new InvalidOperationException(L.T("Esta troca muda um mapa com bans ou rounds registrados."));});
+        Change(()=>{var old=Current.Maps.ToList();Current.Veto[step]=id;Current.SyncMaps(Catalog);if(old.Any(m=>!Current.Maps.Contains(m)&&(m.Confirmed||m.HasPreservedData&&!replace)))throw new InvalidOperationException(L.T("Esta troca muda um mapa com bans, rounds ou estatísticas registrados."));});
     }
     public void Side(string id,bool overtime,int attacker,bool resetBans=false)
     {
         var map=Current.Maps.Single(m=>m.MapId==id);if(map.Confirmed||Current.Complete)throw new InvalidOperationException(L.T("Mapa confirmado. Abra uma revisão para corrigir os dados."));
         if(map.HasData&&!overtime&&map.InitialAttack!=attacker&&!resetBans)throw new InvalidOperationException(L.T("Alterar lado inicial limpa os bans. Confirme a alteração."));
-        Change(()=>{if(overtime)map.OtAttack=attacker;else if(map.InitialAttack!=attacker){map.InitialAttack=attacker;map.Bans=new string[12];}for(int i=0;i<map.Rounds.Count;i++)if(!RoundEnding.Allowed(map.Rounds[i].Ending,map.Rounds[i].Winner,map.Attacker(i+1)))map.Rounds[i].Ending="";});
+        // Existing endings are evidence, not disposable derived data. Validation
+        // rejects incompatible side changes and Change restores every record.
+        Change(()=>{if(overtime)map.OtAttack=attacker;else if(map.InitialAttack!=attacker){map.InitialAttack=attacker;map.Bans=new string[12];}});
     }
     public int[] PendingBans()
     {
@@ -74,7 +76,7 @@ public sealed class MatchSession
     public void Ban(int slot,string id)
     {
         if(Map==null||!Map.BanStageReached(slot)||Current.Complete&&Map.Rounds.Count==0)throw new InvalidOperationException(L.T("Ban de etapa futura."));
-        if(!Catalog.Operators.Any(o=>o.Id==id&&o.Role==Map.BanRole(slot))||Enumerable.Range(slot/6*6,6).Any(i=>i!=slot&&Map.Bans[i]==id))throw new InvalidOperationException(L.T("Operador incompatível com o lado."));
+        if(id!=MapRecord.NoBan(Map.BanRole(slot))&&(!Catalog.Operators.Any(o=>o.Id==id&&o.Role==Map.BanRole(slot))||Enumerable.Range(slot/6*6,6).Any(i=>i!=slot&&Map.Bans[i]==id)))throw new InvalidOperationException(L.T("Operador incompatível com o lado."));
         Change(()=>Map!.Bans[slot]=id);
     }
     public void Round(string site,int winner,string ending,int index=-1,bool trim=false)
@@ -88,7 +90,7 @@ public sealed class MatchSession
     {
         int count=format=="MD5"?5:format=="MD3"?3:format=="MD1"?1:0;
         if(count==0||ids.Length!=count||ids.Distinct().Count()!=count||ids.Any(id=>!Catalog.Maps.Any(m=>m.Id==id)))throw new InvalidOperationException(L.T("Mapas repetidos ou desconhecidos."));
-        if(Current.HasConfirmed||Current.Maps.Any(m=>m.HasData)&&(format!=Current.Format||!Current.Maps.Select(m=>m.MapId).SequenceEqual(ids)))throw new InvalidOperationException(L.T("Esta troca muda um mapa com bans ou rounds registrados."));
+        if(Current.HasConfirmed||Current.Maps.Any(m=>m.HasPreservedData)&&(format!=Current.Format||!Current.Maps.Select(m=>m.MapId).SequenceEqual(ids)))throw new InvalidOperationException(L.T("Esta troca muda um mapa com bans, rounds ou estatísticas registrados."));
         Change(()=>{Current.Format=format;Current.DirectMaps=true;Current.Veto=new string[8];Current.Maps=ids.Select(id=>Current.Maps.FirstOrDefault(m=>m.MapId==id)??new MapRecord{MapId=id,Picker=0}).ToList();});
     }
     public void SpecSide(string id,bool overtime,int attacker)
@@ -124,7 +126,7 @@ public sealed class MatchSession
     public void Review(string reason){if(Map==null||!Map.Confirmed||string.IsNullOrWhiteSpace(reason))throw new InvalidOperationException(L.T("Informe o motivo da revisão."));Change(()=>Map!.ConfirmedAt=null,reason);}
     public bool ApplyArtworkVeto(string id,ImageBrand brand)
     {
-        var target=Matches.Single(m=>m.Id==id);if(target.Maps.Any(m=>m.HasData||m.Confirmed))throw new InvalidOperationException(L.T("A partida já tem bans ou rounds registrados. Mantenha esta correção somente na arte."));var copy=MatchFiles.ArtworkMatch(target,Catalog,brand);MatchStore.Validate(copy,Catalog);MatchStore.Save(copy);target.Veto=copy.Veto;target.Maps=copy.Maps;if(Current.Id==id){Current=target;Map=target.Maps.FirstOrDefault();}Changed?.Invoke();return true;
+        var target=Matches.Single(m=>m.Id==id);if(target.Maps.Any(m=>m.HasPreservedData||m.Confirmed))throw new InvalidOperationException(L.T("A partida já tem bans, rounds ou estatísticas registrados. Mantenha esta correção somente na arte."));var copy=MatchFiles.ArtworkMatch(target,Catalog,brand);MatchStore.Validate(copy,Catalog);MatchStore.Save(copy);target.Veto=copy.Veto;target.Maps=copy.Maps;if(Current.Id==id){Current=target;Map=target.Maps.FirstOrDefault();}Changed?.Invoke();return true;
     }
     public void Import(string file){var match=MatchStore.Read(file,Catalog);if(MatchStore.IsDuplicate(Matches,match,MatchStore.Folder))throw new InvalidOperationException(L.T("Esta partida já existe no programa."));MatchStore.Save(match);Matches.Insert(0,match);Select(match.Id);}
     public void AttachImported(SiegeMatch match){Matches.Insert(0,match);Select(match.Id);}
@@ -136,7 +138,7 @@ public sealed class MatchSession
             lines.Add(L.T("Ataque inicial")+": "+(m.InitialAttack<0?L.T("Não definido"):Team(m.InitialAttack)));
             lines.Add(L.T("Defesa inicial")+": "+(m.InitialAttack<0?L.T("Não definido"):Team(1-m.InitialAttack)));
             lines.Add(L.T("Ataque na prorrogação")+": "+(m.OtAttack<0?L.T("Não definido"):Team(m.OtAttack)));
-            for(int half=0;half<2;half++)foreach(int slot in m.BanOrder(half).Where(i=>!string.IsNullOrEmpty(m.Bans[i])))lines.Add($"{L.T("Round")} {half*6+1}–{half*6+6} · {Team(MapRecord.BanTeam(slot))} · {L.Role(m.BanRole(slot))} · {Catalog.Operators.Single(o=>o.Id==m.Bans[slot]).Name}");
+            for(int half=0;half<2;half++)foreach(int slot in m.BanOrder(half).Where(i=>!string.IsNullOrEmpty(m.Bans[i])))lines.Add($"{L.T("Round")} {half*6+1}–{half*6+6} · {Team(MapRecord.BanTeam(slot))} · {L.Role(m.BanRole(slot))} · {(MapRecord.IsNoBan(m.Bans[slot])?L.T("Sem banimento"):Catalog.Operators.Single(o=>o.Id==m.Bans[slot]).Name)}");
             for(int i=0;i<m.Rounds.Count;i++)lines.Add($"{L.T("Round")} {i+1:00} · {BombsiteNames.Display(m.MapId,m.Rounds[i].Site)} · {Team(m.Rounds[i].Winner)}");
         }lines.Add(L.T("Após configurar, confira o mapa."));return string.Join(Environment.NewLine,lines);
     }

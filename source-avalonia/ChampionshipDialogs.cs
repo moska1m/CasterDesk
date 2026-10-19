@@ -37,7 +37,7 @@ public sealed partial class ChampionshipView
             var button = Ui.Button("", async () => {
                 try {
                     bool replace = false;
-                    if (match.Maps.Any(m => m.HasData)) replace = await Ui.Ask(dialog, "Esta troca muda um mapa com bans ou rounds registrados. Limpar apenas os registros do mapa substituído?") == 1;
+                    if (match.Maps.Any(m => m.HasPreservedData)) replace = await Ui.Ask(dialog, "Esta troca muda um mapa com bans, rounds ou estatísticas registrados. Limpar apenas os registros do mapa substituído?") == 1;
                     Session.Veto(step, map.Id, replace); dialog.Close(true);
                 } catch (Exception ex) { notice.Text = ex.Message; }
             });
@@ -60,19 +60,26 @@ public sealed partial class ChampionshipView
         var body = new Grid { Margin = new Thickness(12), RowDefinitions = new("Auto,*") };
         var search = new TextBox { PlaceholderText = L.T("Selecionar…"), Margin = new Thickness(0, 0, 0, 10) };
         body.Children.Add(search);
-        var grid = new UniformGrid { Columns = 11 }; Add(body, grid, 0, 1);
-        var dialog = Ui.Dialog(this, (SpecMode ? SpecTeam(MapRecord.BanTeam(slot)) : Session.Current.Team(MapRecord.BanTeam(slot))) + " · " + L.Role(map.BanRole(slot)), body, 1120, 470);
+        var grid = new UniformGrid { Columns = 7 }; Add(body, grid, 0, 1);
+        var dialog = Ui.Dialog(this, (SpecMode ? SpecTeam(MapRecord.BanTeam(slot)) : Session.Current.Team(MapRecord.BanTeam(slot))) + " · " + L.Role(map.BanRole(slot)), body, 820, 620);
         void Fill()
         {
             grid.Children.Clear();
+            var noBan=Ui.Button("",()=>dialog.Close(MapRecord.NoBan(map.BanRole(slot))));noBan.Name="ban-none-choice";noBan.Margin=new Thickness(3);noBan.Padding=new Thickness(4);noBan.Height=72;
+            noBan.Background=Brush.Parse("#334354");noBan.Foreground=Brushes.White;
+            var noBanCard=new StackPanel();noBanCard.Children.Add(new Image{Source=Ui.FileImage(StudioRenderer.Asset(map.BanRole(slot)=="DEF"?"Icon_Defender.png":"Icon_Attacker.png"),thumbnail:96),Height=36,Stretch=Stretch.Uniform});
+            noBanCard.Children.Add(new TextBlock { Text=L.T("Sem banimento"),FontSize=10,TextAlignment=TextAlignment.Center,TextWrapping=TextWrapping.Wrap });
+            noBan.Content=noBanCard;ToolTip.SetTip(noBan,L.T("Sem banimento"));
             foreach (var op in OperatorOrder.Sort(Session.Catalog.Operators, map.BanRole(slot)).Where(o => o.Name.Contains(search.Text ?? "", StringComparison.OrdinalIgnoreCase))) {
-                var button = Ui.Button("", () => dialog.Close(op.Id)); button.Name = "operator-" + op.Id; button.Margin = new Thickness(3); button.Padding = new Thickness(4);
+                var button = Ui.Button("", () => dialog.Close(op.Id)); button.Name = "operator-" + op.Id; button.Margin = new Thickness(3); button.Padding = new Thickness(4);button.Height=72;
+                button.Background=Brush.Parse("#334354");button.Foreground=Brushes.White;
                 var card = new StackPanel();
-                try { card.Children.Add(new Image { Source = Ui.FileImage(SiegeCatalog.Asset(op.Icon)), Height = 42, Stretch = Stretch.Uniform }); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
+                try { card.Children.Add(new Image { Source = Ui.FileImage(SiegeCatalog.Asset(op.Icon),thumbnail:96), Height = 36, Stretch = Stretch.Uniform }); } catch (Exception ex) { AppLog.Write(ex.ToString()); }
                 card.Children.Add(new TextBlock { Text = op.Name, FontSize = 10, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap });
                 button.Content = card; ToolTip.SetTip(button, op.Name);
                 button.IsEnabled = !Enumerable.Range(slot / 6 * 6, 6).Any(i => i != slot && map.Bans[i] == op.Id); grid.Children.Add(button);
             }
+            grid.Children.Add(noBan);
         }
         search.TextChanged += (_, _) => Fill(); Fill(); return dialog;
     }

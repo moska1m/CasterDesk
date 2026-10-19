@@ -1,6 +1,30 @@
-﻿# CasterDesk — progresso e validação
+# CasterDesk — progresso e validação
 
 Diretriz de 14/10/2026: priorizar entregas locais; não atualizar/publicar o GitHub a cada ajuste. Usar o remoto quando solicitado ou necessário ao processo, como compilação nativa do plugin. Apresentação centrada no CasterDesk, sem destacar a base de interface; nomes técnicos permanecem somente onde necessários à compilação e compatibilidade. Referências às bases nas entregas antigas registram o contexto histórico.
+
+## Versão 1.0.7 — 19/10/2026
+
+Atualização acumulada desde a release pública 1.0.1, com artes/estatísticas por categoria, conciliação de jogadores, Twitch salvo, nomes confirmados sem interromper digitação, Sem banimento repetível, layout compacto dos bans, proteção dos dados e abertura maximizada. As seis falhas reproduzidas na auditoria foram corrigidas; seleções rápidas e exportação reutilizam trabalho já preparado.
+
+O painel OBS foi recompilado com Sem banimento no final, cards e ícones padronizados e opacidade dos bans futuros. Atualizar o plugin é necessário para receber o novo visual. Testes incluem 91 verificações HTTP OBS e 87 nativas Qt, sem abrir OBS ou aplicativo na área de trabalho. Instalação/UAC e uso no OBS real permanecem manuais. Publicação no GitHub autorizada pelo usuário em 19/10/2026, com código e instalador da 1.0.7; ver RELEASE-NOTES.md e docs/VALIDACAO-1.0.7.md.
+
+## Versão 1.0.3 — 17/10/2026
+
+Nomes deixam de ser confirmados pelo temporizador de 500ms. Commit ao sair dos dois campos ou pressionar Enter; falhas preservam nomes pendentes. Canal Twitch tem prefixo fixo e nick salvo em Configuracoes/image-preferences.json, reaproveitado em novas partidas sem substituir canal já específico de uma partida. Canal antigo Twitch pode inicializar a preferência quando ela está vazia.
+
+Sem banimento usa IDs estruturais __def/__atq, distintos de vazio/pendente; função validada e repetição permitida. Seletores locais e API apresentam o símbolo da função; o plugin nativo existente recebe as novas opções e ícones pela API, sem necessidade de nova DLL. Resumo de remake e SPEC reconhecem o registro. JSONs com estes IDs exigem 1.0.3 ou posterior.
+
+Gerador de imagens com título principal em caixa alta, botões de abas no padrão do campeonato, seletor à direita na mesma linha, coluna 370px (320px compacta), margem reservada para o scroll. Aplicar tempo compartilha SetClock com OBS e preserva o estado de execução/pausa; leitura curta mm:ss aceita. Resetar tempo continua uma operação distinta. Blocos reposicionáveis adiados.
+
+Instalador 1.0.3 concluído. 713 verificações do núcleo e 509 da interface/API/SPEC/artes/interações aprovadas, incluindo 18 específicas desta entrega. Manifesto de 709 arquivos e ícones conferidos. SHA256: 44dfe89199f64c96e46282b853b5e2b7f5f496e40159e54178bafddc0db9edb1. Sem instalação interativa ou execução no OBS real nesta entrega. Nenhum programa/OBS/instalador aberto na área de trabalho e sem envio automático ao GitHub.
+
+## Versão 1.0.2 — 17/10/2026
+
+Correção da central de imagens: quatro categorias, sem a aba redundante Resultado da série. Estatísticas da série somam os mapas já conferidos e exigem conciliação explícita se aparecerem mais de cinco identidades por equipe ou nomes duplicados sob identidades diferentes. O diálogo trabalha em cópia, valida as escolhas e salva uma cópia anterior em Estatisticas/antes-conciliacao-*.json antes de confirmar. Cancelar não altera os dados. Não há associação aproximada automática; substituições reais que excedam cinco jogadores precisam de revisão, pois a composição atual tem cinco linhas por equipe.
+
+Fontes dos nicks fixas por formato e grupo MVP centrado sob o nome, com E/M/A. Fundo e acento por categoria; campo hexadecimal e cores prontas. O fundo antigo compartilhado migra para a categoria Estatísticas da série, sem alterar os arquivos PNG anteriores.
+
+Reprodução em diretório isolado com cópia da partida de 17/10: detectadas 12 identidades; após associação explícita de duas variantes na cópia, 10 jogadores, KDS com 19 eliminações e Lenda1 com 9. Nenhum JSON ou PNG da partida original foi sobrescrito. Usuário confirmou as duas identidades e fechou o aplicativo. Reparação aplicada à partida real, com backup Backups/NA-ORG-FAZE-antes-reparo-20261017-153353.zip: dois nomes/IDs corrigidos, JSONs raiz e pasta atualizados e três PNGs feed regenerados (mapas 1 e 2 e série). KDA original e hashes do anúncio/map veto conferidos contra o ZIP, sem alterações nesses arquivos. 19 verificações focadas passaram, incluindo conciliação pela interface Headless, backup, recarga, fonte e formatos. Instalador 1.0.2 concluído. 713 verificações do núcleo e 491 da interface/API/SPEC/artes aprovadas. Manifesto de 709 arquivos e ícones conferidos. SHA256 do instalador: 32381dab0c03f1498d3d78ef5750ece366d78027f0448753491dc246a6c50311. Não foi realizada instalação interativa. Sem abertura do programa/OBS/instalador na área de trabalho e sem publicação automática no GitHub.
 
 ## Versão 1.0.1 — 14/10/2026
 

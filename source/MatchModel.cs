@@ -21,6 +21,8 @@ public static class RoundEnding
 }
 public sealed class MapRecord
 {
+    public static bool IsNoBan(string id)=>id is "__def" or "__atq";
+    public static string NoBan(string role)=>role=="DEF"?"__def":"__atq";
     public string MapId { get; set; } = "";
     public int Picker { get; set; }
     public int InitialAttack { get; set; } = -1;
@@ -31,6 +33,9 @@ public sealed class MapRecord
     public MapStatistics? Statistics { get; set; }
     [JsonIgnore] public bool Confirmed => ConfirmedAt.HasValue;
     [JsonIgnore] public bool HasData => Rounds.Count > 0 || Bans.Any(x => !string.IsNullOrEmpty(x));
+    // Statistics may be reviewed before rounds are entered. They still require
+    // explicit protection when replacing a map, without requiring initial sides.
+    [JsonIgnore] public bool HasPreservedData => HasData || Statistics is not null;
     public int Attacker(int round) => round <= 6 ? InitialAttack : round <= 12 ? 1 - InitialAttack : (round % 2 == 1 ? OtAttack : 1 - OtAttack);
     public (int A, int B, int Winner, int EndAt) Score()
     {
@@ -179,9 +184,9 @@ public static class MatchStore
             for(int i=0;i<12;i++) if(!string.IsNullOrEmpty(map.Bans[i]))
             {
                 Need(map.Rounds.Count>=MapRecord.BanThreshold(i),L.T("Ban de etapa futura."));
-                Need(c.Operators.Any(o=>o.Id==map.Bans[i] && o.Role==map.BanRole(i)),L.T("Operador incompatível com o lado."));
+                Need(map.Bans[i]==MapRecord.NoBan(map.BanRole(i))||c.Operators.Any(o=>o.Id==map.Bans[i] && o.Role==map.BanRole(i)),L.T("Operador incompatível com o lado."));
             }
-            foreach(int half in new[]{0,1}) {var bans=map.Bans.Skip(half*6).Take(6).Where(x=>!string.IsNullOrEmpty(x)).ToList(); Need(bans.Distinct().Count()==bans.Count,L.T("Ban duplicado na mesma metade."));}
+            foreach(int half in new[]{0,1}) {var bans=map.Bans.Skip(half*6).Take(6).Where(x=>!string.IsNullOrEmpty(x)&&!MapRecord.IsNoBan(x)).ToList(); Need(bans.Distinct().Count()==bans.Count,L.T("Ban duplicado na mesma metade."));}
         }
     }
 }

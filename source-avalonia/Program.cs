@@ -22,7 +22,7 @@ internal static class Program
                 throw new InvalidOperationException("Headless checks require isolated data.");
             AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
             SynchronizationContext.SetSynchronizationContext(new AvaloniaSynchronizationContext());
-            if(args.Contains("--spec-only")){L.Set("pt-BR");SpecChecks.Run();}else Checks.Run(); return;
+            if(args.Contains("--audit-fixes-only")){L.Set("pt-BR");AuditFixChecks.Run();}else if(args.Contains("--spec-only")){L.Set("pt-BR");SpecChecks.Run();}else if(args.Contains("--interaction-only")){L.Set("pt-BR");InteractionChecks.Run();}else if(args.Contains("--art-only")){L.Set("pt-BR");ArtChecks.Run();}else Checks.Run(); return;
         }
         InitialArguments = args;
         string key = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(

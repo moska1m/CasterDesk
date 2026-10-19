@@ -31,7 +31,7 @@ internal static class Checks
             using var image = new RenderTargetBitmap(new PixelSize((int)size.Width, (int)size.Height), new Vector(96, 96));
             image.Render(studio); image.Save(Path.Combine(AppPaths.DataDirectory, $"avalonia-studio-{size.Width}.png"));
         }
-        for (int category = 1; category < 5; category++) {
+        for (int category = 1; category < 4; category++) {
             Wait(studio.CheckCategory(category));
             if (!studio.PreviewReady) throw new Exception($"Category {category} preview failed.");
         }
@@ -42,9 +42,12 @@ internal static class Checks
         TextsChecks.Run();
         BrandChecks.Run();
         CorrectionChecks.Run();
+        ArtChecks.Run();
+        InteractionChecks.Run();
         SpecChecks.Run();
         ObsDockChecks.Run();
-        File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-check.txt"), "PASS: five image categories, announcement feed/story, three layouts, generate bounds and championship UI flow. No desktop window was opened.");
+        AuditFixChecks.Run();
+        File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "avalonia-check.txt"), "PASS: four image categories, announcement feed/story, three layouts, generate bounds and championship UI flow. No desktop window was opened.");
     }
 
     static void Wait(Task task)

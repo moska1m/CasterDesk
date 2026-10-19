@@ -18,6 +18,8 @@ Abas **PARTIDA → REMAKE → CRONÔMETRO**. PARTIDA reúne registro por botões
 
 Bans de cada etapa são liberados no próprio painel, na mesma aba dos rounds. Os lados e a prorrogação precisam estar configurados no programa.
 
+A partir da 1.0.7, Sem banimento fica no final da seleção e usa os mesmos tamanhos dos operadores. A ordem do jogo é preservada; a opção pode ser repetida. Bans futuros aparecem com 50% de opacidade. Atualize o painel pela opção **Instalar o painel CasterDesk no OBS** do instalador, com OBS e CasterDesk fechados.
+
 No bloco Bans de operadores do CasterDesk, ligue **Plugin OBS** para impedir seletores automáticos depois dos rounds. Essa preferência fica salva e não desativa o cronômetro ou a conexão. Desligado, mantém o fluxo automático no programa. Clicar manualmente em um ban ou em Banir próximo continua funcionando em ambos os modos.
 
 Em MD3/MD5, o seletor de mapa do plugin usa os mapas da partida e atualiza a seleção do programa. Em MD1 não há seletor editável. A seleção não apaga registros.
@@ -32,7 +34,7 @@ Duplo clique em um round do mapa ativo não confirmado abre sua correção em PA
 
 ## Cronômetro e TXT
 
-Controle iniciar/retomar, pausar, definir tempo, retirar/acrescentar um minuto e reiniciar. Configure tempo inicial, formato mm:ss/hh:mm:ss, mensagem final e três acréscimos em minutos; Aplicar configurações salva esses valores sem reiniciar a contagem em andamento. Definir tempo altera imediatamente a contagem; Resetar tempo volta à duração inicial salva. A mensagem final aparece ao encerrar a contagem. Contagem, configurações e TXT são compartilhados com o programa.
+Controle iniciar/retomar, pausar, aplicar tempo, retirar/acrescentar um minuto e reiniciar. Configure tempo inicial, formato mm:ss/hh:mm:ss, mensagem final e os acréscimos em minutos salvos no programa (até oito); Aplicar configurações salva esses valores sem reiniciar a contagem em andamento. Aplicar tempo substitui imediatamente a contagem, preservando execução/pausa; Resetar tempo volta à duração inicial salva. A mensagem final aparece ao encerrar a contagem. Contagem, configurações e TXT são compartilhados com o programa.
 
 Copiar caminho copia somente a pasta que contém o TXT, no painel e no CasterDesk. No seletor de arquivos do OBS, abra essa pasta e escolha o TXT. A seleção de outro arquivo de saída continua na aba Textos para OBS do programa.
 

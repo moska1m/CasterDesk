@@ -16,6 +16,8 @@ public sealed class MapStatistics
 {
     public string Status{get;set;}="complete";
     public string Screenshot{get;set;}="";
+    // Null preserves legacy/manual records without guessing which team was above the other.
+    public int? TopTeam{get;set;}
     public DateTimeOffset? ConfirmedAt{get;set;}
     public List<PlayerStatistic> Players{get;set;}=[];
 }
@@ -43,6 +45,7 @@ public static class StatisticsData
     }
     public static void Validate(MapStatistics data)
     {
+        if(data.TopTeam is <0 or >1)throw new InvalidDataException(L.T("Estatísticas inválidas."));
         if(data.Status is not ("complete" or "partial" or "missing")||data.Players is null||data.Players.Count>20||data.Screenshot is null||data.Screenshot.Length>200)throw new InvalidDataException(L.T("Estatísticas inválidas."));
         if(!string.IsNullOrEmpty(data.Screenshot)&&(Path.IsPathRooted(data.Screenshot)||data.Screenshot.Split('/','\\').Contains("..")))throw new InvalidDataException(L.T("Caminho de print inválido."));
         if(data.Players.Any(p=>p is null||p.Team is <0 or >1||string.IsNullOrWhiteSpace(p.Name)||p.Name.Length>60||p.Kills is <0 or >99||p.Deaths is <0 or >99||p.Assists is <0 or >99))throw new InvalidDataException(L.T("Confira nomes e valores de eliminações, mortes e assistências."));
@@ -53,6 +56,19 @@ public static class StatisticsData
     }
     public static StatisticsSummary ForMap(MapRecord map)=>Sum([map]);
     public static StatisticsSummary ForSeries(SiegeMatch match)=>Sum(match.Maps.Where(m=>m.Rounds.Count>0).ToList());
+    // Render-time guard: OCR variants must be reconciled explicitly, never fuzzily merged.
+    public static string SeriesIssue(SiegeMatch match)
+    {
+        var summary=ForSeries(match);
+        var problems=new List<string>();
+        for(int team=0;team<2;team++) {
+            var players=summary.Players.Where(p=>p.Team==team).ToList();
+            if(players.Count>5)problems.Add(match.Team(team)+": "+string.Join(", ",players.Select(p=>p.Name)));
+            else if(players.GroupBy(p=>p.Name.Trim().ToUpperInvariant()).Any(g=>g.Count()>1))
+                problems.Add(match.Team(team)+": "+string.Join(", ",players.Select(p=>p.Name)));
+        }
+        return problems.Count==0?"":L.T("Há nomes incompatíveis entre os mapas. Concilie os jogadores antes de gerar as estatísticas da série.")+"\n"+string.Join("\n",problems);
+    }
     public static SummedPlayer? SuggestMvp(SiegeMatch match, MapRecord? map = null)
     {
         int winner = map?.Score().Winner ?? (match.Complete ? (match.Maps.Count(m=>m.Confirmed && m.Score().Winner==0)>=match.WinsRequired?0:1) : -1);

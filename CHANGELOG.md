@@ -1,4 +1,56 @@
-﻿# 1.0.1
+# 1.0.7
+
+- Painel OBS com Sem banimento no final da seleção, mantendo a ordem dos operadores do jogo.
+- Operadores e Sem banimento com os mesmos cards de 72 px, ícones de 36 px e texto abaixo do ícone.
+- Bans futuros no OBS com 50% de opacidade; liberados e registrados permanecem a 100%.
+- Sem banimento registrado usa o símbolo de sua função, mantendo o significado explícito no tooltip, acessibilidade e remake.
+
+# 1.0.6
+
+- Abertura maximizada por padrão.
+- Trocas de mapa, formato e veto da arte protegem também estatísticas já salvas, mesmo sem rounds ou bans.
+- Alterações de lado incompatíveis são recusadas sem apagar finalizações; dados e placares anteriores são preservados.
+- Equipe no topo do print persistida. Prints antigos sem essa informação exigem seleção explícita para nova leitura.
+- Correções de estatísticas reutilizam o print arquivado quando a imagem não mudou.
+- Aplicação dos oito TXT e sua configuração prepara todos os arquivos antes de publicar e desfaz alterações se uma gravação falhar.
+- Plugin OBS respeita a quantidade de atalhos de tempo salva (0–8), sem limitar a três; remake evita reconstruções quando o conteúdo não muda.
+- Seleções rápidas de round atualizam os controles existentes. Exportação reutiliza a prévia em resolução integral quando os dados não mudaram.
+- Caminho inválido de saída do timer não interrompe a consulta de estado. Instalador verifica o resultado da instalação opcional do painel OBS.
+
+# 1.0.5
+
+- Sem banimento com o mesmo tamanho, ícone e fonte das opções de operadores.
+- Seleção de operadores em sete colunas, na ordem existente do jogo, com Sem banimento no final da grade.
+- Cards vazios usam os símbolos DEF/ATQ; o estado Sem banimento permanece explícito no tooltip, acessibilidade, dados e remake.
+- Bans de etapas futuras ficam a 50% de opacidade; liberados e já registrados ficam a 100%, preservando o bloqueio de ações.
+- Placar incorporado à barra de título do Histórico de rounds no modo Caster, eliminando a linha separada acima do painel.
+
+# 1.0.4
+
+- Rodapé de marca e linha permanente de salvamento removidos; avisos de erro e recuperação continuam visíveis quando necessários.
+- Confronto com altura limitada e espaço restante destinado aos lados dos mapas, favorecendo MD3 e MD5.
+- Bans divididos em duas metades lado a lado: DEF acima, ATQ abaixo e separador antes do terceiro ban. Cores e responsáveis preservados.
+- Miniaturas proporcionais com redução e interpolação de qualidade, sem recorte forçado de rostos ou símbolos em janelas menores.
+- Removido o achatamento da configuração superior em janelas pequenas; cabeçalho dos bans permanece em uma linha.
+
+# 1.0.3
+
+- Canal Twitch salvo para reutilizar em novas partidas, com prefixo fixo e campo apenas para o nick.
+- Nomes das equipes confirmados ao sair dos campos ou pressionar Enter, preservando digitação lenta.
+- Sem banimento selecionável e repetível por função; preservado em JSON, SPEC, remake e painel OBS. Não é o mesmo que um ban pendente.
+- Gerador de imagens com navegação padronizada, seletor à direita, opções mais largas e faixa reservada para rolagem.
+- Aplicar tempo substitui o restante mantendo execução/pausa, no app e pelo comando existente do OBS; aceita mm:ss ou hh:mm:ss.
+- Blocos reposicionáveis continuam futuros. Arquivos com novos registros Sem banimento exigem esta versão ou posterior.
+
+# 1.0.2
+
+- Central de imagens reúne resultado e estatísticas da série em uma única aba.
+- Geração da série bloqueada quando variações de nomes produzem mais de cinco identidades por equipe; conciliação explícita por mapa com backup antes de salvar. Não há mesclagem aproximada nem descarte silencioso.
+- Nomes dos jogadores com fonte fixa por formato, truncando nomes longos sem reduzir sua fonte. MVP alinhado ao grupo E/M/A centralizado.
+- Fundo e cor de destaque independentes por categoria; cores prontas e hexadecimal personalizado. Fundo compartilhado antigo preservado nas estatísticas da série.
+- OBS e partida original preservados.
+
+# 1.0.1
 
 - SPEC: equipes editáveis e placar no centro da barra das abas; placar duplicado removido do histórico.
 - Histórico e registro de rounds com cabeçalhos alinhados.

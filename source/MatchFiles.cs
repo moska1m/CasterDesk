@@ -27,13 +27,15 @@ public static class MatchFiles
         string dir=Ensure(match);batch.Text(Path.Combine(dir,"partida.json"),JsonSerializer.Serialize(match,MatchStore.Options));
         batch.Text(Path.Combine(dir,"LEIA-ME.txt"),$"CasterDesk\r\n{match.TeamA} × {match.TeamB}\r\n{match.Created:g} · {match.Format}\r\n\r\npartida.json: dados da partida\r\nImagens: artes geradas\r\nEstatisticas: prints usados na conferência\r\nRecursos: logos e fundos personalizados\r\n");
     }
-    public static void SaveStatistics(SiegeMatch match,MapRecord map,MapStatistics data,Image? print)
+    public static void SaveStatistics(SiegeMatch match,MapRecord map,MapStatistics data,Image? print,bool screenshotChanged=true)
     {
         StatisticsData.Identify(match,data);StatisticsData.Validate(data);var previous=map.Statistics;
         lock(FileBatch.Gate)
         {
             using var batch=new FileBatch();
-            if(print!=null&&data.Status!="missing"){data.Screenshot="Estatisticas/"+map.MapId+"-"+Guid.NewGuid().ToString("N")+".png";batch.Add(Path.Combine(Ensure(match),data.Screenshot),p=>OptimizedPng.Save(print,p));}
+            if(data.Status=="missing")data.Screenshot="";
+            else if(!screenshotChanged&&previous is not null&&Resolve(match,previous.Screenshot) is not null)data.Screenshot=previous.Screenshot;
+            else if(print!=null){data.Screenshot="Estatisticas/"+map.MapId+"-"+Guid.NewGuid().ToString("N")+".png";batch.Add(Path.Combine(Ensure(match),data.Screenshot),p=>OptimizedPng.Save(print,p));}
             map.Statistics=data;try{MatchStore.Stage(batch,match);batch.Commit();}catch{map.Statistics=previous;throw;}
         }
     }
@@ -57,7 +59,7 @@ public static class MatchFiles
     {
         if(new FileInfo(source).Length>40_000_000)throw new InvalidDataException(L.T("Use uma imagem com até 40 MB."));
         using var image=Image.FromFile(source);if((long)image.Width*image.Height>50_000_000)throw new InvalidDataException(L.T("A imagem é muito grande."));
-        float scale=Math.Min(1,(kind=="fundo"?2560f:768f)/Math.Max(image.Width,image.Height));
+        float scale=Math.Min(1,(kind.StartsWith("fundo")?2560f:768f)/Math.Max(image.Width,image.Height));
         using var bitmap=new Bitmap(Math.Max(1,(int)(image.Width*scale)),Math.Max(1,(int)(image.Height*scale)));
         using(var g=Graphics.FromImage(bitmap)){g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;g.DrawImage(image,0,0,bitmap.Width,bitmap.Height);}
         string relative=Path.Combine("Recursos",kind+".png");AtomicImage(Path.Combine(Ensure(match),relative),bitmap);return relative;
@@ -99,16 +101,20 @@ public static class MatchFiles
     {
         var artwork=kind==ArtKind.MapVeto?ArtworkMatch(match,catalog,brand):match;
         var pages=StudioRenderer.Render(artwork,catalog,brand,kind,aspect,map);
-        try
-        {
+        try { return ExportRendered(match,brand,kind,pages); }
+        finally{foreach(var page in pages)page.Dispose();}
+    }
+    // Caller owns the full-resolution preview pages. Encoding retains the same
+    // file transaction and fixed OBS-path publication order as a fresh render.
+    public static string ExportRendered(SiegeMatch match,ImageBrand brand,ArtKind kind,IReadOnlyList<ResultPage> pages)
+    {
+            if(pages.Count==0||pages.Select(p=>p.Name).Distinct().Count()!=pages.Count||pages.Any(p=>string.IsNullOrWhiteSpace(p.Name)||Path.GetFileName(p.Name)!=p.Name||p.Name.IndexOfAny(Path.GetInvalidFileNameChars())>=0))throw new InvalidDataException("Invalid rendered pages.");
             string dir=Ensure(match);using var batch=new FileBatch();batch.Text(Path.Combine(dir,"arte.json"),JsonSerializer.Serialize(brand,MatchStore.Options));StageSnapshot(batch,match);
             foreach(var page in pages)batch.Add(Path.Combine(dir,"Imagens",page.Name+".png"),p=>OptimizedPng.Save(page.Image,p));
             // Publish the fixed path only after all archive copies succeeded.
             if(kind==ArtKind.MapVeto)batch.Add(ObsVeto,p=>OptimizedPng.Save(pages.Single(page=>page.Name=="map-veto-obs").Image,p));
             batch.Text(Path.Combine(dir,"ultima-exportacao.json"),JsonSerializer.Serialize(new{Generated=DateTimeOffset.Now,Kind=kind.ToString(),Files=pages.Select(p=>"Imagens/"+p.Name+".png").ToArray()},MatchStore.Options));batch.Commit();
             return dir;
-        }
-        finally{foreach(var page in pages)page.Dispose();}
     }
 }
 public sealed class ImageBrand
@@ -122,5 +128,20 @@ public sealed class ImageBrand
     public string TeamALogo{get;set;}="";
     public string TeamBLogo{get;set;}="";
     public string Background{get;set;}="";
+    public Dictionary<string,ArtStyle> ArtStyles{get;set;}=new();
+    public ArtStyle Style(ArtKind kind) {
+        ArtStyles ??= new();
+        string key=(kind==ArtKind.Results?ArtKind.SeriesStats:kind).ToString();
+        if(!ArtStyles.TryGetValue(key,out var style)||style is null)ArtStyles[key]=style=new();
+        return style;
+    }
+    // Legacy direct renderer callers remain compatible; the UI migrates the old shared background.
+    public string BackgroundFor(ArtKind kind)=>ArtStyles?.GetValueOrDefault((kind==ArtKind.Results?ArtKind.SeriesStats:kind).ToString())?.Background ?? Background;
+    public Color AccentFor(ArtKind kind) {
+        string hex=Style(kind).Accent??"";
+        return System.Text.RegularExpressions.Regex.IsMatch(hex, "^#[0-9A-Fa-f]{6}$")?ColorTranslator.FromHtml(hex):Color.FromArgb(255,57,39);
+    }
     public string Mvp{get;set;}="";
 }
+
+public sealed class ArtStyle { public string? Background{get;set;} public string Accent{get;set;}="#FF3927"; }

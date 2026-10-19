@@ -61,6 +61,9 @@ internal static class ObsDockChecks
         for(int n=0;n<4;n++){
             using var state=State();var data=state.RootElement;string role=data.GetProperty("role").GetString()!;
             Need(role==(n%2==0?"DEF":"ATQ"),"Dock follows alternating next ban");
+            var choices=data.GetProperty("operators").EnumerateArray().ToArray();
+            Need(choices[^1].GetProperty("id").GetString()==MapRecord.NoBan(role)&&choices[^1].GetProperty("enabled").GetBoolean(),"repeatable no-ban is last in the OBS selector");
+            Need(choices.SkipLast(1).Select(o=>o.GetProperty("id").GetString()).SequenceEqual(OperatorOrder.Sort(session.Catalog.Operators,role).Select(o=>o.Id)),"OBS retains game operator order before no-ban");
             int slot=data.GetProperty("pending").GetInt32();long revision=data.GetProperty("revision").GetInt64();
             var op=OperatorOrder.Sort(session.Catalog.Operators,role).First(o=>!session.Map.Bans.Contains(o.Id));
             using(var r=Send("/api/command",key,new{action="ban",matchId=session.Current.Id,mapId,revision,slot,operatorId=op.Id}))Need(r.IsSuccessStatusCode&&session.Map.Bans[slot]==op.Id&&view.ActiveDialog==null,"Dock ban saved without program popup");

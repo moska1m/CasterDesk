@@ -1,7 +1,7 @@
 ![CasterDesk — organize a partida, cuide da transmissão](docs/media/banner.svg)
 
 <p align="center">
-  <img alt="Versão 1.0.0" src="https://img.shields.io/badge/vers%C3%A3o-1.0.0-327FA8" />
+  <img alt="Versão 1.0.7" src="https://img.shields.io/badge/vers%C3%A3o-1.0.7-327FA8" />
   <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448" />
   <img alt="Português, inglês e espanhol" src="https://img.shields.io/badge/idiomas-PT%20%C2%B7%20EN%20%C2%B7%20ES-233448" />
   <img alt="Licença MIT para o código próprio" src="https://img.shields.io/badge/c%C3%B3digo-MIT-25834C" />
@@ -29,10 +29,10 @@ Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o fee
 |---|---|
 | **Partidas** | MD1, MD3 e MD5; registro do vencedor externo do coin flip, veto de nove mapas, lados e prorrogação. |
 | **SPEC** | Tela alternativa no menu, mesmos dados, escolha direta de mapas, edição inline de rounds, exclusão confirmada e desfazer/refazer. |
-| **Bans** | Ícones na ordem do jogo, etapas DEF → ATQ, equipe responsável e revisão protegida. |
+| **Bans** | Ícones na ordem do jogo, Sem banimento repetível no final, etapas DEF → ATQ, equipe responsável e revisão protegida. |
 | **Rounds** | Registro rápido de bombsite, vencedor e finalização; histórico com placar, ataque/defesa e cores fixas. |
 | **Estatísticas** | Print por arquivo ou Ctrl+V, leitura de nomes/E/M/A, revisão lado a lado e correção manual; suporte a remake e dados incompletos. |
-| **Central de imagens** | Anúncio, map veto, resultado da série, estatísticas por mapa e da série; logos opcionais, logo neutra e fundo personalizado. |
+| **Central de imagens** | Anúncio, map veto e estatísticas por mapa/série; logos opcionais, logo neutra, fundos e cores por categoria. |
 | **OBS** | Cronômetro e nomes/perfis do casting em TXT; map veto transparente em caminho fixo. Plugin opcional beta com painel nativo de rounds/bans/timer e conexão automática. |
 | **Arquivos e backup** | Pasta por partida com JSON, imagens e recursos; importação/exportação, recuperação de salvamento e backup/restauração. |
 
@@ -57,7 +57,9 @@ As artes preservam as proporções das bases fornecidas. Mapas não jogados fica
 
 ## Começar a usar
 
-1. Use o instalador entregue com a atualização local ou escolha uma versão registrada em [Releases](https://github.com/moska1m/CasterDesk/releases). A versão **1.0.0** está preparada para Windows x64.
+**Atualizando de uma versão anterior?** Feche CasterDesk e OBS. No instalador 1.0.7, marque **Instalar o painel CasterDesk no OBS** para atualizar também o plugin; atualizar somente o app mantém a DLL anterior. Veja o [resumo das novidades desde a 1.0.1](RELEASE-NOTES.md).
+
+1. Use o instalador entregue com a atualização local ou escolha uma versão registrada em [Releases](https://github.com/moska1m/CasterDesk/releases). A versão **1.0.7** está preparada para Windows x64.
 2. Confira o nome/versão do instalador e o SHA-256 disponibilizado junto dele.
 3. Instale e abra **CasterDesk**. O pacote inclui o runtime .NET; não é necessário instalar o SDK para usar.
 4. Crie uma partida, informe as equipes e registre o coin flip feito fora do programa. Complete o veto, defina os lados e inicie os bans por clique.
@@ -75,7 +77,7 @@ Ative pela engrenagem. Mesma partida, apresentação compacta, mapas e lados no 
 
 ## Usar com OBS
 
-Na versão 1.0.0, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
+Na versão 1.0.7, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
 
 O painel registra/corrige rounds, seleciona mapas de séries e controla o mesmo timer e os bans sem alternar de janela. Marque a instalação opcional do plugin OBS no instalador para conexão automática. As instruções e limites estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
 

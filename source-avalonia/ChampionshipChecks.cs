@@ -52,8 +52,13 @@ internal static class ChampionshipChecks
                 Need(role == (count % 2 == 1 ? "DEF" : "ATQ"), "Ban chain alternates DEF then ATQ after every actual selection");
                 var ordered = OperatorOrder.Sort(session.Catalog.Operators, role).ToArray();
                 var actual = view.ActiveDialog.GetVisualDescendants().OfType<Button>().Where(b => b.Name?.StartsWith("operator-") == true).ToArray();
+                var noBanChoice = Find<Button>(view.ActiveDialog, "ban-none-choice");
+                Need(noBanChoice.Height == actual[0].Height && noBanChoice.Padding == actual[0].Padding, "No-ban choice shares operator dimensions and padding");
+                Need(noBanChoice.GetVisualDescendants().OfType<TextBlock>().Single().FontSize == 10, "No-ban label uses the same compact type as operators");
                 Need(actual.Select(b => b.Name![9..]).SequenceEqual(ordered.Select(o => o.Id)), "Operator release order");
-                var grid = view.ActiveDialog.GetVisualDescendants().OfType<UniformGrid>().Single(); Need(grid.Columns == 11, "Eleven operator columns");
+                var grid = view.ActiveDialog.GetVisualDescendants().OfType<UniformGrid>().Single(); Need(grid.Columns == 7, "Seven operator columns match the in-game ban grid");
+                Need(ReferenceEquals(grid.Children.Last(), noBanChoice), "No-ban choice follows every operator without shifting release order");
+                if (count == 1) Snapshot((Control)view.ActiveDialog.Content!, new Size(800, 580), "operator-picker-" + role);
                 string id = actual.First(b => b.IsEnabled).Name![9..]; int slot = pending[0];
                 Click(actual.First(b => b.IsEnabled)); Pump(); Need(session.Map.Bans[slot] == id, "Ban stored and next popup automatic");
             }
@@ -69,6 +74,9 @@ internal static class ChampionshipChecks
             Need(inside.Y >= 0 && inside.Y + action.Bounds.Height <= frame.Bounds.Height, "Confirm round cannot overlap footer");
             Need(view.GetVisualDescendants().OfType<Button>().Where(b => b.Name?.StartsWith("round-site-") == true).Select(b => b.Height).Distinct().Count() == 1, "Bombsite buttons keep a uniform height");
             var history = Find<Grid>(view, "round-history-panel");
+            var scoreHeader = Find<Grid>(view, "history-score-header"); var scoreLabel = Find<TextBlock>(view, "match-score");
+            Need(ReferenceEquals(scoreLabel.Parent, scoreHeader) && scoreHeader.Children.OfType<TextBlock>().Count() == 2, "Score shares history title band");
+            Need(scoreLabel.Bounds.Y + scoreLabel.Bounds.Height <= scoreHeader.Bounds.Height + 1 && scoreLabel.Bounds.Right <= scoreHeader.Bounds.Width + 1, "History score fits one header row without overlap at " + size);
             Need(frame.TranslatePoint(default, view)!.Value.X < history.TranslatePoint(default, view)!.Value.X, "Round entry stays left of history");
             Need(frame.TranslatePoint(default, view)!.Value.X >= Find<Border>(view, "bans-panel").TranslatePoint(default, view)!.Value.X + Find<Border>(view, "bans-panel").Bounds.Width, "Bans stay left; both round controls and history stay in the right block");
             var cards = Enumerable.Range(0, 12).Select(n => Find<Button>(view, "ban-slot-" + n)).ToArray();
@@ -78,6 +86,18 @@ internal static class ChampionshipChecks
             Need(cards.All(c=>c.Padding==new Thickness(0)),"Ban caption extends to card edges");
             Need(Find<StackPanel>(view,"obs-mode-line").Bounds.Height<=24,"OBS switch and label fit a single line without on/off text");
             var banArea = Find<Grid>(view, "ban-groups");
+            var firstHalf = Find<Grid>(view, "ban-half-0"); var secondHalf = Find<Grid>(view, "ban-half-1");
+            Need(firstHalf.Bounds.Y == secondHalf.Bounds.Y && firstHalf.Bounds.Right <= secondHalf.Bounds.X, "Ban halves share a row without overlapping at " + size);
+            foreach (int half in new[] { 0, 1 }) {
+                var group = Find<Grid>(view, "ban-half-grid-" + half);
+                var defense = map.BanOrder(half).Where(i => map.BanRole(i) == "DEF").Select(i => Find<Button>(view, "ban-slot-" + i)).ToArray();
+                var attack = map.BanOrder(half).Where(i => map.BanRole(i) == "ATQ").Select(i => Find<Button>(view, "ban-slot-" + i)).ToArray();
+                Need(defense.Length == 3 && attack.Length == 3 && defense.All(c => Grid.GetRow(c) == 0) && attack.All(c => Grid.GetRow(c) == 1), "Each half groups DEF above ATQ without changing ban ownership");
+                Need(Grid.GetColumn(defense[2]) == 3 && Grid.GetColumn(attack[2]) == 3 && group.ColumnDefinitions[2].Width.Value == 8, "Later bans are separated from the initial pair");
+            }
+            Need(Enumerable.Range(0,12).All(i => Find<Image>(view,"ban-image-"+i).Stretch == Stretch.Uniform), "Small-window portraits and role symbols retain their full proportions");
+            Need(!Find<TextBlock>(view,"match-notice").IsVisible, "Successful saves reserve no footer row");
+            Need(Enumerable.Range(0,12).All(i => Find<Button>(view,"ban-slot-"+i).Opacity == (map.BanStageReached(i) || !string.IsNullOrEmpty(map.Bans[i]) ? 1 : .5)), "Future bans are half opaque; available and registered bans are fully visible");
             Need(cards.All(c => c.TranslatePoint(default, banArea)!.Value.Y + c.Bounds.Height <= banArea.Bounds.Height + 1), "All twelve bans fit without scrolling at " + size + "; available " + banArea.Bounds.Height + "; bottom " + cards.Max(c => c.TranslatePoint(default, banArea)!.Value.Y + c.Bounds.Height));
             var title = view.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Text == L.T("Confronto").ToUpperInvariant());
             var prior = title.TranslatePoint(default, view)!.Value; Find<ScrollViewer>(view, "setup-scroll").Offset = new Vector(0, 50); Pump();
@@ -140,9 +160,20 @@ internal static class ChampionshipChecks
         Need(Enumerable.Range(0,12).All(n => Find<Button>(completeView,"ban-slot-"+n).GetVisualDescendants().OfType<Border>().Any(b => Equals(b.Background,Find<Button>(completeView,"ban-slot-"+n).Background))), "Team backgrounds retained on confirmed bans");
         Need(Enumerable.Range(0,12).All(n => !Find<Button>(completeView,"ban-slot-"+n).GetVisualAncestors().OfType<ScrollViewer>().Any()), "All twelve assigned bans require no scrolling");
         Snapshot(completeView,new Size(1920,1080),"championship-all-bans");completeView.Stop();completeOwner.Close();
+        foreach (string format in new[] { "MD3", "MD5" }) {
+            var series = new MatchSession(); series.New();
+            series.ConfigureSpec(format, series.Catalog.Maps.Take(format == "MD3" ? 3 : 5).Select(m => m.Id).ToArray());
+            var seriesView = new ChampionshipView(series);
+            var seriesOwner = new Window { Content = seriesView, Background = Ui.Canvas, Width = 1920, Height = 1080 };
+            seriesOwner.Show(); Pump(); seriesView.Refresh(); Pump();
+            var sidesScroll = Find<ScrollViewer>(seriesView, "match-sides-scroll");
+            Need(sidesScroll.Viewport.Height >= sidesScroll.Extent.Height - 1, format + " sides fit the expanded panel at Full HD");
+            Need(Find<Border>(seriesView, "match-setup-card").Bounds.Height < Find<Border>(seriesView, "match-sides-card").Bounds.Height, "Confronto yields height to " + format + " maps");
+            Snapshot(seriesView, new Size(1920,1080), "championship-sides-" + format); seriesView.Stop(); seriesOwner.Close();
+        }
         view.Stop(); owner.Content = null; owner.Close();
         var shell = new StudioShell(session); shell.Show(); Pump();
-        Need(shell.MenuWidth == 0, "Closed menu reserves no width"); shell.ToggleMenu(); Pump(); Need(shell.MenuWidth > 0 && shell.MenuWidth <= 300, "Menu inside available width");
+            Need(shell.MenuWidth == 0, "Closed menu reserves no width"); shell.ToggleMenu(); Pump(); Need(shell.MenuWidth > 0 && shell.MenuWidth <= 300, "Menu inside available width");
         TextButton(shell, "Modo clássico"); Pump(); Need(!shell.Championship.QuickMode, "Classic registration option applies");
         TextButton(shell, "Modo rápido"); Pump(); Need(shell.Championship.QuickMode, "Quick registration option applies");
         TextButton(shell, "Claro"); Pump(); Need(!Ui.Dark, "Light theme option applies"); TextButton(shell, "Escuro"); Pump(); Need(Ui.Dark, "Dark theme option applies");
