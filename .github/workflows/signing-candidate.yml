@@ -1,0 +1,78 @@
+name: Candidato Windows para assinatura
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: signing-candidate-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  windows:
+    if: github.repository == 'moska1m/CasterDesk' && github.ref == 'refs/heads/main'
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: obs-plugin/.deps
+          key: obs-native-deps-${{ runner.os }}-${{ hashFiles('obs-plugin/buildspec.json') }}
+      - name: Compilar o plugin a partir dos fontes
+        working-directory: obs-plugin
+        run: |
+          cmake --preset windows-ci-x64
+          if ($LASTEXITCODE -ne 0) { throw 'Falha na configuração nativa.' }
+          cmake --build --preset windows-x64 --config RelWithDebInfo --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Falha na compilação nativa.' }
+      - name: Testar o painel sem abrir OBS
+        run: ./scripts/Test-OBSPanel.ps1
+      - name: Preparar pacote nativo
+        working-directory: obs-plugin
+        run: cmake --install build_x64 --prefix release --config RelWithDebInfo
+      - name: Preparar compilador Inno Setup verificado
+        shell: pwsh
+        run: |
+          $installer = Join-Path $env:RUNNER_TEMP 'innosetup.exe'
+          Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe' -OutFile $installer
+          if ((Get-FileHash $installer).Hash -ne '0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f') { throw 'Integridade do compilador não confere.' }
+          $directory = Join-Path $env:RUNNER_TEMP 'inno7'
+          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/SP-',('/DIR="'+$directory+'"')) -WindowStyle Hidden -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw 'Falha ao preparar o compilador.' }
+          if (!(Test-Path (Join-Path $directory 'ISCC.exe'))) { throw 'ISCC.exe ausente.' }
+      - name: Compilar, testar e empacotar candidato sem assinatura
+        run: |
+          ./scripts/Package-Desktop.ps1 -Dotnet dotnet -Iscc (Join-Path $env:RUNNER_TEMP 'inno7/ISCC.exe') -PluginPackage (Join-Path $PWD 'obs-plugin/release/casterdesk-obs') -UnsignedCandidate
+      - name: Registrar origem do candidato
+        shell: pwsh
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          [ordered]@{ Repository='moska1m/CasterDesk'; Commit=$env:SOURCE_SHA; WorkflowRun=$env:RUN_ID; AuthenticodeSigned=$false; UpdateFeedSigned=$false; GoogleLoginBundled=$false; Purpose='Candidato para avaliação SignPath; sem publicação automática' } | ConvertTo-Json | Set-Content dist/candidate-origin.json -Encoding utf8
+          @('## Candidato de assinatura','Compilado e testado em runner hospedado do GitHub.','Ainda sem assinatura Authenticode. Não foi publicada uma release nem alterado o catálogo do atualizador.','Login Google integrado não é incluído neste candidato; a configuração avançada continua disponível.') | Add-Content $env:GITHUB_STEP_SUMMARY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: casterdesk-signing-candidate
+          path: |
+            dist/CasterDesk-*-win-x64-Setup.exe
+            dist/CasterDesk-*-win-x64-Setup.exe.sha256
+            dist/CasterDesk-*-win-x64-Setup.exe.manifest.json
+            dist/candidate-origin.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Guardar verificações
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verificacoes-signing-candidate
+          path: |
+            test-results/**/*.txt
+            obs-plugin/panel-test.out
+            obs-plugin/panel-test.err
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Iscc,[string]$Dotnet='dotnet',[string]$RestoreConfig,[Parameter(Mandatory=$true)][string]$PluginPackage,[string]$GoogleDesktopClient,[ValidateSet('normal','important')][string]$UpdatePriority='normal',[string]$UpdateNotesFile)
+param([Parameter(Mandatory=$true)][string]$Iscc,[string]$Dotnet='dotnet',[string]$RestoreConfig,[Parameter(Mandatory=$true)][string]$PluginPackage,[string]$GoogleDesktopClient,[ValidateSet('normal','important')][string]$UpdatePriority='normal',[string]$UpdateNotesFile,[switch]$UnsignedCandidate)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 Push-Location $root
@@ -7,7 +7,7 @@ try {
     $version=[string]$properties.Project.PropertyGroup.CasterDeskVersion
     $fileVersion=[string]$properties.Project.PropertyGroup.FileVersion
     $updateNotes=if($UpdateNotesFile){Get-Content -LiteralPath $UpdateNotesFile -Raw}else{'Uma nova versão do CasterDesk está disponível.'}
-    if(!(Test-Path -LiteralPath (Join-Path $env:LOCALAPPDATA 'CasterDesk/ReleaseKeys/update-signing.bin'))){throw 'Chave de publicação ausente. Prepare-a com New-UpdateKey.ps1 antes de empacotar.'}
+    if(!$UnsignedCandidate -and !(Test-Path -LiteralPath (Join-Path $env:LOCALAPPDATA 'CasterDesk/ReleaseKeys/update-signing.bin'))){throw 'Chave de publicação ausente. Prepare-a com New-UpdateKey.ps1 antes de empacotar.'}
     $googleBuild=@()
     if($GoogleDesktopClient){
         $googleSource=Get-Content -LiteralPath $GoogleDesktopClient -Raw | ConvertFrom-Json
@@ -26,7 +26,11 @@ try {
     if(!$pluginFull.StartsWith($rootFull+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'O pacote do plugin precisa estar dentro da pasta do projeto.'}
     if(!(Test-Path -LiteralPath (Join-Path $pluginFull 'bin/64bit/casterdesk-obs.dll'))){throw 'DLL do plugin compilado ausente.'}
     $pluginRelative=[IO.Path]::GetRelativePath($rootFull,$pluginFull)
-    Compress-Archive -LiteralPath (Join-Path $root 'obs-plugin') -DestinationPath (Join-Path $pluginFull 'source.zip') -Force
+    # Never archive dependency caches or build trees into the shipped source ZIP.
+    $dirtyPlugin=@(git status --porcelain --untracked-files=no -- obs-plugin)
+    if($LASTEXITCODE -ne 0 -or $dirtyPlugin.Count -gt 0){throw 'Faça commit dos fontes OBS antes de gerar seu pacote verificável.'}
+    & git archive --format=zip --prefix=obs-plugin/ --output (Join-Path $pluginFull 'source.zip') HEAD:obs-plugin
+    if($LASTEXITCODE -ne 0){throw 'Falha ao arquivar os fontes versionados do OBS.'}
     & $Iscc "/DPluginPackage=$pluginRelative" installer/CasterDesk-OBS.iss
     if($LASTEXITCODE -ne 0){throw 'Falha ao compilar instalador do plugin OBS.'}
     & "$PSScriptRoot/Test-Core.ps1" -Dotnet $Dotnet -RestoreConfig $RestoreConfig
@@ -55,6 +59,7 @@ try {
     $pluginSetup=Get-Item 'dist/CasterDesk-OBS-1.0.0-win-x64-Setup.exe'
     $plugin=[ordered]@{Version='1.0.0';DllSha256=(Get-FileHash (Join-Path $pluginFull 'bin/64bit/casterdesk-obs.dll')).Hash.ToLowerInvariant();Installer=$pluginSetup.Name;InstallerSha256=(Get-FileHash $pluginSetup.FullName).Hash.ToLowerInvariant();SourcesSha256=(Get-FileHash (Join-Path $pluginFull 'source.zip')).Hash.ToLowerInvariant();NativeOBSLoadingTested=$false}
     [ordered]@{Version=$version;Published=$publish;Built=Get-Date -Format o;Installer=$installer.Name;Sha256=$hash;Signed=$false;NativeInstallationTested=$false;ObsPlugin=$plugin;Files=@($files)} | ConvertTo-Json -Depth 5 | Set-Content ($installer.FullName+'.manifest.json') -Encoding utf8
-    & "$PSScriptRoot/Write-UpdateManifest.ps1" -Installer $installer.FullName -Version $version -Priority $UpdatePriority -Notes $updateNotes
+    if($UnsignedCandidate){Write-Output 'CANDIDATO SEM ASSINATURA: não foi gerado anúncio de atualização nem publicada uma release.'}
+    else {& "$PSScriptRoot/Write-UpdateManifest.ps1" -Installer $installer.FullName -Version $version -Priority $UpdatePriority -Notes $updateNotes}
     Write-Output $installer.FullName
 } finally {Pop-Location}

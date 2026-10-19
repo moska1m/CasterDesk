@@ -1,6 +1,7 @@
 name: Build CasterDesk OBS plugin
 on:
   push:
+    branches: [main]
     paths: ['obs-plugin/**', '.github/workflows/obs-plugin.yml']
   workflow_dispatch:
 permissions:

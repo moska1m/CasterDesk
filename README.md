@@ -12,6 +12,7 @@
   <a href="#o-que-você-pode-fazer">Funcionalidades</a> ·
   <a href="docs/OBS.md">Conexão com OBS</a> ·
   <a href="CHANGELOG.md">Novidades</a> ·
+  <a href="CODE_SIGNING_POLICY.md">Code signing policy</a> ·
   <a href="CONTRIBUTING.md">Contribuir</a>
 </p>
 
@@ -39,6 +40,8 @@ Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o fee
 | **Atualizações** | [Lista de versões](docs/ATUALIZACOES.md), releases por padrão, betas opcionais, avisos importantes e download conferido antes de instalar. |
 
 Os dados são salvos no computador. Se você ativar Google Sheets, os campos da tabela também são enviados à planilha escolhida. O CasterDesk registra as decisões do usuário; não lê partidas ao vivo nem controla o jogo.
+
+[Privacidade](PRIVACY.md) · [Code signing policy](CODE_SIGNING_POLICY.md) — preparação da candidatura à SignPath; nenhuma assinatura Authenticode foi concedida até o momento.
 
 ## Conheça a interface
 
