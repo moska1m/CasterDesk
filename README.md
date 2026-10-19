@@ -4,153 +4,101 @@
   <img alt="Versão 1.0.8" src="https://img.shields.io/badge/vers%C3%A3o-1.0.8-327FA8" />
   <img alt="Windows 10 e 11, x64" src="https://img.shields.io/badge/Windows-10%20%2F%2011%20%C2%B7%20x64-233448" />
   <img alt="Português, inglês e espanhol" src="https://img.shields.io/badge/idiomas-PT%20%C2%B7%20EN%20%C2%B7%20ES-233448" />
-  <img alt="Licença MIT para o código próprio" src="https://img.shields.io/badge/c%C3%B3digo-MIT-25834C" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/moska1m/CasterDesk/releases">Downloads e versões</a> ·
-  <a href="#o-que-você-pode-fazer">Funcionalidades</a> ·
-  <a href="docs/OBS.md">Conexão com OBS</a> ·
+  <a href="https://github.com/moska1m/CasterDesk/releases/latest">Baixar CasterDesk</a> ·
+  <a href="#funcionalidades">Funcionalidades</a> ·
+  <a href="docs/OBS.md">Usar no OBS</a> ·
   <a href="CHANGELOG.md">Novidades</a> ·
-  <a href="CODE_SIGNING_POLICY.md">Code signing policy</a> ·
-  <a href="CONTRIBUTING.md">Contribuir</a>
+  <a href="https://github.com/moska1m/CasterDesk/issues">Enviar feedback</a>
 </p>
 
-**CasterDesk é uma ferramenta para community casters de Rainbow Six Siege:** organiza a partida, acompanha o veto e os rounds, prepara informações para a transmissão e gera artes para divulgação e resultados.
+**Mapas, bans, rounds, cronômetro e artes para a sua transmissão de Rainbow Six Siege.** O CasterDesk reúne essas ferramentas em um aplicativo para Windows, com um modo dedicado ao spectator e um painel opcional para OBS Studio.
 
-## Por que o CasterDesk existe
+O projeto nasceu da rotina de transmitir campeonatos da comunidade. A proposta é facilitar o registro das informações e a preparação da transmissão, para que o caster possa dedicar mais atenção ao jogo.
 
-O projeto nasceu da rotina de transmitir campeonatos da comunidade: controlar o tempo, atualizar nomes, acompanhar bans e placares e preparar imagens enquanto a partida acontece. A intenção é reunir essas tarefas em um programa que ajude o caster a dedicar mais atenção à transmissão.
+## Funcionalidades
 
-Começou com cronômetro e arquivos de texto para OBS. Evoluiu com o uso e o feedback de casters: partidas completas, registro rápido de rounds, bans de operadores, histórico, estatísticas por print e uma Central de imagens. A identidade aprovada combina um microfone monocromático com o nome **CasterDesk**, unido, em Rajdhani Bold; a interface mantém Segoe UI para leitura.
-
-## O que você pode fazer
-
-| Área | O que oferece |
+| Recurso | O que você pode fazer |
 |---|---|
-| **Partidas** | MD1, MD3 e MD5; registro do vencedor externo do coin flip, veto de nove mapas, lados e prorrogação. |
-| **SPEC** | Tela alternativa no menu, mesmos dados, escolha direta de mapas, edição inline de rounds, exclusão confirmada e desfazer/refazer. |
-| **Bans** | Ícones na ordem do jogo, Sem banimento repetível no final, etapas DEF → ATQ, equipe responsável e revisão protegida. |
-| **Rounds** | Registro rápido de bombsite, vencedor e finalização; histórico com placar, ataque/defesa e cores fixas. |
-| **Estatísticas** | Print por arquivo ou Ctrl+V, leitura de nomes/E/M/A, revisão lado a lado e correção manual; suporte a remake e dados incompletos. |
-| **Central de imagens** | Anúncio, map veto e estatísticas por mapa/série; logos opcionais, logo neutra, fundos e cores por categoria. |
-| **OBS** | Cronômetro e nomes/perfis do casting em TXT; map veto transparente em caminho fixo. Plugin opcional beta com painel nativo de rounds/bans/timer e conexão automática. |
-| **Arquivos e backup** | Pasta por partida com JSON, imagens e recursos; importação/exportação, recuperação de salvamento e backup/restauração. |
-| **Tabela da partida (experimental)** | [Excel local](docs/TABELA-LOCAL.md) atualizado automaticamente e [Google Sheets](docs/GOOGLE-SHEETS.md) opcional para MD1/MD3; cópias preservadas por partida/mapa. |
-| **Atualizações** | [Lista de versões](docs/ATUALIZACOES.md), releases por padrão, betas opcionais, avisos importantes e download conferido antes de instalar. |
+| **Partidas e séries** | Organizar MD1, MD3 e MD5, realizar o veto de mapas e definir lados iniciais e prorrogação. |
+| **Modo SPEC** | Escolher mapas diretamente e registrar rounds em uma interface dedicada ao spectator. Corrigir vencedor e bombsite, excluir registros e desfazer ou refazer alterações. |
+| **Bans de operadores** | Acompanhar as etapas de banimento, identificar a equipe responsável e registrar escolhas sem banimento. |
+| **Round a round** | Registrar bombsite, vencedor e finalização, com histórico e placar atualizado. No SPEC, a finalização é opcional. |
+| **Resumo para remake** | Consultar mapa, lados, bans e vencedores dos rounds para reconstruir a partida. |
+| **Estatísticas** | Importar prints, revisar os dados dos jogadores e reunir estatísticas por mapa e série. |
+| **Gerador de imagens** | Criar anúncios, artes de veto e estatísticas com logos, fundos e cores personalizáveis. |
+| **Integração com OBS** | Usar o painel de controle, o cronômetro e arquivos de texto e imagem na transmissão. |
+| **Arquivos e backups** | Preservar partidas e recursos, importar e exportar dados e restaurar backups. |
+| **Tabela da partida** | Atualizar um arquivo Excel ou uma planilha Google Sheets. Integração experimental e opcional para MD1 e MD3. |
+| **Atualizações** | Consultar versões e baixar atualizações pelo programa, com opção de exibir betas. |
 
-Os dados são salvos no computador. Se você ativar Google Sheets, os campos da tabela também são enviados à planilha escolhida. O CasterDesk registra as decisões do usuário; não lê partidas ao vivo nem controla o jogo.
-
-[Privacidade](PRIVACY.md) · [Code signing policy](CODE_SIGNING_POLICY.md) — preparação da candidatura à SignPath; nenhuma assinatura Authenticode foi concedida até o momento.
+O CasterDesk utiliza as informações registradas pelo operador. Não lê a partida automaticamente nem modifica o jogo.
 
 ## Conheça a interface
 
-![Partida, timer fixo, bans e histórico no CasterDesk](docs/media/interface.png)
-
-*Prévia renderizada pelos controles do programa com dados de demonstração. O timer permanece acessível na barra fixa; registro e histórico ficam à direita dos bans.*
+![Tela de partida do CasterDesk](docs/media/interface.png)
 
 <details>
-<summary><strong>Central de imagens e exemplo de estatísticas</strong></summary>
+<summary><strong>Modo SPEC</strong></summary>
 
-![Central de imagens do CasterDesk](docs/media/central.png)
-
-<p align="center"><img src="docs/media/estatisticas.png" width="420" alt="Exemplo de estatísticas por mapa em formato feed, com MVP e dados parciais de demonstração" /></p>
-
-As artes preservam as proporções das bases fornecidas. Mapas não jogados ficam em preto e branco; ausência de estatísticas não vira zero. O MVP automático considera eliminações da equipe vencedora, com seleção manual disponível.
+![Modo SPEC com registro de rounds e histórico](docs/media/spec.png)
 
 </details>
 
-## Começar a usar
-
-**Atualizando de uma versão anterior?** Feche CasterDesk e OBS. No instalador 1.0.8, marque **Instalar o painel CasterDesk no OBS** para atualizar também o plugin; atualizar somente o app mantém a DLL anterior. Veja as [novidades da 1.0.8](docs/releases/1.0.8.md). A partir desta versão, use **Configurações → Verificar atualizações**: lista de releases, betas opcionais, avisos importantes e download pelo programa. [Como funciona](docs/ATUALIZACOES.md).
-
-1. Use o instalador entregue com a atualização local ou escolha uma versão registrada em [Releases](https://github.com/moska1m/CasterDesk/releases). A versão **1.0.8** está preparada para Windows x64.
-2. Confira o nome/versão do instalador e o SHA-256 disponibilizado junto dele.
-3. Instale e abra **CasterDesk**. O pacote inclui o runtime .NET; não é necessário instalar o SDK para usar.
-4. Crie uma partida, informe as equipes e registre o coin flip feito fora do programa. Complete o veto, defina os lados e inicie os bans por clique.
-5. Registre os rounds, confirme o resultado de cada mapa e confira os prints antes de exportar estatísticas.
-
-Na engrenagem, selecione Português (Brasil), English ou Español. O idioma é aplicado na próxima abertura. Nomes personalizados e IDs internos são preservados ao importar partidas entre idiomas.
-
-**Validação:** os testes automatizados e prévias em memória foram executados; o instalador não tem assinatura digital. Instalação em outros PCs, escalas/monitores e OCR real ainda precisam de validação. Evidências e limites: [PROGRESSO.md](PROGRESSO.md).
-
-## Modo SPEC
-
-![Tela SPEC com registro e histórico lateral](docs/media/spec.png)
-
-Ative pela engrenagem. Mesma partida, apresentação compacta, mapas e lados no topo. Finalização opcional; confirme com bombsite e vencedor. O timer do cabeçalho fica oculto nesse modo.
-
-## Usar com OBS
-
-Na versão 1.0.7, configure fontes de texto para ler os TXT do CasterDesk. Para o map veto, configure uma fonte de imagem com o caminho fixo copiado pelo programa: a próxima geração substitui esse PNG, preservando cópias na pasta da partida.
-
-O painel registra/corrige rounds, seleciona mapas de séries e controla o mesmo timer e os bans sem alternar de janela. Marque a instalação opcional do plugin OBS no instalador para conexão automática. As instruções e limites estão em [docs/OBS.md](docs/OBS.md). Stream Deck fica para uma etapa futura.
-
 <details>
-<summary><strong>Painel de navegador anterior (beta.0.9)</strong></summary>
+<summary><strong>Gerador de imagens e estatísticas</strong></summary>
 
-<img src="docs/media/obs-timer.png" width="320" alt="Painel de timer" /> <img src="docs/media/obs-bans.png" width="320" alt="Painel de bans" />
+![Gerador de imagens do CasterDesk](docs/media/central.png)
 
-Prévias em navegador sem janela, com dados de demonstração. API real testada separadamente; navegador integrado do OBS ainda não validado.
+<p align="center"><img src="docs/media/estatisticas.png" width="420" alt="Exemplo de arte de estatísticas com MVP" /></p>
 
 </details>
 
-## Seus arquivos
+*Imagens de demonstração; a aparência pode variar conforme a versão e as configurações.*
 
-Os dados ficam em **Documentos/CasterDesk**, respeitando a localização de Documentos no Windows: uma pasta por partida com JSON, artes, prints e recursos, além de pastas separadas para textos, configurações e backups. Os caminhos TXT podem ser personalizados.
+## Instalação
 
-Importar só um JSON não transporta todos os recursos: use pacotes/backup para levar imagens e configurações. A desinstalação preserva os dados. Detalhes de compatibilidade: [formato JSON](MATCH-JSON-FORMAT.md).
+1. Baixe o instalador para **Windows 10 ou 11, x64**, em [Releases](https://github.com/moska1m/CasterDesk/releases/latest).
+2. Feche o CasterDesk e, se for instalar ou atualizar o painel, o OBS Studio.
+3. Execute o instalador. A opção **Instalar o painel CasterDesk no OBS** é opcional.
+4. Abra o programa, crie uma partida e informe as equipes. Escolha o modo de trabalho nas configurações.
 
-## Evolução do projeto
+O instalador inclui os componentes necessários para executar o aplicativo. Português, inglês e espanhol estão disponíveis nas configurações.
 
-| Linha | Evolução |
-|---|---|
-| **0.1** | Cronômetro, casting e primeiras ferramentas para a transmissão. |
-| **0.2** | Fluxo de campeonato, registro rápido, bans e exportação de imagens. |
-| **0.3 até beta.0.4** | Estabilização de comandos, persistência, importação, backup e adaptação anterior da interface. |
-| **0.3 beta.0.5–0.6** | Interface renovada, publicação autossuficiente e ajustes de partida/lobby. |
-| **0.3 beta.0.7** | Aplicação da marca aprovada. |
-| **0.3 beta.0.13** | Guia REMAKE por mapa, cards de ícones por equipe e cabeçalho/status ajustados no OBS. |
-| **0.3 beta.0.12** | OBS com rounds por botões, histórico e bans juntos; timer completo e ajustes de layout/menu. |
-| **0.3 beta.0.11** | Rounds e mapas da série no OBS, bans durante toda a partida e modo explícito sem popups. |
-| **0.3 beta.0.10** | Plugin opcional OBS com descoberta automática. |
-| **0.3 beta.0.9** | Painel local para timer/bans no OBS, ativação explícita e proteção de comandos. |
-| **0.3 beta.0.8** | Timer fixo, layout compacto, ordem de bans corrigida e melhorias no histórico/MVP. |
+Depois da instalação, use **Configurações → Verificar atualizações** para consultar novas versões. As partidas e configurações são preservadas nas atualizações. [Saiba mais](docs/ATUALIZACOES.md).
 
-[Changelog](CHANGELOG.md) · [Histórico dos arquivos recuperados](RELEASE-HISTORY.md) · [Releases](https://github.com/moska1m/CasterDesk/releases)
+## CasterDesk no OBS
 
-Algumas betas antigas têm instaladores preservados, mas não um snapshot exato separado dos fontes. Isso é identificado nos arquivos históricos; não foram inventados commits retroativos.
+O painel opcional oferece três abas:
 
-## Desenvolvimento
+- **PARTIDA:** registro de rounds, seleção de mapas da série e bans de operadores.
+- **REMAKE:** informações do mapa escolhido para reconstruir a partida.
+- **CRONÔMETRO:** controle do tempo e dos textos do timer.
 
-Aplicativo Windows em C# e .NET 10, com comandos e serviços compartilhados. Renderização e OCR usam serviços Windows. As entregas priorizam o instalador local para teste; atualizações no GitHub são feitas quando necessárias ao processo ou solicitadas.
+Com o CasterDesk aberto, a conexão é automática. No OBS, acesse **Painéis → CasterDesk** caso o painel esteja oculto. O plugin atende ao **OBS Studio 31.1 ou mais recente, Windows x64**; instalações portáteis exigem configuração manual.
 
-```powershell
-dotnet restore source-desktop/CasterDesk.Desktop.csproj
-dotnet build source-desktop/CasterDesk.Desktop.csproj -c Release
-./scripts/Test-Core.ps1
-./scripts/Test-Desktop.ps1
-```
+Textos do casting, cronômetro e imagem de veto também podem ser usados como fontes na transmissão. Consulte o [guia do OBS](docs/OBS.md).
 
-Os testes usam uma pasta isolada e o backend Headless; não abrem o programa na área de trabalho. Para empacotar, use `scripts/Package-Desktop.ps1 -Iscc <ISCC-x64.exe> -Dotnet <dotnet.exe> -PluginPackage <pasta-do-plugin-compilado>`. Os scripts aceitam configuração explícita de restore offline.
+## Dados e integrações
 
-Documentação: [formato JSON](MATCH-JSON-FORMAT.md), [validação](PROGRESSO.md), [contribuição](CONTRIBUTING.md).
+As partidas, artes, prints e backups ficam em **Documentos/CasterDesk**. A desinstalação preserva esses dados. Para transferir recursos junto com as partidas, use os pacotes de exportação ou o backup do programa.
 
-## Próximas etapas
+A [tabela local em Excel](docs/TABELA-LOCAL.md) acompanha a partida em andamento e preserva cópias por partida e mapa. A [conexão com Google Sheets](docs/GOOGLE-SHEETS.md) é opcional e envia os campos para a planilha escolhida. Nesta fase de testes, o login Google exige uma conta autorizada. O modelo de tabela atual suporta MD1 e MD3.
 
-- [x] Painel local beta: timer e bans sincronizados com o CasterDesk.
-- [ ] Validar o carregamento do plugin, encaixe no OBS e instalação/UAC.
-- [ ] Validação nativa em outros PCs e escalas de tela.
-- [ ] Revisão regional dos termos em espanhol e inglês.
-- [x] Instalador com identidade visual, aceite PT/EN/ES e abertura opcional ao terminar.
-- [ ] Controle por Stream Deck.
+Consulte a [política de privacidade](PRIVACY.md) para detalhes sobre dados e conexões.
 
-## Condições de uso e marca
+## Feedback e contribuição
 
-O instalador pede ciência dos [termos de uso](docs/TERMOS-PT.txt). Código próprio MIT e plugin GPL mantêm suas permissões; nome, marca, pacote apresentado como oficial e recursos de terceiros são distintos. Use as artes nos limites das autorizações do evento/canal e dos titulares. O aceite não concede autorização da Ubisoft.
+Encontrou um problema ou tem uma sugestão? Abra uma [issue](https://github.com/moska1m/CasterDesk/issues) e informe a versão do CasterDesk, o que aconteceu e, quando possível, como reproduzir. Remova dados pessoais de prints e arquivos antes de publicá-los.
 
-## Créditos e licenças
+Para contribuir com o código, consulte [CONTRIBUTING.md](CONTRIBUTING.md). O histórico de mudanças está no [changelog](CHANGELOG.md), e os detalhes técnicos e verificações estão em [PROGRESSO.md](PROGRESSO.md).
 
-Desenvolvido para community casters. Código próprio sob [MIT](LICENSE). A tipografia Rajdhani da marca usa SIL OFL; fontes e componentes mantêm seus avisos.
+## Licenças e uso
 
-Imagens, operadores, marcas de Rainbow Six Siege e outros recursos de terceiros **não estão cobertos pela licença MIT do código**. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) para origens e situação dos recursos antes de distribuição ampla. O CasterDesk é independente e não representa produto oficial ou endosso da Ubisoft.
+O código próprio do aplicativo está sob [MIT](LICENSE), e o plugin OBS sob [GPL-2.0-or-later](obs-plugin/LICENSE). Marca, imagens, fontes e outros recursos de terceiros mantêm seus próprios direitos e condições; não estão automaticamente cobertos pela licença do código.
+
+O CasterDesk é um projeto independente, sem afiliação ou endosso da Ubisoft. O uso de imagens e marcas deve respeitar as autorizações dos respectivos titulares e do evento ou canal. Consulte os [termos de uso](docs/TERMOS-PT.txt) e os [avisos de terceiros](THIRD-PARTY-NOTICES.md).
+
+O instalador atual ainda não possui assinatura digital Authenticode. A candidatura à SignPath Foundation foi enviada e aguarda análise. Consulte a [política de assinatura](CODE_SIGNING_POLICY.md).

@@ -1,6 +1,6 @@
 # CasterDesk dentro do OBS
 
-## Plugin opcional — beta.0.13
+## Instalar o painel opcional
 
 1. Feche OBS e execute o instalador do CasterDesk.
 2. Marque **Instalar o painel CasterDesk no OBS**. O componente OBS pede permissão de administrador; o aplicativo permanece instalado por usuário.
