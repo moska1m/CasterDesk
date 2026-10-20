@@ -37,6 +37,7 @@ internal static class Checks
         }
         studio.Stop(); owner.Content = null; owner.Close();
         UpdateUiChecks.Run();
+        ReplayUiChecks.Run();
         TableSyncChecks.Run();
         ChampionshipChecks.Run();
         BackupChecks.Run();

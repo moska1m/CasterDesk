@@ -1,10 +1,11 @@
-param([Parameter(Mandatory=$true)][string]$Iscc,[string]$Dotnet='dotnet',[string]$RestoreConfig,[Parameter(Mandatory=$true)][string]$PluginPackage,[string]$GoogleDesktopClient,[ValidateSet('normal','important')][string]$UpdatePriority='normal',[string]$UpdateNotesFile,[switch]$UnsignedCandidate)
+param([Parameter(Mandatory=$true)][string]$Iscc,[string]$Dotnet='dotnet',[string]$RestoreConfig,[Parameter(Mandatory=$true)][string]$PluginPackage,[string]$GoogleDesktopClient,[ValidateSet('normal','important')][string]$UpdatePriority='normal',[string]$UpdateNotesFile,[switch]$UnsignedCandidate,[string]$ReplayGo='go',[string]$TestDataRoot)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 Push-Location $root
 try {
     [xml]$properties=Get-Content Directory.Build.props
     $version=[string]$properties.Project.PropertyGroup.CasterDeskVersion
+    & "$PSScriptRoot/Build-ReplayReader.ps1" -Go $ReplayGo
     $fileVersion=[string]$properties.Project.PropertyGroup.FileVersion
     $updateNotes=if($UpdateNotesFile){Get-Content -LiteralPath $UpdateNotesFile -Raw}else{'Uma nova versão do CasterDesk está disponível.'}
     if(!$UnsignedCandidate -and !(Test-Path -LiteralPath (Join-Path $env:LOCALAPPDATA 'CasterDesk/ReleaseKeys/update-signing.bin'))){throw 'Chave de publicação ausente. Prepare-a com New-UpdateKey.ps1 antes de empacotar.'}
@@ -33,7 +34,7 @@ try {
     if($LASTEXITCODE -ne 0){throw 'Falha ao arquivar os fontes versionados do OBS.'}
     & $Iscc "/DPluginPackage=$pluginRelative" installer/CasterDesk-OBS.iss
     if($LASTEXITCODE -ne 0){throw 'Falha ao compilar instalador do plugin OBS.'}
-    & "$PSScriptRoot/Test-Core.ps1" -Dotnet $Dotnet -RestoreConfig $RestoreConfig
+    & "$PSScriptRoot/Test-Core.ps1" -Dotnet $Dotnet -RestoreConfig $RestoreConfig -DataRoot $TestDataRoot
     $publish="publish-casterdesk-$version-"+[Guid]::NewGuid().ToString('N').Substring(0,8)
     $restore=@('restore','source-desktop/CasterDesk.Desktop.csproj','-r','win-x64')
     if($RestoreConfig){$restore+=@('--configfile',$RestoreConfig)}
@@ -49,7 +50,8 @@ try {
         if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Arquivo ausente na publicação: $required"}
     }
     if(!(Test-Path -LiteralPath (Join-Path $publish 'assets/update-public-key.pem'))){throw 'Chave pública do atualizador ausente.'}
-    & "$PSScriptRoot/Test-Desktop.ps1" -Dotnet $Dotnet -PublishFolder $publish
+    foreach($required in @('assets/replay/casterdesk-replay.exe','assets/replay/LICENSE','assets/replay/ORIGIN.md','assets/replay/replay-licenses.txt','assets/replay/replay-reader-source.zip')){if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Leitor de replay incompleto: $required"}}
+    & "$PSScriptRoot/Test-Desktop.ps1" -Dotnet $Dotnet -PublishFolder $publish -DataRoot $TestDataRoot
     & $Iscc "/DAppVersion=$version" "/DAppFileVersion=$fileVersion" "/DPublishFolder=$publish" installer/CasterDesk.iss
     if($LASTEXITCODE -ne 0){throw 'Falha ao compilar instalador do CasterDesk.'}
     $installer=Get-Item "dist/CasterDesk-$version-win-x64-Setup.exe"

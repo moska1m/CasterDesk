@@ -1,4 +1,4 @@
-param([string]$Dotnet='dotnet',[string]$RestoreConfig)
+param([string]$Dotnet='dotnet',[string]$RestoreConfig,[string]$DataRoot)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $previousData=$env:CASTERDESK_DATA_DIR
@@ -10,7 +10,8 @@ try {
     if($LASTEXITCODE -ne 0){throw 'Falha ao preparar o núcleo.'}
     & $Dotnet build source-core-checks/CasterDesk.CoreChecks.csproj -c Release --no-restore
     if($LASTEXITCODE -ne 0){throw 'Falha ao compilar o núcleo.'}
-    $env:CASTERDESK_DATA_DIR=Join-Path $root ('test-results/casterdesk-core-'+[Guid]::NewGuid().ToString('N'))
+    $base=if($DataRoot){[IO.Path]::GetFullPath($DataRoot)}else{Join-Path $root 'test-results'}
+    $env:CASTERDESK_DATA_DIR=Join-Path $base ('casterdesk-core-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $env:CASTERDESK_DATA_DIR | Out-Null
     & $Dotnet source-core-checks/bin/Release/net10.0-windows/CasterDesk.Engine.dll
     if($LASTEXITCODE -ne 0){throw "Testes do núcleo falharam: $env:CASTERDESK_DATA_DIR"}

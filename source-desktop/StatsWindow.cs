@@ -10,8 +10,12 @@ public sealed class StatsWindow : Window
     readonly List<Entry> rows = [];
     readonly List<(TextBlock Heading, List<Entry> Rows)> groups = [];
     readonly Image image = new() { Stretch = Stretch.Uniform };
+    readonly ContentControl previewHost = new();
+    ReplayImport? replay;
+    string source = "manual", replayArchive = "";
     readonly TextBlock status = Ui.Text("E = eliminações · M = mortes · A = assistências. Dados lidos precisam de revisão.");
     readonly ComboBox top, coverage = Ui.Combo("Estatísticas completas", "Estatísticas parciais / remake", "Sem print / sem estatísticas");
+    readonly TextBlock topLabel = Ui.Text("Equipe no topo do print:");
     readonly Button confirm;
     readonly CancellationTokenSource lifetime = new();
     CancellationTokenSource? reading;
@@ -25,6 +29,7 @@ public sealed class StatsWindow : Window
     public StatsWindow(SiegeMatch match, MapRecord map)
     {
         this.match = match; this.map = map;
+        source = map.Statistics?.Source ?? "manual"; replayArchive = map.Statistics?.ReplayArchive ?? "";
         Title = L.T("Conferir estatísticas"); Width = 1280; Height = 780; MinWidth = 900; MinHeight = 580;
         WindowStartupLocation = WindowStartupLocation.CenterOwner; Background = Ui.Canvas; FontFamily = new FontFamily("Segoe UI"); FontSize = 14;
         var body = new Grid { Margin = new Thickness(18), RowDefinitions = new("Auto,*,Auto"), ColumnDefinitions = new("*,*") };
@@ -34,16 +39,19 @@ public sealed class StatsWindow : Window
         actions.Children.Add(Ui.Button("Colar print · Ctrl+V", () => _ = Paste()));
         actions.Children.Add(Ui.Button("Ler novamente", () => _ = Read()));
         actions.Children.Add(Ui.Button("Conciliar jogadores", () => _ = Reconcile()));
+        var replayButton = Ui.Button("Importar replays · beta", () => _ = ImportReplay()); replayButton.Name = "stats-import-replay"; actions.Children.Add(replayButton);
         body.Children.Add(actions);
         top = Ui.RawCombo(match.TeamA, match.TeamB);
         top.PlaceholderText = L.T("Selecionar…");
         top.SelectedIndex = map.Statistics?.TopTeam ?? -1;
         top.Name = "stats-top-team";
         var choices = new StackPanel { Margin = new Thickness(12, 0, 0, 8) };
-        choices.Children.Add(Ui.Text("Equipe no topo do print:")); choices.Children.Add(top); choices.Children.Add(coverage);
+        choices.Children.Add(topLabel); choices.Children.Add(top); choices.Children.Add(coverage);
+        topLabel.IsVisible=top.IsVisible=source!="replay";
         body.Children.Add(choices); Grid.SetColumn(choices, 1);
         coverage.SelectedIndex = map.Statistics?.Status switch { "partial" => 1, "missing" => 2, _ => 0 };
-        var frame = new Border { Background = Brush.Parse("#0B1017"), Padding = new Thickness(12), Margin = new Thickness(0, 0, 16, 12), Child = image };
+        previewHost.Content = image;
+        var frame = new Border { Background = Brush.Parse("#0B1017"), Padding = new Thickness(12), Margin = new Thickness(0, 0, 16, 12), Child = previewHost };
         body.Children.Add(frame); Grid.SetRow(frame, 1);
         var scroll = new ScrollViewer { Content = entries, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         body.Children.Add(scroll); Grid.SetColumn(scroll, 1); Grid.SetRow(scroll, 1);
@@ -60,7 +68,7 @@ public sealed class StatsWindow : Window
             if (lastTop < 0) return;
             // Choosing an unknown legacy orientation must not invert already reviewed player teams.
             if (previousTop >= 0) {
-                foreach (var row in rows) { row.Team = 1 - row.Team; row.TeamLabel.Text = match.Team(row.Team); row.PlayerId = ""; }
+                foreach (var row in rows) { row.Team = 1 - row.Team; row.TeamLabel.Text = match.Team(row.Team); row.PlayerId = ""; row.UbisoftProfileId=""; row.ReplayDetails=null; }
                 foreach (var group in groups) if (group.Rows.Count > 0) group.Heading.Text = match.Team(group.Rows[0].Team);
             }
             edited = true;
@@ -74,7 +82,7 @@ public sealed class StatsWindow : Window
             if (busy) { e.Cancel = true; reading?.Cancel(); return; }
             if (edited) { e.Cancel = true; if (!askingClose) _ = ConfirmClose(); }
         };
-        Closed += (_, _) => { closed = true; generation++; reading?.Cancel(); lifetime.Cancel(); original?.Dispose(); thumbnail?.Dispose(); };
+        Closed += (_, _) => { closed = true; generation++; reading?.Cancel(); lifetime.Cancel(); original?.Dispose(); thumbnail?.Dispose(); replay?.Dispose(); };
     }
 
     void Fill(IReadOnlyList<PlayerStatistic> data)
@@ -86,7 +94,7 @@ public sealed class StatsWindow : Window
             var group = data.Where(p => p.Team == team).ToArray();
             for (int n = 0; n < Math.Max(5, group.Length); n++) {
                 var p = group.ElementAtOrDefault(n);
-                var row = new Entry { Team = team, PlayerId = p?.PlayerId ?? "" };
+                var row = new Entry { Team = team, PlayerId = p?.PlayerId ?? "", UbisoftProfileId = p?.UbisoftProfileId ?? "", ReplayDetails=p?.ReplayDetails };
                 row.Name.Name = $"stats-player-{team}-{n}";
                 row.TeamLabel.Text = match.Team(team);
                 row.Name.Text = p?.Name ?? ""; row.Kills.Text = p?.Kills?.ToString() ?? "";
@@ -100,6 +108,10 @@ public sealed class StatsWindow : Window
                     input.TextChanged += (_, _) => { if (input.Text != lastValue) { lastValue = input.Text; edited = true; } };
                 }
                 entries.Children.Add(grid); rows.Add(row); groupRows.Add(row);
+                if(p?.ReplayDetails is {} extra){
+                    string hs=extra.HeadshotPercentage is {} percent?percent.ToString("0.0")+"%":"—";
+                    entries.Children.Add(Ui.RawText($"Replay · HS {extra.Headshots} ({hs}) · primeiras eliminações {extra.OpeningKills} · primeiras mortes {extra.OpeningDeaths} · plants {extra.Plants} · desarmes {extra.Defuses} · eventos {extra.ObservedRounds}/{extra.ExpectedRounds}{(extra.Partial?" · PARCIAL":"")}"));
+                }
             }
         }
         edited = false;
@@ -137,6 +149,8 @@ public sealed class StatsWindow : Window
         if ((long)source.Width * source.Height > 50_000_000) throw new InvalidDataException(L.T("A imagem é muito grande."));
         if (edited && await Ui.Ask(this, "Substituir os dados editados pela leitura de um novo print?") != 1) return;
         if (closed) return;
+        replay?.Dispose(); replay=null; this.source="manual"; replayArchive=""; topLabel.IsVisible=top.IsVisible=true; previewHost.Content=image;
+        foreach(var row in rows){row.UbisoftProfileId="";row.ReplayDetails=null;}
         reading?.Cancel(); generation++; busy = false; confirm.IsEnabled = true;
         ReplaceImage(source); imageChanged = true; top.SelectedIndex = -1; coverage.SelectedIndex = 0; edited = true;
         status.Text = L.T("Equipe no topo do print:") + " " + L.T("Selecionar…") + " · " + L.T("Ler novamente");
@@ -165,6 +179,7 @@ public sealed class StatsWindow : Window
             if (closed || request != generation) return;
             if (edited) { status.Text = L.T("Leitura descartada para preservar sua edição manual."); return; }
             var data = StatisticsData.Parse(document); if (topTeam == 1) foreach (var p in data) p.Team = 1 - p.Team;
+            replay?.Dispose(); replay=null; source="manual"; replayArchive="";
             Fill(data);
             bool complete = data.Count == 10 && data.All(p => p.Kills.HasValue && p.Deaths.HasValue && p.Assists.HasValue && !string.IsNullOrWhiteSpace(p.Name));
             coverage.SelectedIndex = complete ? 0 : 1;
@@ -189,17 +204,33 @@ public sealed class StatsWindow : Window
     {
         if (busy) return;
         try {
-            var data = new MapStatistics { Status = coverage.SelectedIndex switch { 1 => "partial", 2 => "missing", _ => "complete" }, ConfirmedAt = DateTimeOffset.Now, TopTeam = top.SelectedIndex >= 0 ? top.SelectedIndex : null };
+            var data = new MapStatistics { Source=source, ReplayArchive=replayArchive, Status = coverage.SelectedIndex switch { 1 => "partial", 2 => "missing", _ => "complete" }, ConfirmedAt = DateTimeOffset.Now, TopTeam = top.SelectedIndex >= 0 ? top.SelectedIndex : null };
             int? Number(string? text) => string.IsNullOrWhiteSpace(text) ? null : int.TryParse(text, out int n) ? n : throw new InvalidDataException(L.T("Use números inteiros nos campos E/M/A."));
             if (data.Status != "missing") foreach (var row in rows.Where(r => !string.IsNullOrWhiteSpace(r.Name.Text)))
-                data.Players.Add(new() { PlayerId = row.PlayerId, Team = row.Team, Name = row.Name.Text!.Trim(), Kills = Number(row.Kills.Text), Deaths = Number(row.Deaths.Text), Assists = Number(row.Assists.Text) });
+                data.Players.Add(new() { ReplayDetails=row.ReplayDetails, PlayerId = row.PlayerId, UbisoftProfileId=row.UbisoftProfileId, Team = row.Team, Name = row.Name.Text!.Trim(), Kills = Number(row.Kills.Text), Deaths = Number(row.Deaths.Text), Assists = Number(row.Assists.Text) });
             StatisticsData.Validate(data);
             busy = saving = true; confirm.IsEnabled = false; entries.IsEnabled = top.IsEnabled = coverage.IsEnabled = false;
             using var snapshot = original == null || !imageChanged ? null : new System.Drawing.Bitmap(original);
-            await Task.Run(() => MatchFiles.SaveStatistics(match, map, data, snapshot, imageChanged));
+            await Task.Run(() => MatchFiles.SaveStatistics(match, map, data, snapshot, imageChanged,replay));
             allowClose = true; Close(true);
         } catch (Exception ex) { status.Text = ex.Message; }
         finally { busy = saving = false; confirm.IsEnabled = true; entries.IsEnabled = top.IsEnabled = coverage.IsEnabled = true; }
+    }
+
+    async Task ImportReplay()
+    {
+        if (busy || saving || closed) return;
+        if ((edited || map.Statistics is not null) && await Ui.Ask(this,"Abrir a importação para conferir os replays? Os dados salvos só serão substituídos após Confirmar estatísticas.")!=1) return;
+        var selection=await new ReplayImportWindow(match,map).ShowDialog<ReplaySelection?>(this);
+        if(selection==null) return;
+        if(closed){selection.Import.Dispose();return;}
+        replay?.Dispose(); replay=selection.Import; source="replay"; replayArchive="";
+        original?.Dispose();original=null;thumbnail?.Dispose();thumbnail=null;image.Source=null;imageChanged=true;
+        top.SelectedIndex=-1;topLabel.IsVisible=top.IsVisible=false;
+        Fill(selection.Statistics.Players);coverage.SelectedIndex=selection.Statistics.Status=="complete"?0:1;
+        previewHost.Content=new ScrollViewer { Content=Ui.RawText(replay.Report) };
+        status.Text="Dados locais do replay. Confira E/M/A e confirme para salvar e arquivar os arquivos. Nenhum print é necessário.";
+        edited=true;
     }
 
     async Task Reconcile()
@@ -220,7 +251,8 @@ public sealed class StatsWindow : Window
 
     sealed record Identity(string Id, string Name) { public override string ToString() => Name; }
     sealed class Entry {
-        public int Team; public string PlayerId = "";
+        public int Team; public string PlayerId = "", UbisoftProfileId = "";
+        public PlayerReplayDetails? ReplayDetails;
         public readonly TextBlock TeamLabel = Ui.Text("");
         public readonly TextBox Name = new(), Kills = new(), Deaths = new(), Assists = new();
     }

@@ -27,12 +27,13 @@ public static class MatchFiles
         string dir=Ensure(match);batch.Text(Path.Combine(dir,"partida.json"),JsonSerializer.Serialize(match,MatchStore.Options));
         batch.Text(Path.Combine(dir,"LEIA-ME.txt"),$"CasterDesk\r\n{match.TeamA} × {match.TeamB}\r\n{match.Created:g} · {match.Format}\r\n\r\npartida.json: dados da partida\r\nImagens: artes geradas\r\nEstatisticas: prints usados na conferência\r\nRecursos: logos e fundos personalizados\r\n");
     }
-    public static void SaveStatistics(SiegeMatch match,MapRecord map,MapStatistics data,Image? print,bool screenshotChanged=true)
+    public static void SaveStatistics(SiegeMatch match,MapRecord map,MapStatistics data,Image? print,bool screenshotChanged=true,ReplayImport? replay=null)
     {
         StatisticsData.Identify(match,data);StatisticsData.Validate(data);var previous=map.Statistics;
         lock(FileBatch.Gate)
         {
             using var batch=new FileBatch();
+            if(replay is not null){data.ReplayArchive="Replays/"+map.MapId+"-"+Guid.NewGuid().ToString("N")+".zip";batch.Add(Path.Combine(Ensure(match),data.ReplayArchive),replay.WriteArchive);}
             if(data.Status=="missing")data.Screenshot="";
             else if(!screenshotChanged&&previous is not null&&Resolve(match,previous.Screenshot) is not null)data.Screenshot=previous.Screenshot;
             else if(print!=null){data.Screenshot="Estatisticas/"+map.MapId+"-"+Guid.NewGuid().ToString("N")+".png";batch.Add(Path.Combine(Ensure(match),data.Screenshot),p=>OptimizedPng.Save(print,p));}

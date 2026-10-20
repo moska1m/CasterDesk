@@ -5,15 +5,32 @@ using System.Text.RegularExpressions;
 namespace CasterDesk.Core;
 public sealed class PlayerStatistic
 {
+    public PlayerReplayDetails? ReplayDetails{get;set;}
     public string PlayerId{get;set;}="";
+    public string UbisoftProfileId{get;set;}="";
     public int Team{get;set;}
     public string Name{get;set;}="";
     public int? Kills{get;set;}
     public int? Deaths{get;set;}
     public int? Assists{get;set;}
 }
+public sealed class PlayerReplayDetails
+{
+    public int ObservedRounds{get;set;}
+    public int ExpectedRounds{get;set;}
+    public int ObservedKills{get;set;}
+    public int Headshots{get;set;}
+    public int OpeningKills{get;set;}
+    public int OpeningDeaths{get;set;}
+    public int Plants{get;set;}
+    public int Defuses{get;set;}
+    [System.Text.Json.Serialization.JsonIgnore] public bool Partial=>ObservedRounds<ExpectedRounds;
+    [System.Text.Json.Serialization.JsonIgnore] public double? HeadshotPercentage=>ObservedKills>0?100.0*Headshots/ObservedKills:null;
+}
 public sealed class MapStatistics
 {
+    public string Source{get;set;}="manual";
+    public string ReplayArchive{get;set;}="";
     public string Status{get;set;}="complete";
     public string Screenshot{get;set;}="";
     // Null preserves legacy/manual records without guessing which team was above the other.
@@ -23,6 +40,7 @@ public sealed class MapStatistics
 }
 public sealed record SummedPlayer(int Team,string Name,int? Kills,int? Deaths,int? Assists,int Maps)
 {
+    public PlayerReplayDetails? ReplayDetails{get;init;}
     public string PlayerId{get;init;}="";
     public int KillMaps{get;init;}
     public int DeathMaps{get;init;}
@@ -45,6 +63,9 @@ public static class StatisticsData
     }
     public static void Validate(MapStatistics data)
     {
+        if(data.Source is not ("manual" or "replay") || data.ReplayArchive is null || data.ReplayArchive.Length>200 || Path.IsPathRooted(data.ReplayArchive) || data.ReplayArchive.Split('/','\\').Contains(".."))throw new InvalidDataException("Referência de replay inválida.");
+        if(data.Players?.Any(p=>p is not null && (p.UbisoftProfileId is null || (p.UbisoftProfileId!="" && !Guid.TryParse(p.UbisoftProfileId,out _))))==true)throw new InvalidDataException("Perfil de jogador do replay inválido.");
+        if(data.Players?.Any(p=>p?.ReplayDetails is {} d && (d.ObservedRounds<0 || d.ExpectedRounds<d.ObservedRounds || d.ExpectedRounds>100 || new[]{d.ObservedKills,d.Headshots,d.OpeningKills,d.OpeningDeaths,d.Plants,d.Defuses}.Any(n=>n<0||n>500) || d.Headshots>d.ObservedKills))==true)throw new InvalidDataException("Estatísticas extras do replay inválidas.");
         if(data.TopTeam is <0 or >1)throw new InvalidDataException(L.T("Estatísticas inválidas."));
         if(data.Status is not ("complete" or "partial" or "missing")||data.Players is null||data.Players.Count>20||data.Screenshot is null||data.Screenshot.Length>200)throw new InvalidDataException(L.T("Estatísticas inválidas."));
         if(!string.IsNullOrEmpty(data.Screenshot)&&(Path.IsPathRooted(data.Screenshot)||data.Screenshot.Split('/','\\').Contains("..")))throw new InvalidDataException(L.T("Caminho de print inválido."));
@@ -82,9 +103,14 @@ public static class StatisticsData
         var included=maps.Where(m=>m.Statistics?.ConfirmedAt is not null && m.Statistics.Status!="missing" && m.Statistics.Players.Count>0).ToList();
         int? Known(IEnumerable<int?> values){var known=values.Where(v=>v.HasValue).ToList();return known.Count==0?null:known.Sum(v=>v!.Value);}
         var all=included.SelectMany(m=>m.Statistics!.Players).ToList();string Identity(PlayerStatistic p)=>!string.IsNullOrEmpty(p.PlayerId)?p.PlayerId:all.FirstOrDefault(k=>k.Team==p.Team&&k.PlayerId!=""&&string.Equals(k.Name.Trim(),p.Name.Trim(),StringComparison.OrdinalIgnoreCase))?.PlayerId??p.Name.Trim().ToUpperInvariant();
-        var players=all.GroupBy(p=>(p.Team,Identity:Identity(p))).Select(g=>new SummedPlayer(g.Key.Team,g.First().Name.Trim(),Known(g.Select(p=>p.Kills)),Known(g.Select(p=>p.Deaths)),Known(g.Select(p=>p.Assists)),g.Count()){PlayerId=g.First().PlayerId,KillMaps=g.Count(p=>p.Kills.HasValue),DeathMaps=g.Count(p=>p.Deaths.HasValue),AssistMaps=g.Count(p=>p.Assists.HasValue)}).ToList();
+        var players=all.GroupBy(p=>(p.Team,Identity:Identity(p))).Select(g=>new SummedPlayer(g.Key.Team,g.First().Name.Trim(),Known(g.Select(p=>p.Kills)),Known(g.Select(p=>p.Deaths)),Known(g.Select(p=>p.Assists)),g.Count()){ReplayDetails=CombineReplayDetails(g.Select(p=>p.ReplayDetails)),PlayerId=g.First().PlayerId,KillMaps=g.Count(p=>p.Kills.HasValue),DeathMaps=g.Count(p=>p.Deaths.HasValue),AssistMaps=g.Count(p=>p.Assists.HasValue)}).ToList();
         bool partial=included.Count!=maps.Count||included.Any(m=>m.Statistics!.Status!="complete");
         return new(players,partial,included.Count,maps.Count);
+    }
+    static PlayerReplayDetails? CombineReplayDetails(IEnumerable<PlayerReplayDetails?> source)
+    {
+        var items=source.ToArray();if(items.Length==0||items.Any(d=>d is null))return null;
+        return new(){ObservedRounds=items.Sum(d=>d!.ObservedRounds),ExpectedRounds=items.Sum(d=>d!.ExpectedRounds),ObservedKills=items.Sum(d=>d!.ObservedKills),Headshots=items.Sum(d=>d!.Headshots),OpeningKills=items.Sum(d=>d!.OpeningKills),OpeningDeaths=items.Sum(d=>d!.OpeningDeaths),Plants=items.Sum(d=>d!.Plants),Defuses=items.Sum(d=>d!.Defuses)};
     }
     public static void Identify(SiegeMatch match,MapStatistics data)
     {
@@ -92,7 +118,7 @@ public static class StatisticsData
         foreach(var player in data.Players)
         {
             if(!string.IsNullOrEmpty(player.PlayerId))continue;
-            var existing=known.FirstOrDefault(p=>p.Team==player.Team&&string.Equals(p.Name.Trim(),player.Name.Trim(),StringComparison.OrdinalIgnoreCase));
+            var existing=known.FirstOrDefault(p=>p.Team==player.Team&&((player.UbisoftProfileId!=""&&p.UbisoftProfileId==player.UbisoftProfileId)||string.Equals(p.Name.Trim(),player.Name.Trim(),StringComparison.OrdinalIgnoreCase)));
             player.PlayerId=existing?.PlayerId??Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(match.Id+":"+player.Team+":"+player.Name.Trim().ToUpperInvariant())))[..32].ToLowerInvariant();
         }
     }

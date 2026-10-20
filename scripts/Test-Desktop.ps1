@@ -1,10 +1,11 @@
-param([string]$Dotnet='dotnet',[string]$PublishFolder)
+param([string]$Dotnet='dotnet',[string]$PublishFolder,[string]$DataRoot)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $previousData=$env:CASTERDESK_DATA_DIR
 Push-Location $root
 try {
-    $env:CASTERDESK_DATA_DIR=Join-Path $root ('test-results/casterdesk-ui-'+[Guid]::NewGuid().ToString('N'))
+    $base=if($DataRoot){[IO.Path]::GetFullPath($DataRoot)}else{Join-Path $root 'test-results'}
+    $env:CASTERDESK_DATA_DIR=Join-Path $base ('casterdesk-ui-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $env:CASTERDESK_DATA_DIR | Out-Null
     # This switch uses only Avalonia.Headless. It never starts the desktop backend.
     if($PublishFolder){

@@ -3,6 +3,11 @@
   <!-- Drawing/OCR remain Windows services. The shared engine has no WPF UI dependency. -->
   <ItemGroup><FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" /></ItemGroup>
   <ItemGroup>
+    <Content Include="../build-config/casterdesk-replay.exe" Condition="Exists('../build-config/casterdesk-replay.exe')" Link="assets/replay/casterdesk-replay.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../build-config/replay-licenses.txt;../build-config/replay-reader-source.zip" Condition="Exists('../build-config/replay-licenses.txt')" Link="assets/replay/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../tools/replay-reader/LICENSE;../tools/replay-reader/ORIGIN.md" Link="assets/replay/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="../source/AppPaths.cs;../source/AppLog.cs;../source/Localization.cs;../source/MatchModel.cs;../source/MatchJsonConverter.cs;../source/StatisticsData.cs;../source/MatchFiles.cs;../source/FileBatch.cs;../source/DataBackup.cs;../source/ResultRenderer.cs;../source/StudioRenderer.cs;../source/ArtworkRenderer.cs;../source/OptimizedPng.cs;../source/OperatorOrder.cs" Link="%(Filename)%(Extension)" />
     <EmbeddedResource Include="../source/translations.json" LogicalName="CasterDesk.translations.json"/><EmbeddedResource Include="../source/match-sites.json" LogicalName="CasterDesk.match-sites.json"/>
   </ItemGroup>

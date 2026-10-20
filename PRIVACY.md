@@ -4,6 +4,10 @@ O CasterDesk registra partidas, nomes, rounds, estatísticas, imagens e configur
 
 O aplicativo não possui serviço próprio de análise de uso ou envio automático de prints, partidas ou relatórios de erro. Logs locais podem conter caminhos e mensagens de erro; revise-os antes de encaminhar para suporte.
 
+## Replays locais — experimental
+
+Quando o usuário escolhe importar replays do Siege, o CasterDesk lê cópias dos arquivos locais para extrair equipes, perfis Ubisoft dos jogadores, placares, estatísticas e eventos. O processamento é local; os replays não são enviados ao r6tv, GitHub ou a outro serviço de análise. Após confirmação, cópias dos replays e dos dados extraídos ficam na pasta da partida e podem acompanhar seus pacotes e backups. Revise esses arquivos antes de compartilhá-los. A pasta de origem do jogo não é alterada.
+
 ## Conexões
 
 - **Painel OBS:** conexão HTTP autenticada na interface local do computador. A configuração contém uma chave de acesso; não a compartilhe. O projeto atual não disponibiliza automaticamente o painel na internet.

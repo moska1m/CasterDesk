@@ -1,5 +1,9 @@
 # Recursos de terceiros
 
+## Leitor de replay experimental
+
+O adaptador local de replays deriva de redraskal/r6-dissect e do fork julio208920/r6-dissect, commit 6602cf2e2d72e645cf2b2a3a801fa953cf21903f. Código MIT, com os avisos originais preservados. Fontes e origem estão em `tools/replay-reader`; o pacote inclui licença, avisos das dependências e fontes do adaptador em `assets/replay`. Replays do usuário são dados locais e não acompanham o instalador.
+
 ## Ubisoft / Rainbow Six Siege
 
 Os ícones e retratos de operadores, imagens dos mapas e logos de Siege pertencem aos respectivos titulares. Foram obtidos em páginas e CDNs oficiais da Ubisoft para o protótipo. Origem dos arquivos: `assets/siege/manifest.json` e `assets/branding/ORIGEM.txt`. Os retratos agora são utilizados nos cards de bans.
