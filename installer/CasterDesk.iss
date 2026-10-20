@@ -142,7 +142,11 @@ procedure CurStepChanged(CurStep: TSetupStep);
 var PluginExit: Integer;
     PluginOK: Boolean;
 begin
-  if (CurStep = ssPostInstall) and WizardIsTaskSelected('obsplugin') then begin
+  if (CurStep = ssPostInstall) and IsAppUpdate then
+    Log('Application update: preserving the installed OBS component and opt-in.');
+  { Previous task selections may be restored after InitializeWizard. Guard the
+    side effect itself so app updates cannot reinstall or disable the OBS dock. }
+  if (CurStep = ssPostInstall) and (not IsAppUpdate) and WizardIsTaskSelected('obsplugin') then begin
     PluginStage;
     PluginExit := -1;
     PluginOK := ShellExec('', ExpandConstant('{app}\CasterDesk-OBS-1.0.0-win-x64-Setup.exe'),

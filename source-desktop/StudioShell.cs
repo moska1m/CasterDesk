@@ -62,7 +62,7 @@ public sealed partial class StudioShell : Window
         var brand = BrandMark.Create(Ui.Dark);
         brand.Margin = new Thickness(20, 8, 26, 8); brand.VerticalAlignment = VerticalAlignment.Center;
         header.Children.Add(brand);
-        gear = Ui.Button("", ToggleMenu); gear.Name = "settings-menu"; gear.Content = new GearIcon { Width = 34, Height = 34 };
+        gear = Ui.Button("", ToggleMenu); gear.Name = "settings-menu"; gear.Content = new GearIcon { Name="settings-gear-icon", Width = 34, Height = 34 };
         gear.Width = 50; gear.Padding = new Thickness(6); gear.Margin = new Thickness(12, 5); gear.BorderThickness = new Thickness(1);
         gear.BorderBrush = Brush.Parse("#677078"); gear.Background = Brushes.Transparent;
         global::Avalonia.Automation.AutomationProperties.SetName(gear, L.T("Configurações e sobre"));
@@ -82,7 +82,7 @@ public sealed partial class StudioShell : Window
             brand.Margin = new Thickness(narrow ? 8 : 20,8,narrow ? 8 : 26,8);
             foreach(var tab in tabs) { tab.Padding = new Thickness(narrow ? 8 : 16,17); tab.FontSize = narrow ? 11 : 14; }
         }
-        SizeChanged += (_, _) => FitHeader(); FitHeader();
+        SizeChanged += (_, _) => FitHeader(); FitHeader();PaintGear(false);
         layout.Children.Add(page); Grid.SetRow(page, 1);
         drawerPanel = new Border { Background = Ui.MenuSurface, BorderBrush=Ui.FrameLine, BorderThickness=new Thickness(1), Margin=new Thickness(0,0,12,0), Padding = new Thickness(14), Child = new ScrollViewer { Content = drawer }, ClipToBounds = true,
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, IsVisible = false, Width = 300 };
@@ -147,7 +147,7 @@ public sealed partial class StudioShell : Window
         menuShade.ZIndex=100;drawerPanel.ZIndex=101;
         PaintGear(menuOpen); if (menuOpen) { Menu(); drawer.Children.OfType<Button>().FirstOrDefault()?.Focus(); } else gear.Focus();
     }
-    void PaintGear(bool active) => gear.Background=active?MenuHighlight():Brushes.Transparent;
+    void PaintGear(bool active) => gear.Background=active?MenuHighlight():Ui.Dark?Brushes.Transparent:Brush.Parse("#49657D");
 
     void Menu()
     {
@@ -205,6 +205,7 @@ public sealed partial class StudioShell : Window
         foreach(var tab in tabs)tab.Foreground=Ui.Ink;
         Championship.Refresh();studio.Background=Ui.Canvas;Texts.RefreshColors();
         for(int i=0;i<tabs.Length;i++){tabs[i].Background=i==selected?Ui.Panel:Brushes.Transparent;tabs[i].BorderBrush=i==selected?Ui.Accent:Brushes.Transparent;}
+        PaintGear(menuOpen || gear.IsPointerOver);
         if(menuOpen)Menu();
     }
     internal double MenuWidth => menuOpen ? drawerPanel.Width : 0;
@@ -235,7 +236,7 @@ public sealed partial class StudioShell : Window
                     }
                     path.EndFigure(true);
                 }
-                context.DrawGeometry(Ui.Ink, null, geometry);
+                context.DrawGeometry(Brushes.White, null, geometry);
             }
             Gear(15, 15, 8.1); Gear(32, 31, 12.5);
         }

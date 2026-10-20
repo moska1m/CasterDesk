@@ -1,6 +1,6 @@
-# Correções preparadas — arraste e cores de operadores
+# Correções — arraste e cores de operadores
 
-Solicitação de 20/10/2026. Correções locais no código, sem gerar instalador, publicar no GitHub ou substituir a instalação usada na transmissão.
+Solicitação de 20/10/2026. As correções foram inicialmente preparadas no código e, após autorização do usuário, incluídas na beta.5 e aplicadas à instalação local. Não houve publicação no GitHub.
 
 ## Causas e ajustes
 
@@ -16,4 +16,4 @@ Solicitação de 20/10/2026. Correções locais no código, sem gerar instalador
 - Suíte completa de interface passou em diretório isolado: `CasterDesk-window-color-regression-ba979ad3ad6a4b9eb97dc72d4993c026` dentro da pasta temporária do Windows.
 - Capturas foram revisadas. Os testes usam Avalonia.Headless: o arraste nativo, encaixe do Windows e movimento entre monitores ainda precisam de verificação no Windows real na próxima atualização.
 
-A versão e o instalador beta.4 anteriores permanecem intactos. Empacotar somente depois que o usuário terminar de usar o programa e solicitar a atualização.
+O programa foi fechado normalmente para salvar a sessão, atualizado para 1.0.9-beta.5 e reaberto. Executável e DLL instalados conferem com os hashes da publicação testada. O instalador beta.4 anterior permanece intacto.

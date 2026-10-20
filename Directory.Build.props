@@ -1,6 +1,6 @@
 <Project>
  <PropertyGroup>
-    <CasterDeskVersion>1.0.9-beta.4</CasterDeskVersion>
+    <CasterDeskVersion>1.0.9-beta.6</CasterDeskVersion>
   <Product>CasterDesk</Product>
   <Company>CasterDesk</Company>
   <Authors>CasterDesk contributors</Authors>

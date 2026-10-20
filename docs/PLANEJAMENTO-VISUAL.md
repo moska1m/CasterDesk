@@ -4,6 +4,10 @@ Implementação local 1.0.9-beta.3: menu compacto, opções em abas, moldura pr�
 
 Na beta.4, Tabela, Backup e OBS ficam completos dentro das próprias abas. Opções, Atualizações e Créditos são painéis modais dentro da janela principal, sem outra janela ou barra de título. Somente esses painéis escurecem e bloqueiam o fundo; a engrenagem abre um menu compacto sem escurecimento. O tema claro usa azul nos destaques dos menus e abas; padrão e escuro mantêm vermelho. O fechar permanece vermelho em todos os temas. A identidade e a versão ficam compactas no rodapé do menu. O indicador distingue cliente OBS presente de servidor apenas habilitado.
 
+Na beta.5, a barra de título inteira aceita o arraste, as cores de equipe nos botões são preservadas pelo tema e a engrenagem permanece branca nos estados normal, hover e menu aberto. O tema claro usa uma base azul mais escura no botão em repouso para preservar o contraste do ícone branco.
+
+Na beta.6, a moldura mantém o visual próprio e usa os comportamentos nativos do Windows para arraste, duplo clique e restauração após minimizar. A validação inclui uma janela Win32 real com dados isolados.
+
 ## Fora deste pacote
 
 - Ícones nos cabeçalhos dos blocos.

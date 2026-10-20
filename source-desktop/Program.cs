@@ -18,6 +18,13 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        if(args.Contains("--casterdesk-native-caption-check")) {
+            if(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("CASTERDESK_DATA_DIR")))
+                throw new InvalidOperationException("Native checks require isolated data.");
+            Directory.CreateDirectory(AppPaths.DataDirectory);
+            AppBuilder.Configure<NativeWindowCheckApp>().UseWin32().UseSkia().UseHarfBuzz().StartWithClassicDesktopLifetime(args);
+            return;
+        }
         if (args.Contains("--casterdesk-check")) {
             Headless = true;
             if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("CASTERDESK_DATA_DIR")))
