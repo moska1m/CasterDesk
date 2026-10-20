@@ -19,7 +19,7 @@ internal static class VisualSettingsChecks
         var session=new MatchSession();session.Current.TeamA="Banco";session.Current.TeamB="Team custom";
         var shell=new StudioShell(session);shell.WindowState=WindowState.Normal;shell.Width=1280;shell.Height=800;shell.Show();Pump();
         try {
-            Need(shell.WindowDecorations==WindowDecorations.None,"custom frame replaces system titlebar");
+            Need(shell.ExtendClientAreaToDecorationsHint && shell.GetVisualDescendants().OfType<Control>().Any(c=>c.Name=="window-drag-region"),"custom caption extends into native frame");
             Need(shell.GetVisualDescendants().OfType<ContentPresenter>().Any(p=>p.Name=="PART_ContentPresenter"),"frame presents original content");
             shell.ToggleMenu();Pump();
             Need(shell.GetVisualDescendants().OfType<Border>().Single(b=>b.Name=="menu-scrim").IsVisible,"transparent menu dismiss layer visible");
