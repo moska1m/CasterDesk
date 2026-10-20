@@ -4,6 +4,7 @@
 #ifndef PublishFolder
 #error A verified publication directory is required.
 #endif
+#include "obsolete-assets.iss"
 [Setup]
 SetupArchitecture=x64
 AppId={{5BB534BC-6E39-447F-BB82-4A86199BAC31}

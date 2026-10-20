@@ -1,0 +1,56 @@
+PACOTE VISUAL DO CAMPEONATO — CASTERDESK
+
+Para quem cria a arte
+
+1. Crie os fundos no Photoshop ou no editor que preferir.
+2. Exporte cada fundo como PNG, em RGB/sRGB, usando os nomes abaixo.
+3. Coloque os PNGs juntos em uma pasta. Não precisa preparar código nem JSON.
+4. Informe também o nome do campeonato e a cor de destaque em hexadecimal, por exemplo #2575C4.
+
+NOMES E TAMANHOS
+
+Anúncio da transmissão:
+  anuncio-feed.png                 1080 × 1350
+  anuncio-stories.png              1080 × 1920
+
+Veto de mapas:
+  map-veto-horizontal.png          1920 × 1080
+
+Estatísticas de um mapa:
+  estatisticas-mapa-feed.png       1080 × 1350
+  estatisticas-mapa-stories.png    1080 × 1920
+  estatisticas-mapa-horizontal.png 1920 × 1080
+
+Estatísticas da série:
+  estatisticas-serie-feed.png       1080 × 1350
+  estatisticas-serie-stories.png    1080 × 1920
+  estatisticas-serie-horizontal.png 1920 × 1080
+
+Você pode fornecer só os formatos necessários. Onde não houver um fundo, o programa usará o padrão.
+Use até 40 MB por imagem e até 160 MB no pacote inteiro.
+
+O QUE DESENHAR NO FUNDO
+
+Use a identidade do campeonato: cores, texturas e elementos decorativos.
+Nomes das equipes, placar, jogadores, números das estatísticas e destaque MVP são preenchidos pelo CasterDesk; não escreva esses dados no fundo.
+Deixe livres as áreas de informação da composição atual. Confira o resultado na prévia antes de distribuir.
+
+COMO MONTAR O ZIP
+
+No Gerador de imagens, abra “Montar pacote a partir de imagens”.
+Selecione a pasta, escreva o nome do campeonato, escolha a cor de destaque e salve o ZIP.
+Depois use “Importar pacote visual” para aplicá-lo à partida e conferir a prévia.
+Você também pode ajustar cores e fundos individualmente e usar “Exportar pacote visual” para salvar essa versão refinada.
+Distribua esse ZIP para que as outras pessoas importem o mesmo enxoval.
+
+E O PSD?
+
+O PSD é o arquivo de criação do designer. O CasterDesk não abre PSD diretamente.
+Para a importação, entregue as imagens PNG exportadas. Você pode enviar o PSD junto, separadamente, para manutenção da arte.
+Se o projeto mudar a posição ou o tamanho dos campos — por exemplo, trocar a tabela, criar novas colunas ou reposicionar o MVP — precisamos adaptar o layout do gerador. Trocar o fundo não reposiciona esses dados automaticamente.
+
+O QUE O PACOTE CONTÉM
+
+Fundos por área e formato, nome do campeonato e cores de destaque.
+Não precisa incluir partidas, replays, contas, fontes ou os dados de quem fez a transmissão.
+Ao importar, a configuração anterior da arte fica preservada na pasta de recursos da partida.

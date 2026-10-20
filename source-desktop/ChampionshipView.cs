@@ -299,7 +299,7 @@ public sealed partial class ChampionshipView : Grid
         if (!BansReady || map == null) return Ui.Text("Defina os lados antes de escolher os operadores.");
         var panel = new Grid { Name = "ban-groups", ColumnDefinitions = new("*,*") };
         double cardWidth = Math.Max(34, (Bounds.Width * .4 - 68) / 6);
-        double portraitHeight = Math.Clamp(cardWidth * .72, 24, compact ? 38 : 64);
+        double portraitHeight = Math.Clamp(cardWidth * .90, 32, 116);
         double cardHeight = portraitHeight + (compact ? 29 : 32);
         var frames = new List<(Grid Portrait, Image Image, Button Button, bool Symbol)>();
         for (int half = 0; half < 2; half++) {
@@ -318,11 +318,12 @@ public sealed partial class ChampionshipView : Grid
             foreach (int slot in map.BanOrder(half)) {
                 int field = slot; var op = Session.Catalog.Operators.FirstOrDefault(o => o.Id == map.Bans[slot]);
                 var content = new Grid { RowDefinitions = new("*,Auto") };
-                string file = op == null ? StudioRenderer.Asset(map.BanRole(slot) == "DEF" ? "Icon_Defender.png" : "Icon_Attacker.png") : SiegeCatalog.Asset(op.Id + "-portrait.png");
+                string file = StudioRenderer.Asset(map.BanRole(slot) == "DEF" ? "Icon_Defender.png" : "Icon_Attacker.png");
                 Grid? portrait = null; Image? image = null;
                 try {
                     portrait = new Grid { Name = "ban-portrait-" + slot, Height = portraitHeight, ClipToBounds = true };
-                    image = new Image { Name = "ban-image-" + slot, Source = Ui.FileImage(file, thumbnail: compact ? 128 : 192), Height = op == null ? portrait.Height * .55 : portrait.Height, Stretch = Stretch.Uniform, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center };
+                    image = op == null ? new Image { Source = Ui.FileImage(file, thumbnail: 96), Stretch = Stretch.Uniform, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center } : Ui.OperatorPortrait(op.Id);
+                    image.Name = "ban-image-" + slot; image.Height = op == null ? portrait.Height * .55 : Math.Max(4,portrait.Height-4);
                     global::Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(image, global::Avalonia.Media.Imaging.BitmapInterpolationMode.HighQuality);
                     portrait.Children.Add(image);
                     content.Children.Add(portrait);
@@ -348,11 +349,12 @@ public sealed partial class ChampionshipView : Grid
         }
         panel.SizeChanged += (_, _) => {
             // Use the actual allocated height, including the full shell's compact header.
-            double height = Math.Min(cardHeight, Math.Max(36, (panel.Bounds.Height - 28) / 2 - 6));
+            double target = Math.Clamp(frames.Min(frame=>frame.Button.Bounds.Width) * .9, 32, 116) + (compact ? 29 : 32);
+            double height = Math.Min(target, Math.Max(42, (panel.Bounds.Height - 28) / 2 - 6));
             double picture = Math.Max(8, height - (compact ? 29 : 32));
             foreach (var frame in frames) {
                 frame.Button.Height = height; frame.Portrait.Height = picture;
-                frame.Image.Height = picture * (frame.Symbol ? .55 : 1);
+                frame.Image.Height = frame.Symbol ? picture * .55 : Math.Max(4,picture-4);
             }
         };
         return panel;

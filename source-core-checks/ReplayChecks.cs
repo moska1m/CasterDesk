@@ -10,6 +10,10 @@ static class ReplayChecks
         Need(ReplayImport.MapId("VillaY10")=="villa" && ReplayImport.MapId("BankY10")=="bank","modernized map identifiers");
         Need(ReplayImport.MapId("UnknownMap")=="","do not guess unknown map");
         Need(ReplayImport.SameName(" FAZE ","faze"),"explicit team normalization");
+        ReplayDocument Header(string id,int round,int minutes,string map="Bank")=>new(){Schema=1,MatchID=id,Map=new(){Id=map=="Bank"?1:2,Name=map},Timestamp=new DateTimeOffset(2026,10,19,12,minutes,0,TimeSpan.Zero),RoundNumber=round,Teams=[new(){Name="AZUL",StartingScore=round/2},new(){Name="LARANJA",StartingScore=round-round/2}]};
+        string lobby=Guid.NewGuid().ToString();var first=Header(lobby,0,0);var restored=Header(lobby,4,20);var remake=Header(Guid.NewGuid().ToString(),5,35);
+        Need(ReplayImport.ContinuationHint(first,restored)=="Mesma sessão"&&ReplayImport.ContinuationHint(restored,remake)=="Possível continuação","session and conservative remake hints");
+        Need(ReplayImport.ContinuationHint(first,Header(Guid.NewGuid().ToString(),0,45))==""&&ReplayImport.ContinuationHint(first,Header(lobby,4,20,"Villa"))=="","fresh match and different map not grouped");
         bool refused=false;try{ReplayImport.ValidateDocument(new());}catch(InvalidDataException){refused=true;}Need(refused,"invalid document refused");
         var stats=new MapStatistics{Source="replay",Status="partial",Players=[new(){Team=0,Name="Player",Kills=null,Deaths=0,Assists=null,UbisoftProfileId=Guid.NewGuid().ToString()}]};
         StatisticsData.Validate(stats);

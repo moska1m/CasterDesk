@@ -71,7 +71,7 @@ internal sealed class ObsDockServer : IAsyncDisposable
         server.MapGet("/dock.js",()=>Results.Content(File.ReadAllText(Asset("dock.js")),"text/javascript; charset=utf-8"));
         server.MapGet("/brand.svg",()=>Results.File(Path.Combine(AppContext.BaseDirectory,"assets","branding","casterdesk-horizontal-white.svg"),"image/svg+xml"));
         server.MapGet("/icons/{id}",(string id)=>{
-            if(id is "__def" or "__atq")return Results.File(Path.Combine(AppContext.BaseDirectory,"assets","studio",id=="__def"?"Icon_Defender.png":"Icon_Attacker.png"),"image/png");
+            if(id is "__def" or "__atq")return Results.File(StudioRenderer.Asset(id=="__def"?"Icon_Defender.png":"Icon_Attacker.png"),"image/png");
             var op=championship.Session.Catalog.Operators.FirstOrDefault(o=>o.Id==id);
             return op==null?Results.NotFound():Results.File(SiegeCatalog.Asset(op.Icon),"image/png");
         });

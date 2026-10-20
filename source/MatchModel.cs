@@ -10,7 +10,19 @@ public sealed class SiegeCatalog
     public List<SiegeOperator> Operators { get; set; } = []; public List<SiegeMap> Maps { get; set; } = [];
     public static string AssetRoot => Path.Combine(AppContext.BaseDirectory, "assets", "siege");
     public static SiegeCatalog Load() => JsonSerializer.Deserialize<SiegeCatalog>(File.ReadAllText(Path.Combine(AssetRoot, "catalog.json")), MatchStore.Options)!;
-    public static string Asset(string file) => Path.Combine(AssetRoot, Path.GetFileName(file));
+    public static string Asset(string file) {
+        string root=Path.GetFullPath(AssetRoot)+Path.DirectorySeparatorChar;
+        string path=Path.GetFullPath(Path.Combine(root,file.Replace('/',Path.DirectorySeparatorChar)));
+        if(!path.StartsWith(root,StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Invalid asset path");
+        if(File.Exists(path))return path;
+        string name=Path.GetFileName(file);
+        if(name.EndsWith("-portrait.png",StringComparison.OrdinalIgnoreCase))return Portrait(name[..^13],160);
+        return new[]{Path.Combine(root,name),Path.Combine(root,"maps",name),Path.Combine(root,"operators","icons",name)}.FirstOrDefault(File.Exists)??path;
+    }
+    public static string Portrait(string id,double pixels) {
+        if(id.IndexOfAny(Path.GetInvalidFileNameChars())>=0||id.Contains('/')||id.Contains('\\'))throw new InvalidDataException("Invalid operator ID");
+        return Path.Combine(AssetRoot,"operators","portraits",pixels<=80?"small":pixels<=160?"medium":"large",id+".png");
+    }
 }
 public sealed class RoundRecord { public int Winner { get; set; } public string Site { get; set; } = ""; public string Ending { get; set; } = ""; }
 public static class RoundEnding

@@ -79,7 +79,7 @@ internal static class ArtChecks
   var exportMethod=typeof(StudioView).GetMethod("Export",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
   ResultPage CurrentPage()=>((List<ResultPage>)renderedField.GetValue(studio)!)[0];
   var previewPage=CurrentPage();Wait((Task)exportMethod.Invoke(studio,null)!);
-  Need(ReferenceEquals(previewPage,CurrentPage())&&File.Exists(Path.Combine(MatchFiles.DirectoryFor(match),"Imagens",previewPage.Name+".png")),"unchanged preview exports without rendering again");
+  Need(ReferenceEquals(previewPage,CurrentPage())&&Directory.GetFiles(Path.Combine(MatchFiles.DirectoryFor(match),"Imagens"),previewPage.Name+".png",SearchOption.AllDirectories).Length==1,"unchanged preview exports without rendering again");
   match.TeamA="Updated export team";Wait((Task)exportMethod.Invoke(studio,null)!);
   Need(!ReferenceEquals(previewPage,CurrentPage())&&MatchStore.Read(Path.Combine(MatchFiles.DirectoryFor(match),"partida.json"),catalog).TeamA==match.TeamA,"changed match invalidates preview before export");
   studio.Stop();studioOwner.Close();

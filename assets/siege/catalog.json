@@ -4,469 +4,469 @@
       "id": "noor",
       "name": "Noor",
       "role": "DEF",
-      "icon": "icons/noor.png"
+      "icon": "operators/icons/noor.png"
     },
     {
       "id": "solid-snake",
       "name": "Solid Snake",
       "role": "ATQ",
-      "icon": "icons/solid-snake.png"
+      "icon": "operators/icons/solid-snake.png"
     },
     {
       "id": "denari",
       "name": "Denari",
       "role": "DEF",
-      "icon": "icons/denari.png"
+      "icon": "operators/icons/denari.png"
     },
     {
       "id": "rauora",
       "name": "Rauora",
       "role": "ATQ",
-      "icon": "icons/rauora.png"
+      "icon": "operators/icons/rauora.png"
     },
     {
       "id": "skopos",
       "name": "Skopós",
       "role": "DEF",
-      "icon": "icons/skopos.png"
+      "icon": "operators/icons/skopos.png"
     },
     {
       "id": "striker",
       "name": "Striker",
       "role": "ATQ",
-      "icon": "icons/striker.png"
+      "icon": "operators/icons/striker.png"
     },
     {
       "id": "sentry",
       "name": "Sentry",
       "role": "DEF",
-      "icon": "icons/sentry.png"
+      "icon": "operators/icons/sentry.png"
     },
     {
       "id": "deimos",
       "name": "Deimos",
       "role": "ATQ",
-      "icon": "icons/deimos.png"
+      "icon": "operators/icons/deimos.png"
     },
     {
       "id": "tubarao",
       "name": "Tubarão",
       "role": "DEF",
-      "icon": "icons/tubarao.png"
+      "icon": "operators/icons/tubarao.png"
     },
     {
       "id": "ram",
       "name": "Ram",
       "role": "ATQ",
-      "icon": "icons/ram.png"
+      "icon": "operators/icons/ram.png"
     },
     {
       "id": "fenrir",
       "name": "Fenrir",
       "role": "DEF",
-      "icon": "icons/fenrir.png"
+      "icon": "operators/icons/fenrir.png"
     },
     {
       "id": "brava",
       "name": "Brava",
       "role": "ATQ",
-      "icon": "icons/brava.png"
+      "icon": "operators/icons/brava.png"
     },
     {
       "id": "solis",
       "name": "Solis",
       "role": "DEF",
-      "icon": "icons/solis.png"
+      "icon": "operators/icons/solis.png"
     },
     {
       "id": "grim",
       "name": "Grim",
       "role": "ATQ",
-      "icon": "icons/grim.png"
+      "icon": "operators/icons/grim.png"
     },
     {
       "id": "sens",
       "name": "Sens",
       "role": "ATQ",
-      "icon": "icons/sens.png"
+      "icon": "operators/icons/sens.png"
     },
     {
       "id": "azami",
       "name": "Azami ",
       "role": "DEF",
-      "icon": "icons/azami.png"
+      "icon": "operators/icons/azami.png"
     },
     {
       "id": "thorn",
       "name": "Thorn",
       "role": "DEF",
-      "icon": "icons/thorn.png"
+      "icon": "operators/icons/thorn.png"
     },
     {
       "id": "osa",
       "name": "Osa",
       "role": "ATQ",
-      "icon": "icons/osa.png"
+      "icon": "operators/icons/osa.png"
     },
     {
       "id": "thunderbird",
       "name": "Thunderbird",
       "role": "DEF",
-      "icon": "icons/thunderbird.png"
+      "icon": "operators/icons/thunderbird.png"
     },
     {
       "id": "flores",
       "name": "Flores",
       "role": "ATQ",
-      "icon": "icons/flores.png"
+      "icon": "operators/icons/flores.png"
     },
     {
       "id": "aruni",
       "name": "Aruni",
       "role": "DEF",
-      "icon": "icons/aruni.png"
+      "icon": "operators/icons/aruni.png"
     },
     {
       "id": "zero",
       "name": "Zero",
       "role": "ATQ",
-      "icon": "icons/zero.png"
+      "icon": "operators/icons/zero.png"
     },
     {
       "id": "ace",
       "name": "Ace",
       "role": "ATQ",
-      "icon": "icons/ace.png"
+      "icon": "operators/icons/ace.png"
     },
     {
       "id": "melusi",
       "name": "Melusi",
       "role": "DEF",
-      "icon": "icons/melusi.png"
+      "icon": "operators/icons/melusi.png"
     },
     {
       "id": "oryx",
       "name": "Oryx",
       "role": "DEF",
-      "icon": "icons/oryx.png"
+      "icon": "operators/icons/oryx.png"
     },
     {
       "id": "iana",
       "name": "Iana",
       "role": "ATQ",
-      "icon": "icons/iana.png"
+      "icon": "operators/icons/iana.png"
     },
     {
       "id": "wamai",
       "name": "Wamai",
       "role": "DEF",
-      "icon": "icons/wamai.png"
+      "icon": "operators/icons/wamai.png"
     },
     {
       "id": "kali",
       "name": "Kali",
       "role": "ATQ",
-      "icon": "icons/kali.png"
+      "icon": "operators/icons/kali.png"
     },
     {
       "id": "amaru",
       "name": "Amaru",
       "role": "ATQ",
-      "icon": "icons/amaru.png"
+      "icon": "operators/icons/amaru.png"
     },
     {
       "id": "goyo",
       "name": "Goyo",
       "role": "DEF",
-      "icon": "icons/goyo.png"
+      "icon": "operators/icons/goyo.png"
     },
     {
       "id": "nokk",
       "name": "NØKK",
       "role": "ATQ",
-      "icon": "icons/nokk.png"
+      "icon": "operators/icons/nokk.png"
     },
     {
       "id": "warden",
       "name": "Warden",
       "role": "DEF",
-      "icon": "icons/warden.png"
+      "icon": "operators/icons/warden.png"
     },
     {
       "id": "mozzie",
       "name": "Mozzie",
       "role": "DEF",
-      "icon": "icons/mozzie.png"
+      "icon": "operators/icons/mozzie.png"
     },
     {
       "id": "gridlock",
       "name": "Gridlock",
       "role": "ATQ",
-      "icon": "icons/gridlock.png"
+      "icon": "operators/icons/gridlock.png"
     },
     {
       "id": "nomad",
       "name": "Nomad",
       "role": "ATQ",
-      "icon": "icons/nomad.png"
+      "icon": "operators/icons/nomad.png"
     },
     {
       "id": "kaid",
       "name": "Kaid",
       "role": "DEF",
-      "icon": "icons/kaid.png"
+      "icon": "operators/icons/kaid.png"
     },
     {
       "id": "clash",
       "name": "Clash",
       "role": "DEF",
-      "icon": "icons/clash.png"
+      "icon": "operators/icons/clash.png"
     },
     {
       "id": "maverick",
       "name": "Maverick",
       "role": "ATQ",
-      "icon": "icons/maverick.png"
+      "icon": "operators/icons/maverick.png"
     },
     {
       "id": "maestro",
       "name": "Maestro",
       "role": "DEF",
-      "icon": "icons/maestro.png"
+      "icon": "operators/icons/maestro.png"
     },
     {
       "id": "alibi",
       "name": "Alibi",
       "role": "DEF",
-      "icon": "icons/alibi.png"
+      "icon": "operators/icons/alibi.png"
     },
     {
       "id": "lion",
       "name": "Lion",
       "role": "ATQ",
-      "icon": "icons/lion.png"
+      "icon": "operators/icons/lion.png"
     },
     {
       "id": "finka",
       "name": "Finka",
       "role": "ATQ",
-      "icon": "icons/finka.png"
+      "icon": "operators/icons/finka.png"
     },
     {
       "id": "vigil",
       "name": "Vigil",
       "role": "DEF",
-      "icon": "icons/vigil.png"
+      "icon": "operators/icons/vigil.png"
     },
     {
       "id": "dokkaebi",
       "name": "Dokkaebi",
       "role": "ATQ",
-      "icon": "icons/dokkaebi.png"
+      "icon": "operators/icons/dokkaebi.png"
     },
     {
       "id": "zofia",
       "name": "Zofia",
       "role": "ATQ",
-      "icon": "icons/zofia.png"
+      "icon": "operators/icons/zofia.png"
     },
     {
       "id": "ela",
       "name": "Ela",
       "role": "DEF",
-      "icon": "icons/ela.png"
+      "icon": "operators/icons/ela.png"
     },
     {
       "id": "ying",
       "name": "Ying",
       "role": "ATQ",
-      "icon": "icons/ying.png"
+      "icon": "operators/icons/ying.png"
     },
     {
       "id": "lesion",
       "name": "Lesion",
       "role": "DEF",
-      "icon": "icons/lesion.png"
+      "icon": "operators/icons/lesion.png"
     },
     {
       "id": "mira",
       "name": "Mira",
       "role": "DEF",
-      "icon": "icons/mira.png"
+      "icon": "operators/icons/mira.png"
     },
     {
       "id": "jackal",
       "name": "Jackal",
       "role": "ATQ",
-      "icon": "icons/jackal.png"
+      "icon": "operators/icons/jackal.png"
     },
     {
       "id": "hibana",
       "name": "Hibana",
       "role": "ATQ",
-      "icon": "icons/hibana.png"
+      "icon": "operators/icons/hibana.png"
     },
     {
       "id": "echo",
       "name": "Echo",
       "role": "DEF",
-      "icon": "icons/echo.png"
+      "icon": "operators/icons/echo.png"
     },
     {
       "id": "caveira",
       "name": "Caveira",
       "role": "DEF",
-      "icon": "icons/caveira.png"
+      "icon": "operators/icons/caveira.png"
     },
     {
       "id": "capitao",
       "name": "CAPITÃO",
       "role": "ATQ",
-      "icon": "icons/capitao.png"
+      "icon": "operators/icons/capitao.png"
     },
     {
       "id": "blackbeard",
       "name": "Blackbeard",
       "role": "ATQ",
-      "icon": "icons/blackbeard.png"
+      "icon": "operators/icons/blackbeard.png"
     },
     {
       "id": "valkyrie",
       "name": "Valkyrie",
       "role": "DEF",
-      "icon": "icons/valkyrie.png"
+      "icon": "operators/icons/valkyrie.png"
     },
     {
       "id": "buck",
       "name": "Buck",
       "role": "ATQ",
-      "icon": "icons/buck.png"
+      "icon": "operators/icons/buck.png"
     },
     {
       "id": "frost",
       "name": "Frost",
       "role": "DEF",
-      "icon": "icons/frost.png"
+      "icon": "operators/icons/frost.png"
     },
     {
       "id": "mute",
       "name": "Mute",
       "role": "DEF",
-      "icon": "icons/mute.png"
+      "icon": "operators/icons/mute.png"
     },
     {
       "id": "sledge",
       "name": "Sledge",
       "role": "ATQ",
-      "icon": "icons/sledge.png"
+      "icon": "operators/icons/sledge.png"
     },
     {
       "id": "smoke",
       "name": "Smoke",
       "role": "DEF",
-      "icon": "icons/smoke.png"
+      "icon": "operators/icons/smoke.png"
     },
     {
       "id": "thatcher",
       "name": "Thatcher",
       "role": "ATQ",
-      "icon": "icons/thatcher.png"
+      "icon": "operators/icons/thatcher.png"
     },
     {
       "id": "ash",
       "name": "Ash",
       "role": "ATQ",
-      "icon": "icons/ash.png"
+      "icon": "operators/icons/ash.png"
     },
     {
       "id": "castle",
       "name": "Castle",
       "role": "DEF",
-      "icon": "icons/castle.png"
+      "icon": "operators/icons/castle.png"
     },
     {
       "id": "pulse",
       "name": "Pulse",
       "role": "DEF",
-      "icon": "icons/pulse.png"
+      "icon": "operators/icons/pulse.png"
     },
     {
       "id": "thermite",
       "name": "Thermite",
       "role": "ATQ",
-      "icon": "icons/thermite.png"
+      "icon": "operators/icons/thermite.png"
     },
     {
       "id": "montagne",
       "name": "Montagne",
       "role": "ATQ",
-      "icon": "icons/montagne.png"
+      "icon": "operators/icons/montagne.png"
     },
     {
       "id": "twitch",
       "name": "Twitch",
       "role": "ATQ",
-      "icon": "icons/twitch.png"
+      "icon": "operators/icons/twitch.png"
     },
     {
       "id": "doc",
       "name": "Doc",
       "role": "DEF",
-      "icon": "icons/doc.png"
+      "icon": "operators/icons/doc.png"
     },
     {
       "id": "rook",
       "name": "Rook",
       "role": "DEF",
-      "icon": "icons/rook.png"
+      "icon": "operators/icons/rook.png"
     },
     {
       "id": "jager",
       "name": "Jäger",
       "role": "DEF",
-      "icon": "icons/jager.png"
+      "icon": "operators/icons/jager.png"
     },
     {
       "id": "bandit",
       "name": "Bandit",
       "role": "DEF",
-      "icon": "icons/bandit.png"
+      "icon": "operators/icons/bandit.png"
     },
     {
       "id": "blitz",
       "name": "Blitz",
       "role": "ATQ",
-      "icon": "icons/blitz.png"
+      "icon": "operators/icons/blitz.png"
     },
     {
       "id": "iq",
       "name": "IQ",
       "role": "ATQ",
-      "icon": "icons/iq.png"
+      "icon": "operators/icons/iq.png"
     },
     {
       "id": "fuze",
       "name": "Fuze",
       "role": "ATQ",
-      "icon": "icons/fuze.png"
+      "icon": "operators/icons/fuze.png"
     },
     {
       "id": "glaz",
       "name": "Glaz",
       "role": "ATQ",
-      "icon": "icons/glaz.png"
+      "icon": "operators/icons/glaz.png"
     },
     {
       "id": "tachanka",
       "name": "Tachanka",
       "role": "DEF",
-      "icon": "icons/tachanka.png"
+      "icon": "operators/icons/tachanka.png"
     },
     {
       "id": "kapkan",
       "name": "Kapkan",
       "role": "DEF",
-      "icon": "icons/kapkan.png"
+      "icon": "operators/icons/kapkan.png"
     }
   ],
   "maps": [

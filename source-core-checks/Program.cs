@@ -5,6 +5,7 @@ if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("CASTERDESK_DAT
 L.Set("pt-BR");
 if(args.Length==3 && args[0]=="--replay-local-check"){await ReplayChecks.RunLocal(args[1],args[2]);return;}
 ReplayChecks.Run();
+BrandPackageChecks.Run();
 if(args.Length==2&&args[0] is "--update-manifest-check" or "--update-catalog-check" or "--update-live-check") {
     using var http=UpdateClient.CreateHttpClient();var client=new UpdateClient(http);
     if(args[0]=="--update-manifest-check")Console.WriteLine("Verified signed manifest: "+client.ReadManifest(File.ReadAllBytes(args[1])).Version);

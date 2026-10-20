@@ -64,6 +64,22 @@ internal static class Ui
         return dialog;
     }
 
+    public static Image OperatorPortrait(string id)
+    {
+        var image = new Image { Stretch = Stretch.Uniform, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(0,4,0,0) };
+        string current = "";
+        void Update() {
+            double scale = TopLevel.GetTopLevel(image)?.RenderScaling ?? 1;
+            string file = SiegeCatalog.Portrait(id, Math.Max(image.Bounds.Width, image.Bounds.Height) * scale);
+            if(file==current)return;
+            image.Source=FileImage(file);current=file;
+        }
+        image.Source=FileImage(SiegeCatalog.Portrait(id,160));
+        image.SizeChanged+=(_,_)=>Update();image.AttachedToVisualTree+=(_,_)=>Update();
+        global::Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(image,BitmapInterpolationMode.HighQuality);
+        return image;
+    }
+
     public static async Task<string?> PickFile(Control owner, string title, string extension, bool save = false, string? name = null)
     {
         var type = new FilePickerFileType(title) { Patterns = ["*." + extension] };

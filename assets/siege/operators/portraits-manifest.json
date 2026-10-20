@@ -1,0 +1,2420 @@
+[
+  {
+    "id": "ace",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/ace",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3VknamIo6E87ELFbLqk1dx/a54751fe2435104ed35b5e6ee660ef72/r6s-operator-ace.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "181b6435916e6614add37567361dfe5615fb5a3061519973495da9990e3ca774",
+    "crop": [
+      23,
+      6,
+      812,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "alibi",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/alibi",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7ufK1h05Bv9FA19SpIACoJ/b3017cfc3836340861a11fc3fe82bef2/R6-operator-alibi.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "b73cf8f9ec606db0a50ffeac2c2c14bc4835360543ca42cfce3f3c86158971b3",
+    "crop": [
+      181,
+      30,
+      717,
+      615
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "amaru",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/amaru",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1w0TmOriiVzmeIBYodZ6wK/81da7f64732b1dbf5ccf984f2aea1d94/R6-operator-amaru.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "d9721b4b34d63019c4cb45bb7810cc951ac1ce525fe0b43f163b3682aea5934e",
+    "crop": [
+      5,
+      9,
+      825,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "aruni",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/aruni",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/xIH5tc98YOO1Juf1cRcJC/779f61650fac17e6e79e7b0f618c83e5/r6s-operator-aruni.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "05c98f392d681ec1c4de9ef31236c9f2f57285e24e93e2db63a0b413f7fb57df",
+    "crop": [
+      48,
+      11,
+      774,
+      663
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "ash",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/ash",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4uyWdmCF6zI9vcn4vKp9zx/1b9393a63e1071daeccb95732e530d40/r6-operator-ash_229846.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "1da08058360a0f405a177564978d473f356dff4f67f38dcc88b1a7f241a524bc",
+    "crop": [
+      89,
+      12,
+      740,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "azami",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/azami",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6vzacvORn7fh5sWFqy4glF/daadcbb2e0515129bf0cb610eccb3393/r6s-operator-azami.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "c36be3bc59adec6317723a71e99c9a92f033ae1e4c333d55c404a0fbdaf09b16",
+    "crop": [
+      111,
+      0,
+      702,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "bandit",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/bandit",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7uF3w5MYCFA1zikIkECPi9/f03570fd8c7739361619726638561c7a/R6-operator-bandit.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "bfae42ed38207ec7055bccafe8c811b5034cb3f7cc19459b5428118f708b989a",
+    "crop": [
+      157,
+      13,
+      680,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "blackbeard",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/blackbeard",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1FtCiVm4q4DsQNsLoT5nV0/4d8db4491539e77f4905fa3242147ba5/r6s-operators-blackbeard__1_.png",
+    "source_size": [
+      930,
+      710
+    ],
+    "source_sha256": "d124094089198e5763f7cbcb415e2b9357c3052b86264ff120a5724bf56f4648",
+    "crop": [
+      0,
+      14,
+      665,
+      613
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "blitz",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/blitz",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/MlN3NUzTAYwPkFughKR23/19b3155bf7d69c7415cafa36f52f67e7/R6-operator-blitz.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "cf54daff51e8e164e7042a8c9c769b335aecd6886d1067337666498e6e736eeb",
+    "crop": [
+      80,
+      13,
+      746,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "brava",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/brava",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7uyRvknQBEbg6KY37rXeK2/699fd5226e65c7b3ad5205dcf54360f4/r6s-operator-brava.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "e47df186641b9ac2e976db06e2529b23656ad0d06ef548da5a07ab1c7c1eb08a",
+    "crop": [
+      26,
+      8,
+      787,
+      691
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "buck",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/buck",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3YDi0a5YWFRwNzMoAjZstI/f2ebc37bde447faa664bcf160c63042d/R6-operator-buck.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "a56625dc4c0971be60776793f760c74934fc86d8a785755d1ab1fc06de11a50d",
+    "crop": [
+      38,
+      0,
+      737,
+      627
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "capitao",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/capitao",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5OxEmlChYi0U3d4URLaC4C/e348f7b3b77d2d8dec65ec6afbe171f9/R6-operator-capitao.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "9755a24972aae601fdaf7863d96b2c9449664add03604a08087131e3181208c4",
+    "crop": [
+      61,
+      12,
+      761,
+      640
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "castle",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/castle",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/569euf91mHD0ZceUnO5tVl/d2c58485cf44e51c130373fe8007f4d0/R6-operator-castle.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "ae4925707403f4fec6afbd3fa28c6b04e41e2dd820f1ebd31fea8fc99e815bd7",
+    "crop": [
+      117,
+      12,
+      716,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "caveira",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/caveira",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3BfIIo48RsMmkntTXU54g5/93826b4340e2fda49d959054b15151c0/R6-operator-caveira.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "7c404db084cf29b2db5cfae9f238fffdc8fd1508a883567d18cae4dc3211187e",
+    "crop": [
+      205,
+      2,
+      624,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "clash",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/clash",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/snhm8UctuxdKTEcvnWi2K/0fb6214a5de9e3903209c329699fcfd9/r6s-operator-clash.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "cb71978e4d86475030c451ddb44df504e7e456989293febd6cad9c9133ab8358",
+    "crop": [
+      71,
+      92,
+      799,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "deimos",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/deimos",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/30I7qa77OwH9EWPvcHYBbH/45c27a7d2d3df007b0138f2c6ab2b94a/r6s-operator-deimos.png",
+    "source_size": [
+      860,
+      710
+    ],
+    "source_sha256": "43230bc31a7854b6f2b37f282362f61626b8372f3e988816fccfd34f713ab191",
+    "crop": [
+      60,
+      0,
+      815,
+      678
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "denari",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/denari",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2tXE8ZM09IZLZNqb3xWzeC/4c96e9e2c07fe43811c6c5dcfd8256d4/r6s-operator-denari__3_.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "471822328afb25977ad2aca38fea4db6aaf07699d52afd6e91db300e2957e20d",
+    "crop": [
+      94,
+      1,
+      649,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "doc",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/doc",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7cZ1TDHehPRrgv6uJ2GIoy/d6feddd3fc1a0769a8ad56afa658e572/R6-operator-doc.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "b3f32e4defeb29892025fe91e9c8e2687e1b9e135a68d379dd1266a7789cfc0b",
+    "crop": [
+      109,
+      13,
+      660,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "dokkaebi",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/dokkaebi",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2s5BCj0po76sK50EyDeNH5/631c421568fdd20a64f8694d62adc7c5/r6s-operator-dokkaebi.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "042f3ad47f8ace051703bbb1d6972e08f0c581a470dba26b99bae52d71f7f93a",
+    "crop": [
+      138,
+      9,
+      722,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "echo",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/echo",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2dZawp2HB63pTV3Zwgro6L/8278d19b2e9ae6b1f4ef45784a217c89/R6-operator-echo.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "eeee216cc5e685fd993a2ccdb97d443806e4593bf1f6315a0196a705f3b29b00",
+    "crop": [
+      88,
+      2,
+      742,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "ela",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/ela",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3cpkHAvjm3RLhEoTqs090m/35a7595eb2f2431213656d66da8a9af8/R6-operator-ela.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "720f25ecbab6d75f4d4197d04a866a17a6cbcdcd9bf43fee85279ea0df69bb89",
+    "crop": [
+      82,
+      19,
+      759,
+      627
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "fenrir",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/fenrir",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1rWrOkHjxowW37i5UJKcqt/a60e59c16a9b8a9583b9578853a6b15b/r6s-operator-fenrir.png",
+    "source_size": [
+      880,
+      710
+    ],
+    "source_sha256": "6ee5fca31b9a3f2b1b129625d0bed354bf1e782d17a254c6b4aecac3fefea426",
+    "crop": [
+      1,
+      0,
+      879,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "finka",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/finka",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1ihKzLryOLc5JNkejAdUh2/1b7a9f866afdc07b86a604a681f23b1b/R6-operator-finka.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "b8fa858df28609e318ee6593acdbf4595e79d9c6d4cb6c8ce0f266032498c063",
+    "crop": [
+      50,
+      16,
+      760,
+      653
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "flores",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/flores",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4lZEmYIYYUloCcSarIJfiK/f8cbc4701200b414e6efe0d599ac8106/r6s-operator-flores.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "a58b3b29c2c6e940d7069f9046313c6a40e9c9a4585e08445d0222ed73150d7a",
+    "crop": [
+      11,
+      12,
+      822,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "frost",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/frost",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4IrcYxDo6aVBQyxDOFirQE/852e6c6c0e8a46303469921efae3d6dc/R6-operator-frost.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "a143d9990c211335fd143d9da34a262745abb52d6ca273a845dd290763cdbfc7",
+    "crop": [
+      176,
+      12,
+      674,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "fuze",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/fuze",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/pzeHydBjAc16X63nQH6Sm/33adb500a2abe9fbcaf368fa601ef59b/R6-operator-fuze.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "54c3d43361d2e4401fc244c40275b37c3e58681d2358d7c484a402f77b400221",
+    "crop": [
+      17,
+      2,
+      805,
+      709
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "glaz",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/glaz",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1xYMcXH9CNiKHI5Wqoxw8y/ac8414157d7647ea8377dd5c7ce6d2bb/R6-operator-glaz.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "1e313650a4fd2b8fc6029d5c88960739d9e995e3b16785ed85a39f72e2463144",
+    "crop": [
+      2,
+      10,
+      780,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "goyo",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/goyo",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3Hz6j8A8mmpN0zsxoQWXgC/1d29dff2a852f5fe25c5c4640dfe2d12/R6-operator-goyo.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "08f753eac11cbd683c9d54b2680d59b5c4c1fc0559b0925278c4f924a8b52803",
+    "crop": [
+      84,
+      7,
+      803,
+      652
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "gridlock",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/gridlock",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/221q2yd28L3IAkjUGEFCke/51f431695fe53b30f7b384141b5e63ee/R6-operator-gridlock.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "d65f6f19c4003d1de5ea3e7107308adb82b58d1dc0837bd5643332c8fccb7d93",
+    "crop": [
+      48,
+      9,
+      756,
+      644
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "grim",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/grim",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2Mh6QhvaGrU16dvqAlDq6M/65d751edc5d985badc95db15b0784f54/r6s-operator-grim.png",
+    "source_size": [
+      950,
+      710
+    ],
+    "source_sha256": "8138808ad180736896ef91967a32bca0e533ba954d12c07599aa81f39cb5208a",
+    "crop": [
+      6,
+      10,
+      948,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "hibana",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/hibana",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4a3bXHSd7wz9vRZzRC8Kzq/98dac79c29394be7f5ff4d363fce5140/R6-operator-hibana.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "8ac95dfeb9e909185a89ca49c42c2422a1bc591a95661600ba50e6dff494fbab",
+    "crop": [
+      108,
+      18,
+      756,
+      613
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "iana",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/iana",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6Fiy7YExswMn1Cf13GUU9t/7bb697bf32c0d79c2852b354e3045fff/r6s-operator-iana.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "d6e53f6f9f55fc674d2f0db592411cfcba034a22bdfd980625ae5679a9029ccb",
+    "crop": [
+      119,
+      2,
+      711,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "iq",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/iq",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2bdUfjHxFfSn9YzMjlUThL/d1b3519228790ba30785eebab03bbc38/R6-operator-iq.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "642b2c6627ae61b5b7c6f8898811e344b2700dad9d6c2894150bb90731f7fd5f",
+    "crop": [
+      129,
+      14,
+      715,
+      613
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "jackal",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/jackal",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2YoFmkuQL4r8odEWB7K60w/b5fd30cf9c7f407753bd921dfe6a1d28/R6-operator-jackal.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "0192ba194d62bcca3ee72be7aabb8eff4fb659ca24b26631a738e5697fe5bd97",
+    "crop": [
+      3,
+      8,
+      770,
+      696
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "jager",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/jager",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/18FXPSsVVIDvyKvMi4cmnO/bac05dd81df9a8f48336babdc5030cff/R6-operator-jager.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "724b6b90e51dcfd86c1811491a4e5c9e3f4a34424b404307b0fb015b4d6033bc",
+    "crop": [
+      48,
+      44,
+      669,
+      617
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "kaid",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/kaid",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4WdfMUlABk6Pr9FjV3kV4x/42ffacc4a2cd75ff9539dcb00e1e28ee/R6-operator-kaid.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "3b45640a8c17a820939d2b7ed852abd75232554a1bc10e23734e69c58fd5a80c",
+    "crop": [
+      57,
+      13,
+      792,
+      673
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "kali",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/kali",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4xh8dBfzXNSwQIOaw660Xb/6df56a74ea8534be1d15f61e49aa1e24/r6-operator-kali_358315.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "0ae89f2abfb6205d3abbe95cd755b0403deea126b2a77202fcf4649db8b8ba2b",
+    "crop": [
+      202,
+      0,
+      753,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "kapkan",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/kapkan",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4DCZD6bED0srAvUDbciDgO/f7b915b1d07854638973fbc23aa0ad9b/R6-operator-kapkan.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "571c707e3c43d3c3eb7231aa377e0a47fc7ca953801907b1ecfad6f1ee18d92f",
+    "crop": [
+      52,
+      12,
+      779,
+      664
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "lesion",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/lesion",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3R9iXCdt0dpYqg6LqFojua/ba70e0f2616df82a2f89ecf2d72b4ae0/R6-operator-lesion.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "15fc77607fcdc8f91f6bd4df91790154e4da1966d9ab3d155c54508e49b98252",
+    "crop": [
+      94,
+      12,
+      745,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "lion",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/lion",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/O1pBwXRND1RV2WN5OrEr7/787e4d31e1b74ae9700ffac675205de3/R6-operator-lion.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "960265b361ab635bf7d3d75ac5de5dc472141eeeaad19fe10dfc86e5645062b4",
+    "crop": [
+      3,
+      16,
+      830,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "maestro",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/maestro",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5DSFt6OEgGRcIOjC8YmdEV/e858ba7e2b695d4d792b84f2fcd95c3a/R6-operator-maestro.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "56f65f10e8bb41703c9ad15b4d01682741556d869e2e27ac76e7e4fb9f368fdd",
+    "crop": [
+      13,
+      18,
+      812,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "maverick",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/maverick",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5JkQYq5w8jibdznsDl2yvy/3ec75ea42f9a54238f569797a3e185a6/r6-operator-maverick.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "e677f44094ae94ba5a283a8c131b0d983c650a90a72318abbfaf136ebec0efaf",
+    "crop": [
+      52,
+      26,
+      777,
+      677
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "melusi",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/melusi",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7xlDG41BwglAg68IGGhvf3/73cd220cd35d5e58dc30f0f3f551b923/r6s-operator-melusi.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "f9c3c650a9812d704546fe0ac15bd7e6f9528001f4ec9a3d0e1fb90b33cdabd2",
+    "crop": [
+      133,
+      6,
+      610,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "mira",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/mira",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6wZplm8r956WXGrSYlULTU/0f9c0a33abfd42d9102723886850b8ca/R6-operator-mira.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "5fc2a809507a0369e1cb378e0962b5a76b52fd2a1c9acd0ef25a226a579aaa59",
+    "crop": [
+      51,
+      9,
+      761,
+      646
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "montagne",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/montagne",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/37v1tD14BQ9A59vqXO7I9p/ba1d199bf7697f5ede61b93cdec60686/R6-operator-montagne.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "33cff7e893a07780370b10bf5fbc1d31dd6c85794639716da6056a819dfdb6b2",
+    "crop": [
+      2,
+      9,
+      648,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "mozzie",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/mozzie",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/22Gyn0Z317IfLRGwHPBlmL/1e9e9f041403e8846824337cb53600b8/r6-operator-mozzie_343388.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "758c730eae6a727e74154676fd63843af46040f88ee5e5080b064cda2b96f43e",
+    "crop": [
+      143,
+      7,
+      741,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "mute",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/mute",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3gItFrDP0bBZsDXPdPp8ni/4314eb876028a87ae7fb20cc3215d3f6/R6-operator-mute.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "0e87a110b643c26e3bb380e1f2714e12e31e6018c1b9309ba53922a114a7db1a",
+    "crop": [
+      27,
+      12,
+      767,
+      676
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "nokk",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/nokk",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5X4tMHTglYiy22CYHvvn6b/74f36f4695c6f1eb79533be5e9f97002/R6-operator-nokk.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "907be0be5a63467e76e0c748db267e8161aa57db39c12cc87b701d5a8fac5a1d",
+    "crop": [
+      123,
+      14,
+      711,
+      613
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "nomad",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/nomad",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1Fue2SumRQEs8Geb2CpWsX/913fbcda744ab9dc719a1440047e4585/R6-operator-nomad.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "0bd874d0ec3d1bb63572964d0b1ebb078918b320649ffc18adb8d06930069d96",
+    "crop": [
+      46,
+      16,
+      790,
+      684
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "noor",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/noor",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1STehR7C0Oqrcg3Vq4kCHK/4b3f6af650dad93057129de3866a73ac/r6s-operator-noor.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "9326bdd7e31eb853bbbc024c61ee25915e0a18bbd2e9cc4d55dbb7a0e7b20729",
+    "crop": [
+      23,
+      2,
+      703,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "oryx",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/oryx",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3Ha2aY7zJrudEskszfFA3K/2f5d898ca145d4dd73d8ec4ece53b195/r6s-operator-oryx.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "d867835b8d24d8324bbea5d9ef63036b4e3751fd4348442900250edc041b67b3",
+    "crop": [
+      123,
+      9,
+      708,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "osa",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/osa",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5IYWNxvwiiwPDxAWsZVmVS/1e62cb6bcd4a7fa1608ed152a5fbb9b4/r6s-operator-osa.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "289e24ce5a408bfbc5d23ff0df7bedc548a8b406e2d22fa5824af116efe45f9f",
+    "crop": [
+      104,
+      9,
+      749,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "pulse",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/pulse",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3eOrdhZhYBqcFJdD0ygcGI/ba8ce2069fd409480fc74b8a5dbf8afd/R6-operator-pulse.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "644323e2de94c0acd78d48b61a863686457ab810843bf6c9bc8d8d73228dc43e",
+    "crop": [
+      88,
+      12,
+      808,
+      658
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "ram",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/ram",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/Fgszpez8AbRf23OkswHQl/32f5f4d2bb387941e474833ceb3ac2cb/r6s-operator-ram.png",
+    "source_size": [
+      880,
+      710
+    ],
+    "source_sha256": "60092af0def6804351aaaba02c02043131b70ac7e3b48f480f48566b6253d863",
+    "crop": [
+      6,
+      0,
+      877,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "rauora",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/rauora",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7pMqlgdqX1f8iCxxExGyW/811e3604206f21b4912eb59392d59115/r6s-operator-rauora.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "de64b15d79506795f477dfe95d1ece7d6dc3259e51588e97d842f812a5358a63",
+    "crop": [
+      0,
+      4,
+      830,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "rook",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/rook",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/17CNRjTOFVKS1Q8Zou4ZVD/663dae86e2902f210bf2b1504904dbd0/R6-operator-rook.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "e52bfa46ab5782740fe8b23f0392ca106d75b5ac8f6ba261c8e41fead39e7f40",
+    "crop": [
+      45,
+      12,
+      781,
+      673
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "sens",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/sens",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5jnAuLrtadxfg1XOieDnL0/4694dde0c71e3e9998a1e5fd6cb1a7d2/r6s-operator-sens.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "dac5d094ff902f5440fb01c9ad0ae7ef34de75f1ace81c8d6c3a427c3bc282d5",
+    "crop": [
+      0,
+      1,
+      829,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "sentry",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/sentry",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4D6K0a93Nwh0vXbuudP1tE/02310bdbd60ede48be879721d7ba248e/r6s-operator-sentry.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "e498a769cee22e8d3a8e841ea8ca50d9511ae6116d96c1b0cb631aaedf3a0838",
+    "crop": [
+      18,
+      6,
+      812,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "skopos",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/skopos",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/24aepg0uhygjIpm0de121o/721cf782e6c9f7434fb970ab8da9f859/r6s-operator-skopos__1_.png",
+    "source_size": [
+      1060,
+      710
+    ],
+    "source_sha256": "6f7fcad447d645b6d6304ce280640bfabd29759676c9a69a6e275172308c1e48",
+    "crop": [
+      0,
+      10,
+      1060,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "sledge",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/sledge",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2p5MyJkqbsfL8kCRNJVhcz/90aa196a11f2ea49ea107aab69789053/R6-operator-sledge.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "3489d5d9b4a8176c19cf626e0d3fbb6ea1395b9973cee59588ef51d6aaeffb5f",
+    "crop": [
+      138,
+      23,
+      756,
+      614
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "smoke",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/smoke",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5NUuXBKokP1KmAGR8Q7fqE/9628143388fc1c2f50162c1ccdf94942/R6-operator-smoke.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "269021e4a65d8a480f9926c033e518c266bf184798e1d82849c33d49b826c82e",
+    "crop": [
+      8,
+      12,
+      783,
+      708
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "solid-snake",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/solid-snake",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/14s4oSyeat1seTsWpQ5g86/c252e34b3aa0e15358cad9aa907d4f8f/r6s-operator-solidsnake.png",
+    "source_size": [
+      980,
+      710
+    ],
+    "source_sha256": "85cf52c748477cc7c05cf44dbe97c7016a55383693300a3f5cc426e1edffe78f",
+    "crop": [
+      3,
+      7,
+      856,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "solis",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/solis",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/1OfBCr46se4TbYO1ff5Ral/3f4e4e9ed19672f8e49e9b608c5b8f6b/r6s-operator-solis.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "aedd4db5b8ec4a9c398f54d983e99cdffb3d234c40b41f2d9123416f432e8f80",
+    "crop": [
+      166,
+      6,
+      713,
+      611
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "striker",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/striker",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4efdFybEQIMHeYByKJ5yPB/98ac1b2c27da72694b525b4424aab613/r6s-operator-striker.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "b293e89a46aeab9b2acea33ecbe25c9eea6eddcc149486c42d4af78dc12e6f6a",
+    "crop": [
+      101,
+      9,
+      738,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "tachanka",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/tachanka",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3anG5CUIzp0MWB9T6tIpy9/bd81ae97ecd984afe84813384eb027d8/r6s-operator-tachanka.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "50c01701adf8910f207714e38fb872e6c6e5befd8575e13964ea59791b097e12",
+    "crop": [
+      3,
+      1,
+      828,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "thatcher",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/thatcher",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4yGZXsXNG7gxH0YIwnii6F/aea81ff691fae0422a87987c30f829f9/r6s-operator-thatcher.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "00f6b16d25839051bbf5423c282cc1bb8b60f97beeb933cb6693ebe62d3d6b8f",
+    "crop": [
+      67,
+      0,
+      784,
+      643
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "thermite",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/thermite",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4c4cEUFWUwXTT4p3V5wAjm/e755c2a37a050de118eabc667c55c511/R6-operator-thermite.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "11f4a8d355ede3a87047ef488eb0fa85daf497d9bee56c31825e7b6aa532ea20",
+    "crop": [
+      161,
+      12,
+      731,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "thorn",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/thorn",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3erk7Ub0asfBDZEKsdL8j9/5019698958b0834e806d01cd7bf36286/r6s-operator-thorn.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "7abd605abbce4b37b3290665701053cf09e42f31394570f3e9671266c277592a",
+    "crop": [
+      6,
+      1,
+      824,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "thunderbird",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/thunderbird",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/2braENz5x4Ko9UZ03LsBfY/7fd1647e138fa8db8f2fac2be2867693/r6s-operator-thunderbird.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "a085e63698d2a171442e17fec75bf9febd63f8081270c69c69121405f5cd1db6",
+    "crop": [
+      26,
+      8,
+      806,
+      708
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "tubarao",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/tubarao",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6RHlZJniCer89285ocTyPY/103b3da47a3978f5b6fbbd77a02b53c9/r6s-operator-tubarao.png",
+    "source_size": [
+      1060,
+      710
+    ],
+    "source_sha256": "4c6b04b29ab18c8d4b4b87e1b99dba5dd8542591d78fde0fbd37d37987ba6767",
+    "crop": [
+      3,
+      0,
+      1057,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "twitch",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/twitch",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5jaeo9LkOu6deQz4mOF9a2/9a07011ac08bc25d58cbfc828b442e3a/R6-operator-twitch.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "37f204ca924781802353e229ba2ad3fbd046aaba38f64430fd12bcbf4448bd68",
+    "crop": [
+      114,
+      12,
+      659,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "valkyrie",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/valkyrie",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5q1yIrIxoddG5pds2Nq3mz/7dc46a59bbfb6959296d01469916f44c/R6-operator-valkyrie.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "67caeae7f1e5fab1096b09dea33d13aa439a2dff77e47353a06253699f2848d5",
+    "crop": [
+      13,
+      13,
+      809,
+      710
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "vigil",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/vigil",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/bPE2opWKKK0BPVx6I1H4b/4e15d30820900ecd0794ef90e1361d5a/R6-operator-vigil.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "edf5a2e05095637c02323000cd2d6cd328f363ff9aaf88d0adaf205e90107db2",
+    "crop": [
+      70,
+      4,
+      761,
+      624
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "wamai",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/wamai",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6S1qFckDJGp8NyVztOpbCE/86eaaab66472038666289cc2aefe3949/r6-operator-wamai_358316.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "23b0c6d6443de90b7b229216a8cce203283961cfbd9b7c4ae282d188db75ee5b",
+    "crop": [
+      51,
+      17,
+      800,
+      689
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "warden",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/warden",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6IeUn3ejRrjAngxPvqqsZh/234847c2a25cbdd2cf783ef15caf9738/R6-operator-warden.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "52267bde2b9751ea7fa3933a31f0e44be84454ce9cd9b25623991859944092ed",
+    "crop": [
+      80,
+      13,
+      695,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "ying",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/ying",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/4Oyf6w5rI0u9j4zMcWBSGz/ef22bcaca06cba29fdfa41e5ec921f7d/R6-operator-ying.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "f6f76b5ca40ccd340f3bc97a354ec48513e900ac315e44be36ffc11e99b5d3a1",
+    "crop": [
+      108,
+      52,
+      722,
+      618
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "zero",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/zero",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7lou5sF83pEwxoQaRr7qgP/3bc2e32393f5e98389c1b5e98d005894/r6s-operator-zero.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "0ec8a449b19db3ae01c72de8b778494876c24955e6874d03c089ee4c7acce6e1",
+    "crop": [
+      30,
+      0,
+      801,
+      692
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  },
+  {
+    "id": "zofia",
+    "source_page": "https://www.ubisoft.com/pt-br/game/rainbow-six/siege/game-info/operators/zofia",
+    "url": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/5KUunQgJWx9sVC0hFhHVAt/8fdff15ca50227328fb0589ecd8ccda0/R6-operator-zofia.png",
+    "source_size": [
+      830,
+      710
+    ],
+    "source_sha256": "c882e05cfb777743187f1ece88359a30655c7fa75921a3b61b1c5bfa61f772c2",
+    "crop": [
+      167,
+      13,
+      663,
+      612
+    ],
+    "anchor": "top",
+    "variants": {
+      "large": [
+        320,
+        288
+      ],
+      "medium": [
+        160,
+        144
+      ],
+      "small": [
+        80,
+        72
+      ]
+    }
+  }
+]

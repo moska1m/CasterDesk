@@ -184,6 +184,18 @@ public sealed class ReplayImport : IDisposable
     };
     public static bool SameName(string a, string b) => string.Equals(a.Trim(), b.Trim(), StringComparison.OrdinalIgnoreCase);
 
+    // Hints only: full import still validates and requires explicit session classification.
+    public static string ContinuationHint(ReplayDocument a, ReplayDocument b)
+    {
+        if (a.Map.Id <= 0 || a.Map.Id != b.Map.Id || a.Teams.Count != 2 || b.Teams.Count != 2 || a.Teams.Any(t => string.IsNullOrWhiteSpace(t.Name)) || b.Teams.Any(t => string.IsNullOrWhiteSpace(t.Name)) || a.Teams.Select(t=>t.Name.Trim().ToUpperInvariant()).Distinct().Count()!=2 || b.Teams.Select(t=>t.Name.Trim().ToUpperInvariant()).Distinct().Count()!=2 || !a.Teams.All(t => b.Teams.Any(u => SameName(t.Name, u.Name)))) return "";
+        if (Guid.TryParse(a.MatchID, out _) && SameName(a.MatchID, b.MatchID)) return "Mesma sessão";
+        var first = a.Timestamp <= b.Timestamp ? a : b; var next = ReferenceEquals(first, a) ? b : a;
+        if (first.Timestamp == default || next.Timestamp - first.Timestamp > TimeSpan.FromHours(3) || next.RoundNumber <= first.RoundNumber || next.Teams.Sum(t => t.StartingScore) == 0) return "";
+        if (next.Teams.Any(t => t.StartingScore < first.Teams.Single(u => SameName(t.Name, u.Name)).StartingScore)) return "";
+        if (first.Players.Count == 10 && next.Players.Count == 10 && !first.Players.Select(p => p.Username.Trim().ToUpperInvariant()).Order().SequenceEqual(next.Players.Select(p => p.Username.Trim().ToUpperInvariant()).Order())) return "";
+        return "Possível continuação";
+    }
+
     // Each transition must be explicitly classified by the operator: true = new lobby, false = restored cumulative totals.
     public MapStatistics Consolidate(SiegeMatch match, MapRecord map, IReadOnlyList<bool> newLobby)
     {

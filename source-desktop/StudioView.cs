@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Threading;
+using Avalonia.Platform.Storage;
 
 
 
@@ -68,10 +69,16 @@ public sealed class StudioView : Grid
   Label("FORMATO DA IMAGEM");options.Children.Add(aspect);options.Children.Add(vetoOptions);
   options.Children.Add(mapTitle);options.Children.Add(maps);statsEdit=Ui.Button("Conferir estatísticas / colar print",EditStatistics);options.Children.Add(statsEdit);options.Children.Add(stats);
   reconcile=Ui.Button("Conciliar jogadores da série",()=>_=ReconcileSeries());options.Children.Add(reconcile);
+  Label("PACOTE VISUAL DO CAMPEONATO");
+  var importTheme=Ui.Button("Importar pacote visual",()=>_=ThemePackage(true));importTheme.Name="import-theme";options.Children.Add(importTheme);
+  var exportTheme=Ui.Button("Exportar pacote visual",()=>_=ThemePackage(false));exportTheme.Name="export-theme";options.Children.Add(exportTheme);
+  var buildTheme=Ui.Button("Montar pacote a partir de imagens",()=>_=BuildThemePackage());buildTheme.Name="build-theme";options.Children.Add(buildTheme);
+  options.Children.Add(Ui.Button("Instruções para o designer",()=>{var guide=Path.Combine(AppContext.BaseDirectory,"assets","guides","PACOTE-VISUAL.txt");if(File.Exists(guide))new TextGuideWindow(guide).ShowDialog(Ui.Owner(this));}));
+  options.Children.Add(Ui.Text("Um arquivo com nome do campeonato, cores e fundos de cada área e formato."));
   Label("CAMPEONATO (OPCIONAL)");options.Children.Add(eventName);
   options.Children.Add(channelTitle);channelHint.Margin=new Thickness(0,5,6,0);channelRow.Children.Add(channelHint);channelRow.Children.Add(channel);SetColumn(channel,1);options.Children.Add(channelRow);channel.Name="art-channel-nick";
   Label("LOGOS DAS EQUIPES");Action("Selecionar logo da equipe A",()=>Resource("logo-a"));Action("Selecionar logo da equipe B",()=>Resource("logo-b"));Action("Usar logos neutras",()=>{brand.TeamALogo=brand.TeamBLogo="";Changed();});
-  Label("FUNDO DA ARTE");Action("Carregar fundo",()=>Resource("fundo"));Action("Restaurar fundo padrão",()=>{brand.Style(Kind).Background="";Changed();});options.Children.Add(background);
+  Label("FUNDO DA ARTE");Action("Carregar fundo",()=>Resource("fundo"));Action("Restaurar fundo padrão",()=>{brand.Style(Kind).Backgrounds[BackgroundKey]="";Changed();});options.Children.Add(background);
   Label("COR DE DESTAQUE");
   palette.Name="art-palette";palette.SelectedIndex=-1;options.Children.Add(palette);
   palette.SelectionChanged+=(_,_)=>{if(!loading&&palette.SelectedIndex>=0){brand.Style(Kind).Accent=new[]{"#FF3927","#4199BB","#FFFFFF"}[palette.SelectedIndex];Changed();}};
@@ -114,7 +121,7 @@ public sealed class StudioView : Grid
    var choices=new List<Choice>{new("",L.T("MVP automático")),new("none",L.T("Sem destaque MVP"))};
    if(Selected!=null){var summary=Kind==ArtKind.MapStats&&Map!=null?StatisticsData.ForMap(Map):StatisticsData.ForSeries(Selected);ToolTip.SetTip(stats,L.F($"Cobertura: {summary.MapsIncluded}/{summary.MapsPlayed} mapas conferidos.")+Environment.NewLine+string.Join(Environment.NewLine,summary.Players.Select(p=>$"{p.Name}: E {p.KillMaps}, M {p.DeathMaps}, A {p.AssistMaps}")));choices.AddRange(summary.Players.Select(p=>new Choice(p.Key,Selected.Team(p.Team)+" · "+p.Name)));}
    string suggested=Selected==null?"":StatisticsData.SuggestMvp(Selected,Kind==ArtKind.MapStats?Map:null)?.Key??"";
-   mvp.ItemsSource=choices;mvp.SelectedItem=choices.FirstOrDefault(c=>c.Key==(string.IsNullOrEmpty(brand.Mvp)?suggested:brand.Mvp))??choices[0];background.Text=L.T(string.IsNullOrEmpty(brand.BackgroundFor(Kind))?"Fundo padrão":"Fundo personalizado. Ajustado ao formato; confira o recorte na prévia.");
+   mvp.ItemsSource=choices;mvp.SelectedItem=choices.FirstOrDefault(c=>c.Key==(string.IsNullOrEmpty(brand.Mvp)?suggested:brand.Mvp))??choices[0];background.Text=L.T(string.IsNullOrEmpty(brand.BackgroundFor(Kind,BackgroundKey))?"Fundo padrão":"Fundo personalizado. Ajustado ao formato; confira o recorte na prévia.");
   }
   finally{loading=false;}
  }
@@ -122,7 +129,34 @@ public sealed class StudioView : Grid
  {
   if(Selected==null)return;
   var ownerMatch=Selected;var resourceKind=Kind;
-  try{var path=await Ui.PickImage(this);if(path==null||Selected?.Id!=ownerMatch.Id)return;string resource=await Task.Run(()=>MatchFiles.Resource(ownerMatch,type=="fundo"?"fundo-"+resourceKind:type,path));if(Selected?.Id!=ownerMatch.Id)return;if(type=="fundo")brand.Style(resourceKind).Background=resource;else if(type=="logo-a")brand.TeamALogo=resource;else brand.TeamBLogo=resource;Changed();}catch(Exception ex){status.Text=ex.Message;}
+  string format=BackgroundKey;
+  try{var path=await Ui.PickImage(this);if(path==null||Selected?.Id!=ownerMatch.Id)return;string resource=await Task.Run(()=>MatchFiles.Resource(ownerMatch,type=="fundo"?"fundo-"+resourceKind+"-"+format:type,path));if(Selected?.Id!=ownerMatch.Id)return;if(type=="fundo")brand.Style(resourceKind).Backgrounds[format]=resource;else if(type=="logo-a")brand.TeamALogo=resource;else brand.TeamBLogo=resource;Changed();}catch(Exception ex){status.Text=ex.Message;}
+ }
+ string BackgroundKey=>Kind==ArtKind.MapVeto?"horizontal":Aspect==ExportAspect.Horizontal?"horizontal":Aspect==ExportAspect.Feed?"feed":"stories";
+ async Task BuildThemePackage()
+ {
+  if(exporting||applying)return;
+  var body=new StackPanel{Margin=new Thickness(18),Spacing=8};var title=new TextBox{Text=brand.EventName,MaxLength=80,PlaceholderText="Nome do campeonato"};var color=new TextBox{Text=brand.Style(Kind).Accent,MaxLength=7};var folder=new TextBox{IsReadOnly=true,PlaceholderText="Pasta com os PNGs do designer"};var message=Ui.Text("");
+  body.Children.Add(Ui.Text("MONTAR PACOTE VISUAL",true));body.Children.Add(Ui.Text("Use os nomes do guia. Os fundos não fornecidos usam o padrão do CasterDesk."));body.Children.Add(title);body.Children.Add(Ui.Text("Cor de destaque · #RRGGBB"));body.Children.Add(color);body.Children.Add(folder);
+  var dialog=Ui.Dialog(this,"Montar pacote visual",body,620,510);
+  body.Children.Add(Ui.Button("Selecionar pasta",async()=>{var chosen=await dialog.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions{Title="Pasta do enxoval",AllowMultiple=false});folder.Text=chosen.FirstOrDefault()?.TryGetLocalPath()??folder.Text;}));
+  var save=Ui.Button("Salvar pacote ZIP",()=>{},true);save.Name="save-built-theme";
+  save.Click+=async(_,_)=>{if(string.IsNullOrWhiteSpace(folder.Text)){message.Text="Selecione a pasta dos PNGs.";return;}string? destination=await Ui.PickFile(dialog,"Salvar pacote visual","zip",true,"casterdesk-campeonato.zip");if(destination==null)return;save.IsEnabled=false;try{string source=folder.Text!,name=title.Text??"",accent=color.Text??"";await Task.Run(()=>BrandPackage.CreateFromFolder(source,destination,name,accent));dialog.Close();status.Text="Pacote criado. Use Importar pacote visual para aplicá-lo.";}catch(Exception ex){message.Text=ex.Message;save.IsEnabled=true;}};
+  body.Children.Add(save);body.Children.Add(message);body.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));await dialog.ShowDialog(Ui.Owner(this));
+ }
+ async Task ThemePackage(bool import)
+ {
+  if(Selected==null||exporting||applying||!Flush())return;
+  var match=Selected;
+  string? file=await Ui.PickFile(this,import?"Importar pacote visual":"Exportar pacote visual","zip",!import,"casterdesk-campeonato.zip");
+  if(file==null||Selected?.Id!=match.Id||!Flush())return;
+  applying=true;kind.IsEnabled=options.IsEnabled=matches.IsEnabled=generate.IsEnabled=false;
+  try {
+   var snapshot=JsonSerializer.Deserialize<ImageBrand>(JsonSerializer.Serialize(brand))!;
+   if(import){brand=await Task.Run(()=>BrandPackage.Import(match,snapshot,file));brandDirty=false;loading=true;eventName.Text=brand.EventName;loading=false;Configure();await Render();status.Text=L.T("Pacote visual aplicado nesta partida.");}
+   else{await Task.Run(()=>BrandPackage.Export(match,snapshot,file));status.Text=L.T("Pacote visual exportado. Você pode reutilizá-lo em outra partida.");}
+  }catch(Exception ex){status.Text=ex.Message;}
+  finally{loading=false;applying=false;kind.IsEnabled=options.IsEnabled=matches.IsEnabled=true;generate.IsEnabled=rendered.Count>0;}
  }
  void BuildVeto()
  {

@@ -43,7 +43,7 @@ try {
     & $Dotnet publish source-desktop/CasterDesk.Desktop.csproj -c Release -r win-x64 --self-contained true --no-restore -o $publish -m:1 -p:UseSharedCompilation=false @googleBuild
     if($LASTEXITCODE -ne 0){throw 'Falha ao publicar CasterDesk.'}
     if($GoogleDesktopClient -and !(Test-Path -LiteralPath (Join-Path $publish 'assets/google-desktop-client.json'))){throw 'Configuração do login Google ausente na publicação.'}
-    foreach($required in @('assets/match-table-template.xlsx','CasterDesk.exe','CasterDesk.dll','CasterDesk.Core.dll','coreclr.dll','hostfxr.dll','SkiaSharp.dll','libSkiaSharp.dll','OcrImage.ps1','assets/siege/catalog.json','assets/promo/background.png','assets/studio/Icon_Defender.png','assets/branding/CasterDesk.ico','assets/branding/casterdesk-horizontal-white.svg','assets/branding/casterdesk-horizontal-black.svg')) {
+    foreach($required in @('assets/match-table-template.xlsx','CasterDesk.exe','CasterDesk.dll','CasterDesk.Core.dll','coreclr.dll','hostfxr.dll','SkiaSharp.dll','libSkiaSharp.dll','OcrImage.ps1','assets/siege/catalog.json','assets/promo/background.png','assets/studio/icons/Icon_Defender.png','assets/siege/operators/portraits/small/azami.png','assets/siege/operators/portraits/large/azami.png','assets/branding/CasterDesk.ico','assets/branding/casterdesk-horizontal-white.svg','assets/branding/casterdesk-horizontal-black.svg')) {
         if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Arquivo ausente na publicação: $required"}
     }
     foreach($required in @('assets/obs/dock.html','assets/obs/dock.js','Microsoft.AspNetCore.Server.Kestrel.Core.dll')) {

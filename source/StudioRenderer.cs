@@ -53,7 +53,7 @@ public static class StudioRenderer
     {
         var image=new Bitmap(size.Width,size.Height,PixelFormat.Format32bppArgb);
         using var g=Graphics.FromImage(image);Setup(g);g.Clear(Color.FromArgb(12,18,25));
-        string? custom=MatchFiles.Resolve(match,brand.BackgroundFor(kind));
+        string? custom=MatchFiles.Resolve(match,brand.BackgroundFor(kind,kind==ArtKind.MapVeto?"horizontal":format=="promo"?(size.Width>size.Height?"horizontal":size.Height>1500?"stories":"feed"):format));
         Photo(g,custom??Asset("background-"+format+".jpg"),new(0,0,size.Width,size.Height));
         if(custom is not null){using var shade=new SolidBrush(Color.FromArgb(105,0,0,0));g.FillRectangle(shade,0,0,size.Width,size.Height);}
         return image;

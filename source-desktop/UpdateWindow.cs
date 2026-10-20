@@ -5,13 +5,14 @@ namespace CasterDesk.Desktop;
 public sealed partial class StudioShell
 {
     readonly UpdateController updates;
-    readonly DispatcherTimer updateTimer = new() { Interval=TimeSpan.FromSeconds(12) };
+    readonly DispatcherTimer updateTimer = new() { Interval=TimeSpan.FromSeconds(3) };
     readonly Border updateBanner = new() { Name="update-banner",IsVisible=false,Padding=new Thickness(10,4),Margin=new Thickness(10,0,10,4) };
     readonly TextBlock updateBannerText = Ui.RawText("");
     Window? updateWindow;
     bool updateInitial=true;
     string dismissedUpdate="";
     bool installingUpdate;
+    bool startupUpdateShown;
 
     void InitializeUpdates(Grid layout)
     {
@@ -26,9 +27,34 @@ public sealed partial class StudioShell
         updateTimer.Tick+=async(_,_)=>{
             if(updateInitial){updateInitial=false;updateTimer.Interval=TimeSpan.FromMinutes(15);}
             await updates.CheckAsync(false);
+            await ShowStartupUpdate();
         };
         Opened+=(_,_)=>{if(!Program.Headless)updateTimer.Start();};
         Closed+=(_,_)=>{updateTimer.Stop();updates.Dispose();};
+    }
+    internal async Task ShowStartupUpdate()
+    {
+        var item=updates.Available;
+        if(startupUpdateShown||!updates.Preferences.Automatic||item==null||updates.Checking||updates.Downloading||backupOpen||studio.Exporting||Championship.Processing||OwnedWindows.Any(w=>w.IsVisible)||!IsVisible)return;
+        startupUpdateShown=true;
+        var content=new Grid { Margin=new Thickness(20),RowDefinitions=new("Auto,Auto,*,Auto,Auto") };
+        var title=Ui.RawText((item.Important?"ATUALIZAÇÃO IMPORTANTE":"NOVA ATUALIZAÇÃO")+" · "+item.Version,true);title.FontSize=22;content.Children.Add(title);
+        var version=Ui.RawText("Instalada: "+BuildInfo.Version+(item.Beta?" · Esta versão é uma beta em teste.":""));content.Children.Add(version);Grid.SetRow(version,1);
+        var notes=Ui.RawText(Summary(item.Notes));notes.Name="startup-update-notes";notes.FontSize=15;
+        var scroll=new ScrollViewer { Content=notes,Margin=new Thickness(0,12),HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled };content.Children.Add(scroll);Grid.SetRow(scroll,2);
+        var hint=Ui.Text("Você pode atualizar agora ou continuar usando o programa e fazer isso depois.");hint.FontSize=12;content.Children.Add(hint);Grid.SetRow(hint,3);
+        var buttons=new StackPanel { Orientation=Orientation.Horizontal,Spacing=10,HorizontalAlignment=HorizontalAlignment.Center };
+        var dialog=Ui.Dialog(this,"Novidades do CasterDesk",content,640,540);dialog.Name="startup-update-notice";
+        var show=Ui.Button("Ver versões e atualizar",()=>dialog.Close(true),true);show.Name="startup-update-open";buttons.Children.Add(show);
+        var later=Ui.Button("Depois",()=>dialog.Close(false));later.Name="startup-update-later";buttons.Children.Add(later);
+        content.Children.Add(buttons);Grid.SetRow(buttons,4);
+        if(await dialog.ShowDialog<bool>(this)) { updates.Select(item.Version);await OpenUpdates(false); }
+    }
+    static string Summary(string notes)
+    {
+        string text=string.Join(Environment.NewLine,notes.Split('\n').Where(l=>!l.TrimStart().StartsWith('#')));
+        text=System.Text.RegularExpressions.Regex.Replace(text,@"\[([^\]]+)\]\([^)]+\)","$1").Replace("**","").Replace("`","");
+        return text.Length>6000?text[..6000]+"…":text.Trim();
     }
     void RefreshUpdateBanner()
     {
@@ -41,6 +67,7 @@ public sealed partial class StudioShell
     }
     internal async Task OpenUpdates(bool check=true)
     {
+        startupUpdateShown=true;
         if(updateWindow!=null){updateWindow.Activate();return;}
         if(menuOpen)ToggleMenu();
         var panel=new StackPanel{Margin=new Thickness(20),Spacing=10};

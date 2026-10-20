@@ -28,6 +28,12 @@ internal static class UpdateUiChecks
         Need(controller.Versions.Length==2&&controller.Available?.Version=="9.0.0","only releases shown and notified by default");
         Need(shell.GetVisualDescendants().OfType<Border>().Single(b=>b.Name=="update-banner").IsVisible,"important update banner visible");
         Need(shell.IsVisible,"check does not close running application");
+        controller.Configure(false,false);Wait(shell.ShowStartupUpdate());Need(!shell.OwnedWindows.Any(w=>w.Name=="startup-update-notice"&&w.IsVisible),"startup notice respects automatic-check preference");controller.Configure(true,false);
+        var noticeTask=shell.ShowStartupUpdate();Dispatcher.UIThread.RunJobs();var notice=shell.OwnedWindows.Single(w=>w.Name=="startup-update-notice");
+        Need(notice.GetVisualDescendants().OfType<TextBlock>().Single(t=>t.Name=="startup-update-notes").Text==manifest.Notes,"startup notice uses the verified release notes");
+        using(var bitmap=new Avalonia.Media.Imaging.RenderTargetBitmap(new PixelSize(640,540))){notice.Measure(new Size(640,540));notice.Arrange(new Rect(0,0,640,540));bitmap.Render(notice);bitmap.Save(Path.Combine(AppPaths.DataDirectory,"update-startup-preview.png"));}
+        notice.GetVisualDescendants().OfType<Button>().Single(b=>b.Name=="startup-update-later").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Wait(noticeTask);
+        Wait(shell.ShowStartupUpdate());Need(!shell.OwnedWindows.Any(w=>w.Name=="startup-update-notice"&&w.IsVisible),"startup notice shown only once per session");
         var dialogTask=shell.OpenUpdates(false);Dispatcher.UIThread.RunJobs();var dialog=shell.OwnedWindows.Single(w=>w.Title=="Atualizações");
         Need(dialog.GetVisualDescendants().OfType<TextBlock>().Any(t=>t.Text?.Contains("Atualização importante") == true),"important label");
         Need(dialog.GetVisualDescendants().OfType<Button>().Single(b=>b.Name=="download-update").IsVisible,"download action available");

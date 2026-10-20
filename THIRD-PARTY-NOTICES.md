@@ -24,6 +24,8 @@ Twitch, YouTube e Kick são marcas de seus respectivos titulares; os símbolos e
 
 ## Componentes
 
+Os retratos amplos dos 78 operadores foram obtidos das páginas oficiais da Ubisoft e preparados para a interface em três resoluções. Os originais, URLs de origem e recortes estão em `assets/siege/operators/originals` e `portraits-manifest.json`. Não houve geração de novas ilustrações dos personagens.
+
 O aplicativo utiliza Avalonia 12.0.0 (MIT, conforme o metadata do pacote), SkiaSharp e HarfBuzzSharp. Avisos em `assets/licenses/AVALONIA-LICENSE.txt`, `SKIASHARP-LICENSE.txt` e `HARFBUZZSHARP-LICENSE.txt`; os dois últimos foram copiados dos pacotes usados nesta publicação. Os avisos do runtime .NET também acompanham o instalador.
 
 O pacote autocontido inclui componentes Microsoft .NET, sujeitos às licenças e avisos distribuídos pelo próprio runtime (`LICENSE.txt` e `THIRD-PARTY-NOTICES.txt`, quando fornecidos). O instalador é produzido com Inno Setup, de Jordan Russell e Martijn Laan, conforme a licença do compilador. Nenhum desses componentes é desenvolvido ou endossado pelo CasterDesk.

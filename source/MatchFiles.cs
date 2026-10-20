@@ -63,7 +63,8 @@ public static class MatchFiles
         float scale=Math.Min(1,(kind.StartsWith("fundo")?2560f:768f)/Math.Max(image.Width,image.Height));
         using var bitmap=new Bitmap(Math.Max(1,(int)(image.Width*scale)),Math.Max(1,(int)(image.Height*scale)));
         using(var g=Graphics.FromImage(bitmap)){g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;g.DrawImage(image,0,0,bitmap.Width,bitmap.Height);}
-        string relative=Path.Combine("Recursos",kind+".png");AtomicImage(Path.Combine(Ensure(match),relative),bitmap);return relative;
+        if(!System.Text.RegularExpressions.Regex.IsMatch(kind,"^[A-Za-z0-9_-]+$"))throw new InvalidDataException("Invalid resource category");
+        string relative=Path.Combine("Recursos",kind.StartsWith("fundo")?"Fundos":"Logos",kind,Guid.NewGuid().ToString("N")+".png");AtomicImage(Path.Combine(Ensure(match),relative),bitmap);return relative;
     }
     public static string? Resolve(SiegeMatch match,string? relative)
     {
@@ -111,10 +112,11 @@ public static class MatchFiles
     {
             if(pages.Count==0||pages.Select(p=>p.Name).Distinct().Count()!=pages.Count||pages.Any(p=>string.IsNullOrWhiteSpace(p.Name)||Path.GetFileName(p.Name)!=p.Name||p.Name.IndexOfAny(Path.GetInvalidFileNameChars())>=0))throw new InvalidDataException("Invalid rendered pages.");
             string dir=Ensure(match);using var batch=new FileBatch();batch.Text(Path.Combine(dir,"arte.json"),JsonSerializer.Serialize(brand,MatchStore.Options));StageSnapshot(batch,match);
-            foreach(var page in pages)batch.Add(Path.Combine(dir,"Imagens",page.Name+".png"),p=>OptimizedPng.Save(page.Image,p));
+            string Relative(ResultPage page) { string format=page.Name.EndsWith("-feed")?"Feed":page.Name.EndsWith("-stories")?"Stories":"Horizontal"; return Path.Combine("Imagens",format,kind==ArtKind.Announcement?"Anuncios":kind==ArtKind.MapVeto?"Mapas":"Estatisticas",page.Name+".png"); }
+            foreach(var page in pages)batch.Add(Path.Combine(dir,Relative(page)),p=>OptimizedPng.Save(page.Image,p));
             // Publish the fixed path only after all archive copies succeeded.
             if(kind==ArtKind.MapVeto)batch.Add(ObsVeto,p=>OptimizedPng.Save(pages.Single(page=>page.Name=="map-veto-obs").Image,p));
-            batch.Text(Path.Combine(dir,"ultima-exportacao.json"),JsonSerializer.Serialize(new{Generated=DateTimeOffset.Now,Kind=kind.ToString(),Files=pages.Select(p=>"Imagens/"+p.Name+".png").ToArray()},MatchStore.Options));batch.Commit();
+            batch.Text(Path.Combine(dir,"ultima-exportacao.json"),JsonSerializer.Serialize(new{Generated=DateTimeOffset.Now,Kind=kind.ToString(),Files=pages.Select(p=>Relative(p).Replace('\\','/')).ToArray()},MatchStore.Options));batch.Commit();
             return dir;
     }
 }
@@ -134,10 +136,11 @@ public sealed class ImageBrand
         ArtStyles ??= new();
         string key=(kind==ArtKind.Results?ArtKind.SeriesStats:kind).ToString();
         if(!ArtStyles.TryGetValue(key,out var style)||style is null)ArtStyles[key]=style=new();
+        style.Backgrounds??=new();
         return style;
     }
     // Legacy direct renderer callers remain compatible; the UI migrates the old shared background.
-    public string BackgroundFor(ArtKind kind)=>ArtStyles?.GetValueOrDefault((kind==ArtKind.Results?ArtKind.SeriesStats:kind).ToString())?.Background ?? Background;
+    public string BackgroundFor(ArtKind kind,string? format=null) { var style=ArtStyles?.GetValueOrDefault((kind==ArtKind.Results?ArtKind.SeriesStats:kind).ToString());return (format==null?null:style?.Backgrounds?.GetValueOrDefault(format))??style?.Background??Background; }
     public Color AccentFor(ArtKind kind) {
         string hex=Style(kind).Accent??"";
         return System.Text.RegularExpressions.Regex.IsMatch(hex, "^#[0-9A-Fa-f]{6}$")?ColorTranslator.FromHtml(hex):Color.FromArgb(255,57,39);
@@ -145,4 +148,4 @@ public sealed class ImageBrand
     public string Mvp{get;set;}="";
 }
 
-public sealed class ArtStyle { public string? Background{get;set;} public string Accent{get;set;}="#FF3927"; }
+public sealed class ArtStyle { public string? Background{get;set;} public Dictionary<string,string> Backgrounds{get;set;}=new(); public string Accent{get;set;}="#FF3927"; }

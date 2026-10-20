@@ -37,6 +37,7 @@ internal static class ObsDockChecks
             return Wait(client.SendAsync(request));
         }
         string key=new Uri(server.PanelUrl).Fragment[5..];
+        foreach(string id in new[]{"__def","__atq","azami"})using(var icon=Send("/icons/"+id,key)){var bytes=Wait(icon.Content.ReadAsByteArrayAsync());Need(icon.IsSuccessStatusCode&&bytes.Take(4).SequenceEqual(new byte[]{137,80,78,71}),"Organized icon remains available to OBS: "+id);}
         using(var r=Send("/api/state"))Need(r.StatusCode==HttpStatusCode.Unauthorized,"No key cannot read match state");
         using(var r=Send("/api/state","wrong"))Need(r.StatusCode==HttpStatusCode.Unauthorized,"Invalid key rejected");
         using(var r=Send("/api/state",key,host:"evil.example"))Need(r.StatusCode==HttpStatusCode.Forbidden,"Host protects local API from rebinding");

@@ -2,4 +2,4 @@
 
 Origem: kit `outputs/CasterDesk-Logo-Microfone-Rajdhani`, fornecido e aprovado pelo usuário. Microfone monocromático + Rajdhani Bold, nome unido CasterDesk. SVGs copiados sem alteração, com letras em contorno; a interface continua em Segoe UI. Preto em fundo claro, branco em fundo escuro, sem deformação.
 
-`CasterDesk.ico` é uma cópia exata de `icons/CasterDesk.ico` do kit. A mesma cópia em `assets/casterdesk.ico` atende aos projetos e instaladores existentes. A janela do CasterDesk usa o ICO publicado nesta pasta. `BrandMark` lê somente os paths dos SVGs aprovados (não é um interpretador SVG geral) e mantém a proporção do viewBox. Licença Rajdhani preservada em `Rajdhani-OFL.txt`.
+`CasterDesk.ico` usa somente o microfone branco do SVG aprovado, com fundo transparente, em dez resoluções de 16 a 256 pixels. A mesma cópia em `assets/casterdesk.ico` atende ao executável e aos instaladores. A janela do CasterDesk usa o ICO publicado nesta pasta. `BrandMark` lê somente os paths dos SVGs aprovados (não é um interpretador SVG geral) e mantém a proporção do viewBox. Licença Rajdhani preservada em `Rajdhani-OFL.txt`.

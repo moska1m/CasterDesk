@@ -52,7 +52,7 @@ internal static class AuditFixChecks
         using (var draw = System.Drawing.Graphics.FromImage(pageBitmap)) draw.Clear(System.Drawing.Color.Coral);
         using (var page = new ResultPage("audit-preview", pageBitmap)) {
             string exported = MatchFiles.ExportRendered(roundSession.Current, new ImageBrand(), ArtKind.Announcement, [page]);
-            using var loaded = new System.Drawing.Bitmap(Path.Combine(exported, "Imagens", "audit-preview.png"));
+            using var loaded = new System.Drawing.Bitmap(Path.Combine(exported, "Imagens", "Horizontal", "Anuncios", "audit-preview.png"));
             Need(loaded.Width == 8 && loaded.Height == 8 && loaded.GetPixel(4, 4).ToArgb() == pageBitmap.GetPixel(4, 4).ToArgb(), "export uses rendered page pixels without rendering or resizing again");
             Need(pageBitmap.GetPixel(4, 4).ToArgb() == System.Drawing.Color.Coral.ToArgb(), "export leaves preview page owned by caller");
         }
