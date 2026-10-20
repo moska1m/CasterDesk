@@ -19,3 +19,15 @@ A janela agora mantém as decorações nativas com a área de conteúdo estendid
 A captura `native-window.png` foi revisada. O teste não simula um clique físico no ícone da barra de tarefas e não valida movimento entre monitores.
 
 O instalador inclui a proteção de pós-instalação contra reinstalação do OBS em `/UPDATEAPP`. O painel nativo permanece o mesmo.
+
+## Pacote e instalação
+
+- Publicação final: `publish-casterdesk-1.0.9-beta.6-afc49e90`.
+- Núcleo e suíte completa headless passaram; relatórios em `%TEMP%/CasterDesk-beta6-validation`, incluindo `casterdesk-ui-6bef8917c7f447d4a5e0b5b09f7b4e08`.
+- A lógica nativa da moldura passou nas 63 verificações em `%TEMP%/CasterDesk-beta6-native/caption-fa2b64279a9e4df8a7c2676e365e4d80`. Após esse teste, só foram atualizadas as duas verificações headless que exigiam a antiga ausência de decorações. Não foram repetidas janelas de teste durante o trabalho do usuário.
+- Instalador, manifesto de arquivos e anúncio assinado foram conferidos. Os dez tamanhos do ícone aprovado estão presentes no EXE e no Setup.
+- A atualização local foi aplicada silenciosamente com `/UPDATEAPP` e a tarefa OBS desmarcada. O log confirma `Application update: preserving the installed OBS component and opt-in.`
+- Marcador `obs-plugin.optin` e DLL nativa do OBS permaneceram idênticos aos anteriores à instalação, sem reinstalação do painel.
+- `CasterDesk.exe`, `CasterDesk.dll` e `CasterDesk.Core.dll` instalados conferem com a publicação final. O CasterDesk foi aberto para uso após a atualização, conforme solicitado.
+
+Logs: `build-config/package-beta6-final2.log` e `build-config/install-beta6.log`. Evidências locais: `build-config/beta6-installed.json`. Não houve envio ao GitHub.
