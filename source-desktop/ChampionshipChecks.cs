@@ -125,7 +125,7 @@ internal static class ChampionshipChecks
         roundScroll.Offset = default; view.Refresh(); Pump();
         Need(Find<ScrollViewer>(view, "round-history-scroll").Offset.Y == 0, "Refresh preserves manual history position without new rounds");
         TextButton(view, "Confirmar vencedor"); Need(Ui.ActiveQuestion != null, "Confirm result question");
-        Need(Ui.ActiveQuestion!.GetVisualDescendants().OfType<Button>().Count() == 2, "Winner confirmation has only confirm and cancel");
+        Need(Ui.ActiveQuestion!.GetVisualDescendants().OfType<Button>().Count(b => b.Name?.StartsWith("ask-") == true) == 2, "Winner confirmation has only confirm and cancel");
         Click(Find<Button>(Ui.ActiveQuestion!, "ask-1")); Pump();
         Need(session.Map.Confirmed && session.Current.Complete, "Confirmed result retained");
         Click(Find<Button>(view, "history-round-0")); Need(view.ActiveDialog == null && session.Map.Rounds.Count == 7, "Confirmed rounds cannot be edited silently");
@@ -174,10 +174,12 @@ internal static class ChampionshipChecks
         view.Stop(); owner.Content = null; owner.Close();
         var shell = new StudioShell(session); shell.Show(); Pump();
             Need(shell.MenuWidth == 0, "Closed menu reserves no width"); shell.ToggleMenu(); Pump(); Need(shell.MenuWidth > 0 && shell.MenuWidth <= 300, "Menu inside available width");
-        TextButton(shell, "Modo clássico"); Pump(); Need(!shell.Championship.QuickMode, "Classic registration option applies");
-        TextButton(shell, "Modo rápido"); Pump(); Need(shell.Championship.QuickMode, "Quick registration option applies");
-        TextButton(shell, "Claro"); Pump(); Need(!Ui.Dark, "Light theme option applies"); TextButton(shell, "Escuro"); Pump(); Need(Ui.Dark, "Dark theme option applies");
-        shell.ToggleMenu(); Need(shell.MenuWidth == 0, "Menu closes compactly"); shell.Navigate(1); Pump();
+        shell.ToggleMenu();var options=shell.OpenOptions();Pump();var preferences=shell.OwnedWindows.Single(w=>w.Name=="options-window");
+        var optionTabs=preferences.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Name=="settings-tabs");optionTabs.SelectedIndex=1;Pump();
+        var registration=preferences.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="settings-rounds");
+        registration.SelectedIndex=1;Pump();Need(!shell.Championship.QuickMode,"Classic registration option applies");registration.SelectedIndex=0;Pump();Need(shell.Championship.QuickMode,"Quick registration option applies");
+        optionTabs.SelectedIndex=2;Pump();var theme=preferences.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="settings-theme");theme.SelectedIndex=2;Pump();Need(!Ui.Dark,"Light theme option applies");theme.SelectedIndex=0;Pump();Need(Ui.Dark,"Standard theme option applies");
+        preferences.Close();Pump();Need(options.IsCompleted && shell.MenuWidth==0,"Preferences closes compactly"); shell.Navigate(1); Pump();
         shell.ToggleMenu(); Pump(); shell.MouseDown(new Point(20, 200), MouseButton.Left); shell.MouseUp(new Point(20, 200), MouseButton.Left); Pump();
         Need(shell.MenuWidth == 0, "Clicking outside settings closes menu");
         Need(shell.GetVisualDescendants().OfType<StudioView>().Any(), "Navigation to shared studio");

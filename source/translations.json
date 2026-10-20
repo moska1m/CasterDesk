@@ -3658,5 +3658,89 @@
   "GERADOR DE IMAGENS": [
     "IMAGE GENERATOR",
     "GENERADOR DE IMÁGENES"
+  ],
+  "OPÇÕES": [
+    "OPTIONS",
+    "OPCIONES"
+  ],
+  "ATUALIZAÇÕES": [
+    "UPDATES",
+    "ACTUALIZACIONES"
+  ],
+  "CRÉDITOS": [
+    "CREDITS",
+    "CRÉDITOS"
+  ],
+  "Créditos": [
+    "Credits",
+    "Créditos"
+  ],
+  "Opções": [
+    "Options",
+    "Opciones"
+  ],
+  "STATUS DO PLUGIN OBS": [
+    "OBS PLUGIN STATUS",
+    "ESTADO DEL PLUGIN OBS"
+  ],
+  "GERAL": [
+    "GENERAL",
+    "GENERAL"
+  ],
+  "TABELA": [
+    "SPREADSHEET",
+    "TABLA"
+  ],
+  "BACKUP": [
+    "BACKUP",
+    "COPIA"
+  ],
+  "PREFERÊNCIAS": [
+    "PREFERENCES",
+    "PREFERENCIAS"
+  ],
+  "TEMA DO CASTERDESK": [
+    "CASTERDESK THEME",
+    "TEMA DE CASTERDESK"
+  ],
+  "Padrão": [
+    "Standard",
+    "Predeterminado"
+  ],
+  "Tema": [
+    "Theme",
+    "Tema"
+  ],
+  "As preferências são aplicadas imediatamente e salvas automaticamente.": [
+    "Preferences apply immediately and are saved automatically.",
+    "Las preferencias se aplican inmediatamente y se guardan automáticamente."
+  ],
+  "O tema altera somente o aplicativo. O painel do OBS mantém a aparência do OBS.": [
+    "The theme only changes the app. The OBS panel keeps the OBS appearance.",
+    "El tema solo cambia la aplicación. El panel de OBS conserva la apariencia de OBS."
+  ],
+  "Configure o arquivo Excel local e a conexão com o Google Sheets para a partida.": [
+    "Configure the local Excel file and Google Sheets connection for the match.",
+    "Configura el archivo Excel local y la conexión con Google Sheets para la partida."
+  ],
+  "Crie uma cópia dos dados ou restaure um backup do CasterDesk.": [
+    "Create a data backup or restore a CasterDesk backup.",
+    "Crea una copia de los datos o restaura una copia de CasterDesk."
+  ],
+  "Configure a conexão do painel com o OBS.": [
+    "Configure the panel connection to OBS.",
+    "Configura la conexión del panel con OBS."
+  ],
+  "Minimizar": [
+    "Minimize",
+    "Minimizar"
+  ],
+  "Maximizar / Restaurar": [
+    "Maximize / Restore",
+    "Maximizar / Restaurar"
+  ],
+  "Projeto independente. Rainbow Six Siege e suas marcas pertencem à Ubisoft. Consulte os avisos de terceiros distribuídos com o aplicativo.": [
+    "Independent project. Rainbow Six Siege and its trademarks belong to Ubisoft. See the third-party notices distributed with the app.",
+    "Proyecto independiente. Rainbow Six Siege y sus marcas pertenecen a Ubisoft. Consulta los avisos de terceros distribuidos con la aplicación."
   ]
 }

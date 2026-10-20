@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 namespace CasterDesk.Core;
 // Only developer-authored labels/templates are translated, never interpolated user data.
-// Language changes apply on restart, keeping UI and background exports consistent.
+// The desktop refreshes registered labels when the language changes; user-authored data stays intact.
 public static class L
 {
     public static readonly string[] Languages = ["pt-BR", "en", "es"];

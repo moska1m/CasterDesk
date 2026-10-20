@@ -7,10 +7,10 @@ namespace CasterDesk.Desktop;
 // keeping the SVG geometry and proportions without installing a font.
 internal static class BrandMark
 {
-    public static Control Create(bool white, double width = 240)
+    public static Control Create(bool white, double width = 240, bool symbol = false)
     {
         string file = Path.Combine(AppContext.BaseDirectory, "assets", "branding",
-            white ? "casterdesk-horizontal-white.svg" : "casterdesk-horizontal-black.svg");
+            symbol ? (white ? "casterdesk-symbol-white.svg" : "casterdesk-symbol-black.svg") : white ? "casterdesk-horizontal-white.svg" : "casterdesk-horizontal-black.svg");
         var root = XDocument.Load(file).Root!;
         var box = root.Attribute("viewBox")!.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(v => double.Parse(v, CultureInfo.InvariantCulture)).ToArray();
@@ -21,7 +21,7 @@ internal static class BrandMark
                 Data = geometry, Fill = Brush.Parse(element.Attribute("fill")!.Value)
             });
         }
-        var mark = new Viewbox { Name = "casterdesk-brand", Width = width,
+        var mark = new Viewbox { Name = symbol ? "casterdesk-frame-symbol" : "casterdesk-brand", Width = width,
             Height = width * box[3] / box[2], Stretch = Stretch.Uniform, Child = canvas };
         global::Avalonia.Automation.AutomationProperties.SetName(mark, "CasterDesk");
         return mark;

@@ -4,16 +4,24 @@ using Avalonia.Styling;
 
 namespace CasterDesk.Desktop;
 
-internal static class Ui
+internal static partial class Ui
 {
     public static bool Dark { get; private set; } = true;
-    public static IBrush Canvas => Brush.Parse(Dark ? "#182637" : "#E7EDF3");
-    public static IBrush Panel => Brush.Parse(Dark ? "#233448" : "#F6F8FA");
-    public static IBrush Header => Brush.Parse(Dark ? "#354C65" : "#CFDDEA");
+    public static string ThemeName { get; private set; } = "standard";
+    public static IBrush Canvas => Brush.Parse(ThemeName == "dark" ? "#0D1824" : Dark ? "#182637" : "#DFE7EF");
+    public static IBrush Panel => Brush.Parse(ThemeName == "dark" ? "#152638" : Dark ? "#233448" : "#F1F5F8");
+    public static IBrush Header => Brush.Parse(ThemeName == "dark" ? "#243C52" : Dark ? "#354C65" : "#C4D4E2");
+    public static IBrush MenuSurface => Brush.Parse(Dark ? "#0C1621" : "#EAF0F5");
+    public static IBrush Ink => Brush.Parse(Dark ? "#F2F5F8" : "#172C40");
+    public static IBrush FrameLine => Brush.Parse(Dark ? "#466078" : "#879FB5");
     public static IBrush Team(int team, bool selected = true) => new SolidColorBrush(
         Color.FromArgb(selected ? (byte)255 : (byte)150, team == 0 ? (byte)64 : (byte)255,
             team == 0 ? (byte)143 : (byte)119, team == 0 ? (byte)179 : (byte)55));
-    public static void Theme(bool dark) { Dark = dark; if (Application.Current != null) Application.Current.RequestedThemeVariant = dark ? ThemeVariant.Dark : ThemeVariant.Light; }
+    public static void Theme(bool dark) => Theme(dark ? "standard" : "light");
+    public static void Theme(string name) {
+        ThemeName = name is "dark" or "light" ? name : "standard"; Dark = ThemeName != "light";
+        if (Application.Current != null) Application.Current.RequestedThemeVariant = Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+    }
 
     public static Border Card(string title, Control child)
     {
@@ -93,19 +101,21 @@ internal static class Ui
         var button = new Button { Content = L.T(text), Margin = new Thickness(0, 0, 0, 8),
             HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Center };
         if (primary) button.Classes.Add("primary");
+        else { button.Foreground=Ink;button.Background=Header;button.BorderBrush=FrameLine;button.CornerRadius=new CornerRadius(1); }
+        Track(button, text);
         button.Click += (_, _) => action();
         return button;
     }
 
-    public static TextBlock Text(string text, bool heading = false) => RawText(L.T(text), heading);
+    public static TextBlock Text(string text, bool heading = false) { var control = RawText(L.T(text), heading); Track(control,text); return control; }
     public static TextBlock RawText(string text, bool heading = false) => new() {
-        Text = text, FontSize = heading ? 18 : 14,
+        Text = text, Foreground = Ink, FontSize = heading ? 18 : 14,
         FontWeight = heading ? FontWeight.SemiBold : FontWeight.Normal,
         TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, heading ? 10 : 0, 0, 8) };
 
-    public static ComboBox Combo(params string[] choices) => RawCombo(choices.Select(L.T).ToArray());
+    public static ComboBox Combo(params string[] choices) { var control = RawCombo(choices.Select(L.T).ToArray()); Track(control,choices); return control; }
     public static ComboBox RawCombo(params string[] choices) => new() {
-        ItemsSource = choices, SelectedIndex = choices.Length > 0 ? 0 : -1,
+        ItemsSource = choices, SelectedIndex = choices.Length > 0 ? 0 : -1, Foreground = Ink, Background = Panel,
         HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 0, 0, 10) };
 
     public static Bitmap Bitmap(System.Drawing.Image source)
@@ -176,6 +186,7 @@ internal static class Ui
     {
         app.Styles.Add(new global::Avalonia.Themes.Fluent.FluentTheme());
         app.RequestedThemeVariant = ThemeVariant.Dark;
+        WindowFrame.Install(app);
         var primary = new Style(x => x.OfType<Button>().Class("primary"));
         primary.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, Brush.Parse("#327FA8")));
         primary.Setters.Add(new Setter(global::Avalonia.Controls.Button.ForegroundProperty, Brushes.White));

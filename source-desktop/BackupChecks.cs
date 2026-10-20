@@ -58,10 +58,12 @@ internal static class BackupChecks
         Need(Directory.GetDirectories(AppPaths.BackupDirectory, "verificacao-*").Length == 0, "Failed verification cleans staging");
         view.Close(); owner.Close();
         var shell = new StudioShell(); shell.Show(); Dispatcher.UIThread.RunJobs(); shell.ToggleMenu(); Dispatcher.UIThread.RunJobs();
-        Need(shell.GetVisualDescendants().OfType<Button>().Any(b => b.Name == "backup-menu"), "Backup entry in menu");
-        var language = shell.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "Español")); language.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
-        Need(ConfigurationStore.Read<Settings>("settings.json").Language == "es" && L.Current == "pt-BR", "Language saved for next opening without mixed current UI");
-        var portuguese = shell.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "Português")); portuguese.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
+        shell.ToggleMenu();var optionTask=shell.OpenOptions();Dispatcher.UIThread.RunJobs();var options=shell.OwnedWindows.Single(w=>w.Name=="options-window");
+        var tabs=options.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Name=="settings-tabs");tabs.SelectedIndex=4;Dispatcher.UIThread.RunJobs();
+        Need(options.GetVisualDescendants().OfType<Button>().Any(b=>b.Name=="backup-menu"),"Backup entry in options");
+        tabs.SelectedIndex=0;Dispatcher.UIThread.RunJobs();var language=options.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="settings-language");language.SelectedIndex=2;Dispatcher.UIThread.RunJobs();
+        Need(ConfigurationStore.Read<Settings>("settings.json").Language=="es" && L.Current=="es","Language saved and applied immediately");
+        language.SelectedIndex=0;Dispatcher.UIThread.RunJobs();options.Close();Wait(optionTask);
         shell.Texts.Stop(); Wait(shell.Texts.Writes); shell.Close(); Dispatcher.UIThread.RunJobs();
         Need(preparations == resumes, "All backup operations resume live output");
         foreach (string languageCode in new[] { "en", "es" }) {

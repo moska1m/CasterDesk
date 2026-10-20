@@ -24,11 +24,15 @@ public sealed partial class StudioShell : Window
     int selected;
     bool menuOpen;
     bool backupOpen;
+    readonly Border menuShade = new() { Background = Brush.Parse("#98000000"), IsVisible = false, Name = "menu-scrim" };
+    Window? optionsWindow;
+    TextBlock? menuConnection;
+    Grid? mainHeader;
 
     public StudioShell(MatchSession? session = null, UpdateController? updater = null)
     {
         updates=updater??new UpdateController();
-        settings = ConfigurationStore.Read<Settings>("settings.json"); ConfigurationStore.Normalize(settings); Ui.Theme(settings.DarkMode);
+        settings = ConfigurationStore.Read<Settings>("settings.json"); ConfigurationStore.Normalize(settings); Ui.Theme(settings.VisualTheme!);
         Title = "CasterDesk • " + BuildInfo.Version; Width = 1440; Height = 900; MinWidth = 980; MinHeight = 640;
         WindowState = WindowState.Maximized;
         FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
@@ -46,7 +50,7 @@ public sealed partial class StudioShell : Window
         Championship.UseObsForBans=obsSettings.RouteBansToOBS;
         Championship.ObsBansModeChanged=value=>{bool old=obsSettings.RouteBansToOBS;try{obsSettings.RouteBansToOBS=value;SaveObsSettings();}catch{obsSettings.RouteBansToOBS=old;throw;}};
         Championship.Refresh();
-        obsPresence.Tick+=(_,_)=>Championship.SetObsConnected(obsDock.HasClient);
+        obsPresence.Tick+=(_,_)=>{Championship.SetObsConnected(obsDock.HasClient);RefreshMenuConnection();};
         Opened+=(_,_)=>obsPresence.Start();
         Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){AppLog.Write("OBS connection: "+ex);Notify(ex.Message);} };
         Championship.MapConfirmed += async (match, map) => {
@@ -54,7 +58,7 @@ public sealed partial class StudioShell : Window
             catch (Exception ex) { footer.Text = ex.Message; }
         };
         var layout = new Grid { RowDefinitions = new("Auto,*,Auto") }; Content = layout;
-        var header = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto"), Background = Brush.Parse("#0A1118") };
+        var header = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto"), Background = Ui.MenuSurface }; mainHeader=header;
         var brand = BrandMark.Create(true);
         brand.Margin = new Thickness(20, 8, 26, 8); brand.VerticalAlignment = VerticalAlignment.Center;
         header.Children.Add(brand);
@@ -69,7 +73,7 @@ public sealed partial class StudioShell : Window
         string[] labels = ["CAMPEONATO", "GERADOR DE IMAGENS", "TEXTOS PARA OBS"];
         for (int n = 0; n < labels.Length; n++) {
             int index = n; var tab = Ui.Button(labels[n], () => Navigate(index)); tab.Margin = new Thickness(0); tab.Padding = new Thickness(20, 17);
-            tab.Foreground = Brushes.White; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
+            tab.Foreground = Ui.Ink; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
         }
         header.Children.Add(nav); Grid.SetColumn(nav,1); layout.Children.Add(header);
         void FitHeader() {
@@ -80,20 +84,24 @@ public sealed partial class StudioShell : Window
         }
         SizeChanged += (_, _) => FitHeader(); FitHeader();
         layout.Children.Add(page); Grid.SetRow(page, 1);
-        drawerPanel = new Border { Background = Ui.Panel, Padding = new Thickness(14, 8), Child = new ScrollViewer { Content = drawer }, ClipToBounds = true,
+        drawerPanel = new Border { Background = Ui.MenuSurface, BorderBrush=Ui.FrameLine, BorderThickness=new Thickness(1), Margin=new Thickness(0,0,12,0), Padding = new Thickness(14), Child = new ScrollViewer { Content = drawer }, ClipToBounds = true,
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, IsVisible = false, Width = 300 };
+        layout.Children.Add(menuShade); Grid.SetRowSpan(menuShade,3);
+        menuShade.PointerPressed+=(_,e)=>{if(menuOpen)ToggleMenu();e.Handled=true;};
         layout.Children.Add(drawerPanel); Grid.SetRow(drawerPanel, 1);
         footer.FontSize = 12; footer.Margin = new Thickness(18, 4); footer.IsVisible = false;
         footer.PropertyChanged += (_, e) => { if (e.Property == TextBlock.TextProperty) footer.IsVisible = !string.IsNullOrWhiteSpace(footer.Text); };
         layout.Children.Add(footer); Grid.SetRow(footer, 2);
         InitializeUpdates(layout);
-        KeyDown += (_, e) => { if (e.Key == Key.Escape && menuOpen) { ToggleMenu(); e.Handled = true; } };
-        AddHandler(PointerPressedEvent, (_, e) => {
-            if (!menuOpen || e.Source is not global::Avalonia.Visual source) return;
-            for (global::Avalonia.Visual? current = source; current != null; current = current.GetVisualParent())
-                if (current == drawerPanel || current == gear) return;
-            ToggleMenu();
-        }, global::Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
+        KeyDown += (_, e) => {
+            if(!menuOpen)return;
+            if(e.Key==Key.Escape){ToggleMenu();e.Handled=true;}
+            else if(e.Key==Key.Tab){
+                var choices=drawer.Children.OfType<Button>().ToArray();
+                int current=Array.FindIndex(choices,b=>b.IsFocused);
+                choices[(current+(e.KeyModifiers.HasFlag(KeyModifiers.Shift)?choices.Length-1:1)+choices.Length)%choices.Length].Focus();e.Handled=true;
+            }
+        };
         Navigate(0);
         if (ConfigurationStore.RecoveryNotice.Length > 0) footer.Text = ConfigurationStore.RecoveryNotice;
         bool closing = false, waitingToClose = false;
@@ -122,7 +130,7 @@ public sealed partial class StudioShell : Window
             if (selected == 2) Texts.Save();
             selected = index; page.Content = index == 0 ? Championship : index == 1 ? studio : Texts;
             if (index == 1) studio.Refresh(Championship.Session.Current.Id);
-            for (int n = 0; n < tabs.Length; n++) { tabs[n].BorderBrush = n == index ? Brush.Parse("#FF4335") : Brushes.Transparent; tabs[n].Background = n == index ? Brush.Parse("#1C2B39") : Brushes.Transparent; }
+            for (int n = 0; n < tabs.Length; n++) { tabs[n].BorderBrush = n == index ? Brush.Parse("#FF4335") : Brushes.Transparent; tabs[n].Background = n == index ? Ui.Panel : Brushes.Transparent; }
             if (menuOpen) ToggleMenu();
         } catch (Exception ex) { footer.Text = ex.Message; }
     }
@@ -130,9 +138,11 @@ public sealed partial class StudioShell : Window
     void SaveSettings() => MatchFiles.AtomicText(AppPaths.ConfigFile("settings.json"), JsonSerializer.Serialize(settings));
     internal void ToggleMenu()
     {
-        menuOpen = !menuOpen; drawerPanel.IsVisible = menuOpen; drawerPanel.Width = Math.Min(300, Bounds.Width * .32);
+        menuOpen = !menuOpen; drawerPanel.IsVisible = menuOpen; menuShade.IsVisible = menuOpen; drawerPanel.Width = Math.Min(300, Bounds.Width * .32);
         drawerPanel.MaxHeight = Math.Max(150, Bounds.Height - 100);
-        PaintGear(menuOpen); if (menuOpen) Menu();
+        page.IsEnabled=!menuOpen;
+        menuShade.ZIndex=100;drawerPanel.ZIndex=101;
+        PaintGear(menuOpen); if (menuOpen) { Menu(); drawer.Children.OfType<Button>().FirstOrDefault()?.Focus(); } else gear.Focus();
     }
     void PaintGear(bool active) => gear.Background = active ? new LinearGradientBrush {
         StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
@@ -140,39 +150,35 @@ public sealed partial class StudioShell : Window
 
     void Menu()
     {
-        drawer.Children.Clear(); drawer.Children.Add(Ui.Text("Registro de rounds", true));
-        void Option(StackPanel parent, string label, bool active, System.Action change)
-        {
-            var button = Ui.Button(label, () => {
-                bool oldDark = settings.DarkMode, oldQuick = settings.QuickRounds, oldSpec = settings.SpecMode; string oldLanguage = settings.Language;
-                try { Championship.FlushNames(); if (!studio.Flush()) return; Texts.Save(); change(); SaveSettings(); Menu(); }
-                catch (Exception ex) { settings.Language = oldLanguage; settings.QuickRounds = oldQuick; settings.SpecMode = oldSpec; Appearance(oldDark); Championship.SetQuickMode(oldQuick); Championship.SetSpecMode(oldSpec); Menu(); footer.Text = ex.Message; }
-            }, active);
-            button.BorderThickness = new Thickness(0, 0, 0, active ? 3 : 0); button.BorderBrush = Brush.Parse("#FF4335"); parent.Children.Add(button);
+        drawer.Children.Clear();
+        void Item(string title, Action action, string name) {
+            var button=Ui.Button(title,action);button.Name=name;button.Height=56;button.FontSize=19;button.FontWeight=FontWeight.Bold;
+            button.HorizontalContentAlignment=HorizontalAlignment.Left;button.Padding=new Thickness(16,6);button.Margin=new Thickness(0,0,0,8);
+            button.Background=Brushes.Transparent;button.Foreground=Ui.Ink;button.BorderBrush=Ui.FrameLine;button.BorderThickness=new Thickness(1);
+            void Highlight(bool on) { button.Background=on?MenuHighlight():Brushes.Transparent;button.BorderBrush=on?Brush.Parse("#FF4335"):Ui.FrameLine;button.BorderThickness=new Thickness(1,1,1,on?4:1); }
+            button.PointerEntered+=(_,_)=>Highlight(true);button.PointerExited+=(_,_)=>Highlight(false);
+            button.GotFocus+=(_,_)=>Highlight(true);button.LostFocus+=(_,_)=>Highlight(false);drawer.Children.Add(button);
         }
-        Option(drawer, "Modo rápido", settings.QuickRounds, () => { settings.QuickRounds = true; Championship.SetQuickMode(true); });
-        Option(drawer, "Modo clássico", !settings.QuickRounds, () => { settings.QuickRounds = false; Championship.SetQuickMode(false); });
-        drawer.Children.Add(Ui.Text("Tela da partida", true));
-        Option(drawer, "Modo Caster", !settings.SpecMode, () => { settings.SpecMode = false; Championship.SetSpecMode(false); });
-        Option(drawer, "Modo SPEC", settings.SpecMode, () => { settings.SpecMode = true; Championship.SetSpecMode(true); });
-        var appearance = new StackPanel();
-        Option(appearance, "Escuro", settings.DarkMode, () => Appearance(true)); Option(appearance, "Claro", !settings.DarkMode, () => Appearance(false));
-        drawer.Children.Add(new Expander { Header = L.T("Aparência") + " · Siege", Content = appearance, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });
-        var languages = new StackPanel();
-        foreach (var language in new[] { ("pt-BR", "Português"), ("en", "English"), ("es", "Español") }) {
-            string code = language.Item1;
-            Option(languages, language.Item2, settings.Language == code, () => { settings.Language = code; footer.Text = L.T("O idioma será aplicado na próxima abertura do CasterDesk."); });
-        }
-        drawer.Children.Add(new Expander { Header = L.T("Idioma"), Content = languages, HorizontalAlignment = HorizontalAlignment.Stretch, IsExpanded = true });
-        drawer.Children.Add(Ui.Button("Tabela da partida", () => _ = OpenMatchTable()));
-        var updateMenu=Ui.Button("Verificar atualizações",()=>_ = OpenUpdates());updateMenu.Name="updates-menu";drawer.Children.Add(updateMenu);
-        var backups = Ui.Button("Backup e restauração", () => _ = OpenBackup()); backups.Name = "backup-menu"; drawer.Children.Add(backups);
-        var obs=Ui.Button("Painel OBS",()=>_ = OpenObsPanel());obs.Name="obs-menu";drawer.Children.Add(obs);
-        drawer.Children.Add(Ui.Button("Sobre", async () => {
-            var panel = new StackPanel { Margin = new Thickness(20) }; panel.Children.Add(BrandMark.Create(Ui.Dark)); panel.Children.Add(Ui.Text(BuildInfo.Version));
-            panel.Children.Add(Ui.Text("Ferramentas para community casters de Rainbow Six Siege."));
-            var dialog = Ui.Dialog(this, "Sobre", panel, 540, 300); panel.Children.Add(Ui.Button("Fechar", () => dialog.Close())); await dialog.ShowDialog(this);
-        }));
+        Item("OPÇÕES",()=>_ = OpenOptions(),"options-menu");
+        Item("ATUALIZAÇÕES",()=>_ = OpenUpdates(),"updates-menu");
+        Item("CRÉDITOS",()=>_ = OpenCredits(),"credits-menu");
+        var label=Ui.Text("STATUS DO PLUGIN OBS",true);label.FontSize=12;drawer.Children.Add(label);
+        menuConnection=Ui.RawText("");menuConnection.FontSize=16;menuConnection.FontWeight=FontWeight.Bold;drawer.Children.Add(menuConnection);RefreshMenuConnection();
+        drawer.Children.Add(new Border { Height=1,Background=Ui.FrameLine,Margin=new Thickness(0,10) });
+        var identity=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
+        var mark=BrandMark.Create(Ui.Dark);mark.Width=130;mark.Height=31;identity.Children.Add(mark);
+        var version=Ui.RawText(BuildInfo.Version);version.FontSize=11;version.VerticalAlignment=VerticalAlignment.Center;version.Margin=new Thickness(0);identity.Children.Add(version);drawer.Children.Add(identity);
+    }
+    IBrush MenuHighlight()=>new LinearGradientBrush {
+        StartPoint=new RelativePoint(0,0,RelativeUnit.Relative),EndPoint=new RelativePoint(1,1,RelativeUnit.Relative),
+        GradientStops=[new GradientStop(Color.Parse(Ui.Dark?"#182535":"#E9D8D8"),0),new GradientStop(Color.Parse(Ui.Dark?"#622731":"#F2B2AD"),.65),new GradientStop(Color.Parse("#E83E36"),1)] };
+    void RefreshMenuConnection() { if(menuConnection==null)return;menuConnection.Text="●  "+L.T(obsDock.HasClient?"Conectado":"Desconectado").ToUpperInvariant();menuConnection.Foreground=Brush.Parse(obsDock.HasClient?(Ui.Dark?"#29DF83":"#087B46"):(Ui.Dark?"#FF645B":"#B42629")); }
+    async Task OpenCredits() {
+        if(menuOpen)ToggleMenu();
+        var panel=new StackPanel{Margin=new Thickness(24)};panel.Children.Add(BrandMark.Create(Ui.Dark));panel.Children.Add(Ui.RawText(BuildInfo.Version));
+        panel.Children.Add(Ui.Text("Ferramentas para community casters de Rainbow Six Siege."));
+        panel.Children.Add(Ui.Text("Projeto independente. Rainbow Six Siege e suas marcas pertencem à Ubisoft. Consulte os avisos de terceiros distribuídos com o aplicativo."));
+        var dialog=Ui.Dialog(this,"Créditos",panel,600,360);panel.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));await dialog.ShowDialog(this);
     }
     void SaveObsSettings()=>MatchFiles.AtomicText(AppPaths.ConfigFile("obs-connection.json"),JsonSerializer.Serialize(obsSettings));
     async Task OpenObsPanel()
@@ -190,10 +196,16 @@ public sealed partial class StudioShell : Window
         var dialog=Ui.Dialog(this,"Painel OBS",panel,620,420);panel.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));
         await dialog.ShowDialog(this);
     }
-    void Appearance(bool dark)
+    void Appearance(bool dark) => Appearance(dark?"standard":"light");
+    void Appearance(string theme)
     {
-        settings.DarkMode = dark; Ui.Theme(dark); Background = Ui.Canvas; drawerPanel.Background = Ui.Panel;
-        Championship.Refresh(); studio.Background = Ui.Canvas; Texts.RefreshColors();
+        Ui.Repaint(theme,new Control[]{this,Championship,studio,Texts}.Concat(OwnedWindows).ToArray());
+        settings.VisualTheme=Ui.ThemeName;settings.DarkMode=Ui.Dark;Background=Ui.Canvas;drawerPanel.Background=Ui.MenuSurface;
+        if(mainHeader!=null)mainHeader.Background=Ui.MenuSurface;
+        foreach(var tab in tabs)tab.Foreground=Ui.Ink;
+        Championship.Refresh();studio.Background=Ui.Canvas;Texts.RefreshColors();
+        for(int i=0;i<tabs.Length;i++)tabs[i].Background=i==selected?Ui.Panel:Brushes.Transparent;
+        if(menuOpen)Menu();
     }
     internal double MenuWidth => menuOpen ? drawerPanel.Width : 0;
     internal void Notify(string text) => footer.Text = text;
