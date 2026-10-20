@@ -41,7 +41,7 @@ internal static class TableSyncChecks
         var shell = new StudioShell(session); shell.Show(); Dispatcher.UIThread.RunJobs();
         shell.GetVisualDescendants().OfType<Button>().Single(b => b.Name == "match-table").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Dispatcher.UIThread.RunJobs();
-        var dialog = shell.OwnedWindows.Single(w => w.Title!.StartsWith("Tabela da partida"));
+        var dialog = shell.ActiveSurface!;
         var tabs = dialog.GetVisualDescendants().OfType<TabControl>().Single();
         tabs.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
         Need(dialog.GetVisualDescendants().OfType<TextBox>().Any(c => c.Name == "google-table-link"), "Google destination input");

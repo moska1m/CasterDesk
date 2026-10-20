@@ -6,6 +6,15 @@ public sealed partial class StudioShell
 {
     async Task OpenMatchTable()
     {
+        if(ActiveSurface!=null)return;
+        var body=CreateTablePanel(out var cleanup);
+        var root=new Grid{RowDefinitions=new("*,Auto")};root.Children.Add(body);
+        var dialog=new ModalSurface("Tabela da partida",root,840,810){Name="table-surface"};
+        var close=Ui.Button("Fechar",()=>dialog.Close());close.Margin=new Thickness(20,8);root.Children.Add(close);Grid.SetRow(close,1);
+        try{await ShowSurface(dialog);}finally{cleanup();}
+    }
+    Control CreateTablePanel(out Action cleanup)
+    {
         Championship.FlushNames();
         if (menuOpen) ToggleMenu();
         var panel = new StackPanel { Margin = new Thickness(20), Spacing = 8 };
@@ -43,15 +52,14 @@ public sealed partial class StudioShell
             } catch (Exception ex) { state.Text = ex.Message; }
         }));
         panel.Children.Add(state);
-        using var loginCancellation = new CancellationTokenSource();
+        var loginCancellation = new CancellationTokenSource();
         var google = GoogleTablePanel(loginCancellation.Token, out var detachGoogle);
         var tabs = new TabControl { ItemsSource = new[] {
             new TabItem { Header = "EXCEL LOCAL", Content = new ScrollViewer { Content = panel } },
             new TabItem { Header = "GOOGLE SHEETS", Content = new ScrollViewer { Content = google } }
         }};
-        var root = new Grid { RowDefinitions = new("*,Auto") }; root.Children.Add(tabs);
-        var dialog = Ui.Dialog(this, "Tabela da partida · experimental", root, 740, 740);
-        var close = Ui.Button("Fechar", () => dialog.Close()); root.Children.Add(close); Grid.SetRow(close, 1);
-        try { await dialog.ShowDialog(this); } finally { loginCancellation.Cancel(); matchTable.Changed -= Status; detachGoogle(); }
+        tabs.Name="table-tabs";tabs.MinHeight=600;
+        cleanup=()=>{loginCancellation.Cancel();matchTable.Changed-=Status;detachGoogle();loginCancellation.Dispose();};
+        return tabs;
     }
 }

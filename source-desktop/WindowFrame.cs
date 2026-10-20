@@ -31,14 +31,18 @@ internal static class WindowFrame
             else window.BeginMoveDrag(e);
         };
         var buttons = new StackPanel { Orientation = Orientation.Horizontal };
-        void Caption(string glyph, string label, Action action, bool visible = true) {
-            var b = Ui.Button(glyph, action); b.Width = 42; b.Height = 30; b.MinHeight = 0; b.Padding = new Thickness(0); b.Margin = new Thickness(0); b.Background = Brushes.Transparent;
-            b.Foreground = Ui.Ink; b.BorderThickness = new Thickness(0); b.IsVisible = visible;
-            global::Avalonia.Automation.AutomationProperties.SetName(b,L.T(label)); buttons.Children.Add(b);
+        void Caption(string kind,string label,Action action,bool visible=true) {
+            var glyph=new CaptionGlyph(window,kind){Width=44,Height=30};
+            var b=Ui.Button("",action);b.Name="caption-"+kind;b.Width=44;b.Height=30;b.MinHeight=0;b.Margin=new Thickness(0);b.Padding=new Thickness(0);b.BorderThickness=new Thickness(0);b.Background=Brushes.Transparent;b.IsVisible=visible;
+            b.Template=new FuncControlTemplate<Button>((control,names)=>{var back=new Border{Child=glyph};back.Bind(Border.BackgroundProperty,new Binding("Background"){Source=control});return back;});
+            b.PointerEntered+=(_,_)=>{glyph.Hovered=true;b.Background=Brush.Parse(kind=="close"?"#D92C35":Ui.Dark?"#314456":"#CAD6E0");glyph.InvalidateVisual();};
+            b.PointerExited+=(_,_)=>{glyph.Hovered=false;b.Background=Brushes.Transparent;glyph.InvalidateVisual();};
+            window.PropertyChanged+=(_,e)=>{if(e.Property==Window.WindowStateProperty)glyph.InvalidateVisual();};
+            global::Avalonia.Automation.AutomationProperties.SetName(b,L.T(label));buttons.Children.Add(b);
         }
-        Caption("—", "Minimizar", () => window.WindowState = WindowState.Minimized, window is StudioShell);
-        Caption("□", "Maximizar / Restaurar", () => window.WindowState = window.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized, window.CanResize);
-        Caption("×", "Fechar", () => window.Close());
+        Caption("minimize","Minimizar",()=>window.WindowState=WindowState.Minimized,window is StudioShell);
+        Caption("maximize","Maximizar / Restaurar",()=>window.WindowState=window.WindowState==WindowState.Maximized?WindowState.Normal:WindowState.Maximized,window.CanResize);
+        Caption("close","Fechar",()=>window.Close());
         titlebar.Children.Add(buttons); Grid.SetColumn(buttons,2); grid.Children.Add(titlebar);
         var presenter = new ContentPresenter { Name = "PART_ContentPresenter" };
         scope.Register("PART_ContentPresenter",presenter);

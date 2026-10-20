@@ -56,7 +56,7 @@ public sealed class StudioView : Grid
    int index=i;kind.Items.Add(new TabItem{Header=L.T(labels[i])});
    var button=Ui.Button(labels[i],()=>{if(!exporting&&!applying)kind.SelectedIndex=index;});button.Name="art-tab-"+i;button.Margin=new Thickness(0);button.Padding=new Thickness(20,10);buttons.Add(button);tabs.Children.Add(button);
   }
-  void PaintTabs(){for(int i=0;i<buttons.Count;i++){buttons[i].Background=i==kind.SelectedIndex?Ui.Panel:Brushes.Transparent;buttons[i].BorderThickness=new Thickness(0,0,0,3);buttons[i].BorderBrush=i==kind.SelectedIndex?Brush.Parse("#FF4335"):Brushes.Transparent;}}
+  void PaintTabs(){for(int i=0;i<buttons.Count;i++){buttons[i].Background=i==kind.SelectedIndex?Ui.Panel:Brushes.Transparent;buttons[i].BorderThickness=new Thickness(0,0,0,3);buttons[i].BorderBrush=i==kind.SelectedIndex?Ui.Accent:Brushes.Transparent;}}
   kind.PropertyChanged+=(_,e)=>{if(e.Property==IsEnabledProperty)tabs.IsEnabled=kind.IsEnabled;};
   kind.SelectedIndex=0;PaintTabs();kind.SelectionChanged+=(_,_)=>PaintTabs();
   matches.Name="art-match-selector";matches.Width=300;matches.Height=32;matches.MinHeight=0;matches.Margin=new Thickness(8,0,0,0);matches.VerticalAlignment=VerticalAlignment.Center;navigation.Children.Add(matches);SetColumn(matches,1);

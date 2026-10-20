@@ -4,23 +4,22 @@ public sealed partial class StudioShell
 {
     internal async Task OpenOptions()
     {
-        if(optionsWindow!=null){optionsWindow.Activate();return;}
+        if(optionsWindow!=null){optionsWindow.Focus();return;}
+        if(ActiveSurface!=null)return;
         if(menuOpen)ToggleMenu();
         var root=new Grid{RowDefinitions=new("Auto,*,Auto"),Margin=new Thickness(20)};
-        var tabs=new TabControl{Name="settings-tabs"};root.Children.Add(tabs);Grid.SetRow(tabs,1);
-        tabs.Template=new global::Avalonia.Controls.Templates.FuncControlTemplate<TabControl>((control,scope)=>{
-            var host=new global::Avalonia.Controls.Presenters.ContentPresenter{Name="PART_SelectedContentHost"};scope.Register("PART_SelectedContentHost",host);
-            void Present(){host.Content=control.SelectedItem is TabItem item?item.Content:null;}
-            control.PropertyChanged+=(_,e)=>{if(e.Property==TabControl.SelectedIndexProperty)Present();};Present();return host;
-        });
+        var tabs=new TabControl{Name="settings-tabs",IsVisible=false};root.Children.Add(tabs);
+        var pages=new ContentControl{Name="settings-page"};root.Children.Add(pages);Grid.SetRow(pages,1);
+        var pageContents=new List<Control>();
+        void Present(){pages.Content=tabs.SelectedIndex>=0&&tabs.SelectedIndex<pageContents.Count?pageContents[tabs.SelectedIndex]:null;}
         var navigation=new UniformGrid{Rows=1};root.Children.Add(navigation);
         var tabButtons=new List<Button>();
-        void PaintTabs(){for(int i=0;i<tabButtons.Count;i++){var button=tabButtons[i];button.Foreground=Ui.Ink;button.Background=i==tabs.SelectedIndex?Ui.Panel:Brushes.Transparent;button.BorderBrush=i==tabs.SelectedIndex?Brush.Parse("#FF4335"):Ui.FrameLine;button.BorderThickness=new Thickness(0,0,0,i==tabs.SelectedIndex?3:1);}}
-        tabs.SelectionChanged+=(_,e)=>{if(e.Source==tabs)PaintTabs();};
+        void PaintTabs(){for(int i=0;i<tabButtons.Count;i++){var button=tabButtons[i];button.Foreground=Ui.Ink;button.Background=i==tabs.SelectedIndex?Ui.Panel:Brushes.Transparent;button.BorderBrush=i==tabs.SelectedIndex?Ui.Accent:Ui.FrameLine;button.BorderThickness=new Thickness(0,0,0,i==tabs.SelectedIndex?3:1);}}
+        tabs.SelectionChanged+=(_,e)=>{if(e.Source==tabs){Present();PaintTabs();}};
         StackPanel Tab(string title) {
             int index=tabs.Items.Count;var button=Ui.Button(title,()=>tabs.SelectedIndex=index);button.Margin=new Thickness(0);button.Padding=new Thickness(10,12);button.FontSize=14;button.FontWeight=FontWeight.Bold;tabButtons.Add(button);navigation.Children.Add(button);
             var panel=new StackPanel{Spacing=10,Margin=new Thickness(8,18)};
-            tabs.Items.Add(new TabItem{Header=L.T(title),Name="settings-tab-"+tabs.Items.Count,Content=new ScrollViewer{Content=panel,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled}});return panel;
+            pageContents.Add(new ScrollViewer{Content=panel,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled});tabs.Items.Add(new TabItem{Header=L.T(title),Name="settings-tab-"+tabs.Items.Count});return panel;
         }
         void Row(StackPanel panel,string label,Control control) {
             var row=new Grid{ColumnDefinitions=new("*,*"),Background=Ui.Panel,Margin=new Thickness(0,0,0,4)};
@@ -28,7 +27,7 @@ public sealed partial class StudioShell
             control.Margin=new Thickness(8);control.VerticalAlignment=VerticalAlignment.Center;row.Children.Add(caption);row.Children.Add(control);Grid.SetColumn(control,1);panel.Children.Add(row);
         }
         bool loading=true;
-        void dialogTitle(){if(optionsWindow!=null)optionsWindow.Title=L.T("Opções");}
+        void dialogTitle(){if(optionsWindow!=null){optionsWindow.Title=L.T("Opções");Title="CasterDesk • "+L.T("Opções");}}
         void Change(Action change) {
             if(loading)return;
             try { Championship.FlushNames();if(!studio.Flush())return;Texts.Save();change();SaveSettings(); }
@@ -56,14 +55,17 @@ public sealed partial class StudioShell
         rounds.SelectionChanged+=(_,_)=>Change(()=>{if(rounds.SelectedIndex<0)return;settings.QuickRounds=rounds.SelectedIndex==0;Championship.SetQuickMode(settings.QuickRounds);});Row(match,"Registro de rounds",rounds);
         var appearance=Tab("APARÊNCIA");appearance.Children.Add(Ui.Text("TEMA DO CASTERDESK",true));
         var theme=Ui.Combo("Padrão","Escuro","Claro");theme.Name="settings-theme";string[] themes=["standard","dark","light"];theme.SelectedIndex=Array.IndexOf(themes,settings.VisualTheme);
-        theme.SelectionChanged+=(_,_)=>Change(()=>{if(theme.SelectedIndex<0)return;string previous=settings.VisualTheme!;try{Appearance(themes[theme.SelectedIndex]);PaintTabs();SaveSettings();}catch{Appearance(previous);throw;}});Row(appearance,"Tema",theme);
+        theme.SelectionChanged+=(_,_)=>Change(()=>{if(theme.SelectedIndex<0)return;string previous=settings.VisualTheme!;try{Appearance(themes[theme.SelectedIndex],pageContents.ToArray());PaintTabs();SaveSettings();}catch{Appearance(previous,pageContents.ToArray());throw;}});Row(appearance,"Tema",theme);
         appearance.Children.Add(Ui.Text("O tema altera somente o aplicativo. O painel do OBS mantém a aparência do OBS."));
-        var table=Tab("TABELA");table.Children.Add(Ui.Text("Tabela da partida",true));table.Children.Add(Ui.Text("Configure o arquivo Excel local e a conexão com o Google Sheets para a partida."));table.Children.Add(Ui.Button("Tabela da partida",()=>{optionsWindow?.Close();_ = OpenMatchTable();}));
-        var backup=Tab("BACKUP");backup.Children.Add(Ui.Text("Backup e restauração",true));backup.Children.Add(Ui.Text("Crie uma cópia dos dados ou restaure um backup do CasterDesk."));var backupButton=Ui.Button("Backup e restauração",()=>{optionsWindow?.Close();_ = OpenBackup();});backupButton.Name="backup-menu";backup.Children.Add(backupButton);
-        var obs=Tab("OBS");obs.Children.Add(Ui.Text("Painel OBS",true));obs.Children.Add(Ui.Text("Configure a conexão do painel com o OBS."));var obsButton=Ui.Button("Painel OBS",()=>{optionsWindow?.Close();_ = OpenObsPanel();});obsButton.Name="obs-menu";obs.Children.Add(obsButton);
+        var table=Tab("TABELA");table.Children.Add(CreateTablePanel(out var cleanupTable));
+        var backupPanel=CreateBackupPanel();var backup=Tab("BACKUP");backup.Children.Add(backupPanel.DetachContent());
+        var obs=Tab("OBS");obs.Children.Add(CreateObsPanel());
         var close=Ui.Button("Fechar",()=>optionsWindow?.Close());close.HorizontalAlignment=HorizontalAlignment.Right;close.MinWidth=120;root.Children.Add(close);Grid.SetRow(close,2);
-        var dialog=Ui.Dialog(this,"Opções",root,900,570);dialog.MinWidth=700;dialog.MinHeight=430;dialog.Name="options-window";optionsWindow=dialog;
-        tabs.SelectedIndex=0;PaintTabs();loading=false;
-        try{await dialog.ShowDialog(this);}finally{optionsWindow=null;}
+        var dialog=new ModalSurface("Opções",root,940,810){Name="options-window"};optionsWindow=dialog;
+        dialog.BeforeClose=async()=>{if(!await backupPanel.FinishEmbedded())return false;cleanupTable();return true;};
+        backupPanel.EmbeddedClose=scheduled=>{dialog.Close();if(scheduled)_ = CloseAfterRestore();};
+        async Task CloseAfterRestore(){await dialog.Completion;Notify(L.T("Restauração agendada. Ela será aplicada na próxima abertura do CasterDesk."));Close();}
+        tabs.SelectedIndex=0;Present();PaintTabs();loading=false;
+        try{await ShowSurface(dialog);}finally{optionsWindow=null;}
     }
 }

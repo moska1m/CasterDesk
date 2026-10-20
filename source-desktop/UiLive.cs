@@ -36,17 +36,18 @@ internal static partial class Ui
     }
     public static void Repaint(string theme, params Control[] roots)
     {
-        IBrush oldCanvas=Canvas,oldPanel=Panel,oldHeader=Header,oldMenu=MenuSurface,oldInk=Ink,oldFrame=FrameLine;
+        IBrush oldCanvas=Canvas,oldPanel=Panel,oldHeader=Header,oldMenu=MenuSurface,oldInk=Ink,oldFrame=FrameLine,oldAccent=Accent;
         Theme(theme);
-        IBrush? Replace(IBrush? b) => b==null?null:b.ToString()==oldCanvas.ToString()?Canvas:b.ToString()==oldPanel.ToString()?Panel:b.ToString()==oldHeader.ToString()?Header:b.ToString()==oldMenu.ToString()?MenuSurface:b.ToString()==oldInk.ToString()?Ink:b.ToString()==oldFrame.ToString()?FrameLine:b;
+        IBrush? Replace(IBrush? b) => b==null?null:b.ToString()==oldCanvas.ToString()?Canvas:b.ToString()==oldPanel.ToString()?Panel:b.ToString()==oldHeader.ToString()?Header:b.ToString()==oldMenu.ToString()?MenuSurface:b.ToString()==oldInk.ToString()?Ink:b.ToString()==oldFrame.ToString()?FrameLine:b.ToString()==oldAccent.ToString()?Accent:b;
         var controls=roots.SelectMany(r=>r.GetVisualDescendants().OfType<Control>().Concat(r.GetLogicalDescendants().OfType<Control>()).Append(r)).Distinct().ToArray();
         foreach(var c in controls) {
+            if(c is CaptionGlyph glyph)glyph.InvalidateVisual();
             if(c is Window window){window.RequestedThemeVariant=Dark?global::Avalonia.Styling.ThemeVariant.Dark:global::Avalonia.Styling.ThemeVariant.Light;window.Foreground=Ink;}
             if(c is global::Avalonia.Controls.Shapes.Path shape && shape.GetVisualAncestors().OfType<Viewbox>().Any(v=>v.Name is "casterdesk-brand" or "casterdesk-frame-symbol"))shape.Fill=Dark?Brushes.White:Brushes.Black;
-            if(c is Border border){border.Background=Replace(border.Background);border.BorderBrush=Replace(border.BorderBrush);}
-            if(c is Panel panel)panel.Background=Replace(panel.Background);
-            if(c is TextBlock text){text.Background=Replace(text.Background); if(text.IsSet(TextBlock.ForegroundProperty))text.Foreground=Replace(text.Foreground);}
-            if(c is global::Avalonia.Controls.Primitives.TemplatedControl templated){if(templated.IsSet(TemplatedControl.BackgroundProperty))templated.Background=Replace(templated.Background);if(templated.IsSet(TemplatedControl.ForegroundProperty))templated.Foreground=Replace(templated.Foreground);}
+            if(c is Border border){if(border.Background?.ToString()!=Replace(border.Background)?.ToString())border.Background=Replace(border.Background);if(border.BorderBrush?.ToString()!=Replace(border.BorderBrush)?.ToString())border.BorderBrush=Replace(border.BorderBrush);}
+            if(c is Panel panel && panel.Background?.ToString()!=Replace(panel.Background)?.ToString())panel.Background=Replace(panel.Background);
+            if(c is TextBlock text){if(text.Background?.ToString()!=Replace(text.Background)?.ToString())text.Background=Replace(text.Background); if(!paletteBound.TryGetValue(text,out _) && text.IsSet(TextBlock.ForegroundProperty) && text.Foreground?.ToString()!=Replace(text.Foreground)?.ToString())text.Foreground=Replace(text.Foreground);}
+            if(c is global::Avalonia.Controls.Primitives.TemplatedControl templated && !paletteBound.TryGetValue(c,out _)){if(templated.IsSet(TemplatedControl.BackgroundProperty) && templated.Background?.ToString()!=Replace(templated.Background)?.ToString())templated.Background=Replace(templated.Background);if(templated.IsSet(TemplatedControl.ForegroundProperty) && templated.Foreground?.ToString()!=Replace(templated.Foreground)?.ToString())templated.Foreground=Replace(templated.Foreground);}
         }
     }
 }

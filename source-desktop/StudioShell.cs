@@ -25,7 +25,7 @@ public sealed partial class StudioShell : Window
     bool menuOpen;
     bool backupOpen;
     readonly Border menuShade = new() { Background = Brush.Parse("#98000000"), IsVisible = false, Name = "menu-scrim" };
-    Window? optionsWindow;
+    ModalSurface? optionsWindow;
     TextBlock? menuConnection;
     Grid? mainHeader;
 
@@ -46,7 +46,7 @@ public sealed partial class StudioShell : Window
         Texts = new TextsView(settings, SaveSettings);
         obsSettings = ConfigurationStore.Read<ObsDockSettings>("obs-connection.json");
         obsSettings.ConfigurePlugin(File.Exists(Path.Combine(AppContext.BaseDirectory,"obs-plugin.optin")));
-        obsDock = new ObsDockServer(Championship,Texts,()=>!backupOpen&&!studio.Exporting&&!OwnedWindows.Any(w=>w.IsVisible),obsSettings);
+        obsDock = new ObsDockServer(Championship,Texts,()=>ActiveSurface==null&&!backupOpen&&!studio.Exporting&&!OwnedWindows.Any(w=>w.IsVisible),obsSettings);
         Championship.UseObsForBans=obsSettings.RouteBansToOBS;
         Championship.ObsBansModeChanged=value=>{bool old=obsSettings.RouteBansToOBS;try{obsSettings.RouteBansToOBS=value;SaveObsSettings();}catch{obsSettings.RouteBansToOBS=old;throw;}};
         Championship.Refresh();
@@ -57,9 +57,9 @@ public sealed partial class StudioShell : Window
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }
             catch (Exception ex) { footer.Text = ex.Message; }
         };
-        var layout = new Grid { RowDefinitions = new("Auto,*,Auto") }; Content = layout;
+        var layout = new Grid { RowDefinitions = new("Auto,*,Auto") }; Content = layout;surfaceLayout=layout;
         var header = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto"), Background = Ui.MenuSurface }; mainHeader=header;
-        var brand = BrandMark.Create(true);
+        var brand = BrandMark.Create(Ui.Dark);
         brand.Margin = new Thickness(20, 8, 26, 8); brand.VerticalAlignment = VerticalAlignment.Center;
         header.Children.Add(brand);
         gear = Ui.Button("", ToggleMenu); gear.Name = "settings-menu"; gear.Content = new GearIcon { Width = 34, Height = 34 };
@@ -94,6 +94,7 @@ public sealed partial class StudioShell : Window
         layout.Children.Add(footer); Grid.SetRow(footer, 2);
         InitializeUpdates(layout);
         KeyDown += (_, e) => {
+            if(ActiveSurface!=null){if(e.Key==Key.Escape){_ = CloseSurface();e.Handled=true;}return;}
             if(!menuOpen)return;
             if(e.Key==Key.Escape){ToggleMenu();e.Handled=true;}
             else if(e.Key==Key.Tab){
@@ -107,6 +108,7 @@ public sealed partial class StudioShell : Window
         bool closing = false, waitingToClose = false;
         Closing += async (_, e) => {
             if (closing) return;
+            if(ActiveSurface!=null){e.Cancel=true;if(await CloseSurface())Close();return;}
             if (waitingToClose) { e.Cancel = true; return; }
             if (backupOpen || studio.Exporting || Championship.Processing) { e.Cancel = true; footer.Text = L.T("Salvando arquivos…"); return; }
             try {
@@ -124,13 +126,13 @@ public sealed partial class StudioShell : Window
 
     internal void Navigate(int index)
     {
-        if (backupOpen || studio.Exporting || Championship.Processing) return;
+        if (ActiveSurface!=null || backupOpen || studio.Exporting || Championship.Processing) return;
         try {
             Championship.FlushNames(); if (!studio.Flush()) return;
             if (selected == 2) Texts.Save();
             selected = index; page.Content = index == 0 ? Championship : index == 1 ? studio : Texts;
             if (index == 1) studio.Refresh(Championship.Session.Current.Id);
-            for (int n = 0; n < tabs.Length; n++) { tabs[n].BorderBrush = n == index ? Brush.Parse("#FF4335") : Brushes.Transparent; tabs[n].Background = n == index ? Ui.Panel : Brushes.Transparent; }
+            for (int n = 0; n < tabs.Length; n++) { tabs[n].BorderBrush = n == index ? Ui.Accent : Brushes.Transparent; tabs[n].Background = n == index ? Ui.Panel : Brushes.Transparent; }
             if (menuOpen) ToggleMenu();
         } catch (Exception ex) { footer.Text = ex.Message; }
     }
@@ -138,15 +140,14 @@ public sealed partial class StudioShell : Window
     void SaveSettings() => MatchFiles.AtomicText(AppPaths.ConfigFile("settings.json"), JsonSerializer.Serialize(settings));
     internal void ToggleMenu()
     {
-        menuOpen = !menuOpen; drawerPanel.IsVisible = menuOpen; menuShade.IsVisible = menuOpen; drawerPanel.Width = Math.Min(300, Bounds.Width * .32);
+        if(ActiveSurface!=null)return;
+        menuOpen = !menuOpen; drawerPanel.IsVisible = menuOpen; menuShade.IsVisible = menuOpen;menuShade.Background=Brushes.Transparent; drawerPanel.Width = Math.Min(300, Bounds.Width * .32);
         drawerPanel.MaxHeight = Math.Max(150, Bounds.Height - 100);
-        page.IsEnabled=!menuOpen;
+        page.IsEnabled=true;
         menuShade.ZIndex=100;drawerPanel.ZIndex=101;
         PaintGear(menuOpen); if (menuOpen) { Menu(); drawer.Children.OfType<Button>().FirstOrDefault()?.Focus(); } else gear.Focus();
     }
-    void PaintGear(bool active) => gear.Background = active ? new LinearGradientBrush {
-        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
-        GradientStops = [new GradientStop(Color.Parse("#481C20"), 0), new GradientStop(Color.Parse("#FF4335"), 1)] } : Brushes.Transparent;
+    void PaintGear(bool active) => gear.Background=active?MenuHighlight():Brushes.Transparent;
 
     void Menu()
     {
@@ -155,7 +156,7 @@ public sealed partial class StudioShell : Window
             var button=Ui.Button(title,action);button.Name=name;button.Height=56;button.FontSize=19;button.FontWeight=FontWeight.Bold;
             button.HorizontalContentAlignment=HorizontalAlignment.Left;button.Padding=new Thickness(16,6);button.Margin=new Thickness(0,0,0,8);
             button.Background=Brushes.Transparent;button.Foreground=Ui.Ink;button.BorderBrush=Ui.FrameLine;button.BorderThickness=new Thickness(1);
-            void Highlight(bool on) { button.Background=on?MenuHighlight():Brushes.Transparent;button.BorderBrush=on?Brush.Parse("#FF4335"):Ui.FrameLine;button.BorderThickness=new Thickness(1,1,1,on?4:1); }
+            void Highlight(bool on) { button.Background=on?MenuHighlight():Brushes.Transparent;button.BorderBrush=on?Ui.Accent:Ui.FrameLine;button.BorderThickness=new Thickness(1,1,1,on?4:1); }
             button.PointerEntered+=(_,_)=>Highlight(true);button.PointerExited+=(_,_)=>Highlight(false);
             button.GotFocus+=(_,_)=>Highlight(true);button.LostFocus+=(_,_)=>Highlight(false);drawer.Children.Add(button);
         }
@@ -171,17 +172,17 @@ public sealed partial class StudioShell : Window
     }
     IBrush MenuHighlight()=>new LinearGradientBrush {
         StartPoint=new RelativePoint(0,0,RelativeUnit.Relative),EndPoint=new RelativePoint(1,1,RelativeUnit.Relative),
-        GradientStops=[new GradientStop(Color.Parse(Ui.Dark?"#182535":"#E9D8D8"),0),new GradientStop(Color.Parse(Ui.Dark?"#622731":"#F2B2AD"),.65),new GradientStop(Color.Parse("#E83E36"),1)] };
+        GradientStops=[new GradientStop(Color.Parse(Ui.Dark?"#182535":"#D5E7F2"),0),new GradientStop(Color.Parse(Ui.Dark?"#622731":"#9FCBE1"),.65),new GradientStop(Color.Parse(Ui.Dark?"#E83E36":"#288CBA"),1)] };
     void RefreshMenuConnection() { if(menuConnection==null)return;menuConnection.Text="●  "+L.T(obsDock.HasClient?"Conectado":"Desconectado").ToUpperInvariant();menuConnection.Foreground=Brush.Parse(obsDock.HasClient?(Ui.Dark?"#29DF83":"#087B46"):(Ui.Dark?"#FF645B":"#B42629")); }
     async Task OpenCredits() {
         if(menuOpen)ToggleMenu();
         var panel=new StackPanel{Margin=new Thickness(24)};panel.Children.Add(BrandMark.Create(Ui.Dark));panel.Children.Add(Ui.RawText(BuildInfo.Version));
         panel.Children.Add(Ui.Text("Ferramentas para community casters de Rainbow Six Siege."));
         panel.Children.Add(Ui.Text("Projeto independente. Rainbow Six Siege e suas marcas pertencem à Ubisoft. Consulte os avisos de terceiros distribuídos com o aplicativo."));
-        var dialog=Ui.Dialog(this,"Créditos",panel,600,360);panel.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));await dialog.ShowDialog(this);
+        var dialog=new ModalSurface("Créditos",panel,650,440){Name="credits-surface"};panel.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));await ShowSurface(dialog);
     }
     void SaveObsSettings()=>MatchFiles.AtomicText(AppPaths.ConfigFile("obs-connection.json"),JsonSerializer.Serialize(obsSettings));
-    async Task OpenObsPanel()
+    Control CreateObsPanel()
     {
         var panel=new StackPanel { Margin=new Thickness(20) };
         panel.Children.Add(Ui.Text("Controle o timer e os bans em um painel do OBS.",true));
@@ -190,42 +191,29 @@ public sealed partial class StudioShell : Window
         var connect=Ui.Button("Ativar conexão",async()=>{
             try{await obsDock.StartAsync();obsSettings.Enabled=true;SaveObsSettings();state.Text=L.T("Conectado");}
             catch(Exception ex){state.Text=ex.Message;}
-        });panel.Children.Add(connect);
+        });connect.Name="obs-enable";panel.Children.Add(connect);
         panel.Children.Add(Ui.Button("Copiar endereço do painel",()=>{if(obsDock.Running){Ui.CopyText(obsDock.PanelUrl);state.Text=L.T("Endereço copiado.");}}));
         panel.Children.Add(Ui.Button("Desativar conexão",async()=>{try{await obsDock.DisposeAsync();obsSettings.Enabled=false;SaveObsSettings();state.Text=L.T("Desconectado");}catch(Exception ex){state.Text=ex.Message;}}));
-        var dialog=Ui.Dialog(this,"Painel OBS",panel,620,420);panel.Children.Add(Ui.Button("Fechar",()=>dialog.Close()));
-        await dialog.ShowDialog(this);
+        return panel;
     }
     void Appearance(bool dark) => Appearance(dark?"standard":"light");
-    void Appearance(string theme)
+    void Appearance(string theme,params Control[] extra)
     {
-        Ui.Repaint(theme,new Control[]{this,Championship,studio,Texts}.Concat(OwnedWindows).ToArray());
+        Ui.Repaint(theme,new Control[]{this,Championship,studio,Texts}.Concat(OwnedWindows).Concat(extra).ToArray());
         settings.VisualTheme=Ui.ThemeName;settings.DarkMode=Ui.Dark;Background=Ui.Canvas;drawerPanel.Background=Ui.MenuSurface;
         if(mainHeader!=null)mainHeader.Background=Ui.MenuSurface;
         foreach(var tab in tabs)tab.Foreground=Ui.Ink;
         Championship.Refresh();studio.Background=Ui.Canvas;Texts.RefreshColors();
-        for(int i=0;i<tabs.Length;i++)tabs[i].Background=i==selected?Ui.Panel:Brushes.Transparent;
+        for(int i=0;i<tabs.Length;i++){tabs[i].Background=i==selected?Ui.Panel:Brushes.Transparent;tabs[i].BorderBrush=i==selected?Ui.Accent:Brushes.Transparent;}
         if(menuOpen)Menu();
     }
     internal double MenuWidth => menuOpen ? drawerPanel.Width : 0;
     internal void Notify(string text) => footer.Text = text;
-    internal async Task OpenBackup()
-    {
-        if (backupOpen || studio.Exporting || Championship.Processing) return;
-        if (menuOpen) ToggleMenu();
-        backupOpen = true;
-        try {
-            var dialog = new BackupWindow(this, async () => {
-                Championship.FlushNames(); if (!studio.Flush()) throw new InvalidOperationException(L.T("Salvando arquivos…"));
-                await googleTable.FlushArchivesAsync(); await matchTable.FlushAsync(); await Texts.Applying; Texts.Save(); Texts.WritesSuspended = true; await Texts.Writes;
-            }, () => Texts.WritesSuspended = false);
-            bool restore = await dialog.ShowDialog<bool>(this);
-            backupOpen = false;
-            if (restore) { Notify(L.T("Restauração agendada. Ela será aplicada na próxima abertura do CasterDesk.")); Close(); }
-        } catch (Exception ex) { footer.Text = ex.Message; }
-        finally { backupOpen = false; Texts.WritesSuspended = false; }
-    }
-
+    BackupWindow CreateBackupPanel()=>new BackupWindow(this,async()=>{
+        backupOpen=true;
+        Championship.FlushNames();if(!studio.Flush())throw new InvalidOperationException(L.T("Salvando arquivos…"));
+        await googleTable.FlushArchivesAsync();await matchTable.FlushAsync();await Texts.Applying;Texts.Save();Texts.WritesSuspended=true;await Texts.Writes;
+    },()=>{Texts.WritesSuspended=false;backupOpen=false;});
     sealed class GearIcon : Control
     {
         public override void Render(DrawingContext context)
@@ -247,7 +235,7 @@ public sealed partial class StudioShell : Window
                     }
                     path.EndFigure(true);
                 }
-                context.DrawGeometry(Brushes.White, null, geometry);
+                context.DrawGeometry(Ui.Ink, null, geometry);
             }
             Gear(15, 15, 8.1); Gear(32, 31, 12.5);
         }

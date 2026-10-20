@@ -174,7 +174,7 @@ internal static class ChampionshipChecks
         view.Stop(); owner.Content = null; owner.Close();
         var shell = new StudioShell(session); shell.Show(); Pump();
             Need(shell.MenuWidth == 0, "Closed menu reserves no width"); shell.ToggleMenu(); Pump(); Need(shell.MenuWidth > 0 && shell.MenuWidth <= 300, "Menu inside available width");
-        shell.ToggleMenu();var options=shell.OpenOptions();Pump();var preferences=shell.OwnedWindows.Single(w=>w.Name=="options-window");
+        shell.ToggleMenu();var options=shell.OpenOptions();Pump();var preferences=shell.ActiveSurface!;
         var optionTabs=preferences.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Name=="settings-tabs");optionTabs.SelectedIndex=1;Pump();
         var registration=preferences.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="settings-rounds");
         registration.SelectedIndex=1;Pump();Need(!shell.Championship.QuickMode,"Classic registration option applies");registration.SelectedIndex=0;Pump();Need(shell.Championship.QuickMode,"Quick registration option applies");

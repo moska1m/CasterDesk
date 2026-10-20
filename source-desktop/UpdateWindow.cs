@@ -8,7 +8,7 @@ public sealed partial class StudioShell
     readonly DispatcherTimer updateTimer = new() { Interval=TimeSpan.FromSeconds(3) };
     readonly Border updateBanner = new() { Name="update-banner",IsVisible=false,Padding=new Thickness(10,4),Margin=new Thickness(10,0,10,4) };
     readonly TextBlock updateBannerText = Ui.RawText("");
-    Window? updateWindow;
+    ModalSurface? updateWindow;
     bool updateInitial=true;
     string dismissedUpdate="";
     bool installingUpdate;
@@ -35,7 +35,7 @@ public sealed partial class StudioShell
     internal async Task ShowStartupUpdate()
     {
         var item=updates.Available;
-        if(startupUpdateShown||!updates.Preferences.Automatic||item==null||updates.Checking||updates.Downloading||backupOpen||studio.Exporting||Championship.Processing||OwnedWindows.Any(w=>w.IsVisible)||!IsVisible)return;
+        if(startupUpdateShown||!updates.Preferences.Automatic||item==null||updates.Checking||updates.Downloading||backupOpen||studio.Exporting||Championship.Processing||ActiveSurface!=null||OwnedWindows.Any(w=>w.IsVisible)||!IsVisible)return;
         startupUpdateShown=true;
         var content=new Grid { Margin=new Thickness(20),RowDefinitions=new("Auto,Auto,*,Auto,Auto") };
         var title=Ui.RawText((item.Important?"ATUALIZAÇÃO IMPORTANTE":"NOVA ATUALIZAÇÃO")+" · "+item.Version,true);title.FontSize=22;content.Children.Add(title);
@@ -44,11 +44,11 @@ public sealed partial class StudioShell
         var scroll=new ScrollViewer { Content=notes,Margin=new Thickness(0,12),HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled };content.Children.Add(scroll);Grid.SetRow(scroll,2);
         var hint=Ui.Text("Você pode atualizar agora ou continuar usando o programa e fazer isso depois.");hint.FontSize=12;content.Children.Add(hint);Grid.SetRow(hint,3);
         var buttons=new StackPanel { Orientation=Orientation.Horizontal,Spacing=10,HorizontalAlignment=HorizontalAlignment.Center };
-        var dialog=Ui.Dialog(this,"Novidades do CasterDesk",content,640,540);dialog.Name="startup-update-notice";
+        var dialog=new ModalSurface("Novidades do CasterDesk",content,660,580);dialog.Name="startup-update-notice";
         var show=Ui.Button("Ver versões e atualizar",()=>dialog.Close(true),true);show.Name="startup-update-open";buttons.Children.Add(show);
         var later=Ui.Button("Depois",()=>dialog.Close(false));later.Name="startup-update-later";buttons.Children.Add(later);
         content.Children.Add(buttons);Grid.SetRow(buttons,4);
-        if(await dialog.ShowDialog<bool>(this)) { updates.Select(item.Version);await OpenUpdates(false); }
+        if(await ShowSurface(dialog)) { updates.Select(item.Version);await OpenUpdates(false); }
     }
     static string Summary(string notes)
     {
@@ -68,7 +68,8 @@ public sealed partial class StudioShell
     internal async Task OpenUpdates(bool check=true)
     {
         startupUpdateShown=true;
-        if(updateWindow!=null){updateWindow.Activate();return;}
+        if(ActiveSurface!=null && updateWindow==null)return;
+        if(updateWindow!=null){updateWindow.Focus();return;}
         if(menuOpen)ToggleMenu();
         var panel=new StackPanel{Margin=new Thickness(20),Spacing=10};
         panel.Children.Add(Ui.Text("ATUALIZAÇÕES DO CASTERDESK",true));
@@ -97,7 +98,7 @@ public sealed partial class StudioShell
         Button? install=null;
         install=Ui.Button("Instalar e fechar o CasterDesk",async()=>{
             if(updates.Downloaded==null||updates.Selected==null||installingUpdate)return;
-            if(backupOpen||studio.Exporting||Championship.Processing||OwnedWindows.Any(w=>w!=updateWindow&&w.IsVisible)) {status.Text="Conclua a operação atual antes de instalar.";return;}
+            if(backupOpen||studio.Exporting||Championship.Processing||OwnedWindows.Any(w=>w.IsVisible)) {status.Text="Conclua a operação atual antes de instalar.";return;}
             installingUpdate=true;install!.IsEnabled=false;
             try {
                 Championship.FlushNames();if(!studio.Flush())throw new InvalidOperationException("Aguarde o salvamento das imagens.");
@@ -107,7 +108,7 @@ public sealed partial class StudioShell
                 start.ArgumentList.Add("/UPDATEAPP");start.ArgumentList.Add("/APPWAITPID="+Environment.ProcessId);
                 start.ArgumentList.Add("/LANG="+(L.Current=="es"?"spanish":L.Current=="en"?"english":"brazilianportuguese"));
                 _ = Process.Start(start)??throw new IOException("Não foi possível abrir o instalador.");
-                updateWindow!.Close();Close();
+                await CloseSurface();Close();
             } catch(Exception ex){status.Text=ex.Message;installingUpdate=false;install.IsEnabled=true;}
         },true);install.Name="install-update";panel.Children.Add(install);
         panel.Children.Add(Ui.Text("Instale quando puder encerrar a sessão. O instalador será aberto para concluir a atualização. Partidas e configurações permanecem salvas. O painel OBS só é reinstalado se você selecionar essa opção."));
@@ -142,8 +143,8 @@ public sealed partial class StudioShell
         void Configure(){if(refreshing)return;try{updates.Configure(automatic.IsChecked==true,betas.IsChecked==true);}catch(Exception ex){status.Text=ex.Message;}}
         betas.IsCheckedChanged+=(_,_)=>Configure();automatic.IsCheckedChanged+=(_,_)=>Configure();
         updates.Changed+=Refresh;Refresh();
-        updateWindow=Ui.Dialog(this,"Atualizações",new ScrollViewer{Content=panel},720,850);
-        try {var dialogTask=updateWindow.ShowDialog(this);if(check)await updates.CheckAsync(true);await dialogTask;}
+        updateWindow=new ModalSurface("Atualizações",new ScrollViewer{Content=panel},780,850){Name="updates-surface"};
+        try {var dialogTask=ShowSurface(updateWindow);if(check)await updates.CheckAsync(true);await dialogTask;}
         finally {cancellation.Cancel();updates.Changed-=Refresh;updateWindow=null;}
     }
 }

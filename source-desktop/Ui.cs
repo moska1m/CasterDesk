@@ -6,6 +6,7 @@ namespace CasterDesk.Desktop;
 
 internal static partial class Ui
 {
+    static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Control,object> paletteBound=new();
     public static bool Dark { get; private set; } = true;
     public static string ThemeName { get; private set; } = "standard";
     public static IBrush Canvas => Brush.Parse(ThemeName == "dark" ? "#0D1824" : Dark ? "#182637" : "#DFE7EF");
@@ -13,6 +14,7 @@ internal static partial class Ui
     public static IBrush Header => Brush.Parse(ThemeName == "dark" ? "#243C52" : Dark ? "#354C65" : "#C4D4E2");
     public static IBrush MenuSurface => Brush.Parse(Dark ? "#0C1621" : "#EAF0F5");
     public static IBrush Ink => Brush.Parse(Dark ? "#F2F5F8" : "#172C40");
+    public static IBrush Accent => Brush.Parse(Dark ? "#FF4335" : "#187DB0");
     public static IBrush FrameLine => Brush.Parse(Dark ? "#466078" : "#879FB5");
     public static IBrush Team(int team, bool selected = true) => new SolidColorBrush(
         Color.FromArgb(selected ? (byte)255 : (byte)150, team == 0 ? (byte)64 : (byte)255,
@@ -20,7 +22,18 @@ internal static partial class Ui
     public static void Theme(bool dark) => Theme(dark ? "standard" : "light");
     public static void Theme(string name) {
         ThemeName = name is "dark" or "light" ? name : "standard"; Dark = ThemeName != "light";
-        if (Application.Current != null) Application.Current.RequestedThemeVariant = Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+        if (Application.Current != null) {
+            Application.Current.RequestedThemeVariant = Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+            Application.Current.Resources["CasterDeskInk"]=Ink;Application.Current.Resources["CasterDeskPanel"]=Panel;Application.Current.Resources["CasterDeskHeader"]=Header;Application.Current.Resources["CasterDeskFrame"]=FrameLine;
+            var resources=Application.Current.Resources;
+            resources["CasterDeskAccent"]=Accent;
+            resources["ComboBoxDropDownBackground"]=Panel;resources["ComboBoxDropDownBorderBrush"]=FrameLine;
+            foreach(string state in new[]{"","PointerOver","Pressed","Selected","SelectedPointerOver","SelectedPressed"}){
+                resources["ComboBoxItemForeground"+state]=Ink;
+                resources["ComboBoxItemBackground"+state]=state.Length==0?Panel:Header;
+                resources["ComboBoxItemBorderBrush"+state]=FrameLine;
+            }
+        }
     }
 
     public static Border Card(string title, Control child)
@@ -101,22 +114,30 @@ internal static partial class Ui
         var button = new Button { Content = L.T(text), Margin = new Thickness(0, 0, 0, 8),
             HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Center };
         if (primary) button.Classes.Add("primary");
-        else { button.Foreground=Ink;button.Background=Header;button.BorderBrush=FrameLine;button.CornerRadius=new CornerRadius(1); }
+        else {
+            button.Bind(global::Avalonia.Controls.Button.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk"));
+            button.Bind(global::Avalonia.Controls.Button.BackgroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskHeader"));
+            button.Bind(global::Avalonia.Controls.Button.BorderBrushProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskFrame"));button.CornerRadius=new CornerRadius(1);
+        }
+        paletteBound.Add(button,new());
         Track(button, text);
         button.Click += (_, _) => action();
         return button;
     }
 
     public static TextBlock Text(string text, bool heading = false) { var control = RawText(L.T(text), heading); Track(control,text); return control; }
-    public static TextBlock RawText(string text, bool heading = false) => new() {
-        Text = text, Foreground = Ink, FontSize = heading ? 18 : 14,
-        FontWeight = heading ? FontWeight.SemiBold : FontWeight.Normal,
-        TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, heading ? 10 : 0, 0, 8) };
+    public static TextBlock RawText(string text, bool heading = false) {
+        var label=new TextBlock {
+            Text=text,FontSize=heading?18:14,FontWeight=heading?FontWeight.SemiBold:FontWeight.Normal,
+            TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,heading?10:0,0,8) };
+        label.Bind(TextBlock.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk"));paletteBound.Add(label,new());return label;
+    }
 
     public static ComboBox Combo(params string[] choices) { var control = RawCombo(choices.Select(L.T).ToArray()); Track(control,choices); return control; }
     public static ComboBox RawCombo(params string[] choices) => new() {
-        ItemsSource = choices, SelectedIndex = choices.Length > 0 ? 0 : -1, Foreground = Ink, Background = Panel,
-        HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 0, 0, 10) };
+        ItemsSource=choices,SelectedIndex=choices.Length>0?0:-1,Foreground=Ink,Background=Panel,
+        HorizontalAlignment=HorizontalAlignment.Stretch,Margin=new Thickness(0,0,0,10)
+    };
 
     public static Bitmap Bitmap(System.Drawing.Image source)
     {
@@ -187,12 +208,19 @@ internal static partial class Ui
         app.Styles.Add(new global::Avalonia.Themes.Fluent.FluentTheme());
         app.RequestedThemeVariant = ThemeVariant.Dark;
         WindowFrame.Install(app);
+        Theme(ThemeName);
+        foreach(string state in new[]{"",":selected",":pointerover",":selected:pointerover"}){
+            var item=new Style(x=>{var selector=x.OfType<ComboBoxItem>();foreach(var c in state.Split(':',StringSplitOptions.RemoveEmptyEntries))selector=selector.Class(":"+c);return selector;});
+            item.Setters.Add(new Setter(ComboBoxItem.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk")));
+            item.Setters.Add(new Setter(ComboBoxItem.BackgroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension(state.Length==0?"CasterDeskPanel":"CasterDeskHeader")));
+            app.Styles.Add(item);
+        }
         var primary = new Style(x => x.OfType<Button>().Class("primary"));
         primary.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, Brush.Parse("#327FA8")));
         primary.Setters.Add(new Setter(global::Avalonia.Controls.Button.ForegroundProperty, Brushes.White));
         app.Styles.Add(primary);
         var hover = new Style(x => x.OfType<Button>().Class("primary").Class(":pointerover"));
-        hover.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, Brush.Parse("#FF4335")));
+        hover.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskAccent")));
         app.Styles.Add(hover);
     }
 }

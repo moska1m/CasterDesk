@@ -51,7 +51,7 @@ public sealed partial class ChampionshipView : Grid
         sectionTabs[1] = Action("Configurar lobby", () => { var pool = Session.Catalog.Maps.Where(m=>m.Id!=lobbyBackground).ToArray(); lobbyBackground=pool[Random.Shared.Next(pool.Length)].Id; lobby = true; Refresh(); });
         foreach (var tab in sectionTabs) {
             tab.Padding = new Thickness(20, 10); tab.Margin = new Thickness(0); tabs.Children.Add(tab);
-            tab.PointerEntered += (_, _) => tab.Background = Brush.Parse("#FF4335");
+            tab.PointerEntered += (_, _) => tab.Background = Ui.Accent;
             tab.PointerExited += (_, _) => tab.Background = tab == sectionTabs[lobby ? 1 : 0] ? Ui.Panel : Brushes.Transparent;
         }
         var navigation = new Grid { Name = "match-navigation", ColumnDefinitions = new("Auto,*,Auto") }; navigation.Children.Add(tabs);
@@ -99,7 +99,7 @@ public sealed partial class ChampionshipView : Grid
         building = true;
         try {
             sectionTabs[0].Content=L.T(SpecMode?"Partida · SPEC":"Partida");
-            for (int n = 0; n < sectionTabs.Length; n++) { bool active = lobby == (n == 1); sectionTabs[n].BorderThickness = new Thickness(0, 0, 0, 3); sectionTabs[n].BorderBrush = active ? Brush.Parse("#FF4335") : Brushes.Transparent; sectionTabs[n].Background = active ? Ui.Panel : Brushes.Transparent; }
+            for (int n = 0; n < sectionTabs.Length; n++) { bool active = lobby == (n == 1); sectionTabs[n].BorderThickness = new Thickness(0, 0, 0, 3); sectionTabs[n].BorderBrush = active ? Ui.Accent : Brushes.Transparent; sectionTabs[n].Background = active ? Ui.Panel : Brushes.Transparent; }
             matchToolbar.IsVisible = !lobby;
             specMatchHeader.IsVisible = SpecMode && !lobby;
             body.Content = lobby ? LobbyView.Create(lobbySection, index => lobbySection = index, lobbyBackground) : SpecMode ? SpecMatch() : Match();

@@ -1,9 +1,12 @@
+using Avalonia.LogicalTree;
 using System.Text.Json;
 
 namespace CasterDesk.Desktop;
 
 internal sealed class BackupWindow : Window
 {
+    readonly Control uiOwner;
+    internal Action<bool>? EmbeddedClose;
     readonly Func<Task> prepare;
     readonly System.Action resume;
     readonly StackPanel actions = new(), review = new();
@@ -20,7 +23,7 @@ internal sealed class BackupWindow : Window
 
     public BackupWindow(Control owner, Func<Task> prepare, System.Action resume)
     {
-        this.prepare = prepare; this.resume = resume;
+        this.prepare = prepare; this.resume = resume;uiOwner=owner;
         var sizing = Ui.Dialog(owner, "Backup e restauração", new StackPanel(), 760, 610);
         Title = sizing.Title; Width = sizing.Width; Height = sizing.Height; Background = Ui.Canvas;
         WindowStartupLocation = WindowStartupLocation.CenterOwner; FontFamily = new FontFamily("Segoe UI"); FontSize = 14;
@@ -30,15 +33,15 @@ internal sealed class BackupWindow : Window
         panel.Children.Add(Ui.Text("O backup inclui partidas, artes, prints, textos e configurações dentro da pasta CasterDesk. Arquivos em caminhos externos e backups anteriores não são incluídos."));
         panel.Children.Add(Ui.Button("Copiar caminho", () => { try { Ui.CopyText(AppPaths.DataDirectory); } catch (Exception ex) { status.Text = ex.Message; } }));
         var create = Ui.Button("Criar backup", async () => {
-            try { if (await Ui.PickFile(this, "Criar backup", "zip", true, $"CasterDesk_Backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.zip") is string path) Operation = Create(path); }
+            try { if (await Ui.PickFile(uiOwner, "Criar backup", "zip", true, $"CasterDesk_Backup_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.zip") is string path) Operation = Create(path); }
             catch (Exception ex) { status.Text = ex.Message; }
         }, true); create.Name = "backup-create"; actions.Children.Add(create);
         var restore = Ui.Button("Restaurar backup", async () => {
-            try { if (await Ui.PickFile(this, "Restaurar backup", "zip") is string path) Operation = Verify(path); }
+            try { if (await Ui.PickFile(uiOwner, "Restaurar backup", "zip") is string path) Operation = Verify(path); }
             catch (Exception ex) { status.Text = ex.Message; }
         }); restore.Name = "backup-restore"; actions.Children.Add(restore);
         panel.Children.Add(actions); panel.Children.Add(progress); panel.Children.Add(status); panel.Children.Add(review);
-        panel.Children.Add(Ui.Button("Fechar", () => Close(scheduled)));
+        var closeButton=Ui.Button("Fechar", () => RequestClose(scheduled));closeButton.Name="backup-close";panel.Children.Add(closeButton);
         Closing += async (_, e) => {
             if (Busy || confirming) { e.Cancel = true; return; }
             if (!scheduled && (stage != null || copy != null)) {
@@ -46,6 +49,14 @@ internal sealed class BackupWindow : Window
                 await Task.Run(Cleanup); Busy = false; progress.IsVisible = false; Close(false);
             }
         };
+    }
+
+    internal Control DetachContent(){var body=(Control)Content!;var close=body.GetLogicalDescendants().OfType<Button>().FirstOrDefault(b=>b.Name=="backup-close");if(close!=null)close.IsVisible=false;Content=null;return body;}
+    void RequestClose(bool result){if(EmbeddedClose!=null)EmbeddedClose(result);else Close(result);}
+    internal async Task<bool> FinishEmbedded(){
+        if(Busy||confirming)return false;
+        if(!scheduled && (stage!=null||copy!=null)){Busy=true;try{await Task.Run(Cleanup);}finally{Busy=false;}}
+        return true;
     }
 
     async Task Work(Func<Task> action)
@@ -86,7 +97,7 @@ internal sealed class BackupWindow : Window
         if (manifest == null || copy == null || confirming) return;
         confirming = true; review.IsEnabled = actions.IsEnabled = false;
         int answer;
-        try { answer = await Ui.Ask(this, "Agendar a restauração e fechar o CasterDesk? Ela será aplicada na próxima abertura. Uma cópia dos dados atuais será guardada em Backups."); }
+        try { answer = await Ui.Ask(uiOwner, "Agendar a restauração e fechar o CasterDesk? Ela será aplicada na próxima abertura. Uma cópia dos dados atuais será guardada em Backups."); }
         finally { confirming = false; review.IsEnabled = actions.IsEnabled = true; }
         if (answer != 1) return;
         await Work(async () => {
@@ -98,7 +109,7 @@ internal sealed class BackupWindow : Window
             stage = null; scheduled = true;
             status.Text = L.T("Restauração agendada. Ela será aplicada na próxima abertura do CasterDesk.");
         });
-        if (scheduled) Close(true);
+        if (scheduled) RequestClose(true);
     }
     void Cleanup()
     {
