@@ -79,7 +79,7 @@ internal static class VisualSettingsChecks
             var againTabs=settingsWindow.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Name=="settings-tabs");againTabs.SelectedIndex=2;Pump();
             settingsWindow.GetVisualDescendants().OfType<ComboBox>().Single(c=>c.Name=="settings-theme").SelectedIndex=1;Pump();settingsWindow.Close();Pump();Need(again.IsCompleted,"preferences reopen with saved theme");
             shell.ToggleMenu();Pump();Capture(shell,"visual-dark-menu.png");shell.ToggleMenu();
-            var ownDialog=Ui.Dialog(shell,"Escolher mapa",Ui.Text("Mapa"),500,320);ownDialog.Show(shell);Pump();Need(ownDialog.WindowDecorations==WindowDecorations.None,"map dialog receives shared frame");ownDialog.Close();
+            var ownDialog=Ui.Dialog(shell,"Escolher mapa",Ui.Text("Mapa"),500,320);ownDialog.Show(shell);Pump();Need(ownDialog.ExtendClientAreaToDecorationsHint && ownDialog.GetVisualDescendants().OfType<Control>().Any(c=>c.Name=="window-drag-region"),"map dialog receives shared frame");ownDialog.Close();
             File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"visual-settings-check.txt"),$"PASS: {count} checks. Shared frames, menu blocking, three themes and live PT/EN/ES. Headless only; native Windows drag/resize requires manual verification.");
         }finally{shell.Close();Pump();L.Set("pt-BR");Ui.Theme(true);if(before==null)File.Delete(config);else File.WriteAllText(config,before);}
     }
