@@ -24,6 +24,17 @@ static class ReplayChecks
         byte[] original=File.ReadAllBytes(matchPath);
         var match=MatchStore.Read(matchPath,SiegeCatalog.Load());
         var folders=Directory.GetDirectories(replayRoot,"Match-2026-10-17_*");
+        foreach (string folder in folders) {
+            var label = await ReplayImport.PreviewFolderAsync(folder, CancellationToken.None);
+            Need(label.Header is {} h && h.Timestamp.Year == 2026 && h.Teams.Any(t => ReplayImport.SameName(t.Name, match.TeamA)) && h.Teams.Any(t => ReplayImport.SameName(t.Name, match.TeamB)) && ReplayImport.MapId(h.Map.Name) is "bank" or "villa", "folder preview identifies map, teams and date without full import");
+        }
+        string previewFixture=Path.Combine(AppPaths.DataDirectory,"preview-fixture");Directory.CreateDirectory(previewFixture);
+        File.WriteAllText(Path.Combine(previewFixture,"000.rec"),"invalid first file");
+        File.Copy(Directory.GetFiles(folders[0],"*.rec").First(),Path.Combine(previewFixture,"001.rec"));
+        Need((await ReplayImport.PreviewFolderAsync(previewFixture,CancellationToken.None)).Header!=null,"preview retries next file when first is incompatible");
+        File.Delete(Path.Combine(previewFixture,"001.rec"));
+        Need((await ReplayImport.PreviewFolderAsync(previewFixture,CancellationToken.None)).Header==null,"preview failure does not invent metadata");
+        using(var cancel=new CancellationTokenSource()){cancel.Cancel();bool cancelled=false;try{await ReplayImport.PreviewFolderAsync(previewFixture,cancel.Token);}catch(OperationCanceledException){cancelled=true;}Need(cancelled,"preview cancellation respected");}
         foreach(var map in match.Maps.Where(m=>m.Rounds.Count>0)){
             using var preview=await ReplayImport.ReadAsync(folders,match,map,null,CancellationToken.None);
             var modes=Enumerable.Repeat(true,preview.Sessions.Count-1).ToArray();

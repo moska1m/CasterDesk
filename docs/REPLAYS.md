@@ -7,7 +7,7 @@ Disponível para teste local na versão 1.0.9-beta.1. O processamento acontece n
 1. Termine o mapa no Siege e aguarde a gravação dos replays. Se a leitura indicar arquivo em gravação, tente novamente depois de sair do mapa/lobby.
 2. No CasterDesk, confirme o mapa ou abra suas estatísticas no Gerador de imagens.
 3. Clique em **Importar replays · beta**. Informe a pasta `MatchReplay` da instalação do Siege e clique em **Listar pastas**.
-4. Marque as pastas correspondentes ao mapa. Inclua os trechos anteriores e posteriores ao remake. Pastas de outros mapas são ignoradas; equipes incompatíveis interrompem a leitura.
+4. Aguarde a identificação de **mapa · equipe × equipe**, com data e pasta abaixo, e marque os trechos correspondentes. A pré-leitura consulta o cabeçalho de um arquivo da pasta; arquivos incompletos ou incompatíveis aparecem como não identificados. Inclua os trechos anteriores e posteriores ao remake. A importação completa valida novamente todos os arquivos: outros mapas são ignorados; equipes incompatíveis interrompem a leitura.
 5. Clique em **Ler selecionados**. Retornos ao mesmo ID de sessão são agrupados; para cada sessão diferente, escolha **Retorno: já inclui acumulados anteriores** ou **Novo lobby: somar ao trecho anterior**.
 6. Confira cobertura, placar, E/M/A e diferenças em relação aos valores salvos. Clique em **Aplicar à conferência**, revise os campos e finalize em **Confirmar estatísticas**.
 

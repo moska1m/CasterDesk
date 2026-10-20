@@ -9,7 +9,8 @@ MIT license and upstream copyright are retained in LICENSE.
 
 CasterDesk changes: minimal command-line entry point, bounded runtime supervised
 by the desktop app, and nullable initial/final cumulative scoreboard counters
-in dissect/casterdesk.go. No upload or account integration is used.
+in dissect/casterdesk.go, plus bounded header-only metadata reading for folder labels
+in dissect/casterdesk_header.go. No upload or account integration is used.
 Only parser sources are included; the fork's application frontend is not bundled.
 
 Build: scripts/Build-ReplayReader.ps1 -Go <go.exe>. The executable is generated

@@ -48,7 +48,7 @@ try {
         $release=$raw | ConvertFrom-Json
         if(!$release.isDraft){throw 'Essa versão já foi publicada. Não substitua instaladores de uma versão existente.'}
     } else {
-        & $Gh release create $tag --repo $repo --target $Target --title "CasterDesk $version" --notes-file $NotesFile --draft
+        & $Gh release create $tag --repo $repo --target $Target --title "$version" --notes-file $NotesFile --draft
         if($LASTEXITCODE -ne 0){throw 'Falha ao preparar a release.'}
     }
     $files=@($installerFile.FullName,($installerFile.FullName+'.sha256'),($installerFile.FullName+'.manifest.json'),$manifest)
@@ -58,7 +58,7 @@ try {
     & $Gh release edit $tag --repo $repo --draft=false "--prerelease=$($beta.ToString().ToLowerInvariant())" "--latest=$((!$beta).ToString().ToLowerInvariant())"
     if($LASTEXITCODE -ne 0){throw 'Não foi possível publicar a release.'}
     if($InitializeFeed){
-        & $Gh release create update-feed --repo $repo --target $Target --title 'Lista de versões do CasterDesk' --notes 'Catálogo assinado consumido pelo verificador de atualizações. Para instalar, use a versão mais recente do CasterDesk.' --prerelease --latest=false
+        & $Gh release create update-feed --repo $repo --target $Target --title 'update-feed' --notes 'Catálogo assinado consumido pelo verificador de atualizações. Para instalar, use a versão mais recente do CasterDesk.' --prerelease --latest=false
         if($LASTEXITCODE -ne 0){throw 'Falha ao preparar a hospedagem da lista. O instalador já está disponível; publique o catálogo separadamente.'}
     }
     $feed=Join-Path $stage 'versions.json';Copy-Item -LiteralPath $catalog -Destination $feed -Force

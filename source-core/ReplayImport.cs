@@ -55,6 +55,7 @@ public sealed class ReplayDocument
     public bool Concluded => Teams.Count(t => t.Won) == 1 && Teams.Sum(t => t.Score - t.StartingScore) == 1;
 }
 public sealed record ReplayFile(string Name, string Copy, string Sha256, string Json, ReplayDocument Data);
+public sealed record ReplayFolderPreview(ReplayDocument? Header, string Error);
 public sealed record ReplaySession(string Id, IReadOnlyList<ReplayFile> Files)
 {
     public ReplayDocument Last => Files.Where(f => f.Data.Concluded).OrderBy(f => f.Data.RoundNumber).ThenBy(f => f.Data.Timestamp).Last().Data;
@@ -132,16 +133,44 @@ public sealed class ReplayImport : IDisposable
         } catch { result.Dispose(); throw; }
     }
 
-    static async Task<string> ReadDocument(string file, CancellationToken token)
+    // A folder label is only a navigation aid. Import always rereads and validates
+    // every selected round before any values can be applied to the match.
+    public static async Task<ReplayFolderPreview> PreviewFolderAsync(string folder, CancellationToken token)
+    {
+        try {
+            token.ThrowIfCancellationRequested();
+            if ((File.GetAttributes(folder) & FileAttributes.ReparsePoint) != 0) throw new IOException("Pasta não disponível para pré-leitura.");
+            var files = Directory.GetFiles(folder, "*.rec").Order(StringComparer.OrdinalIgnoreCase).Take(3).ToArray();
+            foreach (string file in files) {
+                token.ThrowIfCancellationRequested();
+                try {
+                    var info = new FileInfo(file);
+                    if ((info.Attributes & FileAttributes.ReparsePoint) != 0 || info.Length is <= 0 or > 200_000_000) continue;
+                    long length = info.Length; var time = info.LastWriteTimeUtc;
+                    string json = await ReadDocument(file, token, headerOnly: true);
+                    info.Refresh();
+                    if (info.Length != length || info.LastWriteTimeUtc != time) continue;
+                    var header = JsonSerializer.Deserialize<ReplayDocument>(json, JsonOptions);
+                    if (header == null || header.Schema != 1 || !Guid.TryParse(header.MatchID, out _) || header.Teams.Count != 2 || header.Map.Id <= 0 || header.Map.Name.Length > 100 || header.Teams.Any(t => t.Name.Length > 100)) continue;
+                    return new(header, "");
+                } catch (OperationCanceledException) { token.ThrowIfCancellationRequested(); }
+                catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or System.ComponentModel.Win32Exception) { }
+            }
+            return new(null, "Não identificado · arquivo incompleto ou incompatível");
+        } catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return new(null, "Pré-leitura indisponível · confira a pasta"); }
+    }
+
+    static async Task<string> ReadDocument(string file, CancellationToken token, bool headerOnly = false)
     {
         string reader = Path.Combine(AppContext.BaseDirectory, "assets", "replay", "casterdesk-replay.exe");
         if (!File.Exists(reader)) throw new IOException("O leitor de replay não está incluído nesta instalação.");
         var start = new ProcessStartInfo(reader) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, StandardOutputEncoding = Encoding.UTF8 };
+        if (headerOnly) start.ArgumentList.Add("--header");
         start.ArgumentList.Add(file);
         using var process = Process.Start(start) ?? throw new IOException("Não foi possível abrir o leitor de replay.");
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token); timeout.CancelAfter(TimeSpan.FromSeconds(45));
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token); timeout.CancelAfter(TimeSpan.FromSeconds(headerOnly ? 8 : 45));
         var output = process.StandardOutput.ReadToEndAsync(timeout.Token); var error = process.StandardError.ReadToEndAsync(timeout.Token);
-        try { await process.WaitForExitAsync(timeout.Token); string json = await output, detail = await error; if (process.ExitCode != 0) throw new InvalidDataException("Replay incompatível ou incompleto: " + detail[..Math.Min(detail.Length, 250)]); if (json.Length > 8_000_000) throw new InvalidDataException("Saída do replay maior que o limite."); return json; }
+        try { await process.WaitForExitAsync(timeout.Token); string json = await output, detail = await error; if (process.ExitCode != 0) throw new InvalidDataException("Replay incompatível ou incompleto: " + detail[..Math.Min(detail.Length, 250)]); if (json.Length > (headerOnly ? 100_000 : 8_000_000)) throw new InvalidDataException("Saída do replay maior que o limite."); return json; }
         finally { if (!process.HasExited) { try { process.Kill(true); } catch { } } }
     }
 
