@@ -36,6 +36,7 @@ internal static class Checks
             if (!studio.PreviewReady) throw new Exception($"Category {category} preview failed.");
         }
         studio.Stop(); owner.Content = null; owner.Close();
+        WindowColorChecks.Run();
         VisualSettingsChecks.Run();
         UpdateUiChecks.Run();
         ReplayUiChecks.Run();

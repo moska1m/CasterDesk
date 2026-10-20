@@ -113,12 +113,10 @@ internal static partial class Ui
     {
         var button = new Button { Content = L.T(text), Margin = new Thickness(0, 0, 0, 8),
             HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Center };
+        // Theme defaults belong at style priority. A local color (team, state or warning)
+        // must not be overwritten when a resource resolves on attachment/theme change.
+        button.Classes.Add("app-button");
         if (primary) button.Classes.Add("primary");
-        else {
-            button.Bind(global::Avalonia.Controls.Button.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk"));
-            button.Bind(global::Avalonia.Controls.Button.BackgroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskHeader"));
-            button.Bind(global::Avalonia.Controls.Button.BorderBrushProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskFrame"));button.CornerRadius=new CornerRadius(1);
-        }
         paletteBound.Add(button,new());
         Track(button, text);
         button.Click += (_, _) => action();
@@ -130,7 +128,7 @@ internal static partial class Ui
         var label=new TextBlock {
             Text=text,FontSize=heading?18:14,FontWeight=heading?FontWeight.SemiBold:FontWeight.Normal,
             TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,heading?10:0,0,8) };
-        label.Bind(TextBlock.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk"));paletteBound.Add(label,new());return label;
+        label.Classes.Add("app-ink");paletteBound.Add(label,new());return label;
     }
 
     public static ComboBox Combo(params string[] choices) { var control = RawCombo(choices.Select(L.T).ToArray()); Track(control,choices); return control; }
@@ -209,6 +207,15 @@ internal static partial class Ui
         app.RequestedThemeVariant = ThemeVariant.Dark;
         WindowFrame.Install(app);
         Theme(ThemeName);
+        var buttonDefaults = new Style(x => x.OfType<Button>().Class("app-button"));
+        buttonDefaults.Setters.Add(new Setter(global::Avalonia.Controls.Button.ForegroundProperty, new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk")));
+        buttonDefaults.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskHeader")));
+        buttonDefaults.Setters.Add(new Setter(global::Avalonia.Controls.Button.BorderBrushProperty, new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskFrame")));
+        buttonDefaults.Setters.Add(new Setter(global::Avalonia.Controls.Button.CornerRadiusProperty, new CornerRadius(1)));
+        app.Styles.Add(buttonDefaults);
+        var textDefaults = new Style(x => x.OfType<TextBlock>().Class("app-ink"));
+        textDefaults.Setters.Add(new Setter(TextBlock.ForegroundProperty, new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk")));
+        app.Styles.Add(textDefaults);
         foreach(string state in new[]{"",":selected",":pointerover",":selected:pointerover"}){
             var item=new Style(x=>{var selector=x.OfType<ComboBoxItem>();foreach(var c in state.Split(':',StringSplitOptions.RemoveEmptyEntries))selector=selector.Class(":"+c);return selector;});
             item.Setters.Add(new Setter(ComboBoxItem.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk")));

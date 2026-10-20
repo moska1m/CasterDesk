@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
 using Avalonia.Styling;
+using Avalonia.VisualTree;
 
 namespace CasterDesk.Desktop;
 
@@ -25,11 +26,16 @@ internal static class WindowFrame
         title.Bind(TextBlock.TextProperty, new Binding("Title") { Source = window });
         var symbol=BrandMark.Create(Ui.Dark,16,true);symbol.Margin=new Thickness(10,0,0,0);symbol.VerticalAlignment=VerticalAlignment.Center;titlebar.Children.Add(symbol);
         titlebar.Children.Add(title);Grid.SetColumn(title,1);
-        title.PointerPressed += (_, e) => {
-            if (!e.GetCurrentPoint(title).Properties.IsLeftButtonPressed) return;
+        // The full caption, including its empty space and icon, is a drag surface.
+        // Caption buttons keep their own input and must never start a move operation.
+        titlebar.Name = "window-drag-region";
+        titlebar.AddHandler(Control.PointerPressedEvent, (_, e) => {
+            if (!e.GetCurrentPoint(titlebar).Properties.IsLeftButtonPressed
+                || e.Source is Visual source && source.GetSelfAndVisualAncestors().OfType<Button>().Any()) return;
             if (e.ClickCount == 2 && window.CanResize) window.WindowState = window.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
             else window.BeginMoveDrag(e);
-        };
+            e.Handled = true;
+        }, global::Avalonia.Interactivity.RoutingStrategies.Tunnel);
         var buttons = new StackPanel { Orientation = Orientation.Horizontal };
         void Caption(string kind,string label,Action action,bool visible=true) {
             var glyph=new CaptionGlyph(window,kind){Width=44,Height=30};
