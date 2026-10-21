@@ -37,6 +37,7 @@ internal static class Checks
         }
         studio.Stop(); owner.Content = null; owner.Close();
         WindowColorChecks.Run();
+        ChromeOverlayChecks.Run();
         VisualSettingsChecks.Run();
         UpdateUiChecks.Run();
         ReplayUiChecks.Run();

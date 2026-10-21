@@ -31,6 +31,7 @@ internal static class Program
                 throw new InvalidOperationException("Headless checks require isolated data.");
             AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
             SynchronizationContext.SetSynchronizationContext(new AvaloniaSynchronizationContext());
+            if(args.Contains("--window-chrome-only")){ChromeOverlayChecks.Run();return;}
             if(args.Contains("--window-colors-only")){WindowColorChecks.Run();}else if(args.Contains("--visual-only")){L.Set("pt-BR");VisualSettingsChecks.Run();}else if(args.Contains("--updates-only")){L.Set("pt-BR");UpdateUiChecks.Run();}else if(args.Contains("--table-only")){L.Set("pt-BR");TableSyncChecks.Run();}else if(args.Contains("--audit-fixes-only")){L.Set("pt-BR");AuditFixChecks.Run();}else if(args.Contains("--spec-only")){L.Set("pt-BR");SpecChecks.Run();}else if(args.Contains("--interaction-only")){L.Set("pt-BR");InteractionChecks.Run();}else if(args.Contains("--art-only")){L.Set("pt-BR");ArtChecks.Run();}else Checks.Run(); return;
         }
         InitialArguments = args;

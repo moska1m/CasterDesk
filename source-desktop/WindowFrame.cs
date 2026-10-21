@@ -20,6 +20,11 @@ internal static class WindowFrame
         style.Setters.Add(new Setter(Window.ExtendClientAreaTitleBarHeightHintProperty, 32d));
         style.Setters.Add(new Setter(Window.TemplateProperty, new FuncControlTemplate<Window>(Build)));
         app.Styles.Add(style);
+        // Avalonia 12 adds managed decorations above Window.Template through
+        // TopLevelHost. Our template already draws the complete caption.
+        var platformCaption = new Style(s => s.OfType<WindowDrawnDecorations>());
+        platformCaption.Setters.Add(new Setter(WindowDrawnDecorations.TemplateProperty, null));
+        app.Styles.Add(platformCaption);
     }
     static Control Build(Window window, INameScope scope)
     {

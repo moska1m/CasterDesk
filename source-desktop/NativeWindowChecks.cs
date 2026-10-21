@@ -54,6 +54,7 @@ internal static class NativeWindowChecks
         Need((style&0x00010000)!=0,"Native maximize support must remain enabled");
         foreach(string theme in new[]{"standard","light","dark"}) {
             Ui.Repaint(theme,window);
+            ChromeOverlayChecks.AssertSingleCaption(window);
             window.WindowState=WindowState.Normal;
             await Until(()=>!IsZoomed(handle)&&!IsIconic(handle),"Restore normal window");
             window.UpdateLayout();
@@ -67,7 +68,7 @@ internal static class NativeWindowChecks
             }
             var minimize=Find<Button>(window,"caption-minimize");
             window.UpdateLayout();await Task.Delay(60);
-            using(var shot=new RenderTargetBitmap(new PixelSize((int)window.Bounds.Width,(int)window.Bounds.Height))){shot.Render(window);shot.Save(Path.Combine(AppPaths.DataDirectory,"native-before-minimize.png"));}
+            using(var shot=new RenderTargetBitmap(new PixelSize((int)window.Bounds.Width,(int)window.Bounds.Height))){shot.Render(ChromeOverlayChecks.Host(window));shot.Save(Path.Combine(AppPaths.DataDirectory,"native-before-minimize.png"));}
             var p=minimize.TranslatePoint(new Point(22,15),window)!.Value;
             nint minimizeLocation=Coordinates(window.PointToScreen(p));
             nint minimizeHit=SendMessage(handle,0x84,0,minimizeLocation);
@@ -86,7 +87,7 @@ internal static class NativeWindowChecks
             }
         }
         window.WindowState=WindowState.Normal;window.UpdateLayout();
-        using(var bitmap=new RenderTargetBitmap(new PixelSize((int)window.Bounds.Width,(int)window.Bounds.Height))){bitmap.Render(window);bitmap.Save(Path.Combine(AppPaths.DataDirectory,"native-window.png"));}
+        using(var bitmap=new RenderTargetBitmap(new PixelSize((int)window.Bounds.Width,(int)window.Bounds.Height))){bitmap.Render(ChromeOverlayChecks.Host(window));bitmap.Save(Path.Combine(AppPaths.DataDirectory,"native-window.png"));}
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory,"native-window-check.txt"),$"PASS: {count} native Win32 checks. Caption hit testing and double-click; caption minimize and system/taskbar restore from normal/maximized; three themes.");
     }
 }
