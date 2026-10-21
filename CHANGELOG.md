@@ -1,3 +1,12 @@
+# 1.0.9-beta.7
+
+- Menu compacto com Opções, Atualizações, Créditos e status do OBS.
+- Preferências em abas, com Tabela, Backup e OBS integrados à janela principal.
+- Temas Padrão, Escuro e Claro, com troca de idioma aplicada imediatamente.
+- Correções nos cliques ao fundo, no contraste das listas e nas cores dos operadores.
+- Moldura própria com correções de arraste, maximização, restauração e botões duplicados.
+- Atualizações do aplicativo preservam o painel do OBS instalado.
+
 # 1.0.8
 
 - Verificador gratuito pelo GitHub Releases, com consulta automática e manual, avisos de prioridade e notas de publicação.

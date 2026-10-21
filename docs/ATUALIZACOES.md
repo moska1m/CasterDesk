@@ -4,7 +4,7 @@ O verificador usa arquivos públicos do GitHub Releases. Não exige servidor pag
 
 ## No programa
 
-Abra **Configurações → Verificar atualizações**. A lista mostra versão, data e tipo. Por padrão, só releases aparecem; **Mostrar betas** inclui as versões de teste e permite receber seus avisos. A escolha é salva para as próximas sessões. Versões anteriores podem ter suas notas consultadas; a interface não faz downgrade.
+Abra o verificador no menu de configurações. A lista mostra versão, data e tipo. Por padrão, só releases aparecem; **Mostrar betas** inclui as versões de teste e permite receber seus avisos. A escolha é salva para as próximas sessões. Versões anteriores podem ter suas notas consultadas; a interface não faz downgrade.
 
 A consulta automática acontece ao abrir e, durante a sessão, a cada seis horas. Se a rede falhar, o aplicativo continua funcionando. Atualizações importantes recebem um aviso destacado. Baixar não instala nem interrompe uma transmissão. A instalação começa somente ao clicar em **Instalar e fechar o CasterDesk**, após salvar os dados. O instalador normal é aberto; o painel OBS não é reinstalado automaticamente.
 

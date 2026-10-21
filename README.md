@@ -41,12 +41,12 @@ Também inclui **modo SPEC**, voltado ao registro e à correção de rounds, e i
 ## Instalação
 
 1. Baixe o [instalador](https://github.com/moska1m/CasterDesk/releases/latest) para **Windows 10 ou 11, x64**.
-2. Feche o CasterDesk e o OBS antes de atualizar. No instalador, o painel OBS é opcional.
+2. Feche o CasterDesk antes de atualizar. O painel OBS é opcional; feche o OBS apenas se for instalar ou atualizar o painel.
 3. Abra o programa e crie sua partida. Para usar o painel, acesse **Painéis → CasterDesk** no OBS.
 
 O painel requer **OBS Studio 31.1 ou mais recente, Windows x64**. Com a conexão habilitada e o CasterDesk aberto, ele se conecta automaticamente. [Guia do OBS](docs/OBS.md).
 
-Disponível em **português, inglês e espanhol**. Novas versões podem ser baixadas em **Configurações → Verificar atualizações**, com betas opcionais. [Guia de atualização](docs/ATUALIZACOES.md).
+Disponível em **português, inglês e espanhol**. Novas versões podem ser baixadas pelo menu de configurações, com betas opcionais. [Guia de atualização](docs/ATUALIZACOES.md).
 
 ## Arquivos e suporte
 
