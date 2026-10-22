@@ -25,6 +25,7 @@ public sealed partial class StudioShell : Window
     readonly TextBlock footer = Ui.Text("");
     int selected;
     bool menuOpen;
+    int microphoneClicks;
     bool backupOpen;
     readonly Border menuShade = new() { Background = Brush.Parse("#98000000"), IsVisible = false, Name = "menu-scrim" };
     ModalSurface? optionsWindow;
@@ -34,7 +35,7 @@ public sealed partial class StudioShell : Window
     public StudioShell(MatchSession? session = null, UpdateController? updater = null)
     {
         updates=updater??new UpdateController();
-        settings = ConfigurationStore.Read<Settings>("settings.json"); ConfigurationStore.Normalize(settings); Ui.Theme(settings.VisualTheme!);
+        settings = ConfigurationStore.Read<Settings>("settings.json"); ConfigurationStore.Normalize(settings); Ui.Theme(Program.BlackIcePreview ? "black-ice" : settings.VisualTheme!);
         Title = "CasterDesk • " + BuildInfo.Version; Width = 1440; Height = 900; MinWidth = 980; MinHeight = 640;
         WindowState = WindowState.Maximized;
         FontFamily = new FontFamily("Segoe UI"); FontSize = 14; Background = Ui.Canvas;
@@ -63,10 +64,11 @@ public sealed partial class StudioShell : Window
             catch (Exception ex) { footer.Text = ex.Message; }
         };
         var layout = new Grid { RowDefinitions = new("Auto,*,Auto") }; Content = layout;surfaceLayout=layout;
-        var header = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto"), Background = Ui.MenuSurface }; mainHeader=header;
+        var header = new IceHeader { ColumnDefinitions = new("Auto,*,Auto,Auto"), Background = Ui.MenuSurface }; mainHeader=header;
+        header.Classes.Add("ice-main-header");
         var brand = BrandMark.Create(Ui.Dark);
         brand.Margin = new Thickness(20, 8, 26, 8); brand.VerticalAlignment = VerticalAlignment.Center;
-        header.Children.Add(brand);
+        var brandPlaque=new IcePlaque(IceSurfaceKind.Brand){Name="brand-plaque"};brandPlaque.Children.Add(brand);header.Children.Add(brandPlaque);
         gear = Ui.Button("", ToggleMenu); gear.Name = "settings-menu"; gear.Content = new GearIcon { Name="settings-gear-icon", Width = 34, Height = 34 };
         gear.Width = 50; gear.Padding = new Thickness(6); gear.Margin = new Thickness(12, 5); gear.BorderThickness = new Thickness(1);
         gear.BorderBrush = Brush.Parse("#677078"); gear.Background = Brushes.Transparent;
@@ -78,7 +80,8 @@ public sealed partial class StudioShell : Window
         string[] labels = ["CAMPEONATO", "GERADOR DE IMAGENS", "TEXTOS PARA OBS"];
         for (int n = 0; n < labels.Length; n++) {
             int index = n; var tab = Ui.Button(labels[n], () => Navigate(index)); tab.Margin = new Thickness(0); tab.Padding = new Thickness(20, 17);
-            tab.Foreground = Ui.Ink; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
+            tab.Classes.Add("ice-tab");
+            tab.Foreground = BlackIceTheme.HeaderInk; tab.BorderThickness = new Thickness(0, 0, 0, 4); tabs[n] = tab; nav.Children.Add(tab);
         }
         header.Children.Add(nav); Grid.SetColumn(nav,1); layout.Children.Add(header);
         void FitHeader() {
@@ -89,7 +92,8 @@ public sealed partial class StudioShell : Window
         }
         SizeChanged += (_, _) => FitHeader(); FitHeader();PaintGear(false);
         layout.Children.Add(page); Grid.SetRow(page, 1);
-        drawerPanel = new Border { Background = Ui.MenuSurface, BorderBrush=Ui.FrameLine, BorderThickness=new Thickness(1), Margin=new Thickness(0,0,12,0), Padding = new Thickness(14), Child = new ScrollViewer { Content = drawer }, ClipToBounds = true,
+        var drawerIce=new IcePlaque(IceSurfaceKind.Menu);drawerIce.Children.Add(new ScrollViewer { Content=drawer,Margin=new Thickness(14) });
+        drawerPanel = new Border { Background = Ui.MenuSurface, BorderBrush=Ui.FrameLine, BorderThickness=new Thickness(1), Margin=new Thickness(0,0,12,0), Child = drawerIce, ClipToBounds = true,
             HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, IsVisible = false, Width = 300 };
         layout.Children.Add(menuShade); Grid.SetRowSpan(menuShade,3);
         menuShade.PointerPressed+=(_,e)=>{if(menuOpen)ToggleMenu();e.Handled=true;};
@@ -140,7 +144,7 @@ public sealed partial class StudioShell : Window
             if (selected == 2) Texts.Save();
             selected = index; page.Content = index == 0 ? Championship : index == 1 ? studio : Texts;
             if (index == 1) studio.Refresh(Championship.Session.Current.Id);
-            for (int n = 0; n < tabs.Length; n++) { tabs[n].BorderBrush = n == index ? Ui.Accent : Brushes.Transparent; tabs[n].Background = n == index ? Ui.Panel : Brushes.Transparent; }
+            for (int n = 0; n < tabs.Length; n++) { tabs[n].Classes.Set("ice-selected",n==index);tabs[n].BorderBrush = n == index ? Ui.Accent : Brushes.Transparent; tabs[n].Background = n == index ? Ui.BlackIce ? Brush.Parse("#17658C") : Ui.Panel : Brushes.Transparent; }
             if (menuOpen) ToggleMenu();
         } catch (Exception ex) { footer.Text = ex.Message; }
     }
@@ -149,6 +153,7 @@ public sealed partial class StudioShell : Window
     internal void ToggleMenu()
     {
         if(ActiveSurface!=null)return;
+        microphoneClicks=0;
         menuOpen = !menuOpen; drawerPanel.IsVisible = menuOpen; menuShade.IsVisible = menuOpen;menuShade.Background=Brushes.Transparent; drawerPanel.Width = Math.Min(300, Bounds.Width * .32);
         drawerPanel.MaxHeight = Math.Max(150, Bounds.Height - 100);
         page.IsEnabled=true;
@@ -163,7 +168,7 @@ public sealed partial class StudioShell : Window
         void Item(string title, Action action, string name) {
             var button=Ui.Button(title,action);button.Name=name;button.Height=56;button.FontSize=19;button.FontWeight=FontWeight.Bold;
             button.HorizontalContentAlignment=HorizontalAlignment.Left;button.Padding=new Thickness(16,6);button.Margin=new Thickness(0,0,0,8);
-            button.Background=Brushes.Transparent;button.Foreground=Ui.Ink;button.BorderBrush=Ui.FrameLine;button.BorderThickness=new Thickness(1);
+            button.Background=Brushes.Transparent;button.Foreground=BlackIceTheme.HeaderInk;button.BorderBrush=Ui.FrameLine;button.BorderThickness=new Thickness(1);
             void Highlight(bool on) { button.Background=on?MenuHighlight():Brushes.Transparent;button.BorderBrush=on?Ui.Accent:Ui.FrameLine;button.BorderThickness=new Thickness(1,1,1,on?4:1); }
             button.PointerEntered+=(_,_)=>Highlight(true);button.PointerExited+=(_,_)=>Highlight(false);
             button.GotFocus+=(_,_)=>Highlight(true);button.LostFocus+=(_,_)=>Highlight(false);drawer.Children.Add(button);
@@ -171,16 +176,38 @@ public sealed partial class StudioShell : Window
         Item("OPÇÕES",()=>_ = OpenOptions(),"options-menu");
         Item("ATUALIZAÇÕES",()=>_ = OpenUpdates(),"updates-menu");
         Item("CRÉDITOS",()=>_ = OpenCredits(),"credits-menu");
-        var label=Ui.Text("STATUS DO PLUGIN OBS",true);label.FontSize=12;drawer.Children.Add(label);
+        var label=Ui.Text("STATUS DO PLUGIN OBS",true);label.FontSize=12;label.Foreground=BlackIceTheme.HeaderInk;drawer.Children.Add(label);
         menuConnection=Ui.RawText("");menuConnection.FontSize=16;menuConnection.FontWeight=FontWeight.Bold;drawer.Children.Add(menuConnection);RefreshMenuConnection();
         drawer.Children.Add(new Border { Height=1,Background=Ui.FrameLine,Margin=new Thickness(0,10) });
         var identity=new StackPanel{Orientation=Orientation.Horizontal,Spacing=8};
-        var mark=BrandMark.Create(Ui.Dark);mark.Width=130;mark.Height=31;identity.Children.Add(mark);
-        var version=Ui.RawText(BuildInfo.Version);version.FontSize=11;version.VerticalAlignment=VerticalAlignment.Center;version.Margin=new Thickness(0);identity.Children.Add(version);drawer.Children.Add(identity);
+        var mark=BrandMark.Create(Ui.Dark);mark.Width=130;mark.Height=31;
+        var brandArea=new Grid{Width=130,Height=31};brandArea.Children.Add(mark);
+        // An unadvertised hit region over the existing mark, without button
+        // semantics, cursor, hover decoration or a hint in the ordinary UI.
+        var microphone=new Border{Name="menu-brand-microphone",Width=28,Height=31,Background=Brushes.Transparent,HorizontalAlignment=HorizontalAlignment.Left};
+        bool microphonePressed=false;
+        microphone.PointerPressed+=(_,e)=>microphonePressed=e.GetCurrentPoint(microphone).Properties.IsLeftButtonPressed;
+        microphone.PointerReleased+=(_,e)=>{
+            bool clicked=microphonePressed&&e.InitialPressMouseButton==MouseButton.Left&&new Rect(microphone.Bounds.Size).Contains(e.GetPosition(microphone));
+            microphonePressed=false;
+            if(!clicked||settings.BlackIceUnlocked)return;
+            if(++microphoneClicks==6)UnlockBlackIce();
+        };
+        brandArea.Children.Add(microphone);identity.Children.Add(brandArea);
+        var version=Ui.RawText(BuildInfo.Version);version.Foreground=BlackIceTheme.HeaderInk;version.FontSize=11;version.VerticalAlignment=VerticalAlignment.Center;version.Margin=new Thickness(0);identity.Children.Add(version);drawer.Children.Add(identity);
+    }
+    void UnlockBlackIce()
+    {
+        string previous=settings.VisualTheme??"standard";
+        try {
+            settings.BlackIceUnlocked=true;Appearance("black-ice");SaveSettings();
+        } catch(Exception ex) {
+            settings.BlackIceUnlocked=false;Appearance(previous);microphoneClicks=0;Notify(ex.Message);
+        }
     }
     IBrush MenuHighlight()=>new LinearGradientBrush {
         StartPoint=new RelativePoint(0,0,RelativeUnit.Relative),EndPoint=new RelativePoint(1,1,RelativeUnit.Relative),
-        GradientStops=[new GradientStop(Color.Parse(Ui.Dark?"#182535":"#D5E7F2"),0),new GradientStop(Color.Parse(Ui.Dark?"#622731":"#9FCBE1"),.65),new GradientStop(Color.Parse(Ui.Dark?"#E83E36":"#288CBA"),1)] };
+        GradientStops=[new GradientStop(Color.Parse(Ui.BlackIce?"#173C51":Ui.Dark?"#182535":"#D5E7F2"),0),new GradientStop(Color.Parse(Ui.BlackIce?"#245D78":Ui.Dark?"#622731":"#9FCBE1"),.65),new GradientStop(Color.Parse(Ui.BlackIce?"#1687B4":Ui.Dark?"#E83E36":"#288CBA"),1)] };
     void RefreshMenuConnection() { if(menuConnection==null)return;menuConnection.Text="●  "+L.T(obsDock.HasClient?"Conectado":"Desconectado").ToUpperInvariant();menuConnection.Foreground=Brush.Parse(obsDock.HasClient?(Ui.Dark?"#29DF83":"#087B46"):(Ui.Dark?"#FF645B":"#B42629")); }
     async Task OpenCredits() {
         if(menuOpen)ToggleMenu();
@@ -210,9 +237,9 @@ public sealed partial class StudioShell : Window
         Ui.Repaint(theme,new Control[]{this,Championship,studio,Texts}.Concat(OwnedWindows).Concat(extra).ToArray());
         settings.VisualTheme=Ui.ThemeName;settings.DarkMode=Ui.Dark;Background=Ui.Canvas;drawerPanel.Background=Ui.MenuSurface;
         if(mainHeader!=null)mainHeader.Background=Ui.MenuSurface;
-        foreach(var tab in tabs)tab.Foreground=Ui.Ink;
+        foreach(var tab in tabs)tab.Foreground=BlackIceTheme.HeaderInk;
         Championship.Refresh();studio.Background=Ui.Canvas;Texts.RefreshColors();
-        for(int i=0;i<tabs.Length;i++){tabs[i].Background=i==selected?Ui.Panel:Brushes.Transparent;tabs[i].BorderBrush=i==selected?Ui.Accent:Brushes.Transparent;}
+        for(int i=0;i<tabs.Length;i++){tabs[i].Classes.Set("ice-selected",i==selected);tabs[i].Background=i==selected?Ui.BlackIce?Brush.Parse("#17658C"):Ui.Panel:Brushes.Transparent;tabs[i].BorderBrush=i==selected?Ui.Accent:Brushes.Transparent;}
         PaintGear(menuOpen || gear.IsPointerOver);
         if(menuOpen)Menu();
     }

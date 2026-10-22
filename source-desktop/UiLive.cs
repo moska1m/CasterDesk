@@ -41,8 +41,12 @@ internal static partial class Ui
         IBrush? Replace(IBrush? b) => b==null?null:b.ToString()==oldCanvas.ToString()?Canvas:b.ToString()==oldPanel.ToString()?Panel:b.ToString()==oldHeader.ToString()?Header:b.ToString()==oldMenu.ToString()?MenuSurface:b.ToString()==oldInk.ToString()?Ink:b.ToString()==oldFrame.ToString()?FrameLine:b.ToString()==oldAccent.ToString()?Accent:b;
         var controls=roots.SelectMany(r=>r.GetVisualDescendants().OfType<Control>().Concat(r.GetLogicalDescendants().OfType<Control>()).Append(r)).Distinct().ToArray();
         foreach(var c in controls) {
+            if(c is Button button && button.Classes.Contains("app-button"))button.Classes.Set("black-ice-button",BlackIce);
+            if(c is IceHeader iceHeader){iceHeader.Classes.Set("black-ice-header",BlackIce);iceHeader.InvalidateVisual();}
+            if(c is IceSurface iceSurface)iceSurface.InvalidateVisual();
             if(c is CaptionGlyph glyph)glyph.InvalidateVisual();
             if(c is Window window){window.RequestedThemeVariant=Dark?global::Avalonia.Styling.ThemeVariant.Dark:global::Avalonia.Styling.ThemeVariant.Light;window.Foreground=Ink;}
+            if(c is Window themedWindow)themedWindow.Classes.Set("black-ice-window",BlackIce);
             if(c is global::Avalonia.Controls.Shapes.Path shape && shape.GetVisualAncestors().OfType<Viewbox>().Any(v=>v.Name is "casterdesk-brand" or "casterdesk-frame-symbol"))shape.Fill=Dark?Brushes.White:Brushes.Black;
             if(c is Border border){if(border.Background?.ToString()!=Replace(border.Background)?.ToString())border.Background=Replace(border.Background);if(border.BorderBrush?.ToString()!=Replace(border.BorderBrush)?.ToString())border.BorderBrush=Replace(border.BorderBrush);}
             if(c is Panel panel && panel.Background?.ToString()!=Replace(panel.Background)?.ToString())panel.Background=Replace(panel.Background);

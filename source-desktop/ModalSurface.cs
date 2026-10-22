@@ -15,9 +15,9 @@ internal sealed class ModalSurface : Border
     {
         Title=L.T(title);Width=width;Height=height;MaxWidth=width;MaxHeight=height;
         Background=Ui.Canvas;BorderBrush=Ui.FrameLine;BorderThickness=new Thickness(1);HorizontalAlignment=HorizontalAlignment.Center;VerticalAlignment=VerticalAlignment.Center;
-        var root=new Grid{RowDefinitions=new("Auto,*")};
+        var root=new IcePlaque(IceSurfaceKind.Modal){RowDefinitions=new("Auto,*")};
         var heading=Ui.Text(title,true);heading.Margin=new Thickness(20,14);heading.Name="surface-title";
-        var header=new Grid{ColumnDefinitions=new("*,Auto")};
+        var header=new IceHeader{ColumnDefinitions=new("*,Auto")};
         header.Children.Add(heading);
         var close=WindowFrame.CloseButton(()=>Close(),"surface-close");
         close.VerticalAlignment=VerticalAlignment.Top;

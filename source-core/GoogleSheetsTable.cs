@@ -6,13 +6,19 @@ using System.Text.RegularExpressions;
 
 namespace CasterDesk.Core;
 
-public sealed record SheetsTarget(string SpreadsheetId, int SheetId, string Title);
+public sealed record SheetsTarget(string SpreadsheetId, int SheetId, string Title)
+{
+    public override string ToString() => Title;
+}
 
 // The same input projection drives Excel and Sheets. RAW keeps nicknames and
 // map scores as literal text; one request updates inputs without touching artwork.
 public sealed class GoogleSheetsTable(HttpClient http, Func<CancellationToken, Task<string>> accessToken)
 {
     public const string SheetTitle = "Round Breakdown + Series Layout";
+    public static string TargetLink(SheetsTarget target) => "https://docs.google.com/spreadsheets/d/" + target.SpreadsheetId + "/edit#gid=" + target.SheetId;
+    static string Range(string title, string cells) => "'" + title.Replace("'", "''") + "'!" + cells;
+    sealed record Sheet(SheetsTarget Target, int Rows, int Columns);
     public static (string Id, int? Gid) ParseLink(string value)
     {
         value = value.Trim();
@@ -43,28 +49,43 @@ public sealed class GoogleSheetsTable(HttpClient http, Func<CancellationToken, T
         }
         return JsonDocument.Parse(await response.Content.ReadAsStringAsync(cancellation));
     }
+    async Task<Sheet[]> ReadSheets(string id, CancellationToken cancellation)
+    {
+        using var response = await Request(HttpMethod.Get, id + "?fields=sheets(properties(sheetId,title,gridProperties(rowCount,columnCount)))", null, cancellation);
+        return response.RootElement.GetProperty("sheets").EnumerateArray().Select(s => s.GetProperty("properties"))
+            .Where(p => p.TryGetProperty("gridProperties", out _))
+            .Select(p => new Sheet(new(id, p.GetProperty("sheetId").GetInt32(), p.GetProperty("title").GetString()!),
+                p.GetProperty("gridProperties").GetProperty("rowCount").GetInt32(), p.GetProperty("gridProperties").GetProperty("columnCount").GetInt32())).ToArray();
+    }
+    public async Task<IReadOnlyList<SheetsTarget>> ListAsync(string link, CancellationToken cancellation = default)
+    {
+        var (id, _) = ParseLink(link);
+        return (await ReadSheets(id, cancellation)).Select(s => s.Target).ToArray();
+    }
     public async Task<SheetsTarget> VerifyAsync(string link, CancellationToken cancellation = default)
     {
         var (id, gid) = ParseLink(link);
-        using var response = await Request(HttpMethod.Get, id + "?fields=sheets(properties(sheetId,title,gridProperties(rowCount,columnCount)))", null, cancellation);
-        var matches = response.RootElement.GetProperty("sheets").EnumerateArray().Select(s => s.GetProperty("properties"))
-            .Where(p => gid.HasValue ? p.GetProperty("sheetId").GetInt32() == gid.Value : p.GetProperty("title").GetString() == SheetTitle).ToArray();
-        if (matches.Length != 1 || matches[0].GetProperty("title").GetString() != SheetTitle)
-            throw new InvalidDataException("Selecione a aba “" + SheetTitle + "” do modelo da tabela.");
-        var grid = matches[0].GetProperty("gridProperties");
-        if (grid.GetProperty("rowCount").GetInt32() < 22 || grid.GetProperty("columnCount").GetInt32() < 9)
+        var sheets = await ReadSheets(id, cancellation);
+        var matches = sheets.Where(s => gid.HasValue ? s.Target.SheetId == gid.Value : s.Target.Title == SheetTitle).ToArray();
+        // Existing links still find the model by its original title. A sole tab
+        // can be renamed freely; multi-tab documents require an explicit choice.
+        if (!gid.HasValue && matches.Length == 0 && sheets.Length == 1) matches = sheets;
+        if (matches.Length != 1)
+            throw new InvalidDataException(gid.HasValue ? "A aba selecionada não existe mais. Carregue as abas e escolha novamente." : "Carregue as abas e escolha a que deve receber os dados, ou cole o link dessa aba.");
+        var sheet = matches[0]; var target = sheet.Target;
+        if (sheet.Rows < 22 || sheet.Columns < 9)
             throw new InvalidDataException("A aba precisa conter pelo menos as células A1:I22 do modelo.");
-        string range = Uri.EscapeDataString("'" + SheetTitle + "'!A1:I7");
+        string range = Uri.EscapeDataString(Range(target.Title, "A1:I7"));
         using var headers = await Request(HttpMethod.Get, id + "/values/" + range + "?fields=values", null, cancellation);
         if (!headers.RootElement.TryGetProperty("values", out var rows)) throw new InvalidDataException("A aba não contém os cabeçalhos do modelo.");
         string Cell(int row, int col) => rows.GetArrayLength() > row && rows[row].GetArrayLength() > col ? rows[row][col].ToString().Trim() : "";
         if (Cell(0,0) != "Time1" || Cell(0,1) != "Time2" || Cell(6,0) != "Rounds" || Cell(6,1) != "Vencedor" || Cell(6,2) != "Formato Vitória")
             throw new InvalidDataException("Os cabeçalhos da aba não correspondem ao modelo da tabela. Nenhuma célula foi alterada.");
-        return new(id, matches[0].GetProperty("sheetId").GetInt32(), SheetTitle);
+        return target;
     }
     public static object Batch(SheetsTarget target, IReadOnlyDictionary<string, object> values) => new {
         valueInputOption = "RAW",
-        data = values.Select(cell => new { range = "'" + target.Title.Replace("'", "''") + "'!" + cell.Key,
+        data = values.Select(cell => new { range = Range(target.Title, cell.Key),
             majorDimension = "ROWS", values = new[] { new[] { cell.Value } } }).ToArray()
     };
     public async Task UpdateAsync(string link, SiegeMatch match, SiegeCatalog catalog, CancellationToken cancellation = default)

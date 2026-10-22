@@ -39,6 +39,7 @@ internal static class Checks
         WindowColorChecks.Run();
         ChromeOverlayChecks.Run();
         VisualSettingsChecks.Run();
+        EasterEggChecks.Run();
         UpdateUiChecks.Run();
         ReplayUiChecks.Run();
         PortraitChecks.Run();

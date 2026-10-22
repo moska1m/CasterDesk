@@ -48,21 +48,23 @@ public sealed class StudioView : Grid
   this.list=list;this.catalog=catalog;this.applyVeto=applyVeto;Margin=new Thickness(18);Background=Ui.Canvas;
   RowDefinitions.Add(new(){Height=GridLength.Auto});RowDefinitions.Add(new(){Height=GridLength.Auto});RowDefinitions.Add(new());
   ColumnDefinitions.Add(new(){Width=new GridLength(370)});ColumnDefinitions.Add(new());
-  var navigation=new Grid{ColumnDefinitions=new("*,Auto"),Margin=new Thickness(0,0,0,8)};Children.Add(navigation);SetColumnSpan(navigation,2);
+  var navigation=new IceHeader{ColumnDefinitions=new("*,Auto"),Margin=new Thickness(0,0,0,8)};Children.Add(navigation);SetColumnSpan(navigation,2);
   var tabs=new StackPanel{Orientation=Orientation.Horizontal};navigation.Children.Add(tabs);
   string[] labels=["Anúncio","Map veto","Estatísticas por mapa","Estatísticas da série"];
   var buttons=new List<Button>();
   for(int i=0;i<labels.Length;i++) {
    int index=i;kind.Items.Add(new TabItem{Header=L.T(labels[i])});
    var button=Ui.Button(labels[i],()=>{if(!exporting&&!applying)kind.SelectedIndex=index;});button.Name="art-tab-"+i;button.Margin=new Thickness(0);button.Padding=new Thickness(20,10);buttons.Add(button);tabs.Children.Add(button);
+   button.Classes.Add("ice-tab");
   }
-  void PaintTabs(){for(int i=0;i<buttons.Count;i++){buttons[i].Background=i==kind.SelectedIndex?Ui.Panel:Brushes.Transparent;buttons[i].BorderThickness=new Thickness(0,0,0,3);buttons[i].BorderBrush=i==kind.SelectedIndex?Ui.Accent:Brushes.Transparent;}}
+  void PaintTabs(){for(int i=0;i<buttons.Count;i++){buttons[i].Classes.Set("ice-selected",i==kind.SelectedIndex);buttons[i].Background=i==kind.SelectedIndex?Ui.BlackIce?Brush.Parse("#17658C"):Ui.Panel:Brushes.Transparent;buttons[i].BorderThickness=new Thickness(0,0,0,3);buttons[i].BorderBrush=i==kind.SelectedIndex?Ui.Accent:Brushes.Transparent;}}
   kind.PropertyChanged+=(_,e)=>{if(e.Property==IsEnabledProperty)tabs.IsEnabled=kind.IsEnabled;};
   kind.SelectedIndex=0;PaintTabs();kind.SelectionChanged+=(_,_)=>PaintTabs();
   matches.Name="art-match-selector";matches.Width=300;matches.Height=32;matches.MinHeight=0;matches.Margin=new Thickness(8,0,0,0);matches.VerticalAlignment=VerticalAlignment.Center;navigation.Children.Add(matches);SetColumn(matches,1);
   // The hidden selector retains category state; visible buttons use the same tab treatment as Championship.
   kind.IsVisible=false;Children.Add(kind);SetRow(kind,1);SetColumnSpan(kind,2);
   var sidebar=new Grid{Margin=new Thickness(0,0,18,0)};sidebar.RowDefinitions.Add(new());sidebar.RowDefinitions.Add(new(){Height=GridLength.Auto});SetRow(sidebar,2);Children.Add(sidebar);
+  var well=new IceSurface(IceSurfaceKind.Well){Margin=new Thickness(-7),ZIndex=-1};SetRowSpan(well,2);sidebar.Children.Add(well);
   sidebar.Children.Add(new ScrollViewer{Name="art-options-scroll",Content=options,VerticalScrollBarVisibility=ScrollBarVisibility.Visible,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Margin=new Thickness(0,0,4,0)});sidebar.Children.Add(footer);SetRow(footer,1);
   void Label(string s)=>options.Children.Add(Ui.Text(s,true));
   void Action(string s,Action a)=>options.Children.Add(Ui.Button(s,a));

@@ -51,11 +51,12 @@ public sealed partial class ChampionshipView : Grid
         sectionTabs[0] = Action("Partida", () => { lobby = false; Refresh(); });
         sectionTabs[1] = Action("Configurar lobby", () => { var pool = Session.Catalog.Maps.Where(m=>m.Id!=lobbyBackground).ToArray(); lobbyBackground=pool[Random.Shared.Next(pool.Length)].Id; lobby = true; Refresh(); });
         foreach (var tab in sectionTabs) {
+            tab.Classes.Add("ice-tab");
             tab.Padding = new Thickness(20, 10); tab.Margin = new Thickness(0); tabs.Children.Add(tab);
             tab.PointerEntered += (_, _) => tab.Background = Ui.Accent;
-            tab.PointerExited += (_, _) => tab.Background = tab == sectionTabs[lobby ? 1 : 0] ? Ui.Panel : Brushes.Transparent;
+            tab.PointerExited += (_, _) => tab.Background = tab == sectionTabs[lobby ? 1 : 0] ? Ui.BlackIce?Brush.Parse("#17658C"):Ui.Panel : Brushes.Transparent;
         }
-        var navigation = new Grid { Name = "match-navigation", ColumnDefinitions = new("Auto,*,Auto") }; navigation.Children.Add(tabs);
+        var navigation = new IceHeader { Name = "match-navigation", ColumnDefinitions = new("Auto,*,Auto") }; navigation.Children.Add(tabs);
         navigation.Children.Add(specMatchHeader); SetColumn(specMatchHeader,1);
         navigation.Children.Add(matchToolbar); SetColumn(matchToolbar,2);
         Children.Add(navigation); Children.Add(body); SetRow(body, 1);
@@ -100,7 +101,7 @@ public sealed partial class ChampionshipView : Grid
         building = true;
         try {
             sectionTabs[0].Content=L.T(SpecMode?"Partida · SPEC":"Partida");
-            for (int n = 0; n < sectionTabs.Length; n++) { bool active = lobby == (n == 1); sectionTabs[n].BorderThickness = new Thickness(0, 0, 0, 3); sectionTabs[n].BorderBrush = active ? Ui.Accent : Brushes.Transparent; sectionTabs[n].Background = active ? Ui.Panel : Brushes.Transparent; }
+            for (int n = 0; n < sectionTabs.Length; n++) { bool active = lobby == (n == 1);sectionTabs[n].Classes.Set("ice-selected",active); sectionTabs[n].BorderThickness = new Thickness(0, 0, 0, 3); sectionTabs[n].BorderBrush = active ? Ui.Accent : Brushes.Transparent; sectionTabs[n].Background = active ? Ui.BlackIce?Brush.Parse("#17658C"):Ui.Panel : Brushes.Transparent; }
             matchToolbar.IsVisible = !lobby;
             specMatchHeader.IsVisible = SpecMode && !lobby;
             body.Content = lobby ? LobbyView.Create(lobbySection, index => lobbySection = index, lobbyBackground) : SpecMode ? SpecMatch() : Match();
@@ -139,7 +140,7 @@ public sealed partial class ChampionshipView : Grid
         bansBody.Children.Add(selectedMap);
         bansBody.Children.Remove(selectedMap);
         var title=bansBody.Children.OfType<TextBlock>().First();bansBody.Children.Remove(title);
-        var banHeader=Columns("*,Auto,Auto");banHeader.Background=Ui.Header;banHeader.Margin=new Thickness(-10,-10,-10,2);banHeader.MinHeight=30;
+        var banHeader=new IceHeader{ColumnDefinitions=new("*,Auto,Auto")};banHeader.Background=Ui.Header;banHeader.Margin=new Thickness(-10,-10,-10,2);banHeader.MinHeight=30;
         title.Background=Brushes.Transparent;title.Margin=new Thickness(0);title.TextWrapping=TextWrapping.NoWrap;title.TextTrimming=TextTrimming.CharacterEllipsis;title.FontSize=compact?11:14;
         Add(banHeader,title,0);selectedMap.Width=compact?110:180;selectedMap.Height=30;selectedMap.MinHeight=0;selectedMap.Margin=new Thickness(0,0,6,0);Add(banHeader,selectedMap,2);
         obsKnob = new Border { Width = 16, Height = 16, CornerRadius = new CornerRadius(8), Background = Brushes.White, Margin = new Thickness(3), VerticalAlignment = VerticalAlignment.Center };
@@ -150,7 +151,7 @@ public sealed partial class ChampionshipView : Grid
         global::Avalonia.Automation.AutomationProperties.SetName(obsMode,L.T("Plugin OBS"));
         obsMode.IsCheckedChanged+=(_,_)=>{bool value=obsMode.IsChecked==true;try{ObsBansModeChanged?.Invoke(value);UseObsForBans=value;PaintObsMode();}catch(Exception ex){notice.Text=ex.Message;obsMode.IsChecked=UseObsForBans;}};
         var obsLine = new StackPanel { Name = "obs-mode-line", Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-        obsLine.Children.Add(new TextBlock { Text = L.T("Plugin OBS").ToUpperInvariant(), FontSize = 12, FontWeight = FontWeight.Bold, VerticalAlignment = VerticalAlignment.Center }); obsLine.Children.Add(obsMode); PaintObsMode();
+        var obsCaption=new TextBlock { Text = L.T("Plugin OBS").ToUpperInvariant(), FontSize = 12, FontWeight = FontWeight.Bold, VerticalAlignment = VerticalAlignment.Center };obsCaption.Classes.Add("app-ink");obsLine.Children.Add(obsCaption); obsLine.Children.Add(obsMode); PaintObsMode();
         Add(banHeader,obsLine,1);bansBody.Children.Add(banHeader);
         bansPanel.Name = "bans-panel"; Add(layout, bansPanel, 0, 2);
         var scoreText = Ui.Text($"{match.TeamA}   {score?.A ?? 0} × {score?.B ?? 0}   {match.TeamB}", true);
@@ -163,7 +164,7 @@ public sealed partial class ChampionshipView : Grid
         roundCard.Name = "round-entry-card";
         var roundBody = (Grid)roundCard.Child!;
         var roundTitle = roundBody.Children.OfType<TextBlock>().First(); roundBody.Children.Remove(roundTitle);
-        var roundHeader = Columns("Auto,*");roundHeader.Background=Ui.Header;roundHeader.Margin=new Thickness(-10,-10,-10,8);
+        var roundHeader = new IceHeader{ColumnDefinitions=new("Auto,*")};roundHeader.Background=Ui.Header;roundHeader.Margin=new Thickness(-10,-10,-10,8);
         roundTitle.Margin=new Thickness(0);roundTitle.Background=Brushes.Transparent; Add(roundHeader, roundTitle, 0);
         if (map?.InitialAttack >= 0) {
             int number = map.Rounds.Count + 1, attacker = map.Attacker(number);
@@ -179,7 +180,7 @@ public sealed partial class ChampionshipView : Grid
         var historyTitle = historyBody.Children.OfType<TextBlock>().First(); historyBody.Children.Remove(historyTitle);
         historyTitle.Margin = new Thickness(0); historyTitle.Background = Brushes.Transparent; historyTitle.FontSize = compact ? 11 : 14;
         historyTitle.TextWrapping = TextWrapping.NoWrap; historyTitle.VerticalAlignment = VerticalAlignment.Center;
-        var historyHeader = new Grid { Name = "history-score-header", ColumnDefinitions = new("Auto,*"), MinHeight = 30, Background = Ui.Header, Margin = new Thickness(-10, -10, -10, 8) };
+        var historyHeader = new IceHeader { Name = "history-score-header", ColumnDefinitions = new("Auto,*"), MinHeight = 30, Background = Ui.Header, Margin = new Thickness(-10, -10, -10, 8) };
         Add(historyHeader, historyTitle, 0); Add(historyHeader, scoreText, 1); historyBody.Children.Add(historyHeader);
         Add(history, historyCard, 0);
         Add(roundArea, history, 1); Add(layout, roundArea, 1, 2);
@@ -193,7 +194,7 @@ public sealed partial class ChampionshipView : Grid
         confirm.Background = confirm.IsEnabled ? Brush.Parse("#25834C") : Brush.Parse("#334354");
         confirm.Opacity = confirm.IsEnabled ? 1 : .5; Add(history, confirm, 0, 1);
         var review = Action("Revisar resultado", Review); review.IsEnabled = map?.Confirmed == true; actions.Children.Add(review);
-        Add(layout, actions, 0, 3); SetColumnSpan(actions, 2);
+        var footerIce=new IcePlaque(IceSurfaceKind.Toolbar){Name="match-actions"};footerIce.Children.Add(actions);Add(layout, footerIce, 0, 3); SetColumnSpan(footerIce, 2);
         return layout;
     }
 

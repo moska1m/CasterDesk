@@ -12,12 +12,12 @@ public sealed partial class StudioShell
         var pages=new ContentControl{Name="settings-page"};root.Children.Add(pages);Grid.SetRow(pages,1);
         var pageContents=new List<Control>();
         void Present(){pages.Content=tabs.SelectedIndex>=0&&tabs.SelectedIndex<pageContents.Count?pageContents[tabs.SelectedIndex]:null;}
-        var navigation=new UniformGrid{Rows=1};root.Children.Add(navigation);
+        var navigation=new UniformGrid{Rows=1};var navigationIce=new IcePlaque(IceSurfaceKind.Toolbar);navigationIce.Children.Add(navigation);root.Children.Add(navigationIce);
         var tabButtons=new List<Button>();
-        void PaintTabs(){for(int i=0;i<tabButtons.Count;i++){var button=tabButtons[i];button.Foreground=Ui.Ink;button.Background=i==tabs.SelectedIndex?Ui.Panel:Brushes.Transparent;button.BorderBrush=i==tabs.SelectedIndex?Ui.Accent:Ui.FrameLine;button.BorderThickness=new Thickness(0,0,0,i==tabs.SelectedIndex?3:1);}}
+        void PaintTabs(){for(int i=0;i<tabButtons.Count;i++){var button=tabButtons[i];button.Classes.Set("ice-selected",i==tabs.SelectedIndex);button.Foreground=Ui.BlackIce?Brushes.White:Ui.Ink;button.Background=i==tabs.SelectedIndex?Ui.BlackIce?Brush.Parse("#17658C"):Ui.Panel:Brushes.Transparent;button.BorderBrush=i==tabs.SelectedIndex?Ui.Accent:Ui.FrameLine;button.BorderThickness=new Thickness(0,0,0,i==tabs.SelectedIndex?3:1);}}
         tabs.SelectionChanged+=(_,e)=>{if(e.Source==tabs){Present();PaintTabs();}};
         StackPanel Tab(string title) {
-            int index=tabs.Items.Count;var button=Ui.Button(title,()=>tabs.SelectedIndex=index);button.Margin=new Thickness(0);button.Padding=new Thickness(10,12);button.FontSize=14;button.FontWeight=FontWeight.Bold;tabButtons.Add(button);navigation.Children.Add(button);
+            int index=tabs.Items.Count;var button=Ui.Button(title,()=>tabs.SelectedIndex=index);button.Classes.Add("ice-tab");button.Margin=new Thickness(0);button.Padding=new Thickness(10,12);button.FontSize=14;button.FontWeight=FontWeight.Bold;tabButtons.Add(button);navigation.Children.Add(button);
             var panel=new StackPanel{Spacing=10,Margin=new Thickness(8,18)};
             pageContents.Add(new ScrollViewer{Content=panel,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled});tabs.Items.Add(new TabItem{Header=L.T(title),Name="settings-tab-"+tabs.Items.Count});return panel;
         }
@@ -55,7 +55,9 @@ public sealed partial class StudioShell
         var rounds=Ui.Combo("Modo rápido","Modo clássico");rounds.Name="settings-rounds";rounds.SelectedIndex=settings.QuickRounds?0:1;
         rounds.SelectionChanged+=(_,_)=>Change(()=>{if(rounds.SelectedIndex<0)return;settings.QuickRounds=rounds.SelectedIndex==0;Championship.SetQuickMode(settings.QuickRounds);});Row(match,"Registro de rounds",rounds);
         var appearance=Tab("APARÊNCIA");appearance.Children.Add(Ui.Text("TEMA DO CASTERDESK",true));
-        var theme=Ui.Combo("Padrão","Escuro","Claro");theme.Name="settings-theme";string[] themes=["standard","dark","light"];theme.SelectedIndex=Array.IndexOf(themes,settings.VisualTheme);
+        string[] themes=settings.BlackIceUnlocked?["standard","dark","light","black-ice"]:["standard","dark","light"];
+        var theme=Ui.Combo(settings.BlackIceUnlocked?["Padrão","Escuro","Claro","Black Ice"]:["Padrão","Escuro","Claro"]);theme.Name="settings-theme";theme.SelectedIndex=Array.IndexOf(themes,settings.VisualTheme);
+        if(Program.BlackIcePreview&&Ui.BlackIce&&!settings.BlackIceUnlocked){theme.SelectedIndex=-1;theme.PlaceholderText="Black Ice · prévia interna";}
         theme.SelectionChanged+=(_,_)=>Change(()=>{if(theme.SelectedIndex<0)return;string previous=settings.VisualTheme!;try{Appearance(themes[theme.SelectedIndex],pageContents.ToArray());PaintTabs();SaveSettings();}catch{Appearance(previous,pageContents.ToArray());throw;}});Row(appearance,"Tema",theme);
         appearance.Children.Add(Ui.Text("O tema altera somente o aplicativo. O painel do OBS mantém a aparência do OBS."));
         var table=Tab("TABELA");table.Children.Add(CreateTablePanel(out var cleanupTable));

@@ -4,7 +4,7 @@ Disponível em **Tabela da partida → Google Sheets**, desde a versão 1.0.8-be
 
 ## Uso na edição com login integrado (beta.3)
 
-O instalador preparado com a identidade OAuth do CasterDesk já configura o login. Cada usuário clica em **Conectar com Google**, escolhe sua própria conta e autoriza. Depois cola o link da planilha, marca a sincronização e usa **Verificar e aplicar**. O destino é salvo para as próximas aberturas.
+O instalador preparado com a identidade OAuth do CasterDesk já configura o login. Cada usuário clica em **Conectar com Google**, escolhe sua própria conta e autoriza. Depois cola o link da planilha, usa **Carregar abas** e escolhe a aba de destino. Por fim, marca a sincronização e usa **Verificar e aplicar**. O destino é salvo para as próximas aberturas. Carregar ou selecionar uma aba não altera células nem aplica a sincronização.
 
 O usuário não precisa criar um projeto Google nem importar JSON. Enquanto o projeto estiver em testes, o responsável pelo projeto precisa adicionar previamente o e-mail desse usuário à lista autorizada. A conta também precisa ter acesso de edição à planilha selecionada.
 
@@ -17,7 +17,7 @@ O instalador contém somente a identidade de cliente OAuth para aplicativo de co
 3. Adicione as contas que vão testar em **Público-alvo → Usuários de teste**.
 4. Crie um cliente OAuth do tipo **App para computador**. Baixe seu arquivo JSON.
 5. Em uma instalação sem login integrado, importe esse JSON em **Opções avançadas** e clique em **Conectar com Google**. A autorização abre no navegador padrão do Windows, sem preferência por Chrome.
-6. Cole o link da planilha de destino, incluindo o `gid` da aba quando disponível. A conta precisa poder editar esse arquivo. Para o primeiro teste, use uma cópia do modelo.
+6. Cole o link da planilha de destino. Use **Carregar abas** para escolher a aba, ou inclua o `gid` dela no link. A conta precisa poder editar esse arquivo. Para o primeiro teste, use uma cópia do modelo.
 7. Marque **Sincronizar automaticamente** e clique em **Verificar e aplicar**.
 
 Não é necessário configurar Cloudflare, abrir portas do roteador ou usar uma conta de serviço. A autorização usa um retorno temporário em `127.0.0.1`, limitado ao próprio PC.
@@ -26,7 +26,9 @@ Em projetos externos que permanecem em testes, o Google pode expirar o refresh t
 
 ## O que é atualizado
 
-O destino deve conter a aba **Round Breakdown + Series Layout**, com os cabeçalhos e posições do modelo original. O programa verifica o identificador da aba, as dimensões mínimas e os cabeçalhos antes de escrever.
+O destino deve manter os cabeçalhos e posições do modelo original, mas a aba pode ter outro nome, inclusive **Round Breakdown Series Layout** sem o sinal `+`. O programa verifica o identificador da aba, as dimensões mínimas e os cabeçalhos antes de escrever. O nome não substitui a validação da estrutura.
+
+O destino é salvo com o identificador numérico da aba (`gid`). Se ela for renomeada depois, o programa consulta o nome atual antes de escrever e continua usando a mesma aba. Se ela for excluída, o programa recusa a atualização em vez de trocar para outra aba. Para links sem `gid`, a aba com o título original é reconhecida automaticamente; uma planilha com somente uma aba também pode ser usada. Nos outros casos, é necessário escolher a aba explicitamente.
 
 Usa a mesma projeção do Excel local: nomes das equipes, placar confirmado da série, mapas, status dos mapas, resultados, atacante inicial/overtime e os quinze registros de vencedor e finalização. As finalizações de desativador são exportadas como `Desativador`. O modelo continua limitado a MD1 e MD3.
 
@@ -44,6 +46,6 @@ A autorização do usuário é protegida com Windows DPAPI, vinculada ao usuári
 
 ## Verificação realizada
 
-Testes isolados cobrem o lote RAW, igualdade com o mapeamento do Excel, recusa de destinos incompatíveis, retorno de login com estado inválido, PKCE, proteção da autorização, renovação e revogação. Esses testes usam respostas simuladas, sem contatar uma conta Google. O teste real exige login do usuário e uma planilha de destino com acesso de edição.
+Testes isolados cobrem o lote RAW, igualdade com o mapeamento do Excel, seleção por identificador, abas renomeadas, nomes com caracteres especiais, listagem sem escrita e recusa de destinos incompatíveis ou excluídos. Também verificam retorno de login com estado inválido, PKCE, proteção da autorização, renovação e revogação. Esses testes usam respostas simuladas, sem contatar uma conta Google. O teste real exige login do usuário e uma planilha de destino com acesso de edição.
 
 Referências oficiais: [OAuth para aplicativos de computador](https://developers.google.com/identity/protocols/oauth2/native-app), [atualização de valores em lote](https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/batchUpdate), [expiração de autorizações](https://developers.google.com/identity/protocols/oauth2#expiration).

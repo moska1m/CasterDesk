@@ -21,7 +21,8 @@ public static class ConfigurationStore
  public static void Normalize(Settings value)
  {
   value.Language=L.Languages.Contains(value.Language)?value.Language:"pt-BR";
-  value.VisualTheme=value.VisualTheme is "standard" or "dark" or "light"?value.VisualTheme:value.DarkMode?"standard":"light";
+  value.VisualTheme=value.VisualTheme is "standard" or "dark" or "light" or "black-ice"?value.VisualTheme:value.DarkMode?"standard":"light";
+  if(value.VisualTheme=="black-ice"&&!value.BlackIceUnlocked)value.VisualTheme="standard";
   value.Initial=Math.Clamp(value.Initial,0,1440);
   value.Presets=(value.Presets??new decimal[]{2,3,4}).Where(p=>p>0&&p<=1440).Take(8).ToArray();
   value.Format=value.Format=="hh:mm:ss"?value.Format:"mm:ss";

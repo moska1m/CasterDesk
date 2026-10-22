@@ -8,7 +8,7 @@ public sealed partial class StudioShell
     {
         var panel = new StackPanel { Margin = new Thickness(20), Spacing = 8 };
         panel.Children.Add(Ui.Text("TABELA DA PARTIDA · GOOGLE SHEETS", true));
-        panel.Children.Add(Ui.Text("Usa as mesmas informações do Excel local. Atualiza somente os campos de entrada da aba Round Breakdown + Series Layout e mantém cópias da partida no PC."));
+        panel.Children.Add(Ui.Text("Usa as mesmas informações do Excel local. Atualiza somente os campos de entrada da aba escolhida e mantém cópias da partida no PC. Você pode renomear a aba, mantendo a estrutura do modelo."));
         var account = Ui.RawText(googleTable.Auth.Connected ? "Conta Google conectada." : googleTable.Auth.Configured ? "Conecte sua conta Google para começar." : "O login Google não está disponível nesta instalação. Confira as opções avançadas.");
         panel.Children.Add(account);
         var state = Ui.RawText(googleTable.Status); state.TextWrapping = TextWrapping.Wrap;
@@ -38,6 +38,8 @@ public sealed partial class StudioShell
         connect.Name = "google-connect"; panel.Children.Add(connect);
         panel.Children.Add(Ui.Text("Planilha que deve receber os dados"));
         var link = new TextBox { Name = "google-table-link", Text = googleTable.Link, PlaceholderText = "https://docs.google.com/spreadsheets/d/…/edit#gid=…" }; panel.Children.Add(link);
+        panel.Children.Add(Ui.Text("Aba que deve receber os dados"));
+        panel.Children.Add(new GoogleSheetPicker(link,googleTable.ListSheetsAsync,message=>state.Text=message,loginCancellation));
         panel.Children.Add(enabled);
         panel.Children.Add(Ui.Text("A conta conectada precisa poder editar a planilha. No primeiro teste, use uma cópia do modelo. A conexão não altera as células vermelhas, fórmulas ou formatação."));
         var actions = new UniformGrid { Columns = 2 };

@@ -40,17 +40,26 @@ public sealed class GoogleTableSync
     }
     public async Task ConfigureAsync(bool enabled, string link)
     {
+        SheetsTarget? target = null;
         if (enabled) {
             _ = MatchTable.Inputs(session.Current, session.Catalog);
             if (!Auth.Connected) throw new InvalidOperationException("Conecte a conta Google antes de ativar.");
-            await sheets.VerifyAsync(link, lifetime.Token);
+            target = await sheets.VerifyAsync(link, lifetime.Token);
         }
         // Drain an in-flight request before changing its destination.
         await upload;
+        // Pin the selected numeric tab ID so future renames cannot switch tabs.
+        link = target == null ? link.Trim() : GoogleSheetsTable.TargetLink(target);
         MatchFiles.AtomicText(AppPaths.ConfigFile("google-table-settings.json"), JsonSerializer.Serialize(new GoogleTableSettings { Enabled = enabled, Link = link.Trim() }));
         settings.Enabled = enabled; settings.Link = link.Trim(); previous = ""; retryAfter = default; failures = 0;
         if (enabled) { Capture(); TryUpload(); }
         else { Status = "Google Sheets desligado. As cópias locais foram mantidas."; Changed?.Invoke(); }
+    }
+    public async Task<IReadOnlyList<SheetsTarget>> ListSheetsAsync(string link, CancellationToken cancellation = default)
+    {
+        if (!Auth.Connected) throw new InvalidOperationException("Conecte a conta Google antes de carregar as abas.");
+        using var pending = CancellationTokenSource.CreateLinkedTokenSource(cancellation, lifetime.Token);
+        return await sheets.ListAsync(link, pending.Token);
     }
     void Capture()
     {

@@ -120,7 +120,7 @@ public sealed class TextsView : Grid
         catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException) { return ""; }
     }
     Border Card(string title, Control content) { var card = Ui.Card(title, content); cards.Add(card); return card; }
-    public void RefreshColors() { Background = Ui.Canvas; foreach (var card in cards) { card.Background = Ui.Panel; if(card.Child is Grid body)foreach(var title in body.Children.OfType<TextBlock>())title.Background=Ui.Header; } }
+    public void RefreshColors() { Background = Ui.Canvas; foreach (var card in cards) { card.Background = Ui.Panel; if(card.Child is Grid body)foreach(var title in body.Children.OfType<TextBlock>()){if(Ui.BlackIce)title.ClearValue(TextBlock.BackgroundProperty);else title.Background=Ui.Header;} } }
     Button Command(string label, string name, System.Action action, bool primary = false) {
         var button = Ui.Button(label, () => { try { action(); } catch (Exception ex) { status.Text = ex.Message; } }, primary); button.Name = name; return button;
     }

@@ -45,6 +45,8 @@ internal static class TableSyncChecks
         var tabs = dialog.GetVisualDescendants().OfType<TabControl>().Single();
         tabs.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
         Need(dialog.GetVisualDescendants().OfType<TextBox>().Any(c => c.Name == "google-table-link"), "Google destination input");
+        Need(dialog.GetVisualDescendants().OfType<ComboBox>().Any(c=>c.Name=="google-table-sheet"),"destination tab selector visible");
+        Need(dialog.GetVisualDescendants().OfType<Button>().Any(c=>c.Name=="google-load-sheets"),"read-only load tabs action available");
         Need(!dialog.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "google-table-enabled").IsChecked.GetValueOrDefault(), "Google off by default");
         Need(dialog.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "google-connect").Content?.ToString() == "Conectar com Google", "simple Google login action");
         Need(!dialog.GetVisualDescendants().OfType<Expander>().Single(c => c.Name == "google-advanced").IsExpanded, "technical setup hidden by default");
@@ -52,6 +54,18 @@ internal static class TableSyncChecks
             preview.Render(dialog); preview.Save(Path.Combine(AppPaths.DataDirectory, "google-table-panel.png"));
         }
         dialog.Close(); shell.Close(); Dispatcher.UIThread.RunJobs();
-        File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "casterdesk-table-check.txt"), "PASS: optional default, ordered snapshots, archives on match change, persistent configuration, independent active map and toolbar in both modes.");
+        const string testId="test_document_01234567890123456789";
+        var entry=new TextBox{Text="https://docs.google.com/spreadsheets/d/"+testId+"/edit"};string pickerStatus="";
+        var delayed=new TaskCompletionSource<IReadOnlyList<SheetsTarget>>();int calls=0;
+        var picker=new GoogleSheetPicker(entry,(_,_)=>{calls++;return calls==1?Task.FromResult<IReadOnlyList<SheetsTarget>>([new(testId,42,"Round Breakdown Series Layout"),new(testId,99,"Outra aba")]):delayed.Task;},text=>pickerStatus=text,CancellationToken.None);
+        var pickerWindow=new Window{Content=new StackPanel{Children={entry,picker}},Width=740,Height=200};pickerWindow.Show();Dispatcher.UIThread.RunJobs();
+        var choices=picker.Children.OfType<ComboBox>().Single();
+        Wait(picker.LoadAsync());Need(choices.Items.Count==2&&choices.SelectedIndex==-1,"multiple renamed tabs need explicit selection");
+        choices.SelectedIndex=0;Dispatcher.UIThread.RunJobs();Need(GoogleSheetsTable.ParseLink(entry.Text!)==(testId,42)&&pickerStatus.Contains("Round Breakdown Series Layout"),"user choice sets stable destination and reports current name");
+        entry.Text="https://docs.google.com/spreadsheets/d/other_document_01234567890123456789/edit";Dispatcher.UIThread.RunJobs();Need(choices.Items.Count==0&&choices.SelectedIndex==-1,"editing link invalidates previous tab choice");
+        var pending=picker.LoadAsync();entry.Text="https://docs.google.com/spreadsheets/d/third_document_01234567890123456789/edit";Dispatcher.UIThread.RunJobs();
+        delayed.SetResult([new(testId,42,"Resposta antiga")]);Wait(pending);Need(choices.Items.Count==0&&pickerStatus.Contains("link mudou"),"late tab response cannot replace destination of a different document");
+        pickerWindow.Close();Dispatcher.UIThread.RunJobs();
+        File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "casterdesk-table-check.txt"), "PASS: optional default, ordered snapshots, archives on match change, persistent configuration, independent active map and toolbar in both modes. Google tab picker, explicit destination selection, link change and stale response. Headless, no Google account contacted.");
     }
 }

@@ -3,7 +3,7 @@ namespace CasterDesk.Desktop;
 internal sealed class HeaderTimer : Border
 {
     readonly TextsView texts;
-    readonly TextBlock value = new() { Name = "header-timer-value", FontSize = 24, FontWeight = FontWeight.Bold, Foreground = Ui.Ink, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6,0) };
+    readonly TextBlock value = new() { Name = "header-timer-value", FontSize = 24, FontWeight = FontWeight.Bold, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6,0) };
     readonly TextBlock state = new() { Foreground = Brush.Parse("#40BAD4"), VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4,0) };
     readonly Button start, pause, subtract, add;
     bool compact;
@@ -12,10 +12,12 @@ internal sealed class HeaderTimer : Border
         this.texts = texts; Name = "header-timer"; Margin = new Thickness(8,5); Padding = new Thickness(4);
         BorderBrush = Brush.Parse("#425261"); BorderThickness = new Thickness(1); VerticalAlignment = VerticalAlignment.Center;
         var strip = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 }; Child = strip;
-        strip.Children.Add(new TextBlock { Text = "◷", FontSize = 24, Foreground = Ui.Ink, VerticalAlignment = VerticalAlignment.Center });
+        value.Classes.Add("header-ink");
+        var clock = new TextBlock { Text = "◷", FontSize = 24, VerticalAlignment = VerticalAlignment.Center };
+        clock.Classes.Add("header-ink"); strip.Children.Add(clock);
         strip.Children.Add(value); strip.Children.Add(state);
         Button Control(string caption, string name, string tooltip, Action action) {
-            var button = Ui.Button(caption, action); button.Name = name; button.Margin = new Thickness(1); button.Padding = new Thickness(7,4); button.Foreground = Ui.Ink;
+            var button = Ui.Button(caption, action); button.Name = name; button.Margin = new Thickness(1); button.Padding = new Thickness(7,4); button.Classes.Add("header-ink");
             ToolTip.SetTip(button, L.T(tooltip)); global::Avalonia.Automation.AutomationProperties.SetName(button, L.T(tooltip)); strip.Children.Add(button); return button;
         }
         start = Control("▶", "header-timer-start", "Iniciar / Retomar", texts.StartFromHeader);

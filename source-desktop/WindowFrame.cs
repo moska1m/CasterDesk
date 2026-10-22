@@ -16,7 +16,7 @@ internal static class WindowFrame
         var glyph=new CaptionGlyph(null,"close"){Width=44,Height=30};
         var button=Ui.Button("",action);button.Name=name;button.Width=44;button.Height=30;button.MinHeight=0;
         button.Margin=new Thickness(0);button.Padding=new Thickness(0);button.BorderThickness=new Thickness(0);button.Background=Brushes.Transparent;
-        button.Template=new FuncControlTemplate<Button>((control,names)=>{var back=new Border{Child=glyph};back.Bind(Border.BackgroundProperty,new Binding("Background"){Source=control});return back;});
+        button.Template=new FuncControlTemplate<Button>((control,names)=>{var layers=new Grid();layers.Children.Add(new IceSurface(IceSurfaceKind.Button,control));layers.Children.Add(glyph);var back=new Border{Child=layers};back.Bind(Border.BackgroundProperty,new Binding("Background"){Source=control});return back;});
         button.PointerEntered+=(_,_)=>{glyph.Hovered=true;button.Background=Brush.Parse("#D92C35");glyph.InvalidateVisual();};
         button.PointerExited+=(_,_)=>{glyph.Hovered=false;button.Background=Brushes.Transparent;glyph.InvalidateVisual();};
         global::Avalonia.Automation.AutomationProperties.SetName(button,L.T("Fechar"));
@@ -40,10 +40,13 @@ internal static class WindowFrame
     static Control Build(Window window, INameScope scope)
     {
         window.RequestedThemeVariant=Ui.Dark?ThemeVariant.Dark:ThemeVariant.Light;window.Foreground=Ui.Ink;
+        window.Classes.Set("black-ice-window",Ui.BlackIce);
         window.CanMinimize=window is StudioShell;window.CanMaximize=window.CanResize;
         var grid = new Grid { RowDefinitions = new("32,*"), Background = Ui.Canvas };
-        var titlebar = new Grid { ColumnDefinitions = new("Auto,*,Auto"), Background = Ui.MenuSurface };
-        var title = new TextBlock { Margin = new Thickness(12,0), VerticalAlignment = VerticalAlignment.Center, FontSize = 12, Foreground = Ui.Ink };
+        var bodyIce=new IceSurface(IceSurfaceKind.Canvas){Name="ice-window-material",ZIndex=-1};Grid.SetRowSpan(bodyIce,2);grid.Children.Add(bodyIce);
+        var titlebar = new IceHeader { ColumnDefinitions = new("Auto,*,Auto"), Background = Ui.MenuSurface };
+        var title = new TextBlock { Margin = new Thickness(12,0), VerticalAlignment = VerticalAlignment.Center, FontSize = 12 };
+        title.Classes.Add("caption-ink");
         title.Bind(TextBlock.TextProperty, new Binding("Title") { Source = window });
         var symbol=BrandMark.Create(Ui.Dark,16,true);symbol.Margin=new Thickness(10,0,0,0);symbol.VerticalAlignment=VerticalAlignment.Center;titlebar.Children.Add(symbol);
         titlebar.Children.Add(title);Grid.SetColumn(title,1);
@@ -75,7 +78,7 @@ internal static class WindowFrame
                 "maximize"=>WindowDecorationsElementRole.MaximizeButton,
                 _=>WindowDecorationsElementRole.CloseButton
             });
-            b.Template=new FuncControlTemplate<Button>((control,names)=>{var back=new Border{Child=glyph};back.Bind(Border.BackgroundProperty,new Binding("Background"){Source=control});return back;});
+            b.Template=new FuncControlTemplate<Button>((control,names)=>{var layers=new Grid();layers.Children.Add(new IceSurface(IceSurfaceKind.Button,control));layers.Children.Add(glyph);var back=new Border{Child=layers};back.Bind(Border.BackgroundProperty,new Binding("Background"){Source=control});return back;});
             b.PointerEntered+=(_,_)=>{glyph.Hovered=true;b.Background=Brush.Parse(kind=="close"?"#D92C35":Ui.Dark?"#314456":"#CAD6E0");glyph.InvalidateVisual();};
             b.PointerExited+=(_,_)=>{glyph.Hovered=false;b.Background=Brushes.Transparent;glyph.InvalidateVisual();};
             window.PropertyChanged+=(_,e)=>{if(e.Property==Window.WindowStateProperty)glyph.InvalidateVisual();};
@@ -90,7 +93,7 @@ internal static class WindowFrame
         presenter.Bind(ContentPresenter.ContentProperty,new Binding("Content") { Source=window });
         WindowDecorationProperties.SetElementRole(presenter, WindowDecorationsElementRole.User);
         grid.Children.Add(presenter); Grid.SetRow(presenter,1);
-        var frame = new Border { BorderThickness = new Thickness(1), BorderBrush = Ui.FrameLine, Child = grid };
+        var frame = new Border { BorderBrush = Ui.FrameLine, Child = grid };frame.Classes.Add("ice-window-frame");
         var root = new Grid(); root.Children.Add(frame);
         void Grip(WindowEdge edge, HorizontalAlignment h, VerticalAlignment v, bool horizontal) {
             var grip = new Border { Background=Brushes.Transparent, HorizontalAlignment=h, VerticalAlignment=v, Cursor=new Cursor(edge is WindowEdge.North or WindowEdge.South?StandardCursorType.SizeNorthSouth:edge is WindowEdge.West or WindowEdge.East?StandardCursorType.SizeWestEast:edge is WindowEdge.NorthWest or WindowEdge.SouthEast?StandardCursorType.TopLeftCorner:StandardCursorType.TopRightCorner) };

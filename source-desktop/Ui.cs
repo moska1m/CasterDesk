@@ -9,30 +9,38 @@ internal static partial class Ui
     static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Control,object> paletteBound=new();
     public static bool Dark { get; private set; } = true;
     public static string ThemeName { get; private set; } = "standard";
-    public static IBrush Canvas => Brush.Parse(ThemeName == "dark" ? "#0D1824" : Dark ? "#182637" : "#DFE7EF");
-    public static IBrush Panel => Brush.Parse(ThemeName == "dark" ? "#152638" : Dark ? "#233448" : "#F1F5F8");
-    public static IBrush Header => Brush.Parse(ThemeName == "dark" ? "#243C52" : Dark ? "#354C65" : "#C4D4E2");
-    public static IBrush MenuSurface => Brush.Parse(Dark ? "#0C1621" : "#EAF0F5");
-    public static IBrush Ink => Brush.Parse(Dark ? "#F2F5F8" : "#172C40");
-    public static IBrush Accent => Brush.Parse(Dark ? "#FF4335" : "#187DB0");
-    public static IBrush FrameLine => Brush.Parse(Dark ? "#466078" : "#879FB5");
+    public static bool BlackIce => ThemeName == "black-ice";
+    // A distinct near-transparent brush leaves the shared ice mass visible and
+    // cannot be confused with semantic Transparent during a live palette swap.
+    public static IBrush Canvas => Brush.Parse(BlackIce ? "#010D2738" : ThemeName == "dark" ? "#0D1824" : Dark ? "#182637" : "#DFE7EF");
+    public static IBrush Panel => Brush.Parse(BlackIce ? "#50788E" : ThemeName == "dark" ? "#152638" : Dark ? "#233448" : "#F1F5F8");
+    public static IBrush Header => Brush.Parse(BlackIce ? "#214C65" : ThemeName == "dark" ? "#243C52" : Dark ? "#354C65" : "#C4D4E2");
+    public static IBrush MenuSurface => Brush.Parse(BlackIce ? "#0B2836" : Dark ? "#0C1621" : "#EAF0F5");
+    public static IBrush Ink => Brush.Parse(BlackIce ? "#F2F7FA" : Dark ? "#F2F5F8" : "#172C40");
+    public static IBrush Accent => Brush.Parse(BlackIce ? "#168FC5" : Dark ? "#FF4335" : "#187DB0");
+    public static IBrush FrameLine => Brush.Parse(BlackIce ? "#7CA6BA" : Dark ? "#466078" : "#879FB5");
     public static IBrush Team(int team, bool selected = true) => new SolidColorBrush(
         Color.FromArgb(selected ? (byte)255 : (byte)150, team == 0 ? (byte)64 : (byte)255,
             team == 0 ? (byte)143 : (byte)119, team == 0 ? (byte)179 : (byte)55));
     public static void Theme(bool dark) => Theme(dark ? "standard" : "light");
     public static void Theme(string name) {
-        ThemeName = name is "dark" or "light" ? name : "standard"; Dark = ThemeName != "light";
+        ThemeName = name is "dark" or "light" or "black-ice" ? name : "standard"; Dark = ThemeName != "light";
         if (Application.Current != null) {
             Application.Current.RequestedThemeVariant = Dark ? ThemeVariant.Dark : ThemeVariant.Light;
             Application.Current.Resources["CasterDeskInk"]=Ink;Application.Current.Resources["CasterDeskPanel"]=Panel;Application.Current.Resources["CasterDeskHeader"]=Header;Application.Current.Resources["CasterDeskFrame"]=FrameLine;
             var resources=Application.Current.Resources;
             resources["CasterDeskAccent"]=Accent;
+            resources["CasterDeskHeaderInk"]=BlackIce?Brushes.White:Ink;
+            resources["CasterDeskChoiceHover"]=BlackIce?Brush.Parse("#256B8E"):Header;
+            resources["CasterDeskIceTitleBackground"]=BlackIce?Brushes.Transparent:Header;
+            resources["CasterDeskIceTitleInk"]=BlackIce?Brushes.White:Ink;
             resources["ComboBoxDropDownBackground"]=Panel;resources["ComboBoxDropDownBorderBrush"]=FrameLine;
             foreach(string state in new[]{"","PointerOver","Pressed","Selected","SelectedPointerOver","SelectedPressed"}){
                 resources["ComboBoxItemForeground"+state]=Ink;
-                resources["ComboBoxItemBackground"+state]=state.Length==0?Panel:Header;
+                resources["ComboBoxItemBackground"+state]=state.Length==0?Panel:BlackIce?Brush.Parse("#256B8E"):Header;
                 resources["ComboBoxItemBorderBrush"+state]=FrameLine;
             }
+            BlackIceTheme.Resources(Application.Current);
         }
     }
 
@@ -42,8 +50,9 @@ internal static partial class Ui
         var label = Text(title, true); label.FontSize = 14; label.Margin = new Thickness(0, 0, 0, 8);
         label.Text = label.Text?.ToUpperInvariant(); label.FontWeight = FontWeight.Bold; label.Background = Header;
         label.Padding = new Thickness(10, 4); label.Margin = new Thickness(-10, -10, -10, 8);
+        label.ClearValue(TextBlock.BackgroundProperty);label.Classes.Add("ice-card-title");
         body.Children.Add(label); body.Children.Add(child); Grid.SetRow(child, 1);
-        return new Border { Background = Panel, Padding = new Thickness(10), Margin = new Thickness(4), Child = body, ClipToBounds = true };
+        return new IceCard { Background = Panel, Padding = new Thickness(10), Margin = new Thickness(4), Child = body, ClipToBounds = true };
     }
 
     static readonly Dictionary<string, WeakReference<Bitmap>> images = new(StringComparer.OrdinalIgnoreCase);
@@ -87,15 +96,26 @@ internal static partial class Ui
 
     public static Image OperatorPortrait(string id)
     {
+        if(id is "skopos" or "tubarao") {
+            // Skopos's robots and Tubarao's outstretched arms must not shrink
+            // the bust or leave the lower part of the card transparent.
+            var focused=new Image {
+                Source=new FocusedOperatorPortrait(FileImage(Path.Combine(SiegeCatalog.AssetRoot,"operators","originals",id+".png")),id=="skopos"?new Rect(.17,.014,.57,.986):new Rect(0,0,1,1),id=="tubarao"?.085:0),
+                Stretch=Stretch.Uniform,HorizontalAlignment=HorizontalAlignment.Stretch,
+                VerticalAlignment=VerticalAlignment.Bottom,Margin=new Thickness(0,4,0,0)
+            };
+            global::Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(focused,BitmapInterpolationMode.HighQuality);
+            return focused;
+        }
         var image = new Image { Stretch = Stretch.Uniform, HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(0,4,0,0) };
         string current = "";
         void Update() {
             double scale = TopLevel.GetTopLevel(image)?.RenderScaling ?? 1;
             string file = SiegeCatalog.Portrait(id, Math.Max(image.Bounds.Width, image.Bounds.Height) * scale);
             if(file==current)return;
-            image.Source=FileImage(file);current=file;
+            image.Source=FocusedOperatorPortrait.FitToBase(FileImage(file),file);current=file;
         }
-        image.Source=FileImage(SiegeCatalog.Portrait(id,160));
+        string initial=SiegeCatalog.Portrait(id,160);image.Source=FocusedOperatorPortrait.FitToBase(FileImage(initial),initial);
         image.SizeChanged+=(_,_)=>Update();image.AttachedToVisualTree+=(_,_)=>Update();
         global::Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(image,BitmapInterpolationMode.HighQuality);
         return image;
@@ -112,10 +132,11 @@ internal static partial class Ui
     public static Button Button(string text, Action action, bool primary = false)
     {
         var button = new Button { Content = L.T(text), Margin = new Thickness(0, 0, 0, 8),
-            HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Center };
+            HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Center, VerticalContentAlignment = VerticalAlignment.Center };
         // Theme defaults belong at style priority. A local color (team, state or warning)
         // must not be overwritten when a resource resolves on attachment/theme change.
         button.Classes.Add("app-button");
+        button.Classes.Set("black-ice-button",BlackIce);
         if (primary) button.Classes.Add("primary");
         paletteBound.Add(button,new());
         Track(button, text);
@@ -132,10 +153,11 @@ internal static partial class Ui
     }
 
     public static ComboBox Combo(params string[] choices) { var control = RawCombo(choices.Select(L.T).ToArray()); Track(control,choices); return control; }
-    public static ComboBox RawCombo(params string[] choices) => new() {
-        ItemsSource=choices,SelectedIndex=choices.Length>0?0:-1,Foreground=Ink,Background=Panel,
-        HorizontalAlignment=HorizontalAlignment.Stretch,Margin=new Thickness(0,0,0,10)
-    };
+    public static ComboBox RawCombo(params string[] choices) {
+        var control = new ComboBox { ItemsSource=choices,SelectedIndex=choices.Length>0?0:-1,
+            HorizontalAlignment=HorizontalAlignment.Stretch,Margin=new Thickness(0,0,0,10) };
+        control.Classes.Add("app-choice"); return control;
+    }
 
     public static Bitmap Bitmap(System.Drawing.Image source)
     {
@@ -219,7 +241,7 @@ internal static partial class Ui
         foreach(string state in new[]{"",":selected",":pointerover",":selected:pointerover"}){
             var item=new Style(x=>{var selector=x.OfType<ComboBoxItem>();foreach(var c in state.Split(':',StringSplitOptions.RemoveEmptyEntries))selector=selector.Class(":"+c);return selector;});
             item.Setters.Add(new Setter(ComboBoxItem.ForegroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskInk")));
-            item.Setters.Add(new Setter(ComboBoxItem.BackgroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension(state.Length==0?"CasterDeskPanel":"CasterDeskHeader")));
+            item.Setters.Add(new Setter(ComboBoxItem.BackgroundProperty,new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension(state.Length==0?"CasterDeskPanel":"CasterDeskChoiceHover")));
             app.Styles.Add(item);
         }
         var primary = new Style(x => x.OfType<Button>().Class("primary"));
@@ -229,5 +251,6 @@ internal static partial class Ui
         var hover = new Style(x => x.OfType<Button>().Class("primary").Class(":pointerover"));
         hover.Setters.Add(new Setter(global::Avalonia.Controls.Button.BackgroundProperty, new global::Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("CasterDeskAccent")));
         app.Styles.Add(hover);
+        BlackIceTheme.Install(app);
     }
 }

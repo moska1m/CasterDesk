@@ -7,6 +7,8 @@ internal static class Program
 {
     internal static string[] InitialArguments { get; private set; } = [];
     internal static bool Headless { get; private set; }
+    // Reserved for isolated visual review. It never unlocks or saves a public theme.
+    internal static bool BlackIcePreview => InitialArguments.Contains("--preview-black-ice");
     internal static void ApplyInitialLanguage(string[] args)
     {
         if (File.Exists(AppPaths.ConfigFile("settings.json"))) return;
@@ -18,6 +20,9 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        InitialArguments = args;
+        if(BlackIcePreview && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("CASTERDESK_DATA_DIR")))
+            throw new InvalidOperationException("Visual review requires an isolated data folder.");
         if(args.Contains("--casterdesk-native-caption-check")) {
             if(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("CASTERDESK_DATA_DIR")))
                 throw new InvalidOperationException("Native checks require isolated data.");
@@ -31,10 +36,12 @@ internal static class Program
                 throw new InvalidOperationException("Headless checks require isolated data.");
             AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
             SynchronizationContext.SetSynchronizationContext(new AvaloniaSynchronizationContext());
+            if(args.Contains("--black-ice-only")){L.Set("pt-BR");BlackIceChecks.Run();return;}
+            if(args.Contains("--easter-egg-only")){L.Set("pt-BR");EasterEggChecks.Run();return;}
+            if(args.Contains("--portraits-only")){L.Set("pt-BR");PortraitChecks.Run();return;}
             if(args.Contains("--window-chrome-only")){ChromeOverlayChecks.Run();return;}
             if(args.Contains("--local-control-only")||args.Contains("--local-control-fixture")){L.Set("pt-BR");LocalControlChecks.Run(args.Contains("--local-control-fixture"));}else if(args.Contains("--window-colors-only")){WindowColorChecks.Run();}else if(args.Contains("--visual-only")){L.Set("pt-BR");VisualSettingsChecks.Run();}else if(args.Contains("--updates-only")){L.Set("pt-BR");UpdateUiChecks.Run();}else if(args.Contains("--table-only")){L.Set("pt-BR");TableSyncChecks.Run();}else if(args.Contains("--audit-fixes-only")){L.Set("pt-BR");AuditFixChecks.Run();}else if(args.Contains("--spec-only")){L.Set("pt-BR");SpecChecks.Run();}else if(args.Contains("--interaction-only")){L.Set("pt-BR");InteractionChecks.Run();}else if(args.Contains("--art-only")){L.Set("pt-BR");ArtChecks.Run();}else Checks.Run(); return;
         }
-        InitialArguments = args;
         string key = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
             System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(AppPaths.DataDirectory).ToUpperInvariant())));
         using var instance = new Mutex(false, "Local\\CasterDesk-" + key);

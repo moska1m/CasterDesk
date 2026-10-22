@@ -8,6 +8,7 @@
     <ApplicationIcon>../assets/casterdesk.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="../assets/themes/**/*.png" Link="assets/themes/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <Content Include="../assets/obs/*" Link="assets/obs/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <ProjectReference Include="../source-core/CasterDesk.Core.csproj" />

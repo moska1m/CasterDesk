@@ -22,12 +22,13 @@ static class GoogleSheetsChecks
         foreach (string bad in new[] { "http://docs.google.com/spreadsheets/d/" + id, "https://docs.google.com.evil.test/spreadsheets/d/" + id, "https://example.com/" + id }) {
             bool refused=false;try{GoogleSheetsTable.ParseLink(bad);}catch(InvalidDataException){refused=true;}Need(refused,"reject non-Google link");
         }
-        string title = GoogleSheetsTable.SheetTitle, header = "Time1"; int writes = 0; JsonElement payload = default;
+        string title = GoogleSheetsTable.SheetTitle, header = "Time1",readRange=""; int writes = 0,tabId=42,rows=1000,columns=26; bool multiple=false; JsonElement payload = default;
         using var http = new HttpClient(new Handler(async request => {
             Need(request.Headers.Authorization?.Scheme == "Bearer", "bearer authorization");
             if (request.Method == HttpMethod.Post) { writes++; payload = JsonDocument.Parse(await request.Content!.ReadAsStringAsync()).RootElement.Clone(); return Json(new { totalUpdatedCells = 45 }); }
-            if (request.RequestUri!.AbsolutePath.Contains("/values/")) return Json(new { values = new object[][] { new object[] {header,"Time2"}, [],[],[],[],[],new object[]{"Rounds","Vencedor","Formato Vitória"} } });
-            return Json(new { sheets = new[] {new { properties = new {sheetId=42,title,gridProperties=new {rowCount=1000,columnCount=26}}}} });
+            if (request.RequestUri!.AbsolutePath.Contains("/values/")) {readRange=Uri.UnescapeDataString(request.RequestUri.AbsolutePath.Split("/values/")[1]);return Json(new { values = new object[][] { new object[] {header,"Time2"}, [],[],[],[],[],new object[]{"Rounds","Vencedor","Formato Vitória"} } });}
+            var properties=new[]{new {sheetId=tabId,title,gridProperties=new {rowCount=rows,columnCount=columns}},new {sheetId=99,title="Outra aba",gridProperties=new {rowCount=1000,columnCount=26}}};
+            return Json(new { sheets = properties.Take(multiple?2:1).Select(p=>new{properties=p}).ToArray() });
         }));
         var sheets = new GoogleSheetsTable(http, _ => Task.FromResult("fake-test-access"));
         var catalog = SiegeCatalog.Load();var match = new SiegeMatch { TeamA = "=FORMULA()", DirectMaps = true };
@@ -38,7 +39,21 @@ static class GoogleSheetsChecks
         Need(data.GetArrayLength()==inputs.Count, "exact input count");
         foreach(var cell in data.EnumerateArray()) { string address=cell.GetProperty("range").GetString()!.Split('!')[1];Need(inputs.ContainsKey(address),"only allowed cells");Need(cell.GetProperty("values")[0][0].ToString()==inputs[address].ToString(),"same Excel projection "+address); }
         header="Wrong";bool rejected=false;try{await sheets.UpdateAsync(link,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==1,"wrong layout never written");
-        header="Time1";title="Wrong";rejected=false;try{await sheets.UpdateAsync(link,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==1,"wrong tab never written");
+        header="Time1";title="Round Breakdown Series Layout";
+        await sheets.UpdateAsync(link,match,catalog);
+        Need(writes==2&&readRange=="'"+title+"'!A1:I7","renamed tab is validated by selected ID");
+        Need(payload.GetProperty("data").EnumerateArray().All(c=>c.GetProperty("range").GetString()!.StartsWith("'"+title+"'!")),"renamed tab receives every input");
+        title="Caster's + Layout!";await sheets.UpdateAsync(link,match,catalog);
+        Need(writes==3&&readRange=="'Caster''s + Layout!'!A1:I7","apostrophe and punctuation quoted in header read");
+        Need(payload.GetProperty("data").EnumerateArray().All(c=>c.GetProperty("range").GetString()!.StartsWith("'Caster''s + Layout!'!")),"apostrophe quoted in every write");
+        var target=await sheets.VerifyAsync(id);Need(target.Title==title&&GoogleSheetsTable.ParseLink(GoogleSheetsTable.TargetLink(target))==(id,42),"single renamed tab can be resolved and pinned to its stable ID");
+        multiple=true;var listed=await sheets.ListAsync(link);Need(listed.Count==2&&listed[0].Title==title&&writes==3,"tab list retains real names and never writes");
+        rejected=false;try{await sheets.UpdateAsync(id,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==3,"ambiguous renamed workbook requires tab choice");
+        title=GoogleSheetsTable.SheetTitle;Need((await sheets.VerifyAsync(id)).SheetId==42,"old no-gid links still select the original model among other tabs");
+        tabId=43;rejected=false;try{await sheets.UpdateAsync(link,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==3,"missing selected tab cannot fall back to another tab");tabId=42;
+        rows=21;rejected=false;try{await sheets.UpdateAsync(link,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==3,"too few rows never written");rows=1000;
+        columns=8;rejected=false;try{await sheets.UpdateAsync(link,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==3,"too few columns never written");columns=26;
+        header="Wrong";title="Round Breakdown Series Layout";rejected=false;try{await sheets.UpdateAsync(link,match,catalog);}catch(InvalidDataException){rejected=true;}Need(rejected&&writes==3,"renamed incompatible layout never written");
         string root=Path.Combine(AppPaths.DataDirectory,"google-auth-test");Directory.CreateDirectory(root);
         string client=Path.Combine(root,"fake-client.json"),store=Path.Combine(root,"auth.bin");
         await File.WriteAllTextAsync(client,JsonSerializer.Serialize(new{installed=new{client_id="fake-test.apps.googleusercontent.com",client_secret="fake-test-secret"}}));
@@ -75,6 +90,6 @@ static class GoogleSheetsChecks
         Need(!encrypted.Contains("fake-refresh")&&!encrypted.Contains("fake-test-secret"),"credentials protected on disk");
         var restored=new GoogleTableAuth(tokenHttp,store);Need(restored.Connected,"DPAPI store survives restart");
         await restored.DisconnectAsync();Need(!restored.Connected&&revokes==1,"disconnect revokes grant and forgets tokens");
-        Console.WriteLine("Google Sheets checks passed: exact RAW ranges, target validation, PKCE/state, encrypted tokens, refresh and revoke. No Google account contacted.");
+        Console.WriteLine("Google Sheets checks passed: renamed tabs and stable IDs, read-only tab list, ambiguous/missing/incompatible targets, apostrophe quoting, exact RAW ranges, PKCE/state, encrypted tokens, refresh and revoke. No Google account contacted.");
     }
 }
