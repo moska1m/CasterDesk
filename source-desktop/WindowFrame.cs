@@ -11,6 +11,17 @@ namespace CasterDesk.Desktop;
 // The template leaves Window.Content intact, including dialog results and closing guards.
 internal static class WindowFrame
 {
+    internal static Button CloseButton(Action action,string name)
+    {
+        var glyph=new CaptionGlyph(null,"close"){Width=44,Height=30};
+        var button=Ui.Button("",action);button.Name=name;button.Width=44;button.Height=30;button.MinHeight=0;
+        button.Margin=new Thickness(0);button.Padding=new Thickness(0);button.BorderThickness=new Thickness(0);button.Background=Brushes.Transparent;
+        button.Template=new FuncControlTemplate<Button>((control,names)=>{var back=new Border{Child=glyph};back.Bind(Border.BackgroundProperty,new Binding("Background"){Source=control});return back;});
+        button.PointerEntered+=(_,_)=>{glyph.Hovered=true;button.Background=Brush.Parse("#D92C35");glyph.InvalidateVisual();};
+        button.PointerExited+=(_,_)=>{glyph.Hovered=false;button.Background=Brushes.Transparent;glyph.InvalidateVisual();};
+        global::Avalonia.Automation.AutomationProperties.SetName(button,L.T("Fechar"));
+        ToolTip.SetTip(button,L.T("Fechar"));return button;
+    }
     public static void Install(Application app)
     {
         var style = new Style(s => s.OfType<Window>());
@@ -53,6 +64,10 @@ internal static class WindowFrame
         var buttons = new StackPanel { Orientation = Orientation.Horizontal };
         WindowDecorationProperties.SetElementRole(buttons, WindowDecorationsElementRole.User);
         void Caption(string kind,string label,Action action,bool visible=true) {
+            if(kind=="close"){
+                var close=CloseButton(action,"caption-close");
+                WindowDecorationProperties.SetElementRole(close,WindowDecorationsElementRole.CloseButton);buttons.Children.Add(close);return;
+            }
             var glyph=new CaptionGlyph(window,kind){Width=44,Height=30};
             var b=Ui.Button("",action);b.Name="caption-"+kind;b.Width=44;b.Height=30;b.MinHeight=0;b.Margin=new Thickness(0);b.Padding=new Thickness(0);b.BorderThickness=new Thickness(0);b.Background=Brushes.Transparent;b.IsVisible=visible;
             WindowDecorationProperties.SetElementRole(b, kind switch {

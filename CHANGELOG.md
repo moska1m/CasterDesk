@@ -1,3 +1,40 @@
+# 1.1.0
+
+- Controle pelo celular na rede local por QR code, com veto, bans e rounds.
+- Aba Remake com lados, placar, bans por metade e histórico colorido.
+- Menu e opções reorganizados, temas e troca imediata de idioma.
+- Retratos ajustados e pacotes visuais para o gerador de imagens.
+- Importação experimental e arquivamento de replays com prévia de mapa e equipes.
+- Aviso de atualização com novidades e correções no encerramento e na moldura.
+
+# 1.0.9-beta.11
+
+- Removido o botão Fechar duplicado das opções.
+- Encerramento aguarda salvamentos e conexões locais antes de fechar a janela, evitando bloquear o instalador.
+
+# 1.0.9-beta.10
+
+- Botão Fechar no cabeçalho dos painéis internos.
+- Remake com apenas ataque inicial e ataque no OT.
+- Bans do remake em quadradinhos separados por metade.
+- Histórico na ordem round, bombsite e vencedor, sem finalização.
+
+# 1.0.9-beta.9
+
+- Veto de mapas em janela sobre o painel do celular.
+- Rolagem automática até os bans liberados e retorno ao registro do round.
+- Aba Remake com mapa, placar, lados, bans por ícones e histórico.
+- Cores das equipes reforçadas no histórico de rounds.
+- Instalador deixa de sugerir os diretórios antigos com nomes de frameworks.
+
+# 1.0.9-beta.8
+
+- Controle local pelo navegador com QR, link e encerramento dos acessos.
+- Equipes, logos, veto, lados e OT sincronizados com o PC.
+- Round a round, histórico por cores e bans com ícones.
+- Reconexão automática e proteção contra registros duplicados.
+- Preparação opcional da rede privada no instalador.
+
 # 1.0.9-beta.7
 
 - Menu compacto com Opções, Atualizações, Créditos e status do OBS.

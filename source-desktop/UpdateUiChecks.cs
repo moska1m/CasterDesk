@@ -1,4 +1,5 @@
 using Avalonia.Interactivity;
+using Avalonia.Headless;
 using Avalonia.VisualTree;
 using System.Net;
 using System.Net.Http;
@@ -48,7 +49,13 @@ internal static class UpdateUiChecks
         Need(controller.Selected?.Version==manifest.Version&&list.ItemCount==2,"hiding betas clears beta selection");
         toggle.IsChecked=true;controller.Select(beta.Version);Dispatcher.UIThread.RunJobs();
         using(var bitmap=new Avalonia.Media.Imaging.RenderTargetBitmap(new PixelSize(720,850))){bitmap.Render(dialog);bitmap.Save(Path.Combine(AppPaths.DataDirectory,"updater-preview.png"));}
-        var later=dialog.GetVisualDescendants().OfType<Button>().Single(b=>b.Content?.ToString()=="Continuar usando / depois");later.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Wait(dialogTask);
+        var close=dialog.GetVisualDescendants().OfType<Button>().Single(b=>b.Name=="surface-close");
+        Need(close.IsEffectivelyVisible&&global::Avalonia.Automation.AutomationProperties.GetName(close)==L.T("Fechar"),"updates has accessible frame close button");
+        shell.UpdateLayout();var closePoint=close.TranslatePoint(new Point(22,15),shell)!.Value;
+        shell.MouseMove(closePoint);Dispatcher.UIThread.RunJobs();
+        Need(close.Background?.ToString()==Brush.Parse("#D92C35").ToString(),"updates close button turns red on hover");
+        close.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Wait(dialogTask);
+        Need(shell.ActiveSurface==null&&shell.Championship.IsEffectivelyEnabled,"updates frame close restores workspace without Escape");
         Need(shell.IsVisible,"postpone keeps app open");
         controller.Configure(false,true);
         var stored=ConfigurationStore.Read<UpdatePreferences>("updates.json");Need(!stored.Automatic&&stored.IncludeBetas,"preferences persisted");

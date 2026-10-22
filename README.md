@@ -19,6 +19,7 @@ O **CasterDesk** reúne as ferramentas de organização de partidas e transmiss�
 
 - **Preparar partidas:** MD1, MD3 e MD5, nomes e logos das equipes, veto de mapas, lados e bans de operadores.
 - **Operar pelo OBS:** registrar rounds, fazer bans, selecionar mapas e controlar o cronômetro sem trocar de janela.
+- **Controlar pelo celular:** conectar por QR code na mesma rede para fazer vetos, bans e registrar rounds pelo navegador. [Como conectar](docs/CONTROLE-LOCAL.md).
 - **Acompanhar o jogo:** histórico, placar atualizado e resumo de mapas, lados, bans e rounds para remake.
 - **Gerar estatísticas e artes:** importar e revisar prints, reunir dados por mapa e série e personalizar anúncios, vetos e resultados.
 - **Preservar os registros:** pastas por partida, importação, exportação e backups.

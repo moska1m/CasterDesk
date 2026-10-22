@@ -31,6 +31,7 @@ public sealed partial class ChampionshipView : Grid
     internal bool VetoComplete => Session.Current.DirectMaps || Session.Current.Veto.All(v => !string.IsNullOrEmpty(v));
     internal bool BansReady => VetoComplete && Session.Map?.InitialAttack >= 0;
     internal bool UseObsForBans { get; set; }
+    internal bool LocalControlActive { get; set; }
     bool obsConnected;
     Border? obsTrack, obsKnob;
     internal void SetObsConnected(bool value) { obsConnected = value; PaintObsMode(); }

@@ -47,6 +47,14 @@ public sealed class MatchSession
     }
     void Editable(){if(Map==null)throw new InvalidOperationException(L.T("Escolha um mapa primeiro."));if(Map.Confirmed||Current.Complete)throw new InvalidOperationException(L.T("Mapa confirmado. Abra uma revisão para corrigir os dados."));}
     public void Names(string a,string b){if(Current.HasConfirmed)throw new InvalidOperationException(L.T("Mapa confirmado. Abra uma revisão para corrigir os dados."));Change(()=>{if(a!=Current.TeamA)Current.TeamA=a;if(b!=Current.TeamB)Current.TeamB=b;});}
+    public void Configure(string a,string b,string format,int coin,int first)
+    {
+        if(Current.HasConfirmed||Current.Complete)throw new InvalidOperationException(L.T("Mapa confirmado. Abra uma revisão para corrigir os dados."));
+        if(format is not ("MD1" or "MD3" or "MD5")||coin is <0 or >1||first is <0 or >1||a.Length>80||b.Length>80)throw new InvalidDataException(L.T("Seleção inválida. Confira o campo."));
+        bool reset=format!=Current.Format||first!=Current.FirstBan;
+        if(reset&&(Current.Veto.Any(v=>!string.IsNullOrEmpty(v))||Current.Maps.Any(m=>m.HasPreservedData)))throw new InvalidOperationException(L.T("Esta mudança exige reiniciar o veto."));
+        Change(()=>{Current.TeamA=a;Current.TeamB=b;Current.CoinWinner=coin;Current.FirstBan=first;if(reset){Current.DirectMaps=false;Current.Veto=new string[8];Current.Maps=[];}Current.Format=format;});
+    }
     public void Setup(string format,int coin,int first,bool reset)
     {
         if(Current.HasConfirmed)throw new InvalidOperationException(L.T("Mapa confirmado. Abra uma revisão para corrigir os dados."));

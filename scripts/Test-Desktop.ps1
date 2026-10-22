@@ -28,6 +28,7 @@ try {
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'casterdesk-brand-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'casterdesk-corrections-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'casterdesk-obs-check.txt')
+    Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'casterdesk-local-control-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'casterdesk-spec-check.txt')
     Get-Content (Join-Path $env:CASTERDESK_DATA_DIR 'casterdesk-audit-fix-check.txt')
 } finally {$env:CASTERDESK_DATA_DIR=$previousData;Pop-Location}

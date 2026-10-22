@@ -1,0 +1,32 @@
+/* Phone workflows: native modal veto, team-colored history and read-only remake. */
+nav button{min-width:0;padding:10px 6px}
+dialog#map-picker{width:min(650px,calc(100% - 24px));max-height:calc(100dvh - 24px);max-height:calc(100svh - 24px);padding:14px;background:#182b3d;color:#eff5fb;border:1px solid #658097;border-radius:6px;overscroll-behavior:contain;box-shadow:0 16px 50px #0008}
+dialog#map-picker::backdrop{background:#000b}
+.dialog-header{position:sticky;top:-14px;display:flex;justify-content:space-between;align-items:center;gap:8px;background:#182b3d;z-index:1;padding:10px 0;margin-bottom:10px}
+.dialog-header h2{margin:0;padding:6px 0;background:transparent;letter-spacing:0;text-transform:none;font-size:16px}
+.dialog-header button{flex-shrink:0}
+#map-picker:not([open]){display:none}
+#ban-choice,#round-entry{scroll-margin-top:12px}
+.history-row.team-blue{background:#285573;border-left:4px solid #5cc4ed;color:#fff}
+.history-row.team-orange{background:#88502f;border-left:4px solid #ffab72;color:#fff}
+.history-row .history-detail{color:inherit;min-width:0;overflow-wrap:anywhere}
+.history-row button:disabled{opacity:1;cursor:default}
+.history-row small{color:#f0f5f8}
+.remake-map-card{height:140px;position:relative;isolation:isolate;overflow:hidden;margin-top:14px;background:#263e51;border-bottom:3px solid #51add0}
+.remake-map-card img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:-2}
+.remake-map-card::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent,#081521ed);z-index:-1}
+.remake-map-card strong{position:absolute;left:14px;bottom:12px;font-size:20px;overflow-wrap:anywhere;max-width:calc(100% - 28px)}
+.remake-side{padding:10px 0;border-bottom:1px solid #405a71;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}
+.remake-side strong,.remake-side span{overflow-wrap:anywhere}
+.remake-side span{font-size:13px;color:#c9d9e6}
+.history-row,.history-heading{display:grid;grid-template-columns:34px minmax(0,1.2fr) minmax(0,1fr);gap:8px;align-items:center}
+.history-heading{font-size:11px;color:#d0e1ee;padding:6px 8px 8px 12px}
+.history-winner{overflow-wrap:anywhere;font-size:13px;font-weight:600}
+.remake-slot{position:relative;min-height:102px;padding-top:18px}
+.remake-slot>span:not(.remake-order){display:block;overflow-wrap:anywhere}
+.remake-slot small{font-size:11px;overflow-wrap:anywhere}
+.remake-order{position:absolute;top:3px;left:5px;font-size:11px;font-variant-numeric:tabular-nums}
+.remake-empty-slot{height:39px;display:grid;place-items:center}
+#remake-bans h3{margin:14px 0 8px}
+@media(max-width:460px){#remake-bans .halves{grid-template-columns:1fr;gap:12px}.remake-slot{min-height:112px}}
+@media(max-width:360px){nav button{font-size:13px}}

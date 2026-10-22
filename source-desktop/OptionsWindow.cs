@@ -7,7 +7,7 @@ public sealed partial class StudioShell
         if(optionsWindow!=null){optionsWindow.Focus();return;}
         if(ActiveSurface!=null)return;
         if(menuOpen)ToggleMenu();
-        var root=new Grid{RowDefinitions=new("Auto,*,Auto"),Margin=new Thickness(20)};
+        var root=new Grid{RowDefinitions=new("Auto,*"),Margin=new Thickness(20)};
         var tabs=new TabControl{Name="settings-tabs",IsVisible=false};root.Children.Add(tabs);
         var pages=new ContentControl{Name="settings-page"};root.Children.Add(pages);Grid.SetRow(pages,1);
         var pageContents=new List<Control>();
@@ -48,6 +48,7 @@ public sealed partial class StudioShell
             RefreshMenuConnection();
         });Row(general,"Idioma",language);
         general.Children.Add(Ui.Text("As preferências são aplicadas imediatamente e salvas automaticamente."));
+        general.Children.Add(CreateLocalControlPanel(out var cleanupLocal));
         var match=Tab("PARTIDA");match.Children.Add(Ui.Text("Tela da partida",true));
         var mode=Ui.Combo("Modo Caster","Modo SPEC");mode.Name="settings-mode";mode.SelectedIndex=settings.SpecMode?1:0;
         mode.SelectionChanged+=(_,_)=>Change(()=>{if(mode.SelectedIndex<0)return;bool old=settings.SpecMode;try{settings.SpecMode=mode.SelectedIndex==1;Championship.SetSpecMode(settings.SpecMode);SaveSettings();}catch{settings.SpecMode=old;Championship.SetSpecMode(old);throw;}});Row(match,"Tela da partida",mode);
@@ -60,9 +61,8 @@ public sealed partial class StudioShell
         var table=Tab("TABELA");table.Children.Add(CreateTablePanel(out var cleanupTable));
         var backupPanel=CreateBackupPanel();var backup=Tab("BACKUP");backup.Children.Add(backupPanel.DetachContent());
         var obs=Tab("OBS");obs.Children.Add(CreateObsPanel());
-        var close=Ui.Button("Fechar",()=>optionsWindow?.Close());close.HorizontalAlignment=HorizontalAlignment.Right;close.MinWidth=120;root.Children.Add(close);Grid.SetRow(close,2);
         var dialog=new ModalSurface("Opções",root,940,810){Name="options-window"};optionsWindow=dialog;
-        dialog.BeforeClose=async()=>{if(!await backupPanel.FinishEmbedded())return false;cleanupTable();return true;};
+        dialog.BeforeClose=async()=>{if(!await backupPanel.FinishEmbedded())return false;cleanupTable();cleanupLocal();return true;};
         backupPanel.EmbeddedClose=scheduled=>{dialog.Close();if(scheduled)_ = CloseAfterRestore();};
         async Task CloseAfterRestore(){await dialog.Completion;Notify(L.T("Restauração agendada. Ela será aplicada na próxima abertura do CasterDesk."));Close();}
         tabs.SelectedIndex=0;Present();PaintTabs();loading=false;

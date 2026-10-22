@@ -19,6 +19,8 @@ public sealed partial class StudioShell : Window
     readonly Button[] tabs = new Button[3];
     readonly ObsDockSettings obsSettings;
     readonly ObsDockServer obsDock;
+    readonly LocalControlSettings localSettings;
+    readonly LocalControlServer localControl;
     readonly DispatcherTimer obsPresence = new() { Interval = TimeSpan.FromSeconds(1) };
     readonly TextBlock footer = Ui.Text("");
     int selected;
@@ -47,12 +49,15 @@ public sealed partial class StudioShell : Window
         obsSettings = ConfigurationStore.Read<ObsDockSettings>("obs-connection.json");
         obsSettings.ConfigurePlugin(File.Exists(Path.Combine(AppContext.BaseDirectory,"obs-plugin.optin")));
         obsDock = new ObsDockServer(Championship,Texts,()=>ActiveSurface==null&&!backupOpen&&!studio.Exporting&&!OwnedWindows.Any(w=>w.IsVisible),obsSettings);
+        localSettings=ConfigurationStore.Read<LocalControlSettings>("local-control.json");
+        localControl=new LocalControlServer(Championship,obsDock,localSettings);
         Championship.UseObsForBans=obsSettings.RouteBansToOBS;
         Championship.ObsBansModeChanged=value=>{bool old=obsSettings.RouteBansToOBS;try{obsSettings.RouteBansToOBS=value;SaveObsSettings();}catch{obsSettings.RouteBansToOBS=old;throw;}};
         Championship.Refresh();
         obsPresence.Tick+=(_,_)=>{Championship.SetObsConnected(obsDock.HasClient);RefreshMenuConnection();};
         Opened+=(_,_)=>obsPresence.Start();
         Opened += async (_, _) => { Texts.StartLive(); if(obsSettings.Enabled)try{await obsDock.StartAsync();SaveObsSettings();}catch(Exception ex){AppLog.Write("OBS connection: "+ex);Notify(ex.Message);} };
+        Opened += async (_,_)=>{if(localSettings.Enabled)try{await localControl.StartAsync();}catch(Exception ex){AppLog.Write("Local control startup: "+ex.GetType().Name);Notify(L.T("Não foi possível ativar o controle local. Confira a conexão nas opções."));}};
         Championship.MapConfirmed += async (match, map) => {
             try { await new StatsWindow(match, map).ShowDialog<bool>(this); }
             catch (Exception ex) { footer.Text = ex.Message; }
@@ -111,17 +116,20 @@ public sealed partial class StudioShell : Window
             if(ActiveSurface!=null){e.Cancel=true;if(await CloseSurface())Close();return;}
             if (waitingToClose) { e.Cancel = true; return; }
             if (backupOpen || studio.Exporting || Championship.Processing) { e.Cancel = true; footer.Text = L.T("Salvando arquivos…"); return; }
+            // Keep the UI dispatcher alive until saves and HTTP hosts have stopped.
+            // An async Closed handler can lose its continuation when the last window closes.
+            e.Cancel = true; waitingToClose = true;
             try {
-                Championship.FlushNames(); if (!studio.Flush()) { e.Cancel = true; return; }
-                if (Texts.Busy || !matchTable.FlushAsync().IsCompleted || !googleTable.FlushArchivesAsync().IsCompleted) {
-                    e.Cancel = true; waitingToClose = true;
-                    await Texts.Applying; Texts.Save(); Texts.Stop(); await Texts.Writes; await matchTable.StopAsync(); await googleTable.StopAsync(); closing = true; Close();
-                } else Texts.Save();
+                Championship.FlushNames(); if (!studio.Flush()) return;
+                await Texts.Applying; Texts.Save(); Texts.Stop(); await Texts.Writes;
+                await matchTable.StopAsync(); await googleTable.StopAsync();
+                obsPresence.Stop();timer.Stop();Championship.Stop();studio.Stop();
+                await localControl.DisposeAsync();await obsDock.DisposeAsync();
+                closing = true; Close();
             }
             catch (Exception ex) { e.Cancel = true; footer.Text = ex.Message; }
             finally { waitingToClose = false; }
         };
-        Closed += async (_, _) => { await googleTable.StopAsync(); await matchTable.StopAsync(); obsPresence.Stop();timer.Stop(); Championship.Stop(); studio.Stop(); Texts.Stop(); try{await obsDock.DisposeAsync();}catch(Exception ex){AppLog.Write(ex.ToString());} };
     }
 
     internal void Navigate(int index)

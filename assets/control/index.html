@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="referrer" content="no-referrer"><meta name="theme-color" content="#142231"><title>CasterDesk · Controle local</title><link rel="stylesheet" href="/control.css"><link rel="stylesheet" href="/flow.css"><script src="/control.js" defer></script></head>
+<body><div class="app"><header><img src="/brand.svg" alt="CasterDesk"><button type="button" id="reconnect">Reconectar</button></header>
+<div id="connection" role="status" aria-live="polite">Conectando…</div><div id="error" role="alert" hidden></div>
+<nav role="tablist" aria-label="Controle da partida"><button type="button" id="tab-match" role="tab" aria-selected="true" aria-controls="match">Partida</button><button type="button" id="tab-rounds" role="tab" aria-selected="false" aria-controls="rounds">Round a round</button><button type="button" id="tab-remake" role="tab" aria-selected="false" aria-controls="remake">Remake</button></nav>
+<main><section id="match" role="tabpanel" aria-labelledby="tab-match">
+<form id="setup"><h2>Confronto</h2><fieldset disabled id="setup-fields">
+<label for="team-a">Equipe azul</label><div class="team-row"><img id="logo-a" class="logo" alt=""><input id="team-a" maxlength="80" autocomplete="off"><button type="button" data-logo="0">Logo</button><input id="file-0" type="file" accept="image/png,image/jpeg" hidden></div>
+<label for="team-b">Equipe laranja</label><div class="team-row"><img id="logo-b" class="logo" alt=""><input id="team-b" maxlength="80" autocomplete="off"><button type="button" data-logo="1">Logo</button><input id="file-1" type="file" accept="image/png,image/jpeg" hidden></div>
+<div class="two"><label>Formato<select id="format"><option>MD1</option><option>MD3</option><option>MD5</option></select></label><label>Coin flip<select id="coin"></select></label></div><label>Primeiro ban<select id="first"></select></label><button type="submit" class="primary full">Salvar confronto</button>
+</fieldset></form>
+<section class="block"><h2>Mapas · picks e bans</h2><div id="veto" class="veto-grid"></div></section>
+<section class="block"><h2>Lados iniciais e OT</h2><div id="sides"></div></section>
+</section>
+<section id="rounds" role="tabpanel" aria-labelledby="tab-rounds" hidden>
+<label for="map">Mapa da partida</label><select id="map" disabled></select><div class="score"><span id="name-a" class="blue"></span><strong id="score">—</strong><span id="name-b" class="orange"></span></div>
+<section class="block" id="round-entry"><h2 id="round-title">Round a round</h2><div id="round-wait" class="notice"></div><fieldset id="round-fields" disabled><h3>Bomb site</h3><div id="sites" class="two"></div><h3>Vencedor</h3><div id="winners" class="two"></div><h3>Finalização</h3><div id="endings" class="two"></div><button type="button" id="save-round" class="primary full" disabled>Confirmar round</button><button type="button" id="new-round" hidden>Novo round</button></fieldset></section>
+<div id="lower"><section class="block" id="history-block"><h2>Histórico de rounds</h2><div id="history"></div></section><section class="block" id="bans-block"><h2>Bans de operadores</h2><div id="ban-slots"></div><div id="ban-choice"><div id="ban-phase" class="notice"></div><div id="operators" class="operators"></div></div></section></div>
+</section>
+<section id="remake" role="tabpanel" aria-labelledby="tab-remake" hidden>
+<label for="remake-map">Mapa para o remake</label><select id="remake-map" disabled></select><div id="remake-empty" class="notice">Escolha os mapas da partida para consultar o remake.</div>
+<div id="remake-content" hidden><div class="remake-map-card"><img id="remake-map-image" alt=""><strong id="remake-map-name"></strong></div><div class="score"><span id="remake-name-a" class="blue"></span><strong id="remake-score">—</strong><span id="remake-name-b" class="orange"></span></div>
+<section class="block"><h2>Lados iniciais e OT</h2><div id="remake-sides"></div></section>
+<section class="block"><h2>Bans de operadores</h2><div id="remake-bans"></div></section>
+<section class="block"><h2>Histórico de rounds</h2><div id="remake-history"></div></section><p class="notice">Referência dos registros da partida. Consultar esta aba não altera o jogo.</p></div>
+</section>
+</main><footer>Controle local · mantenha o CasterDesk aberto no PC.</footer></div>
+<dialog id="map-picker" aria-labelledby="map-prompt"><div class="dialog-header"><h2 id="map-prompt">Selecionar mapa</h2><button type="button" id="close-maps" aria-label="Fechar seleção de mapa">Fechar</button></div><div id="map-options" class="map-grid"></div></dialog>
+</body></html>

@@ -17,7 +17,12 @@ internal sealed class ModalSurface : Border
         Background=Ui.Canvas;BorderBrush=Ui.FrameLine;BorderThickness=new Thickness(1);HorizontalAlignment=HorizontalAlignment.Center;VerticalAlignment=VerticalAlignment.Center;
         var root=new Grid{RowDefinitions=new("Auto,*")};
         var heading=Ui.Text(title,true);heading.Margin=new Thickness(20,14);heading.Name="surface-title";
-        root.Children.Add(heading);root.Children.Add(content);Grid.SetRow(content,1);Child=root;
+        var header=new Grid{ColumnDefinitions=new("*,Auto")};
+        header.Children.Add(heading);
+        var close=WindowFrame.CloseButton(()=>Close(),"surface-close");
+        close.VerticalAlignment=VerticalAlignment.Top;
+        header.Children.Add(close);Grid.SetColumn(close,1);
+        root.Children.Add(header);root.Children.Add(content);Grid.SetRow(content,1);Child=root;
         KeyboardNavigation.SetTabNavigation(this,KeyboardNavigationMode.Cycle);
     }
     internal void Close(bool result=false)=>RequestClose?.Invoke(result);

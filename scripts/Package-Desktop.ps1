@@ -49,6 +49,9 @@ try {
     foreach($required in @('assets/obs/dock.html','assets/obs/dock.js','Microsoft.AspNetCore.Server.Kestrel.Core.dll')) {
         if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Arquivo ausente na publicação: $required"}
     }
+    foreach($required in @('assets/control/index.html','assets/control/control.js','assets/control/control.css','assets/control/flow.css','assets/control/Configure-Network.ps1','QRCoder.dll')) {
+        if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Controle local incompleto: $required"}
+    }
     if(!(Test-Path -LiteralPath (Join-Path $publish 'assets/update-public-key.pem'))){throw 'Chave pública do atualizador ausente.'}
     foreach($required in @('assets/replay/casterdesk-replay.exe','assets/replay/LICENSE','assets/replay/ORIGIN.md','assets/replay/replay-licenses.txt','assets/replay/replay-reader-source.zip')){if(!(Test-Path -LiteralPath (Join-Path $publish $required))){throw "Leitor de replay incompleto: $required"}}
     & "$PSScriptRoot/Test-Desktop.ps1" -Dotnet $Dotnet -PublishFolder $publish -DataRoot $TestDataRoot

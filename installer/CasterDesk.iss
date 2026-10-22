@@ -11,7 +11,8 @@ AppId={{5BB534BC-6E39-447F-BB82-4A86199BAC31}
 AppName=CasterDesk
 AppVersion={#AppVersion}
 AppPublisher=CasterDesk
-DefaultDirName={localappdata}\Programs\CasterDesk
+DefaultDirName={code:AppInstallDirectory}
+UsePreviousAppDir=no
 DefaultGroupName=CasterDesk
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64os
@@ -49,7 +50,11 @@ spanish.LicenseAccepted=Estoy de &acuerdo
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
 Name: "obsplugin"; Description: "{cm:InstallOBSPlugin}"; Flags: unchecked
+Name: "localcontrol"; Description: "{cm:PrepareLocalControl}"; Flags: checkedonce
 [CustomMessages]
+brazilianportuguese.PrepareLocalControl=Preparar o controle pelo celular na rede privada (exige permissão de administrador)
+english.PrepareLocalControl=Prepare phone control on the private network (administrator permission required)
+spanish.PrepareLocalControl=Preparar el control por celular en la red privada (requiere permisos de administrador)
 brazilianportuguese.InstallOBSPlugin=Instalar o painel CasterDesk no OBS (OBS 31.1 ou mais recente; feche o OBS; exige permissão de administrador)
 english.InstallOBSPlugin=Install the CasterDesk dock in OBS (OBS 31.1 or newer; close OBS; administrator permission required)
 spanish.InstallOBSPlugin=Instalar el panel CasterDesk en OBS (OBS 31.1 o posterior; cierra OBS; requiere permisos de administrador)
@@ -91,6 +96,19 @@ Type: files; Name: "{app}\CasterDesk.Avalonia.runtimeconfig.json"
 Name: "{autoprograms}\CasterDesk"; Filename: "{app}\CasterDesk.exe"; Parameters: "--language {code:AppLanguage}"; WorkingDir: "{app}"
 Name: "{autodesktop}\CasterDesk"; Filename: "{app}\CasterDesk.exe"; Parameters: "--language {code:AppLanguage}"; WorkingDir: "{app}"; Tasks: desktopicon
 [Code]
+function AppInstallDirectory(Param: String): String;
+var PreviousDir, FolderName: String;
+begin
+  Result := ExpandConstant('{localappdata}\Programs\CasterDesk');
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{5BB534BC-6E39-447F-BB82-4A86199BAC31}_is1', 'InstallLocation', PreviousDir) then begin
+    FolderName := Uppercase(ExtractFileName(RemoveBackslash(PreviousDir)));
+    { Keep custom locations, but stop suggesting old framework-branded folders.
+      Do not remove or relocate files in the former installation directory. }
+    if (FolderName <> 'CASTERDESK-AVALONIA') and (FolderName <> 'CASTERDESK AVALONIA') and
+       (FolderName <> 'CASTERDESK AVALONIA PREVIEW') and (FolderName <> 'CASTERDESK-WPF') then
+      Result := PreviousDir;
+  end;
+end;
 function OpenProcess(Access: LongWord; InheritHandle: Boolean; ProcessId: LongWord): THandle;
   external 'OpenProcess@kernel32.dll stdcall';
 function WaitForSingleObject(Handle: THandle; Milliseconds: LongWord): LongWord;
@@ -122,7 +140,7 @@ end;
 procedure InitializeWizard;
 begin
   { An application update does not reinstall the OBS component automatically. }
-  if IsAppUpdate then WizardSelectTasks('!obsplugin');
+  if IsAppUpdate then WizardSelectTasks('!obsplugin,!localcontrol');
 end;
 procedure AppStage;
 begin
@@ -142,6 +160,14 @@ procedure CurStepChanged(CurStep: TSetupStep);
 var PluginExit: Integer;
     PluginOK: Boolean;
 begin
+  if (CurStep = ssPostInstall) and (not IsAppUpdate) and WizardIsTaskSelected('localcontrol') then begin
+    PluginExit := -1;
+    PluginOK := ShellExec('runas', ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe'),
+      '-NoProfile -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\assets\control\Configure-Network.ps1') + '" -Executable "' + ExpandConstant('{app}\CasterDesk.exe') + '"',
+      ExpandConstant('{app}'), SW_HIDE, ewWaitUntilTerminated, PluginExit);
+    if (not PluginOK) or (PluginExit <> 0) then
+      Log('Local network preparation was not completed; it remains available in application options.');
+  end;
   if (CurStep = ssPostInstall) and IsAppUpdate then
     Log('Application update: preserving the installed OBS component and opt-in.');
   { Previous task selections may be restored after InitializeWizard. Guard the

@@ -73,7 +73,10 @@ internal static class VisualSettingsChecks
                 Need(window.GetVisualDescendants().OfType<Control>().Any(c=>c.Name==expected&&c.IsEffectivelyVisible),"full embedded controls for tab "+index);Capture(shell,"surface-tab-"+index+".png");
             }
             Find("settings-theme").SelectedIndex=2;Pump();
-            window.Close();Pump();Need(options.IsCompleted,"options closes normally");
+            var surfaceClose=window.GetVisualDescendants().OfType<Button>().Single(b=>b.Name=="surface-close");
+            Need(!window.GetVisualDescendants().OfType<Button>().Any(b=>b.IsEffectivelyVisible&&b.Content?.ToString()==L.T("Fechar")),"options has no duplicate text close button");
+            Need(surfaceClose.IsEffectivelyVisible && surfaceClose.Bounds.Height>0,"options has a visible close button in its fixed header");
+            Click(surfaceClose);Need(options.IsCompleted && shell.ActiveSurface==null && shell.Championship.IsEffectivelyEnabled,"header close releases modal and restores match controls without Escape");
             shell.ToggleMenu();Pump();Need(!Ui.Dark,"light menu follows light theme");Capture(shell,"visual-light-menu.png");shell.ToggleMenu();
             var again=shell.OpenOptions();Pump();var settingsWindow=shell.ActiveSurface!;
             var againTabs=settingsWindow.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Name=="settings-tabs");againTabs.SelectedIndex=2;Pump();

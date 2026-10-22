@@ -45,7 +45,7 @@ internal sealed class ObsDockServer : IAsyncDisposable
         if(string.IsNullOrWhiteSpace(settings.Key)||settings.Key.Length!=64||!settings.Key.All(Uri.IsHexDigit))settings.Key=Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         championship.Session.Changed+=Changed;
     }
-    void Changed() => revision++;
+    internal void Changed() => revision++;
     internal async Task StartAsync()
     {
         if(app!=null)return;
@@ -89,7 +89,7 @@ internal sealed class ObsDockServer : IAsyncDisposable
     }
     static string Asset(string name)=>Path.Combine(AppContext.BaseDirectory,"assets","obs",name);
     bool KeyMatches(string key)=>key.Length==settings.Key.Length && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(key),Encoding.UTF8.GetBytes(settings.Key));
-    object State()
+    internal object State(bool local=false)
     {
         var session=championship.Session; var map=session.Map; var match=session.Current;
         int half=map?.ActiveBanHalf(Math.Min(15,map.Rounds.Count+1))??0;
@@ -98,10 +98,14 @@ internal sealed class ObsDockServer : IAsyncDisposable
         int number=map?.Rounds.Count+1??1, attacker=map?.InitialAttack>=0?map.Attacker(number):-1;
         bool editable=map!=null&&!map.Confirmed&&!match.Complete;
         return new {
-            version=BuildInfo.Version,revision,language=L.Current,controllable=canControl()&&championship.DockReady&&!stopping,
+            version=BuildInfo.Version,revision,language=L.Current,controllable=canControl()&&championship.DockReady&&(local||!stopping),
             timer=new{seconds=texts.Remaining,running=texts.Running,options=texts.TimerOptions},
             match=new{id=match.Id,teamA=match.TeamA,teamB=match.TeamB,mapId=map?.MapId,map=map==null?"":session.Catalog.Maps.Single(m=>m.Id==map.MapId).DisplayName,confirmed=map?.Confirmed??false,
                 maps=match.Maps.Select(m=>new{id=m.MapId,label=session.Catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName}).ToArray()},
+            setup=local?new {format=match.Format,coin=match.CoinWinner,first=match.FirstBan,editable=!match.HasConfirmed&&!match.Complete,direct=match.DirectMaps,
+                catalog=session.Catalog.Maps.Select(m=>new{id=m.Id,label=m.DisplayName}).ToArray(),
+                veto=Enumerable.Range(0,8).Select(i=>new{step=i,action=match.Action(i),team=match.Actor(i),id=match.Veto[i]??""}).ToArray(),
+                sides=match.Maps.Select(m=>new{id=m.MapId,label=session.Catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName,initial=m.InitialAttack,ot=m.OtAttack,editable=!m.Confirmed&&!match.Complete}).ToArray()}:null,
             pending=pending.Length>0?(int?)pending[0]:null,role,
             rounds=new{number,attacker,editable,ready=editable&&championship.BansReady&&pending.Length==0&&map!.Score().Winner<0&&(number<=12||map.OtAttack>=0),
                 score=map==null?"":$"{map.Score().A} × {map.Score().B}",
@@ -111,20 +115,32 @@ internal sealed class ObsDockServer : IAsyncDisposable
             bans=map==null?[]:map.BanOrder(0).Concat(map.BanOrder(1)).Select(slot=>new{slot,team=MapRecord.BanTeam(slot),role=map.BanRole(slot),id=map.Bans[slot],name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==map.Bans[slot])?.Name??(MapRecord.IsNoBan(map.Bans[slot])?L.T("Sem banimento"):""),unlocked=map.BanStageReached(slot)}).ToArray(),
             remakes=match.Maps.Select(m=>new {
                 id=m.MapId,label=session.Catalog.Maps.Single(c=>c.Id==m.MapId).DisplayName,initialAttack=m.InitialAttack,otAttack=m.OtAttack,confirmed=m.Confirmed,
-                rounds=m.Rounds.Select((r,i)=>new{index=i,site=BombsiteNames.Display(m.MapId,r.Site),winner=r.Winner}).ToArray(),
+                score=new{a=m.Score().A,b=m.Score().B},
+                rounds=m.Rounds.Select((r,i)=>new{index=i,site=BombsiteNames.Display(m.MapId,r.Site),winner=r.Winner,ending=r.Ending,attacker=m.Attacker(i+1)}).ToArray(),
                 bans=m.BanOrder(0).Concat(m.BanOrder(1)).Where(slot=>!string.IsNullOrEmpty(m.Bans[slot])).Select(slot=>new{slot,half=slot/6,team=MapRecord.BanTeam(slot),role=m.BanRole(slot),id=m.Bans[slot],name=session.Catalog.Operators.FirstOrDefault(o=>o.Id==m.Bans[slot])?.Name??(MapRecord.IsNoBan(m.Bans[slot])?L.T("Sem banimento"):m.Bans[slot])}).ToArray()
             }).ToArray(),
             operators=role==""?[]:OperatorOrder.Sort(session.Catalog.Operators,role).Select(op=>new{id=op.Id,name=op.Name,enabled=!map!.Bans.Skip(half*6).Take(6).Contains(op.Id)}).Concat(new[]{new{id=MapRecord.NoBan(role),name=L.T("Sem banimento"),enabled=true}}).ToArray(),
             labels=new{chooseRemake=L.T("Escolha o mapa para o remake"),undefined=L.T("Não definido"),initialAttack=L.T("Ataque inicial"),initialDefense=L.T("Defesa inicial"),otAttack=L.T("Ataque na prorrogação"),checkMap=L.T("Após configurar, confira o mapa."),partida=L.T("Partida"),history=L.T("Histórico de rounds"),round=L.T("Round"),site=L.T("Bomb site"),winner=L.T("Vencedor"),ending=L.T("Finalização"),reset=L.T("Resetar tempo"),applyTimer=L.T("Aplicar configurações"),copy=L.T("Copiar caminho"),message=L.T("Mensagem final:"),rounds=L.T("Round a round"),newRound=L.T("Novo round"),confirmRound=L.T("Confirmar round"),editRound=L.T("Corrigir round"),roundWait=L.T(map?.Score().Winner>=0?"Vencedor já definido. Confira os rounds.":map?.Rounds.Count>=12&&map.OtAttack<0?"Overtime sem lado definido.":"Conclua os bans de operadores para registrar o próximo round."),timer=L.T("CRONÔMETRO"),bans=L.T("Bans de operadores"),start=L.T("Iniciar / Retomar"),pause=L.T("Pausar"),set=L.T("Aplicar tempo"),select=L.T("Selecionar…"),blocked=L.T("Bloqueado"),wait=L.T(!championship.BansReady?"Conclua o veto e defina os lados na partida.":"Nenhum ban pendente."),connected=L.T("Conectado"),disconnected=L.T("Desconectado"),duration=L.T("Tempo inicial:"),search=L.T("Filtrar operadores"),invalidTime=L.T("Use mm:ss ou hh:mm:ss."),busy=L.T("Conclua a edição aberta no CasterDesk para usar os controles."),team=L.T("Equipe"),def=L.Role("DEF"),atq=L.Role("ATQ")}
         };
     }
-    internal sealed record DockCommand(string Action,double Seconds=0,string MatchId="",string MapId="",long Revision=-1,int Slot=-1,string OperatorId="",string Site="",int Winner=-1,string Ending="",int RoundIndex=-1,string TargetMapId="",string Format="mm:ss",string Message="",double[]? Presets=null);
-    IResult Execute(DockCommand command)
+    internal sealed record DockCommand(string Action,double Seconds=0,string MatchId="",string MapId="",long Revision=-1,int Slot=-1,string OperatorId="",string Site="",int Winner=-1,string Ending="",int RoundIndex=-1,string TargetMapId="",string Format="mm:ss",string Message="",double[]? Presets=null,string TeamA="",string TeamB="",int Coin=-1,int First=-1,int Step=-1,int Attacker=-1,bool Overtime=false);
+    internal IResult Execute(DockCommand command,bool local=false)
     {
-        lastRead=Environment.TickCount64;
-        if(stopping||!canControl()||!championship.DockReady)return Results.Conflict(new{error=L.T("Bloqueado")});
+        if(!local)lastRead=Environment.TickCount64;
+        if((stopping&&!local)||!canControl()||!championship.DockReady)return Results.Conflict(new{error=L.T("Bloqueado")});
         try {
-            if(command.Action=="selectMap") {
+            if(local&&command.Action is "configure" or "veto" or "side") {
+                var session=championship.Session;
+                if(command.Revision!=revision||command.MatchId!=session.Current.Id||command.MapId!=(session.Map?.MapId??""))return Results.Conflict(new{error=L.T("Partida alterada. Atualize o painel.")});
+                if(command.Action=="configure")session.Configure(command.TeamA??"",command.TeamB??"",command.Format,command.Coin,command.First);
+                else if(command.Action=="veto") {
+                    if(!session.Catalog.Maps.Any(m=>m.Id==command.TargetMapId))return Results.BadRequest();
+                    session.Veto(command.Step,command.TargetMapId);
+                } else {
+                    if(command.Attacker is <0 or >1||!session.Current.Maps.Any(m=>m.MapId==command.TargetMapId))return Results.BadRequest();
+                    session.Side(command.TargetMapId,command.Overtime,command.Attacker);
+                }
+            }else if(command.Action=="selectMap") {
                 var session=championship.Session;
                 if(command.Revision!=revision||command.MatchId!=session.Current.Id||command.MapId!=session.Map?.MapId)return Results.Conflict(new{error=L.T("Partida alterada. Atualize o painel.")});
                 if(session.Current.Maps.Count<=1||!session.Current.Maps.Any(m=>m.MapId==command.TargetMapId))return Results.BadRequest();
@@ -151,7 +167,7 @@ internal sealed class ObsDockServer : IAsyncDisposable
                 case "timerConfig":texts.ConfigureTimer(command.Seconds,command.Format??"",command.Message??"",command.Presets??[]);break;
                 default:return Results.BadRequest();
             }
-            return Results.Json(State());
+            return Results.Json(State(local));
         } catch(InvalidDataException ex){return Results.BadRequest(new{error=ex.Message});}
           catch(InvalidOperationException ex){return Results.BadRequest(new{error=ex.Message});}
           catch(IOException ex){AppLog.Write(ex.ToString());return Results.StatusCode(500);}

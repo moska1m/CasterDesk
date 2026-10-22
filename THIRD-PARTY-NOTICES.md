@@ -24,6 +24,8 @@ Twitch, YouTube e Kick são marcas de seus respectivos titulares; os símbolos e
 
 ## Componentes
 
+O QR de conexão local é gerado no próprio PC com QRCoder 1.8.1, licença MIT. O aviso original acompanha o pacote em `licenses/QRCODER-LICENSE.txt`. Nenhum serviço externo recebe o link de acesso.
+
 Os retratos amplos dos 78 operadores foram obtidos das páginas oficiais da Ubisoft e preparados para a interface em três resoluções. Os originais, URLs de origem e recortes estão em `assets/siege/operators/originals` e `portraits-manifest.json`. Não houve geração de novas ilustrações dos personagens.
 
 O aplicativo utiliza Avalonia 12.0.0 (MIT, conforme o metadata do pacote), SkiaSharp e HarfBuzzSharp. Avisos em `assets/licenses/AVALONIA-LICENSE.txt`, `SKIASHARP-LICENSE.txt` e `HARFBUZZSHARP-LICENSE.txt`; os dois últimos foram copiados dos pacotes usados nesta publicação. Os avisos do runtime .NET também acompanham o instalador.

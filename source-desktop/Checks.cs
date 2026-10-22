@@ -53,6 +53,7 @@ internal static class Checks
         InteractionChecks.Run();
         SpecChecks.Run();
         ObsDockChecks.Run();
+        LocalControlChecks.Run();
         AuditFixChecks.Run();
         File.WriteAllText(Path.Combine(AppPaths.DataDirectory, "casterdesk-check.txt"), "PASS: four image categories, announcement feed/story, three layouts, generate bounds and championship UI flow. No desktop window was opened.");
     }
